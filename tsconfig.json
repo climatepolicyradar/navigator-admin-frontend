@@ -25,14 +25,6 @@
     "paths": {
       "@api/*": ["api/*"],
       "@components/*": ["components/*"],
-      "@constants/*": ["constants/*"],
-      "@context/*": ["context/*"],
-      "@helpers/*": ["helpers/*"],
-      "@hooks/*": ["hooks/*"],
-      "@interfaces/*": ["interfaces/*"],
-      "@pages/*": ["pages/*"],
-      "@types": ["types/index"],
-      "@utils/*": ["utils/*"]
     }
   },
   "include": ["src"],
