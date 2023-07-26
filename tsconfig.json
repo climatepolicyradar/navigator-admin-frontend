@@ -25,6 +25,7 @@
     "paths": {
       "@api/*": ["api/*"],
       "@components/*": ["components/*"],
+      "@views/*": ["views/*"],
     }
   },
   "include": ["src"],
