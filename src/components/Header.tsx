@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import {
   Box,
   Breadcrumb,
@@ -6,6 +7,7 @@ import {
   HStack,
   Stack,
 } from '@chakra-ui/react'
+
 import { SideMenu } from './SideMenu'
 
 export function Header() {
@@ -23,17 +25,22 @@ export function Header() {
             <SideMenu />
             <Breadcrumb fontSize="sm">
               <BreadcrumbItem>
-                <BreadcrumbLink href="/" fontWeight="bold">
+                <BreadcrumbLink to="/" fontWeight="bold" as={Link}>
                   Climate Policy Radar
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbItem>
-                <BreadcrumbLink href="/families" fontWeight="bold">
+                <BreadcrumbLink to="/families" fontWeight="bold" as={Link}>
                   Families
                 </BreadcrumbLink>
               </BreadcrumbItem>
+              <BreadcrumbItem>
+                <BreadcrumbLink to="/family" fontWeight="bold" as={Link}>
+                  Family
+                </BreadcrumbLink>
+              </BreadcrumbItem>
               <BreadcrumbItem isCurrentPage>
-                <BreadcrumbLink href="#">Edit family</BreadcrumbLink>
+                <BreadcrumbLink>Edit</BreadcrumbLink>
               </BreadcrumbItem>
             </Breadcrumb>
           </HStack>

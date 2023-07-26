@@ -24,5 +24,6 @@ module.exports = {
     ],
     '@typescript-eslint/no-non-null-assertion': 'off',
   },
-  ignorePatterns: ['.eslintrc.cjs', 'vite.config.ts'],
+  // ignore js files
+  ignorePatterns: ['.eslintrc.cjs', 'vite.config.ts', '**/*.js'],
 }
