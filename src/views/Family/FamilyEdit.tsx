@@ -24,27 +24,23 @@ import {
   Button,
 } from '@chakra-ui/react'
 
-import { FakeNetwork } from '@/api/Faker'
-import { FAMILIES } from '@/data/Families'
 import { TFamily } from '@/interfaces'
 import { formatDate, formatDateISO } from '@/utlities/FormatDate'
 import { SECTORS } from '@/data/Sectors'
 import { CloseIcon } from '@chakra-ui/icons'
 import { DOCUMENT_TYPES } from '@/data/DocTypes'
+import { getFamily } from '@/api/Families'
 
 export async function loader({ params }) {
   // TODO: replace with proper API call
-  // const families = await getFamilies('')
-  // return { families }
-  await FakeNetwork()
-  return {
-    family: FAMILIES.find((family) => family.import_id === params.importId),
-  }
+  const families = await getFamily(params.importId)
+  return families
 }
 
 export default function FamilyEdit() {
-  const { family } = useLoaderData() as { family: TFamily }
-  console.log(family)
+  const {
+    response: { data: family },
+  } = useLoaderData() as { response: { data: TFamily } }
 
   return (
     <>
@@ -68,7 +64,7 @@ export default function FamilyEdit() {
               </FormControl>
               <FormControl isRequired>
                 <FormLabel>Summary</FormLabel>
-                <Textarea size="lg" bg="white" defaultValue={family.summary} />
+                <Textarea height={'300px'} bg="white" defaultValue={family.summary} />
               </FormControl>
               <FormControl isRequired>
                 <FormLabel>Published date</FormLabel>

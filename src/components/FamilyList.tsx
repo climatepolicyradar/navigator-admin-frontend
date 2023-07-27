@@ -14,6 +14,7 @@ import {
   Flex,
   Button,
   HStack,
+  Stack,
 } from '@chakra-ui/react'
 import {
   GoArrowLeft,
@@ -31,8 +32,8 @@ type TProps = {
 export default function FamilyList({ families }: TProps) {
   return (
     <>
-      <TableContainer>
-        <Table size="sm">
+      <TableContainer height={'80vh'}>
+        <Table size="sm" variant={'striped'}>
           <Thead>
             <Tr>
               <Th>ID</Th>
@@ -56,7 +57,7 @@ export default function FamilyList({ families }: TProps) {
                 <Td>{family.geography}</Td>
                 <Td>{family.collections}</Td>
                 <Td>
-                  <HStack spacing="2">
+                  <HStack spacing="2" wrap={'wrap'}>
                     {family.documents.map((document) => {
                       return (
                         <Tag key={document} size="sm">
@@ -78,8 +79,9 @@ export default function FamilyList({ families }: TProps) {
                     <IconButton
                       aria-label="Edit document"
                       icon={<GoPencil />}
-                      variant="solid"
+                      variant="outline"
                       size="sm"
+                      colorScheme='blue'
                     />
                   </Link>
                 </Td>

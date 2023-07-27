@@ -20,6 +20,11 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage />,
         children: [
           {
+            path: '',
+            element: <>Test</>,
+            errorElement: <ErrorPage />,
+          },
+          {
             path: 'families/:importId',
             element: <FamilyEdit />,
             loader: familyEditLoader,
