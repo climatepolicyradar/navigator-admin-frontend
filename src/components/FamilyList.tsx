@@ -1,4 +1,5 @@
 import { TFamily } from '@/interfaces'
+import { formatDate } from '@/utlities/FormatDate'
 import {
   Table,
   Thead,
@@ -65,8 +66,8 @@ export default function FamilyList({ families }: TProps) {
                     })}
                   </HStack>
                 </Td>
-                <Td>{family.published_date}</Td>
-                <Td>{family.last_updated_date}</Td>
+                <Td>{formatDate(family.published_date)}</Td>
+                <Td>{formatDate(family.last_updated_date)}</Td>
                 <Td>
                   <Badge colorScheme="green" size="sm">
                     {family.status}

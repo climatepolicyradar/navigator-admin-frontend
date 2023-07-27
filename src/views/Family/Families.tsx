@@ -1,4 +1,12 @@
-import { Box, Heading, Stack } from '@chakra-ui/react'
+import {
+  Box,
+  Button,
+  ButtonGroup,
+  Flex,
+  Heading,
+  Spacer,
+  Stack,
+} from '@chakra-ui/react'
 import { useLoaderData } from 'react-router-dom'
 
 // import { getFamilies } from '@/api/Families'
@@ -22,7 +30,15 @@ export default function Families() {
 
   return (
     <Stack spacing={4}>
-      <Heading as={'h1'}>Families</Heading>
+      <Flex minWidth="max-content" alignItems="center" gap="2">
+        <Box>
+          <Heading as={'h1'}>Families</Heading>
+        </Box>
+        <Spacer />
+        <ButtonGroup>
+          <Button colorScheme="blue">Add new Family</Button>
+        </ButtonGroup>
+      </Flex>
       <FamilyList families={families} />
     </Stack>
   )

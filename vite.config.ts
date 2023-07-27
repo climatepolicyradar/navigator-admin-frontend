@@ -10,6 +10,7 @@ export default defineConfig({
       '@api': path.resolve(__dirname, './src/api'),
       '@components': path.resolve(__dirname, './src/components'),
       '@views': path.resolve(__dirname, './src/views'),
+      '@utlities': path.resolve(__dirname, './src/utlities'),
     },
   },
   plugins: [react()],

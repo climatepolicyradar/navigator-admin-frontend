@@ -19,6 +19,7 @@ export function Header() {
         direction="column"
         borderBottom="1px"
         borderColor="gray.100"
+        boxShadow='inner'
       >
         <Box>
           <HStack>
