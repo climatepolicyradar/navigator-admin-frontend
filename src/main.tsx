@@ -17,16 +17,21 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       {
-        path: 'families/:importId',
-        element: <FamilyEdit />,
-        loader: familyEditLoader,
         errorElement: <ErrorPage />,
-      },
-      {
-        path: 'families',
-        element: <Families />,
-        loader: familiesLoader,
-        errorElement: <ErrorPage />,
+        children: [
+          {
+            path: 'families/:importId',
+            element: <FamilyEdit />,
+            loader: familyEditLoader,
+            errorElement: <ErrorPage />,
+          },
+          {
+            path: 'families',
+            element: <Families />,
+            loader: familiesLoader,
+            errorElement: <ErrorPage />,
+          },
+        ],
       },
     ],
   },
