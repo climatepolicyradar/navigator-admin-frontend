@@ -1,7 +1,7 @@
 import { AxiosError } from 'axios'
 
 import API from '@/api'
-import { TFamily } from '@/types'
+import { TFamily } from '@/interfaces'
 
 export async function getFamilies(query: string) {
   const families = await API.get<TFamily[]>('/families/', {

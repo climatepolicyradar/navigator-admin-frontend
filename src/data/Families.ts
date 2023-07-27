@@ -1,4 +1,4 @@
-import { TFamily } from '@/types'
+import { TFamily } from '@/interfaces'
 
 export const FAMILIES: TFamily[] = [
   {

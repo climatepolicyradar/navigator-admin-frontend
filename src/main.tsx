@@ -5,10 +5,10 @@ import { ChakraProvider } from '@chakra-ui/react'
 
 import Root from '@/Root'
 import ErrorPage from '@views/Error'
-import FamilyEdit from '@views/Family/FamilyEdit'
-import FamilyList, {
-  loader as familyListLoader,
-} from '@/views/Family/FamilyList'
+import FamilyEdit, {
+  loader as familyEditLoader,
+} from '@views/Family/FamilyEdit'
+import Families, { loader as familiesLoader } from '@/views/Family/Families'
 
 const router = createBrowserRouter([
   {
@@ -17,14 +17,15 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       {
-        path: 'families/:id',
+        path: 'families/:importId',
         element: <FamilyEdit />,
+        loader: familyEditLoader,
         errorElement: <ErrorPage />,
       },
       {
         path: 'families',
-        element: <FamilyList />,
-        loader: familyListLoader,
+        element: <Families />,
+        loader: familiesLoader,
         errorElement: <ErrorPage />,
       },
     ],

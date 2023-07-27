@@ -1,9 +1,10 @@
-import { Box } from '@chakra-ui/react'
+import { Box, Heading, Stack } from '@chakra-ui/react'
 import { useLoaderData } from 'react-router-dom'
 
 // import { getFamilies } from '@/api/Families'
-import { TFamily } from '@/types/Family'
+import { TFamily } from '@/interfaces/Family'
 import { FakeNetwork } from '@/api/Faker'
+import FamilyList from '@/components/FamilyList'
 
 import { FAMILIES } from '@/data/Families'
 
@@ -15,14 +16,14 @@ export async function loader() {
   return { families: FAMILIES }
 }
 
-export default function FamilyList() {
+export default function Families() {
   const { families } = useLoaderData() as { families: TFamily[] }
-  console.log(families)
+  // console.log(families)
 
   return (
-    <>
-      <Box>Family List</Box>
-      <Box></Box>
-    </>
+    <Stack spacing={4}>
+      <Heading as={'h1'}>Families</Heading>
+      <FamilyList families={families} />
+    </Stack>
   )
 }

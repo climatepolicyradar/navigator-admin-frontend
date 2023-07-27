@@ -1,4 +1,4 @@
-export type TFamily = {
+export interface TFamily {
   import_id: string
   title: string
   summary: string
