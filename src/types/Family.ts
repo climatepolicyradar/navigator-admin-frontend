@@ -5,11 +5,11 @@ export type TFamily = {
   geography: string
   category: string
   status: string
-  metadata: string
+  metadata: object
   slug: string
   events: string[]
   published_date: string
   last_updated_date: string
-  documents: number[]
-  collections: number[]
+  documents: string[]
+  collections: string[]
 }
