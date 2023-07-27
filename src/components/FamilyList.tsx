@@ -32,7 +32,7 @@ type TProps = {
 export default function FamilyList({ families }: TProps) {
   return (
     <>
-      <TableContainer height={'80vh'}>
+      <TableContainer height={'80vh'} overflowY={'scroll'} whiteSpace={'normal'}>
         <Table size="sm" variant={'striped'}>
           <Thead>
             <Tr>
