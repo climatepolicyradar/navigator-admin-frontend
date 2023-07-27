@@ -21,7 +21,7 @@ const router = createBrowserRouter([
         children: [
           {
             path: '',
-            element: <>Test</>,
+            element: <>Hi, this is the root of the content area</>,
             errorElement: <ErrorPage />,
           },
           {
