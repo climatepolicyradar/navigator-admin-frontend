@@ -34,6 +34,7 @@ interface ILoaderProps {
   }
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export async function loader({ request }: ILoaderProps) {
   const url = new URL(request.url)
   const q = url.searchParams.get('q')

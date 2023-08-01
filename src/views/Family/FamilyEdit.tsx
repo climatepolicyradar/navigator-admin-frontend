@@ -45,6 +45,7 @@ interface Args extends ActionFunctionArgs {
   params: Params<ParamParseKey<typeof PathNames.familyEdit>>
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export async function loader({ params }: Args) {
   if (!params.importId) {
     return
