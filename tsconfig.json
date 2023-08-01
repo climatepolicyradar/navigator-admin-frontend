@@ -27,7 +27,7 @@
       "@api/*": ["api/*"],
       "@components/*": ["components/*"],
       "@views/*": ["views/*"],
-      "@utilities/*": ["utilities/*"]
+      "@utils/*": ["utils/*"]
     }
   },
   "include": ["src"],

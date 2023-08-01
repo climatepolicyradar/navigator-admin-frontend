@@ -3,9 +3,9 @@ import { AxiosError } from 'axios'
 import API from '@/api'
 import { TFamily } from '@/interfaces'
 
-export async function getFamilies(query: string) {
+export async function getFamilies(query: string | undefined | null) {
   const response = await API.get<TFamily[]>('/families/', {
-    params: { q: 'redd' },
+    params: { q: query || 'redd' },
   })
     .then((response) => {
       return response

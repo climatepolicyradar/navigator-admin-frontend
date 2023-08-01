@@ -4,43 +4,48 @@ import {
   ButtonGroup,
   Flex,
   Heading,
+  Input,
+  SkeletonText,
   Spacer,
   Stack,
 } from '@chakra-ui/react'
-import { useLoaderData } from 'react-router-dom'
+import { Form, Outlet, useNavigation } from 'react-router-dom'
 
-import { getFamilies } from '@/api/Families'
-import { TFamily } from '@/interfaces/Family'
-import { FakeNetwork } from '@/api/Faker'
-import FamilyList from '@/components/FamilyList'
-
-import { FAMILIES } from '@/data/Families'
-
-export async function loader() {
-  // TODO: replace with proper API call
-  const response = await getFamilies('')
-  return response
-  // await FakeNetwork()
-  // return { families: FAMILIES }
-}
+import { Loader } from '@/components/Loader'
 
 export default function Families() {
-  const {
-    response: { data: families },
-  } = useLoaderData() as { response: { data: TFamily[] } }
+  const navigation = useNavigation()
 
   return (
     <Stack spacing={4}>
-      <Flex alignItems="center" gap="2">
+      <Flex alignItems="center" gap="4">
         <Box>
           <Heading as={'h1'}>Families</Heading>
+        </Box>
+        <Box>
+          <Form id="search-form" role="search">
+            <Input
+              bg="white"
+              id="q"
+              placeholder="Search"
+              type="search"
+              name="q"
+            />
+          </Form>
         </Box>
         <Spacer />
         <ButtonGroup>
           <Button colorScheme="blue">Add new Family</Button>
         </ButtonGroup>
       </Flex>
-      <FamilyList families={families} />
+      {navigation.state === 'loading' ? (
+        <Box padding="4" bg="white">
+          <Loader />
+          <SkeletonText mt="4" noOfLines={3} spacing="4" skeletonHeight="2" />
+        </Box>
+      ) : (
+        <Outlet />
+      )}
     </Stack>
   )
 }

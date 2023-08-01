@@ -1,5 +1,6 @@
+import { getFamilies } from '@/api/Families'
 import { TFamily } from '@/interfaces'
-import { formatDate } from '@/utlities/FormatDate'
+import { formatDate } from '@/utils/Date'
 import {
   Table,
   Thead,
@@ -14,7 +15,6 @@ import {
   Flex,
   Button,
   HStack,
-  Stack,
 } from '@chakra-ui/react'
 import {
   GoArrowLeft,
@@ -23,16 +23,38 @@ import {
   GoMoveToStart,
   GoPencil,
 } from 'react-icons/go'
-import { Link } from 'react-router-dom'
+import { Link, useLoaderData } from 'react-router-dom'
 
-type TProps = {
-  families: TFamily[]
+// import { FakeNetwork } from '@/api/Faker'
+// import { FAMILIES } from '@/data/Families'
+
+interface ILoaderProps {
+  request: {
+    url: string
+  }
 }
 
-export default function FamilyList({ families }: TProps) {
+export async function loader({ request }: ILoaderProps) {
+  const url = new URL(request.url)
+  const q = url.searchParams.get('q')
+  const response = await getFamilies(q)
+  return response
+  // await FakeNetwork()
+  // return { families: FAMILIES }
+}
+
+export default function FamilyList() {
+  const {
+    response: { data: families },
+  } = useLoaderData() as { response: { data: TFamily[] } }
+
   return (
     <>
-      <TableContainer height={'80vh'} overflowY={'scroll'} whiteSpace={'normal'}>
+      <TableContainer
+        height={'80vh'}
+        overflowY={'scroll'}
+        whiteSpace={'normal'}
+      >
         <Table size="sm" variant={'striped'}>
           <Thead>
             <Tr>
@@ -75,13 +97,13 @@ export default function FamilyList({ families }: TProps) {
                   </Badge>
                 </Td>
                 <Td>
-                  <Link to={`${family.import_id}`}>
+                  <Link to={`/family/${family.import_id}/edit`}>
                     <IconButton
                       aria-label="Edit document"
                       icon={<GoPencil />}
                       variant="outline"
                       size="sm"
-                      colorScheme='blue'
+                      colorScheme="blue"
                     />
                   </Link>
                 </Td>

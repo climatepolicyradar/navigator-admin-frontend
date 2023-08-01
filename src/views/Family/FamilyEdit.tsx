@@ -1,4 +1,10 @@
-import { Form, useLoaderData } from 'react-router-dom'
+import {
+  ActionFunctionArgs,
+  Form,
+  ParamParseKey,
+  Params,
+  useLoaderData,
+} from 'react-router-dom'
 import {
   Box,
   Flex,
@@ -25,14 +31,24 @@ import {
 } from '@chakra-ui/react'
 
 import { TFamily } from '@/interfaces'
-import { formatDate, formatDateISO } from '@/utlities/FormatDate'
+import { formatDate, formatDateISO } from '@/utils/Date'
 import { SECTORS } from '@/data/Sectors'
 import { CloseIcon } from '@chakra-ui/icons'
 import { DOCUMENT_TYPES } from '@/data/DocTypes'
 import { getFamily } from '@/api/Families'
 
-export async function loader({ params }) {
-  // TODO: replace with proper API call
+const PathNames = {
+  familyEdit: '/family/:importId/edit',
+} as const
+
+interface Args extends ActionFunctionArgs {
+  params: Params<ParamParseKey<typeof PathNames.familyEdit>>
+}
+
+export async function loader({ params }: Args) {
+  if (!params.importId) {
+    return
+  }
   const families = await getFamily(params.importId)
   return families
 }
@@ -64,7 +80,11 @@ export default function FamilyEdit() {
               </FormControl>
               <FormControl isRequired>
                 <FormLabel>Summary</FormLabel>
-                <Textarea height={'300px'} bg="white" defaultValue={family.summary} />
+                <Textarea
+                  height={'300px'}
+                  bg="white"
+                  defaultValue={family.summary}
+                />
               </FormControl>
               <FormControl isRequired>
                 <FormLabel>Published date</FormLabel>

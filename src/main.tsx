@@ -8,7 +8,8 @@ import ErrorPage from '@views/Error'
 import FamilyEdit, {
   loader as familyEditLoader,
 } from '@views/Family/FamilyEdit'
-import Families, { loader as familiesLoader } from '@/views/Family/Families'
+import Families from '@/views/Family/Families'
+import FamilyList, { loader as familiesLoader } from './components/FamilyList'
 
 const router = createBrowserRouter([
   {
@@ -25,7 +26,7 @@ const router = createBrowserRouter([
             errorElement: <ErrorPage />,
           },
           {
-            path: 'families/:importId',
+            path: 'family/:importId/edit',
             element: <FamilyEdit />,
             loader: familyEditLoader,
             errorElement: <ErrorPage />,
@@ -33,8 +34,15 @@ const router = createBrowserRouter([
           {
             path: 'families',
             element: <Families />,
-            loader: familiesLoader,
             errorElement: <ErrorPage />,
+            children: [
+              {
+                path: '',
+                element: <FamilyList />,
+                loader: familiesLoader,
+                errorElement: <ErrorPage />,
+              },
+            ],
           },
         ],
       },
