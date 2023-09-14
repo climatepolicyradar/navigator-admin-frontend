@@ -1,5 +1,5 @@
 import { createContext, useEffect, useMemo, useState } from 'react'
-import axios from 'axios'
+import API from '@/api'
 
 import { login as APILogin } from '@/api/Auth'
 
@@ -35,16 +35,17 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
 
   useEffect(() => {
     if (token) {
-      axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
+      API.defaults.headers.common['Authorization'] = 'Bearer ' + token
       localStorage.setItem('token', token)
     } else {
-      delete axios.defaults.headers.common['Authorization']
+      delete API.defaults.headers.common['Authorization']
       localStorage.removeItem('token')
     }
   }, [token])
 
   const login = async (user: TLoginParams) => {
     const { response: token } = await APILogin(user)
+    console.log(token)
     setTokenState(token)
   }
 

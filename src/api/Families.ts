@@ -1,10 +1,11 @@
 import { AxiosError } from 'axios'
 
 import API from '@/api'
-import { TFamily } from '@/interfaces'
+import { IFamily } from '@/interfaces'
 
 export async function getFamilies(query: string | undefined | null) {
-  const response = await API.get<TFamily[]>('/families/', {
+  console.log(API.defaults.headers.common['Authorization']);
+  const response = await API.get<IFamily[]>('/v1/families/', {
     params: { q: query || 'redd' },
   })
     .then((response) => {
@@ -18,7 +19,7 @@ export async function getFamilies(query: string | undefined | null) {
 }
 
 export async function getFamily(id: string) {
-  const response = await API.get<TFamily[]>('/families/' + id)
+  const response = await API.get<IFamily[]>('/v1/families/' + id)
     .then((response) => {
       return response
     })

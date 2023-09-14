@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   Drawer,
   DrawerBody,
@@ -10,8 +11,11 @@ import {
   Stack,
   StackDivider,
   useDisclosure,
+  Icon,
 } from '@chakra-ui/react'
 import { ChatIcon, HamburgerIcon, RepeatClockIcon } from '@chakra-ui/icons'
+import { RiLogoutBoxRLine } from 'react-icons/ri'
+import Logout from './Logout'
 
 const IconLink = ({
   icon,
@@ -58,6 +62,9 @@ export function SideMenu() {
                   View audit history
                 </IconLink>
                 <IconLink icon={<ChatIcon mr="2" />}>Add comment</IconLink>
+                <IconLink icon={<Icon as={RiLogoutBoxRLine} mr="2" />}>
+                  <Logout />
+                </IconLink>
               </nav>
             </Stack>
           </DrawerBody>

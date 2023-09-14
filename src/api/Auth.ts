@@ -31,7 +31,6 @@ export async function login({ username, password }: TLogin) {
     },
   )
     .then((response) => {
-      console.log(response)
       return response.data.access_token
     })
     .catch((error: AxiosError) => {

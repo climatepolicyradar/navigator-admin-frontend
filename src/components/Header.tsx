@@ -19,7 +19,7 @@ export function Header() {
         direction="column"
         borderBottom="1px"
         borderColor="gray.100"
-        boxShadow='inner'
+        boxShadow="inner"
       >
         <Box>
           <HStack>
@@ -36,7 +36,11 @@ export function Header() {
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbItem>
-                <BreadcrumbLink to="/family/sample1" fontWeight="bold" as={Link}>
+                <BreadcrumbLink
+                  to="/family/sample1"
+                  fontWeight="bold"
+                  as={Link}
+                >
                   Family
                 </BreadcrumbLink>
               </BreadcrumbItem>

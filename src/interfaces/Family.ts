@@ -1,4 +1,4 @@
-export interface TFamily {
+export interface IFamily {
   import_id: string
   title: string
   summary: string
