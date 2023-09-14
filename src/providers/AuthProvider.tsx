@@ -1,13 +1,17 @@
 import { createContext, useEffect, useMemo, useState } from 'react'
 import axios from 'axios'
 
-import { fakeAuth } from '@/api/Auth'
+import { login as APILogin } from '@/api/Auth'
+
+type TLoginParams = {
+  username: string
+  password: string
+}
 
 interface IAuthContext {
   token: string | null
-  setToken: (newToken: string) => void
-  // onLogin: () => void
-  // onLogout: () => void
+  setToken: (newToken?: string) => void
+  login: (user: TLoginParams) => Promise<void>
 }
 
 interface IAuthProviderProps {
@@ -17,8 +21,7 @@ interface IAuthProviderProps {
 export const AuthContext = createContext<IAuthContext>({
   token: '',
   setToken: () => null,
-  // onLogin: () => null,
-  // onLogout: () => null,
+  login: () => Promise.resolve(),
 })
 
 const AuthProvider = ({ children }: IAuthProviderProps) => {
@@ -26,8 +29,8 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
     localStorage.getItem('token'),
   )
 
-  const setToken = (newToken: string) => {
-    setTokenState(newToken)
+  const setToken = (newToken?: string) => {
+    setTokenState(newToken ?? null)
   }
 
   useEffect(() => {
@@ -40,29 +43,20 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
     }
   }, [token])
 
+  const login = async (user: TLoginParams) => {
+    const { response: token } = await APILogin(user)
+    setTokenState(token)
+  }
+
   const contextValue = useMemo(
     () => ({
       token,
       setToken,
+      login,
     }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [token],
   )
-
-  // const handleLogin = async () => {
-  //   const token = await fakeAuth()
-
-  //   setTokenState(token)
-  // }
-
-  // const handleLogout = () => {
-  //   setTokenState(null)
-  // }
-
-  // const value = {
-  //   token,
-  //   onLogin: handleLogin,
-  //   onLogout: handleLogout,
-  // }
 
   return (
     <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>

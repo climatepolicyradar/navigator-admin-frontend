@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom'
+import { Outlet, useNavigate } from 'react-router-dom'
 
 import { useAuth } from './hooks/useAuth'
 
@@ -6,7 +6,13 @@ import { ContentWrapper } from '@components/ContentWrapper'
 import { Header } from '@components/Header'
 
 function Root() {
-  const { token } = useAuth()
+  const { token, setToken } = useAuth()
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    setToken()
+    navigate('/', { replace: true })
+  }
 
   return (
     <>
@@ -14,11 +20,13 @@ function Root() {
       <ContentWrapper>
         <div>Authenticated as {token}</div>
         {token && (
-          <button type="button" onClick={() => null}>
+          <button type="button" onClick={handleLogout}>
             Sign Out
           </button>
         )}
-        <Outlet />
+        <div>
+          <Outlet />
+        </div>
       </ContentWrapper>
     </>
   )
