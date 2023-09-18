@@ -2,11 +2,11 @@ import { useAuth } from '@/hooks/useAuth'
 import { useNavigate } from 'react-router-dom'
 
 export default function Logout() {
-  const { token, setToken } = useAuth()
+  const { token, logout } = useAuth()
   const navigate = useNavigate()
 
   const handleLogout = () => {
-    setToken()
+    logout()
     navigate('/', { replace: true })
   }
 

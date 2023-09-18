@@ -7,4 +7,8 @@ const API = axios.create({
   },
 })
 
+export const GET = (url: string) => {
+  return API.get(url)
+}
+
 export default API

@@ -3,7 +3,7 @@ import API from '@/api'
 
 import { login as APILogin } from '@/api/Auth'
 
-type TLoginParams = {
+interface ILoginParams {
   username: string
   password: string
 }
@@ -11,7 +11,8 @@ type TLoginParams = {
 interface IAuthContext {
   token: string | null
   setToken: (newToken?: string) => void
-  login: (user: TLoginParams) => Promise<void>
+  login: (user: ILoginParams) => Promise<string | null>
+  logout: (returnTo?: string | null) => void
 }
 
 interface IAuthProviderProps {
@@ -21,18 +22,23 @@ interface IAuthProviderProps {
 export const AuthContext = createContext<IAuthContext>({
   token: '',
   setToken: () => null,
-  login: () => Promise.resolve(),
+  login: () => Promise.resolve(''),
+  logout: () => null,
 })
 
 const AuthProvider = ({ children }: IAuthProviderProps) => {
   const [token, setTokenState] = useState<string | null>(
     localStorage.getItem('token'),
   )
+  const [returnTo, setReturnTo] = useState<string | null>(
+    localStorage.getItem('returnTo'),
+  )
 
   const setToken = (newToken?: string) => {
     setTokenState(newToken ?? null)
   }
 
+  // token storage management
   useEffect(() => {
     if (token) {
       API.defaults.headers.common['Authorization'] = 'Bearer ' + token
@@ -43,15 +49,30 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
     }
   }, [token])
 
-  const login = async (user: TLoginParams) => {
+  // returnTo storage management
+  useEffect(() => {
+    if (returnTo) {
+      localStorage.setItem('returnTo', returnTo)
+    } else {
+      localStorage.removeItem('returnTo')
+    }
+  }, [returnTo])
+
+  const login = async (user: ILoginParams) => {
     const { response: token } = await APILogin(user)
-    console.log(token)
     setTokenState(token)
+    return returnTo
+  }
+
+  const logout = (returnTo?: string | null) => {
+    setToken()
+    setReturnTo(returnTo ?? null)
   }
 
   const contextValue = useMemo(
     () => ({
       token,
+      logout,
       setToken,
       login,
     }),

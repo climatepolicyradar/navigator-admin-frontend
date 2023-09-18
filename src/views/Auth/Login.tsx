@@ -2,21 +2,24 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
 
 export default function Login() {
-  const { token, login } = useAuth()
+  const { login } = useAuth()
   const navigate = useNavigate()
 
   const handleLogin = async () => {
-    if (login)
+    if (login) {
       await login({
-        username: 'username',
-        password: 'password',
+        username: '',
+        password: '',
+      }).then((returnTo) => {
+        // TODO: set up return to
+        // console.log(returnTo)
+        navigate('/', { replace: true })
       })
-    navigate('/', { replace: true })
+    }
   }
 
   return (
     <>
-      {token && <div>Authenticated as {token}</div>}
       <button type="button" onClick={() => void handleLogin()}>
         Sign In
       </button>
