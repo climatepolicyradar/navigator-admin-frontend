@@ -3,7 +3,16 @@ import { AxiosError } from 'axios'
 import API from '@/api'
 import { IFamily, IError } from '@/interfaces'
 
+const checkAuth = () => {
+  if (!API.defaults.headers.common['Authorization']) {
+    API.defaults.headers.common['Authorization'] =
+      'Bearer ' + (localStorage.getItem('token') ?? '')
+  }
+}
+
 export async function getFamilies(query: string | undefined | null) {
+  checkAuth()
+
   const response = await API.get<IFamily[]>('/v1/families/', {
     params: { q: query || 'redd' },
   })
@@ -24,6 +33,8 @@ export async function getFamilies(query: string | undefined | null) {
 }
 
 export async function getFamily(id: string) {
+  checkAuth()
+
   const response = await API.get<IFamily[]>('/v1/families/' + id)
     .then((response) => {
       return response
