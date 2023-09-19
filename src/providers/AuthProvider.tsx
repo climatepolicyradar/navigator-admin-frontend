@@ -73,8 +73,8 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
     () => ({
       token,
       logout,
-      setToken,
       login,
+      setToken,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [token],
