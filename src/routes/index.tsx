@@ -3,12 +3,13 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
 
 import Root from '@/Root'
-import Login from '@/views/Auth/Login'
+import Login from '@/views/auth/Login'
+import Dashboard from '@/views/dashboard/Dashboard'
 import ErrorPage from '@views/Error'
 import FamilyEdit, {
   loader as familyEditLoader,
-} from '@views/Family/FamilyEdit'
-import Families from '@/views/Family/Families'
+} from '@/views/family/FamilyEdit'
+import Families from '@/views/family/Families'
 import FamilyList, { loader as familiesLoader } from '@components/FamilyList'
 import { ProtectedRoute } from './ProtectedRoute'
 
@@ -27,7 +28,7 @@ const authenticatedRoutes = [
             children: [
               {
                 path: '',
-                element: <>Hi, this is the root of the content area</>,
+                element: <Dashboard />,
                 errorElement: <ErrorPage />,
               },
               {
