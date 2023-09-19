@@ -5,6 +5,7 @@ import {
   Params,
   useLoaderData,
 } from 'react-router-dom'
+
 import {
   Box,
   Flex,
@@ -61,8 +62,8 @@ export default function FamilyEdit() {
 
   return (
     <>
+      <Heading as={'h1'}>Edit: {family.title}</Heading>
       <Flex alignItems="center" gap="4">
-        <Heading as={'h1'}>Edit: {family.title}</Heading>
         <Tag size="sm">id: {family.import_id}</Tag>
         <Badge colorScheme="green" size="sm">
           {family.status}
@@ -77,15 +78,7 @@ export default function FamilyEdit() {
             <VStack gap="6">
               <FormControl isRequired>
                 <FormLabel>Title</FormLabel>
-                <Input bg="white" defaultValue={family.title} />
-              </FormControl>
-              <FormControl isRequired>
-                <FormLabel>Summary</FormLabel>
-                <Textarea
-                  height={'300px'}
-                  bg="white"
-                  defaultValue={family.summary}
-                />
+                <Input bg="white" defaultValue={family.title} />~
               </FormControl>
               <FormControl isRequired>
                 <FormLabel>Published date</FormLabel>
@@ -94,6 +87,14 @@ export default function FamilyEdit() {
                   placeholder="Select Date and Time"
                   defaultValue={formatDateISO(family.published_date)}
                   type="date"
+                />
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel>Summary</FormLabel>
+                <Textarea
+                  height={'300px'}
+                  bg="white"
+                  defaultValue={family.summary}
                 />
               </FormControl>
               <FormControl isRequired>
