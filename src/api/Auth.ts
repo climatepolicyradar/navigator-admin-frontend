@@ -1,6 +1,7 @@
 import { AxiosError } from 'axios'
 
 import API from '@/api'
+import { IError } from '@/interfaces'
 
 type TLogin = {
   username: string
@@ -28,8 +29,14 @@ export async function login({ username, password }: TLogin) {
     .then((response) => {
       return response.data.access_token
     })
-    .catch((error: AxiosError) => {
-      throw new Error(error.message)
+    .catch((error: AxiosError<{ detail: string }>) => {
+      const e: IError = {
+        status: error.response?.status || 500,
+        detail: error.response?.data?.detail || 'Unknown error',
+        message: error.message,
+        returnPage: '/families',
+      }
+      throw e
     })
 
   return { response }
