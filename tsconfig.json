@@ -27,6 +27,7 @@
       "@api/*": ["api/*"],
       "@components/*": ["components/*"],
       "@views/*": ["views/*"],
+      "@hooks/*": ["hooks/*"],
       "@utils/*": ["utils/*"]
     }
   },

@@ -1,5 +1,5 @@
 import { getFamilies } from '@/api/Families'
-import { TFamily } from '@/interfaces'
+import { IFamily } from '@/interfaces'
 import { formatDate } from '@/utils/Date'
 import {
   Table,
@@ -25,9 +25,6 @@ import {
 } from 'react-icons/go'
 import { Link, useLoaderData } from 'react-router-dom'
 
-// import { FakeNetwork } from '@/api/Faker'
-// import { FAMILIES } from '@/data/Families'
-
 interface ILoaderProps {
   request: {
     url: string
@@ -40,14 +37,12 @@ export async function loader({ request }: ILoaderProps) {
   const q = url.searchParams.get('q')
   const response = await getFamilies(q)
   return response
-  // await FakeNetwork()
-  // return { families: FAMILIES }
 }
 
 export default function FamilyList() {
   const {
     response: { data: families },
-  } = useLoaderData() as { response: { data: TFamily[] } }
+  } = useLoaderData() as { response: { data: IFamily[] } }
 
   return (
     <>

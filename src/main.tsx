@@ -1,59 +1,16 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { ChakraProvider } from '@chakra-ui/react'
 
-import Root from '@/Root'
-import ErrorPage from '@views/Error'
-import FamilyEdit, {
-  loader as familyEditLoader,
-} from '@views/Family/FamilyEdit'
-import Families from '@/views/Family/Families'
-import FamilyList, { loader as familiesLoader } from './components/FamilyList'
-
-const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <Root />,
-    errorElement: <ErrorPage />,
-    children: [
-      {
-        errorElement: <ErrorPage />,
-        children: [
-          {
-            path: '',
-            element: <>Hi, this is the root of the content area</>,
-            errorElement: <ErrorPage />,
-          },
-          {
-            path: 'family/:importId/edit',
-            element: <FamilyEdit />,
-            loader: familyEditLoader,
-            errorElement: <ErrorPage />,
-          },
-          {
-            path: 'families',
-            element: <Families />,
-            errorElement: <ErrorPage />,
-            children: [
-              {
-                path: '',
-                element: <FamilyList />,
-                loader: familiesLoader,
-                errorElement: <ErrorPage />,
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-])
+import AuthProvider from './providers/AuthProvider'
+import Routes from './routes'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <ChakraProvider>
-      <RouterProvider router={router} />
+      <AuthProvider>
+        <Routes />
+      </AuthProvider>
     </ChakraProvider>
   </React.StrictMode>,
 )

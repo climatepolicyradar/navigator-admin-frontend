@@ -30,7 +30,7 @@ import {
   Button,
 } from '@chakra-ui/react'
 
-import { TFamily } from '@/interfaces'
+import { IFamily } from '@/interfaces'
 import { formatDate, formatDateISO } from '@/utils/Date'
 import { SECTORS } from '@/data/Sectors'
 import { CloseIcon } from '@chakra-ui/icons'
@@ -57,7 +57,7 @@ export async function loader({ params }: Args) {
 export default function FamilyEdit() {
   const {
     response: { data: family },
-  } = useLoaderData() as { response: { data: TFamily } }
+  } = useLoaderData() as { response: { data: IFamily } }
 
   return (
     <>
