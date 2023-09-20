@@ -72,7 +72,10 @@ export const FamilyForm = () => {
   })
 
   const handleFamilyCreate = async (family: IFamilyFormTEMP) => {
+    setFormError(null)
+
     console.log('new family: ', family)
+
     await createFamily(family)
       .then((response) => {
         console.log('family created', response)
