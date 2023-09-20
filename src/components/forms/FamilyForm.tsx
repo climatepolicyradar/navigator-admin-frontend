@@ -102,6 +102,10 @@ export const FamilyForm = () => {
         <FormControl isRequired>
           <FormLabel>Import ID</FormLabel>
           <Input bg="white" {...register('import_id')} />
+          <FormHelperText>
+            Must be in the format of: a.b.c.d where each letter represents a
+            word or number for example: CCLW.family.1234.5678
+          </FormHelperText>
         </FormControl>
         <FormControl isRequired>
           <FormLabel>Title</FormLabel>

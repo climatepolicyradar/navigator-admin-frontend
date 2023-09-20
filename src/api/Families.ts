@@ -58,7 +58,7 @@ interface IFamilyPost_TEMP {
   geography: string
   category: string
   status: string
-  metadata: string // json string
+  metadata: object // json string
   slug: string
   events: string[]
   published_date?: string
@@ -85,7 +85,7 @@ export async function createFamily(data: IFamilyPostFromForm_TEMP) {
   const familyToPost: IFamilyPost_TEMP = {
     ...data,
     status: 'draft',
-    metadata: '',
+    metadata: {},
     slug: '',
     events: [],
     documents: [],
@@ -95,7 +95,7 @@ export async function createFamily(data: IFamilyPostFromForm_TEMP) {
   console.log('modified family to POST: ', familyToPost)
 
   const response = await API.post<IFamilyPost_TEMP>(
-    '/v1/families/',
+    '/v1/families',
     familyToPost,
   )
     .then((response) => {
