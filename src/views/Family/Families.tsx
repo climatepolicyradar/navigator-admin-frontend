@@ -9,7 +9,7 @@ import {
   Spacer,
   Stack,
 } from '@chakra-ui/react'
-import { Form, Outlet, useNavigation } from 'react-router-dom'
+import { Link, Form, Outlet, useNavigation } from 'react-router-dom'
 
 import { Loader } from '@/components/Loader'
 
@@ -35,7 +35,7 @@ export default function Families() {
         </Box>
         <Spacer />
         <ButtonGroup>
-          <Button colorScheme="blue">Add new Family</Button>
+          <Button as={Link} colorScheme="blue" to="/family/new">Add new Family</Button>
         </ButtonGroup>
       </Flex>
       {navigation.state === 'loading' ? (

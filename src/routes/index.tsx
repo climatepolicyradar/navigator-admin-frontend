@@ -6,6 +6,7 @@ import Root from '@/Root'
 import Login from '@/views/auth/Login'
 import Dashboard from '@/views/dashboard/Dashboard'
 import ErrorPage from '@views/Error'
+import Family from '@/views/family/Family'
 import FamilyEdit, {
   loader as familyEditLoader,
 } from '@/views/family/FamilyEdit'
@@ -29,6 +30,11 @@ const authenticatedRoutes = [
               {
                 path: '',
                 element: <Dashboard />,
+                errorElement: <ErrorPage />,
+              },
+              {
+                path: '/family/new',
+                element: <Family />,
                 errorElement: <ErrorPage />,
               },
               {
