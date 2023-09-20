@@ -4,8 +4,10 @@
 
 - Vite
 - React
-- Chakra UI (emotion)
-- React Icons
+- [Chakra UI (emotion)](https://chakra-ui.com/)
+- [React Icons](https://react-icons.github.io/react-icons/)
+- [React hook form](https://react-hook-form.com/get-started)
+  - [Yup](https://github.com/jquense/yup)
 
 ## Running the project
 
