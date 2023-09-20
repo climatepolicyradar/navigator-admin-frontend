@@ -1,6 +1,10 @@
+import { useState } from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
+
+import { IError } from '@/interfaces'
+import { createFamily } from '@/api/Families'
 
 import {
   Box,
@@ -28,31 +32,6 @@ import {
   ButtonGroup,
   FormErrorMessage,
 } from '@chakra-ui/react'
-import { FormEvent } from 'react'
-
-interface IFormInputs {
-  category: string
-  collections: string[]
-  documents: string[]
-  events: string[]
-  geography: string
-  import_id: string
-  // last_updated_date: string -- readonly
-  metadata: {
-    framework: string[]
-    hazard: string[]
-    instrument: string[]
-    keyword: string[]
-    sector: string[]
-    topic: string[]
-  }
-  organisation: string
-  published_date: string
-  slug: string
-  status: string
-  summary: string
-  title: string
-}
 
 interface IFamilyFormTEMP {
   import_id: string
@@ -76,6 +55,7 @@ const schema = yup
   .required()
 
 export const FamilyForm = () => {
+  const [formError, setFormError] = useState<IError | null | undefined>()
   const {
     register,
     handleSubmit,
@@ -91,11 +71,31 @@ export const FamilyForm = () => {
     resolver: yupResolver(schema),
   })
 
-  const onSubmit: SubmitHandler<IFamilyFormTEMP> = (data) => console.log(data)
+  const handleFamilyCreate = async (family: IFamilyFormTEMP) => {
+    console.log('new family: ', family)
+    await createFamily(family)
+      .then((response) => {
+        console.log('family created', response)
+      })
+      .catch((error: IError) => {
+        setFormError(error)
+      })
+  }
+
+  const onSubmit: SubmitHandler<IFamilyFormTEMP> = (data) =>
+    handleFamilyCreate(data)
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <VStack gap="4" mb={4}>
+      <VStack gap="4" mb={4} align={'stretch'}>
+        {formError && (
+          <Box>
+            <Text color={'red.500'}>{formError.message}</Text>
+            <Text fontSize="xs" color={'gray.500'}>
+              {formError.detail}
+            </Text>
+          </Box>
+        )}
         <FormControl isRequired>
           <FormLabel>Import ID</FormLabel>
           <Input bg="white" {...register('import_id')} />
@@ -112,13 +112,13 @@ export const FamilyForm = () => {
           <FormLabel>Geography</FormLabel>
           <Select background="white" {...register('geography')}>
             <option value="">Please select</option>
-            <option value="international">International</option>
-            <option value="geo">United Kingdom</option>
-            <option value="usa">United States of America</option>
-            <option value="canada">Canada</option>
-            <option value="mexico">Mexico</option>
-            <option value="brazil">Brazil</option>
-            <option value="argentina">Argentina</option>
+            <option value="SWE">Sweden</option>
+            <option value="USA">United States of America</option>
+            <option value="CAN">Canada</option>
+            <option value="MEX">Mexico</option>
+            <option value="CHN">China</option>
+            <option value="NGA">Nigeria</option>
+            {/* <option value="international">International</option> */}
           </Select>
         </FormControl>
         <FormControl isRequired as="fieldset" isInvalid={!!errors.category}>
@@ -142,7 +142,7 @@ export const FamilyForm = () => {
           <FormErrorMessage>Please select a category</FormErrorMessage>
         </FormControl>
         <FormControl isRequired as="fieldset" isInvalid={!!errors.organisation}>
-          <FormLabel>Organisation</FormLabel>
+          <FormLabel as="legend">Organisation</FormLabel>
           <RadioGroup>
             <HStack gap={4}>
               <Radio bg="white" value="CCLW" {...register('organisation')}>
