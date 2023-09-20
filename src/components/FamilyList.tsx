@@ -58,8 +58,8 @@ export default function FamilyList() {
               <Th>Title</Th>
               <Th>Category</Th>
               <Th>Geography</Th>
-              <Th>Collections</Th>
-              <Th>Documents</Th>
+              <Th>Collection IDs</Th>
+              {/* <Th>Documents</Th> */}
               <Th>Published date</Th>
               <Th>Updated date</Th>
               <Th>Status</Th>
@@ -74,7 +74,7 @@ export default function FamilyList() {
                 <Td>{family.category}</Td>
                 <Td>{family.geography}</Td>
                 <Td>{family.collections}</Td>
-                <Td>
+                {/* <Td>
                   <HStack spacing="2" wrap={'wrap'}>
                     {family.documents.map((document) => {
                       return (
@@ -84,7 +84,7 @@ export default function FamilyList() {
                       )
                     })}
                   </HStack>
-                </Td>
+                </Td> */}
                 <Td>{formatDate(family.published_date)}</Td>
                 <Td>{formatDate(family.last_updated_date)}</Td>
                 <Td>
