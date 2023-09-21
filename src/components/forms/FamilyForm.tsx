@@ -22,6 +22,7 @@ import {
   Button,
   ButtonGroup,
   FormErrorMessage,
+  useToast,
 } from '@chakra-ui/react'
 
 interface IFamilyFormTEMP {
@@ -46,6 +47,7 @@ const schema = yup
   .required()
 
 export const FamilyForm = () => {
+  const toast = useToast()
   const [formError, setFormError] = useState<IError | null | undefined>()
   const {
     register,
@@ -58,14 +60,23 @@ export const FamilyForm = () => {
   const handleFamilyCreate = async (family: IFamilyFormTEMP) => {
     setFormError(null)
 
-    console.log('new family: ', family)
-
     await createFamily(family)
-      .then((response) => {
-        console.log('family created', response)
+      .then(() => {
+        toast.closeAll()
+        toast({
+          title: 'Family has been successfully created',
+          status: 'success',
+          position: 'top',
+        })
       })
       .catch((error: IError) => {
         setFormError(error)
+        toast({
+          title: 'Family has not been created',
+          description: error.message,
+          status: 'error',
+          position: 'top',
+        })
       })
   }
 

@@ -1,6 +1,6 @@
 import { Link, useLoaderData } from 'react-router-dom'
-import { getFamilies } from '@/api/Families'
-import { IFamily } from '@/interfaces'
+import { deleteFamily, getFamilies } from '@/api/Families'
+import { IError, IFamily } from '@/interfaces'
 import { formatDate } from '@/utils/Date'
 import {
   Table,
@@ -15,6 +15,7 @@ import {
   Box,
   HStack,
   Tooltip,
+  useToast,
 } from '@chakra-ui/react'
 import { GoPencil } from 'react-icons/go'
 
@@ -38,9 +39,31 @@ export default function FamilyList() {
   const {
     response: { data: families },
   } = useLoaderData() as { response: { data: IFamily[] } }
+  const toast = useToast()
 
-  const handleDeleteClick = (id: string) => {
-    console.log('Delete family: ', id)
+  const handleDeleteClick = async (id: string) => {
+    toast({
+      title: 'Family deletion in progress',
+      status: 'info',
+      position: 'top',
+    })
+    await deleteFamily(id)
+      .then(() => {
+        toast({
+          title: 'Family has been successful deleted',
+          status: 'success',
+          position: 'top',
+        })
+      })
+      .catch((error: IError) => {
+        console.log(error)
+        toast({
+          title: 'Family has not been deleted',
+          description: error.message,
+          status: 'error',
+          position: 'top',
+        })
+      })
   }
 
   return (
@@ -89,6 +112,7 @@ export default function FamilyList() {
                       </Link>
                     </Tooltip>
                     <DeleteFamily
+                      family={family}
                       callback={() => handleDeleteClick(family.import_id)}
                     />
                   </HStack>
