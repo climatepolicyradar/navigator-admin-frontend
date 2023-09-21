@@ -1,6 +1,6 @@
-import { TFamily } from '@/interfaces'
+import { IFamily } from '@/interfaces'
 
-export const FAMILIES: TFamily[] = [
+export const FAMILIES: IFamily[] = [
   {
     import_id: 'sample1',
     title: 'title',
