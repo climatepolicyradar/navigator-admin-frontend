@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import {
   Box,
   Breadcrumb,
@@ -9,8 +9,19 @@ import {
 } from '@chakra-ui/react'
 
 import { SideMenu } from './SideMenu'
+import { useEffect, useState } from 'react'
 
 export function Header() {
+  const { pathname } = useLocation()
+  const [currentPage, setCurrentPage] = useState<string | null | undefined>()
+
+  useEffect(() => {
+    if (pathname.includes('edit'))
+      return setCurrentPage('Edit: ' + pathname.split('/').reverse()[1])
+    if (pathname.includes('new')) return setCurrentPage('New family')
+    return setCurrentPage(null)
+  }, [pathname])
+
   return (
     <>
       <Stack
@@ -35,7 +46,7 @@ export function Header() {
                   Families
                 </BreadcrumbLink>
               </BreadcrumbItem>
-              <BreadcrumbItem>
+              {/* <BreadcrumbItem>
                 <BreadcrumbLink
                   to="/family/sample1"
                   fontWeight="bold"
@@ -43,10 +54,12 @@ export function Header() {
                 >
                   Family
                 </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbItem isCurrentPage>
-                <BreadcrumbLink>Edit</BreadcrumbLink>
-              </BreadcrumbItem>
+              </BreadcrumbItem> */}
+              {currentPage && (
+                <BreadcrumbItem isCurrentPage>
+                  <BreadcrumbLink>{currentPage}</BreadcrumbLink>
+                </BreadcrumbItem>
+              )}
             </Breadcrumb>
           </HStack>
         </Box>
