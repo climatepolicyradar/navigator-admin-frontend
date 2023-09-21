@@ -1,27 +1,9 @@
-import { Link, useLocation } from 'react-router-dom'
-import {
-  Box,
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  HStack,
-  Stack,
-} from '@chakra-ui/react'
+import { Box, HStack, Stack } from '@chakra-ui/react'
 
 import { SideMenu } from './SideMenu'
-import { useEffect, useState } from 'react'
+import { BreadCrumbs } from './Breadcrumbs'
 
 export function Header() {
-  const { pathname } = useLocation()
-  const [currentPage, setCurrentPage] = useState<string | null | undefined>()
-
-  useEffect(() => {
-    if (pathname.includes('edit'))
-      return setCurrentPage('Edit: ' + pathname.split('/').reverse()[1])
-    if (pathname.includes('new')) return setCurrentPage('New family')
-    return setCurrentPage(null)
-  }, [pathname])
-
   return (
     <>
       <Stack
@@ -35,32 +17,7 @@ export function Header() {
         <Box>
           <HStack>
             <SideMenu />
-            <Breadcrumb fontSize="sm">
-              <BreadcrumbItem>
-                <BreadcrumbLink to="/" fontWeight="bold" as={Link}>
-                  Climate Policy Radar
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbItem>
-                <BreadcrumbLink to="/families" fontWeight="bold" as={Link}>
-                  Families
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              {/* <BreadcrumbItem>
-                <BreadcrumbLink
-                  to="/family/sample1"
-                  fontWeight="bold"
-                  as={Link}
-                >
-                  Family
-                </BreadcrumbLink>
-              </BreadcrumbItem> */}
-              {currentPage && (
-                <BreadcrumbItem isCurrentPage>
-                  <BreadcrumbLink>{currentPage}</BreadcrumbLink>
-                </BreadcrumbItem>
-              )}
-            </Breadcrumb>
+            <BreadCrumbs />
           </HStack>
         </Box>
       </Stack>
