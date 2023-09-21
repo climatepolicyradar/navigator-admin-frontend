@@ -9,7 +9,6 @@ import {
   Input,
   SkeletonText,
   Spacer,
-  Stack,
 } from '@chakra-ui/react'
 import {
   Link,

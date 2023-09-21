@@ -1,3 +1,4 @@
+import { Link, useLoaderData } from 'react-router-dom'
 import { getFamilies } from '@/api/Families'
 import { IFamily } from '@/interfaces'
 import { formatDate } from '@/utils/Date'
@@ -12,9 +13,12 @@ import {
   IconButton,
   Badge,
   Box,
+  HStack,
+  Tooltip,
 } from '@chakra-ui/react'
 import { GoPencil } from 'react-icons/go'
-import { Link, useLoaderData } from 'react-router-dom'
+
+import { DeleteFamily } from './buttons/DeleteFamily'
 
 interface ILoaderProps {
   request: {
@@ -35,12 +39,13 @@ export default function FamilyList() {
     response: { data: families },
   } = useLoaderData() as { response: { data: IFamily[] } }
 
+  const handleDeleteClick = (id: string) => {
+    console.log('Delete family: ', id)
+  }
+
   return (
     <Box flex={1}>
-      <TableContainer
-        height={'100%'}
-        whiteSpace={'normal'}
-      >
+      <TableContainer height={'100%'} whiteSpace={'normal'}>
         <Table size="sm" variant={'striped'}>
           <Thead>
             <Tr>
@@ -71,15 +76,22 @@ export default function FamilyList() {
                   </Badge>
                 </Td>
                 <Td>
-                  <Link to={`/family/${family.import_id}/edit`}>
-                    <IconButton
-                      aria-label="Edit document"
-                      icon={<GoPencil />}
-                      variant="outline"
-                      size="sm"
-                      colorScheme="blue"
+                  <HStack gap={2}>
+                    <Tooltip label="Edit">
+                      <Link to={`/family/${family.import_id}/edit`}>
+                        <IconButton
+                          aria-label="Edit document"
+                          icon={<GoPencil />}
+                          variant="outline"
+                          size="sm"
+                          colorScheme="blue"
+                        />
+                      </Link>
+                    </Tooltip>
+                    <DeleteFamily
+                      callback={() => handleDeleteClick(family.import_id)}
                     />
-                  </Link>
+                  </HStack>
                 </Td>
               </Tr>
             ))}
