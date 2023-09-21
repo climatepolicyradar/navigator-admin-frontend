@@ -9,12 +9,19 @@ import {
   Spacer,
   Stack,
 } from '@chakra-ui/react'
-import { Link, Form, Outlet, useNavigation } from 'react-router-dom'
+import {
+  Link,
+  Form,
+  Outlet,
+  useNavigation,
+  useSearchParams,
+} from 'react-router-dom'
 
 import { Loader } from '@/components/Loader'
 
 export default function Families() {
   const navigation = useNavigation()
+  const [searchParams] = useSearchParams()
 
   return (
     <Stack spacing={4}>
@@ -30,12 +37,15 @@ export default function Families() {
               placeholder="Search"
               type="search"
               name="q"
+              defaultValue={searchParams.get('q') ?? ''}
             />
           </Form>
         </Box>
         <Spacer />
         <ButtonGroup>
-          <Button as={Link} colorScheme="blue" to="/family/new">Add new Family</Button>
+          <Button as={Link} colorScheme="blue" to="/family/new">
+            Add new Family
+          </Button>
         </ButtonGroup>
       </Flex>
       {navigation.state === 'loading' ? (
