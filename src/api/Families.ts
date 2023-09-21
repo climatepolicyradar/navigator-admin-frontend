@@ -99,14 +99,30 @@ export async function createFamily(data: IFamilyPostFromForm_TEMP) {
     collections: [],
   }
 
-  console.log('modified family to POST: ', familyToPost)
-
   const response = await API.post<IFamilyPost_TEMP>(
     '/v1/families',
     familyToPost,
   )
     .then((response) => {
-      console.log('POST createFamily: ', response)
+      return response
+    })
+    .catch((error: AxiosError<{ detail: string }>) => {
+      const e: IError = {
+        status: error.response?.status || 500,
+        detail: error.response?.data?.detail || 'Unknown error',
+        message: error.message,
+      }
+      throw e
+    })
+
+  return { response }
+}
+
+export async function deleteFamily(id: string) {
+  checkAuth()
+
+  const response = await API.delete<IFamily[]>('/v1/families/' + id)
+    .then((response) => {
       return response
     })
     .catch((error: AxiosError<{ detail: string }>) => {
