@@ -15,7 +15,7 @@ export function Header() {
         boxShadow="inner"
       >
         <Box>
-          <HStack>
+          <HStack gap={6}>
             <SideMenu />
             <BreadCrumbs />
           </HStack>

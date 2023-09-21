@@ -3,7 +3,9 @@ import {
   Button,
   ButtonGroup,
   Flex,
+  HStack,
   Heading,
+  IconButton,
   Input,
   SkeletonText,
   Spacer,
@@ -18,6 +20,7 @@ import {
 } from 'react-router-dom'
 
 import { Loader } from '@/components/Loader'
+import { SearchIcon } from '@chakra-ui/icons'
 
 export default function Families() {
   const navigation = useNavigation()
@@ -31,14 +34,23 @@ export default function Families() {
         </Box>
         <Box>
           <Form id="search-form" role="search">
-            <Input
-              bg="white"
-              id="q"
-              placeholder="Search"
-              type="search"
-              name="q"
-              defaultValue={searchParams.get('q') ?? ''}
-            />
+            <HStack spacing="0">
+              <Input
+                bg="white"
+                id="q"
+                placeholder="Search"
+                type="search"
+                name="q"
+                defaultValue={searchParams.get('q') ?? ''}
+                roundedRight={0}
+              />
+              <IconButton
+                type="submit"
+                aria-label="Search database"
+                icon={<SearchIcon />}
+                roundedLeft={0}
+              />
+            </HStack>
           </Form>
         </Box>
         <Spacer />
