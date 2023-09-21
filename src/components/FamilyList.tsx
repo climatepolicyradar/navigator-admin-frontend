@@ -11,6 +11,7 @@ import {
   TableContainer,
   IconButton,
   Badge,
+  Box,
 } from '@chakra-ui/react'
 import { GoPencil } from 'react-icons/go'
 import { Link, useLoaderData } from 'react-router-dom'
@@ -35,10 +36,9 @@ export default function FamilyList() {
   } = useLoaderData() as { response: { data: IFamily[] } }
 
   return (
-    <>
+    <Box flex={1}>
       <TableContainer
-        height={'80vh'}
-        overflowY={'scroll'}
+        height={'100%'}
         whiteSpace={'normal'}
       >
         <Table size="sm" variant={'striped'}>
@@ -86,6 +86,6 @@ export default function FamilyList() {
           </Tbody>
         </Table>
       </TableContainer>
-    </>
+    </Box>
   )
 }

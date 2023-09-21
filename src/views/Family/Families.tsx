@@ -27,7 +27,7 @@ export default function Families() {
   const [searchParams] = useSearchParams()
 
   return (
-    <Stack spacing={4}>
+    <Flex gap={4} height={'100%'} flexDirection={'column'}>
       <Flex alignItems="center" gap="4">
         <Box>
           <Heading as={'h1'}>Families</Heading>
@@ -68,6 +68,6 @@ export default function Families() {
       ) : (
         <Outlet />
       )}
-    </Stack>
+    </Flex>
   )
 }
