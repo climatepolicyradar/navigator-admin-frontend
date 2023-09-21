@@ -14,12 +14,14 @@ import {
   Badge,
   Box,
   HStack,
+  Text,
   Tooltip,
   useToast,
 } from '@chakra-ui/react'
 import { GoPencil } from 'react-icons/go'
 
 import { DeleteFamily } from './buttons/DeleteFamily'
+import { useState } from 'react'
 
 interface ILoaderProps {
   request: {
@@ -40,8 +42,13 @@ export default function FamilyList() {
     response: { data: families },
   } = useLoaderData() as { response: { data: IFamily[] } }
   const toast = useToast()
+  const [familyError, setFamilyError] = useState<string | null | undefined>()
+  const [formError, setFormError] = useState<IError | null | undefined>()
 
   const handleDeleteClick = async (id: string) => {
+    setFormError(null)
+    setFamilyError(null)
+
     toast({
       title: 'Family deletion in progress',
       status: 'info',
@@ -56,7 +63,8 @@ export default function FamilyList() {
         })
       })
       .catch((error: IError) => {
-        console.log(error)
+        setFamilyError(id)
+        setFormError(error)
         toast({
           title: 'Family has not been deleted',
           description: error.message,
@@ -68,6 +76,16 @@ export default function FamilyList() {
 
   return (
     <Box flex={1}>
+      <Box>
+        {formError && (
+          <Box>
+            <Text color={'red.500'}>{formError.message}</Text>
+            <Text fontSize="xs" color={'gray.500'}>
+              {formError.detail}
+            </Text>
+          </Box>
+        )}
+      </Box>
       <TableContainer height={'100%'} whiteSpace={'normal'}>
         <Table size="sm" variant={'striped'}>
           <Thead>
@@ -85,7 +103,11 @@ export default function FamilyList() {
           </Thead>
           <Tbody>
             {families.map((family) => (
-              <Tr key={family.import_id}>
+              <Tr
+                key={family.import_id}
+                borderLeft={family.import_id === familyError ? '2px' : 'inherit'}
+                borderColor={family.import_id === familyError ? 'red.500' : 'inherit'}
+              >
                 <Td>{family.import_id}</Td>
                 <Td>{family.title}</Td>
                 <Td>{family.category}</Td>
