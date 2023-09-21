@@ -85,7 +85,14 @@ export async function createFamily(data: IFamilyPostFromForm_TEMP) {
   const familyToPost: IFamilyPost_TEMP = {
     ...data,
     status: 'draft',
-    metadata: {},
+    metadata: {
+      topic: [],
+      hazard: [],
+      sector: [],
+      keyword: [],
+      framework: [],
+      instrument: [],
+    },
     slug: '',
     events: [],
     documents: [],
