@@ -13,8 +13,8 @@ import {
   useDisclosure,
   Icon,
 } from '@chakra-ui/react'
-import { ChatIcon, HamburgerIcon, RepeatClockIcon } from '@chakra-ui/icons'
-import { RiLogoutBoxRLine } from 'react-icons/ri'
+import { HamburgerIcon } from '@chakra-ui/icons'
+import { GoSignOut, GoComment, GoClock } from 'react-icons/go'
 import Logout from './Logout'
 
 const IconLink = ({
@@ -58,11 +58,13 @@ export function SideMenu() {
           <DrawerBody>
             <Stack divider={<StackDivider />} spacing="4">
               <nav>
-                <IconLink icon={<RepeatClockIcon mr="2" />}>
+                <IconLink icon={<Icon as={GoClock} mr="2" />}>
                   View audit history
                 </IconLink>
-                <IconLink icon={<ChatIcon mr="2" />}>Add comment</IconLink>
-                <IconLink icon={<Icon as={RiLogoutBoxRLine} mr="2" />}>
+                <IconLink icon={<Icon as={GoComment} mr="2" />}>
+                  Add comment
+                </IconLink>
+                <IconLink icon={<Icon as={GoSignOut} mr="2" />}>
                   <Logout />
                 </IconLink>
               </nav>

@@ -5,6 +5,7 @@ import {
   Params,
   useLoaderData,
 } from 'react-router-dom'
+
 import {
   Box,
   Flex,
@@ -61,8 +62,8 @@ export default function FamilyEdit() {
 
   return (
     <>
+      <Heading as={'h1'}>Edit: {family.title}</Heading>
       <Flex alignItems="center" gap="4">
-        <Heading as={'h1'}>Edit: {family.title}</Heading>
         <Tag size="sm">id: {family.import_id}</Tag>
         <Badge colorScheme="green" size="sm">
           {family.status}
@@ -77,15 +78,7 @@ export default function FamilyEdit() {
             <VStack gap="6">
               <FormControl isRequired>
                 <FormLabel>Title</FormLabel>
-                <Input bg="white" defaultValue={family.title} />
-              </FormControl>
-              <FormControl isRequired>
-                <FormLabel>Summary</FormLabel>
-                <Textarea
-                  height={'300px'}
-                  bg="white"
-                  defaultValue={family.summary}
-                />
+                <Input bg="white" defaultValue={family.title} />~
               </FormControl>
               <FormControl isRequired>
                 <FormLabel>Published date</FormLabel>
@@ -97,15 +90,24 @@ export default function FamilyEdit() {
                 />
               </FormControl>
               <FormControl isRequired>
+                <FormLabel>Summary</FormLabel>
+                <Textarea
+                  height={'300px'}
+                  bg="white"
+                  defaultValue={family.summary}
+                />
+              </FormControl>
+              <FormControl isRequired>
                 <FormLabel>Geography</FormLabel>
                 <Select background="white" defaultValue={family.geography}>
-                  <option value="international">International</option>
-                  <option value="geo">United Kingdom</option>
-                  <option value="usa">United States of America</option>
-                  <option value="canada">Canada</option>
-                  <option value="mexico">Mexico</option>
-                  <option value="brazil">Brazil</option>
-                  <option value="argentina">Argentina</option>
+                  <option value="">Please select</option>
+                  <option value="SWE">Sweden</option>
+                  <option value="USA">United States of America</option>
+                  <option value="CAN">Canada</option>
+                  <option value="MEX">Mexico</option>
+                  <option value="CHN">China</option>
+                  <option value="NGA">Nigeria</option>
+                  {/* <option value="international">International</option> */}
                 </Select>
               </FormControl>
               <FormControl as="fieldset">

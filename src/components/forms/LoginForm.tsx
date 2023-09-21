@@ -48,7 +48,7 @@ export const LoginForm = () => {
         username: email,
         password: password,
       })
-        .then((returnTo) => {
+        .then(() => {
           // TODO: set up return to page after login if provided
           // console.log(returnTo)
           navigate('/', { replace: true })

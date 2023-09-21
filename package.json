@@ -7,18 +7,22 @@
     "dev": "vite --port 3000",
     "build": "tsc && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prod": "tsc && vite build && vite preview --port 3000"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.19",
     "@chakra-ui/react": "^2.7.1",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@hookform/resolvers": "^3.3.1",
     "axios": "^1.4.0",
     "framer-motion": "^10.12.17",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.14.0"
+    "react-hook-form": "^7.46.1",
+    "react-router-dom": "^6.14.0",
+    "yup": "^1.2.0"
   },
   "devDependencies": {
     "@types/node": "^20.4.5",

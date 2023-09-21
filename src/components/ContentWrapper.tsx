@@ -6,8 +6,8 @@ type TProps = {
 
 export function ContentWrapper({ children }: TProps) {
   return (
-    <>
-      <Box p="4">{children}</Box>
-    </>
+    <Box p="4" flex={1}>
+      {children}
+    </Box>
   )
 }

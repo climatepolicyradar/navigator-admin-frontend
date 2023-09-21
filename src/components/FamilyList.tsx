@@ -1,5 +1,6 @@
-import { getFamilies } from '@/api/Families'
-import { IFamily } from '@/interfaces'
+import { Link, useLoaderData } from 'react-router-dom'
+import { deleteFamily, getFamilies } from '@/api/Families'
+import { IError, IFamily } from '@/interfaces'
 import { formatDate } from '@/utils/Date'
 import {
   Table,
@@ -11,19 +12,14 @@ import {
   TableContainer,
   IconButton,
   Badge,
-  Tag,
-  Flex,
-  Button,
+  Box,
   HStack,
+  Tooltip,
+  useToast,
 } from '@chakra-ui/react'
-import {
-  GoArrowLeft,
-  GoArrowRight,
-  GoMoveToEnd,
-  GoMoveToStart,
-  GoPencil,
-} from 'react-icons/go'
-import { Link, useLoaderData } from 'react-router-dom'
+import { GoPencil } from 'react-icons/go'
+
+import { DeleteFamily } from './buttons/DeleteFamily'
 
 interface ILoaderProps {
   request: {
@@ -43,14 +39,36 @@ export default function FamilyList() {
   const {
     response: { data: families },
   } = useLoaderData() as { response: { data: IFamily[] } }
+  const toast = useToast()
+
+  const handleDeleteClick = async (id: string) => {
+    toast({
+      title: 'Family deletion in progress',
+      status: 'info',
+      position: 'top',
+    })
+    await deleteFamily(id)
+      .then(() => {
+        toast({
+          title: 'Family has been successful deleted',
+          status: 'success',
+          position: 'top',
+        })
+      })
+      .catch((error: IError) => {
+        console.log(error)
+        toast({
+          title: 'Family has not been deleted',
+          description: error.message,
+          status: 'error',
+          position: 'top',
+        })
+      })
+  }
 
   return (
-    <>
-      <TableContainer
-        height={'80vh'}
-        overflowY={'scroll'}
-        whiteSpace={'normal'}
-      >
+    <Box flex={1}>
+      <TableContainer height={'100%'} whiteSpace={'normal'}>
         <Table size="sm" variant={'striped'}>
           <Thead>
             <Tr>
@@ -58,8 +76,7 @@ export default function FamilyList() {
               <Th>Title</Th>
               <Th>Category</Th>
               <Th>Geography</Th>
-              <Th>Collections</Th>
-              <Th>Documents</Th>
+              <Th>Collection IDs</Th>
               <Th>Published date</Th>
               <Th>Updated date</Th>
               <Th>Status</Th>
@@ -74,17 +91,6 @@ export default function FamilyList() {
                 <Td>{family.category}</Td>
                 <Td>{family.geography}</Td>
                 <Td>{family.collections}</Td>
-                <Td>
-                  <HStack spacing="2" wrap={'wrap'}>
-                    {family.documents.map((document) => {
-                      return (
-                        <Tag key={document} size="sm">
-                          {document}
-                        </Tag>
-                      )
-                    })}
-                  </HStack>
-                </Td>
                 <Td>{formatDate(family.published_date)}</Td>
                 <Td>{formatDate(family.last_updated_date)}</Td>
                 <Td>
@@ -93,42 +99,29 @@ export default function FamilyList() {
                   </Badge>
                 </Td>
                 <Td>
-                  <Link to={`/family/${family.import_id}/edit`}>
-                    <IconButton
-                      aria-label="Edit document"
-                      icon={<GoPencil />}
-                      variant="outline"
-                      size="sm"
-                      colorScheme="blue"
+                  <HStack gap={2}>
+                    <Tooltip label="Edit">
+                      <Link to={`/family/${family.import_id}/edit`}>
+                        <IconButton
+                          aria-label="Edit document"
+                          icon={<GoPencil />}
+                          variant="outline"
+                          size="sm"
+                          colorScheme="blue"
+                        />
+                      </Link>
+                    </Tooltip>
+                    <DeleteFamily
+                      family={family}
+                      callback={() => handleDeleteClick(family.import_id)}
                     />
-                  </Link>
+                  </HStack>
                 </Td>
               </Tr>
             ))}
           </Tbody>
         </Table>
       </TableContainer>
-      <Flex direction="row" mt="4" justify="center" gap="2">
-        <IconButton size="sm" aria-label="first" icon={<GoMoveToStart />} />
-        <IconButton size="sm" aria-label="prev" icon={<GoArrowLeft />} />
-        <Button size="sm" variant="solid">
-          1
-        </Button>
-        <Button size="sm" variant="solid">
-          2
-        </Button>
-        <Button size="sm" variant="solid">
-          3
-        </Button>
-        <Button size="sm" variant="solid">
-          4
-        </Button>
-        <Button size="sm" variant="solid">
-          5
-        </Button>
-        <IconButton size="sm" aria-label="next" icon={<GoArrowRight />} />
-        <IconButton size="sm" aria-label="last" icon={<GoMoveToEnd />} />
-      </Flex>
-    </>
+    </Box>
   )
 }
