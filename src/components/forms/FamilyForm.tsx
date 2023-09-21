@@ -8,26 +8,17 @@ import { createFamily } from '@/api/Families'
 
 import {
   Box,
-  Flex,
   FormControl,
   FormHelperText,
   FormLabel,
-  Grid,
   HStack,
-  Heading,
   Input,
   Radio,
   RadioGroup,
   Select,
-  Tag,
   Textarea,
   VStack,
   Text,
-  TagCloseButton,
-  TagLabel,
-  Stack,
-  Badge,
-  Tooltip,
   Button,
   ButtonGroup,
   FormErrorMessage,
@@ -59,14 +50,7 @@ export const FamilyForm = () => {
   const {
     register,
     handleSubmit,
-    formState: {
-      errors,
-      isDirty,
-      dirtyFields,
-      touchedFields,
-      isValid,
-      isSubmitting,
-    },
+    formState: { errors, isSubmitting },
   } = useForm({
     resolver: yupResolver(schema),
   })
