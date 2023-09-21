@@ -100,13 +100,14 @@ export default function FamilyEdit() {
               <FormControl isRequired>
                 <FormLabel>Geography</FormLabel>
                 <Select background="white" defaultValue={family.geography}>
-                  <option value="international">International</option>
-                  <option value="geo">United Kingdom</option>
-                  <option value="usa">United States of America</option>
-                  <option value="canada">Canada</option>
-                  <option value="mexico">Mexico</option>
-                  <option value="brazil">Brazil</option>
-                  <option value="argentina">Argentina</option>
+                  <option value="">Please select</option>
+                  <option value="SWE">Sweden</option>
+                  <option value="USA">United States of America</option>
+                  <option value="CAN">Canada</option>
+                  <option value="MEX">Mexico</option>
+                  <option value="CHN">China</option>
+                  <option value="NGA">Nigeria</option>
+                  {/* <option value="international">International</option> */}
                 </Select>
               </FormControl>
               <FormControl as="fieldset">
