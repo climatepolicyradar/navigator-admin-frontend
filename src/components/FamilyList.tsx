@@ -94,7 +94,6 @@ export default function FamilyList() {
               <Th>Title</Th>
               <Th>Category</Th>
               <Th>Geography</Th>
-              <Th>Collection IDs</Th>
               <Th>Published date</Th>
               <Th>Updated date</Th>
               <Th>Status</Th>
@@ -105,14 +104,17 @@ export default function FamilyList() {
             {families.map((family) => (
               <Tr
                 key={family.import_id}
-                borderLeft={family.import_id === familyError ? '2px' : 'inherit'}
-                borderColor={family.import_id === familyError ? 'red.500' : 'inherit'}
+                borderLeft={
+                  family.import_id === familyError ? '2px' : 'inherit'
+                }
+                borderColor={
+                  family.import_id === familyError ? 'red.500' : 'inherit'
+                }
               >
                 <Td>{family.import_id}</Td>
                 <Td>{family.title}</Td>
                 <Td>{family.category}</Td>
                 <Td>{family.geography}</Td>
-                <Td>{family.collections}</Td>
                 <Td>{formatDate(family.published_date)}</Td>
                 <Td>{formatDate(family.last_updated_date)}</Td>
                 <Td>
