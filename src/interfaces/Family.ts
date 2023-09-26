@@ -1,3 +1,5 @@
+import { TOrganisation } from './Organisation'
+
 export interface IFamily {
   import_id: string
   title: string
@@ -26,6 +28,7 @@ interface IFamilyBase {
   last_updated_date: string
   documents: string[]
   collections: string[]
+  organisation: TOrganisation
 }
 
 interface IUNFCCCMetadata {
