@@ -1,4 +1,4 @@
-interface IConfigGeographyNode {
+export interface IConfigGeographyNode {
   id: number
   display_value: string
   slug: string
@@ -7,9 +7,9 @@ interface IConfigGeographyNode {
   parent_id: number
 }
 
-interface IConfigGeography {
+export interface IConfigGeography {
   node: IConfigGeographyNode
-  children: IConfigGeographyNode[]
+  children: IConfigGeography[]
 }
 
 interface IConfigMeta {
