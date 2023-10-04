@@ -16,4 +16,4 @@ RUN yarn install
 COPY . /app
 
 RUN yarn build
-CMD yarn run dev --host 0.0.0.0
+CMD yarn run preview --port 3000 --host 0.0.0.0
