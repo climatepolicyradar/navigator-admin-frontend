@@ -123,8 +123,6 @@ export const FamilyForm = () => {
   const handleFamilyCreate = async (family: IFamilyForm) => {
     setFormError(null)
 
-    console.log('handleFamilyCreate, IFamilyForm: ', family)
-
     let familyMetadata = {} as TFamilyFormPostMetadata
     if (family.organisation === 'UNFCCC') {
       const metadata = familyMetadata as IUNFCCCMetadata

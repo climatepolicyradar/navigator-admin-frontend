@@ -54,8 +54,6 @@ export async function getFamily(id: string) {
 export async function createFamily(data: TFamilyFormPost) {
   checkAuth()
 
-  console.log('createFamily, TFamilyFormPost', data)
-
   const response = await API.post<TFamily>('/v1/families', data)
     .then((response) => {
       return response
