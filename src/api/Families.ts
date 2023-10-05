@@ -1,7 +1,7 @@
 import { AxiosError } from 'axios'
 
 import API from '@/api'
-import { IFamily, IError } from '@/interfaces'
+import { TFamily, IError, TFamilyFormPost } from '@/interfaces'
 
 const checkAuth = () => {
   if (!API.defaults.headers.common['Authorization']) {
@@ -13,7 +13,7 @@ const checkAuth = () => {
 export async function getFamilies(query: string | undefined | null) {
   checkAuth()
 
-  const response = await API.get<IFamily[]>('/v1/families/', {
+  const response = await API.get<TFamily[]>('/v1/families/', {
     params: { q: query || 'redd' },
   })
     .then((response) => {
@@ -35,7 +35,7 @@ export async function getFamilies(query: string | undefined | null) {
 export async function getFamily(id: string) {
   checkAuth()
 
-  const response = await API.get<IFamily[]>('/v1/families/' + id)
+  const response = await API.get<TFamily[]>('/v1/families/' + id)
     .then((response) => {
       return response
     })
@@ -51,58 +51,12 @@ export async function getFamily(id: string) {
   return { response }
 }
 
-interface IFamilyPost_TEMP {
-  import_id: string
-  title: string
-  summary: string
-  geography: string
-  category: string
-  status: string
-  metadata: object // json string
-  slug: string
-  events: string[]
-  published_date?: string
-  last_updated_date?: string
-  documents: string[]
-  collections: string[]
-  organisation: string
-}
-
-interface IFamilyPostFromForm_TEMP {
-  import_id: string
-  title: string
-  summary: string
-  geography: string
-  category: string
-  // metadata: string
-  organisation: string
-}
-
-export async function createFamily(data: IFamilyPostFromForm_TEMP) {
+export async function createFamily(data: TFamilyFormPost) {
   checkAuth()
 
-  // FIXME: This is a temporary fix to test the POST request
-  const familyToPost: IFamilyPost_TEMP = {
-    ...data,
-    status: 'draft',
-    metadata: {
-      topic: [],
-      hazard: [],
-      sector: [],
-      keyword: [],
-      framework: [],
-      instrument: [],
-    },
-    slug: '',
-    events: [],
-    documents: [],
-    collections: [],
-  }
+  console.log('createFamily, TFamilyFormPost', data)
 
-  const response = await API.post<IFamilyPost_TEMP>(
-    '/v1/families',
-    familyToPost,
-  )
+  const response = await API.post<TFamily>('/v1/families', data)
     .then((response) => {
       return response
     })
@@ -121,7 +75,7 @@ export async function createFamily(data: IFamilyPostFromForm_TEMP) {
 export async function deleteFamily(id: string) {
   checkAuth()
 
-  const response = await API.delete<IFamily[]>('/v1/families/' + id)
+  const response = await API.delete('/v1/families/' + id)
     .then((response) => {
       return response
     })
