@@ -3,7 +3,14 @@ import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 
-import { IError } from '@/interfaces'
+import {
+  IError,
+  TFamilyFormPost,
+  TOrganisation,
+  TFamilyFormPostMetadata,
+  IUNFCCCMetadata,
+  ICCLWMetadata,
+} from '@/interfaces'
 import { createFamily } from '@/api/Families'
 import useConfig from '@/hooks/useConfig'
 
@@ -16,7 +23,7 @@ import {
   Input,
   Radio,
   RadioGroup,
-  // Select,
+  Select,
   Textarea,
   VStack,
   Text,
@@ -28,10 +35,15 @@ import {
   Divider,
   AbsoluteCenter,
 } from '@chakra-ui/react'
-import { Select, ChakraStylesConfig } from 'chakra-react-select'
+import { Select as CRSelect, ChakraStylesConfig } from 'chakra-react-select'
 import useCollections from '@/hooks/useCollections'
 import { Loader } from '../Loader'
 import { getCountries } from '@/utils/extractNestedGeographyData'
+
+type TMultiSelect = {
+  value: string
+  label: string
+}
 
 interface IFamilyForm {
   import_id: string
@@ -42,6 +54,12 @@ interface IFamilyForm {
   organisation: string
   author?: string
   author_type?: string
+  topic?: TMultiSelect[]
+  hazard?: TMultiSelect[]
+  sector?: TMultiSelect[]
+  keyword?: TMultiSelect[]
+  framework?: TMultiSelect[]
+  instrument?: TMultiSelect[]
 }
 
 const schema = yup
@@ -61,16 +79,23 @@ const schema = yup
       then: (schema) => schema.required(),
     }),
     topic: yup.array().optional(),
-    // hazard: yup.array().of(yup.string()),
-    // sector: yup.array().of(yup.string()),
-    // keyword: yup.array().of(yup.string()),
-    // framework: yup.array().of(yup.string()),
-    // instrument: yup.array().of(yup.string()),
+    hazard: yup.array().optional(),
+    sector: yup.array().optional(),
+    keyword: yup.array().optional(),
+    framework: yup.array().optional(),
+    instrument: yup.array().optional(),
   })
   .required()
 
 const generateOptions = (values?: string[]) => {
   return values?.map((value) => ({ value, label: value })) || []
+}
+
+const chakraStyles: ChakraStylesConfig = {
+  container: (provided) => ({
+    ...provided,
+    background: 'white',
+  }),
 }
 
 export const FamilyForm = () => {
@@ -95,29 +120,59 @@ export const FamilyForm = () => {
 
   const watchOrganisation = watch('organisation')
 
-  const handleFamilyCreate = (family: IFamilyForm) => {
+  const handleFamilyCreate = async (family: IFamilyForm) => {
     setFormError(null)
 
-    console.log(family)
+    console.log('handleFamilyCreate, IFamilyForm: ', family)
 
-    // await createFamily(family)
-    //   .then(() => {
-    //     toast.closeAll()
-    //     toast({
-    //       title: 'Family has been successfully created',
-    //       status: 'success',
-    //       position: 'top',
-    //     })
-    //   })
-    //   .catch((error: IError) => {
-    //     setFormError(error)
-    //     toast({
-    //       title: 'Family has not been created',
-    //       description: error.message,
-    //       status: 'error',
-    //       position: 'top',
-    //     })
-    //   })
+    let familyMetadata = {} as TFamilyFormPostMetadata
+    if (family.organisation === 'UNFCCC') {
+      const metadata = familyMetadata as IUNFCCCMetadata
+      if (family.author) metadata.author = [family.author]
+      if (family.author_type) metadata.author_type = [family.author_type]
+      familyMetadata = metadata
+    } else if (family.organisation === 'CCLW') {
+      const metadata = familyMetadata as ICCLWMetadata
+      metadata.topic = family.topic?.map((topic) => topic.value) || []
+      metadata.hazard = family.hazard?.map((hazard) => hazard.value) || []
+      metadata.sector = family.sector?.map((sector) => sector.value) || []
+      metadata.keyword = family.keyword?.map((keyword) => keyword.value) || []
+      metadata.framework =
+        family.framework?.map((framework) => framework.value) || []
+      metadata.instrument =
+        family.instrument?.map((instrument) => instrument.value) || []
+      familyMetadata = metadata
+    }
+
+    // @ts-expect-error: TODO: fix this
+    const familyData: TFamilyFormPost = {
+      import_id: family.import_id,
+      title: family.title,
+      summary: family.summary,
+      geography: family.geography,
+      category: family.category,
+      organisation: family.organisation as TOrganisation,
+      metadata: familyMetadata,
+    }
+
+    await createFamily(familyData)
+      .then(() => {
+        toast.closeAll()
+        toast({
+          title: 'Family has been successfully created',
+          status: 'success',
+          position: 'top',
+        })
+      })
+      .catch((error: IError) => {
+        setFormError(error)
+        toast({
+          title: 'Family has not been created',
+          description: error.message,
+          status: 'error',
+          position: 'top',
+        })
+      })
   }
 
   const onSubmit: SubmitHandler<IFamilyForm> = (data) =>
@@ -125,13 +180,6 @@ export const FamilyForm = () => {
 
   const canLoadForm =
     !configLoading && !collectionsLoading && !configError && !collectionsError
-
-  const chakraStyles: ChakraStylesConfig = {
-    container: (provided, _state) => ({
-      ...provided,
-      background: 'white',
-    }),
-  }
 
   return (
     <>
@@ -194,7 +242,7 @@ export const FamilyForm = () => {
             </FormControl>
             <FormControl>
               <FormLabel>Collection</FormLabel>
-              {/* <Select background="white">
+              <Select background="white">
                 <option value="">Please select</option>
                 {collections?.map((collection) => (
                   <option
@@ -204,18 +252,18 @@ export const FamilyForm = () => {
                     {collection.title}
                   </option>
                 ))}
-              </Select> */}
+              </Select>
             </FormControl>
             <FormControl isRequired>
               <FormLabel>Geography</FormLabel>
-              {/* <Select background="white" {...register('geography')}>
+              <Select background="white" {...register('geography')}>
                 <option value="">Please select</option>
                 {getCountries(config?.geographies).map((country) => (
                   <option key={country.id} value={country.value}>
                     {country.display_value}
                   </option>
                 ))}
-              </Select> */}
+              </Select>
             </FormControl>
             <FormControl isRequired as="fieldset" isInvalid={!!errors.category}>
               <FormLabel as="legend">Category</FormLabel>
@@ -304,13 +352,43 @@ export const FamilyForm = () => {
                     </HStack>
                   </RadioGroup>
                   <FormErrorMessage>
-                    Please select an organisation
+                    Please select an author type
                   </FormErrorMessage>
                 </FormControl>
               </>
             )}
             {watchOrganisation === 'CCLW' && (
               <>
+                {/* {Object.keys(config?.taxonomies.CCLW || {}).map(
+                  (taxonomy: TCCLWTaxonomy | null) => {
+                    if (Object.keys.length === 0 || !taxonomy) return null
+
+                    const options = config.taxonomies.CCLW[taxonomy]
+                      .allowed_values as string[]
+                    return (
+                      <Controller
+                        control={control}
+                        name={taxonomy}
+                        key={taxonomy}
+                        render={({ field }) => {
+                          return (
+                            <FormControl>
+                              <FormLabel>{taxonomy}</FormLabel>
+                              <CRSelect
+                                chakraStyles={chakraStyles}
+                                isClearable={false}
+                                isMulti={true}
+                                isSearchable={true}
+                                options={generateOptions(options)}
+                                {...field}
+                              />
+                            </FormControl>
+                          )
+                        }}
+                      />
+                    )
+                  },
+                )} */}
                 <Controller
                   control={control}
                   name="topic"
@@ -318,7 +396,7 @@ export const FamilyForm = () => {
                     return (
                       <FormControl>
                         <FormLabel>Topics</FormLabel>
-                        <Select
+                        <CRSelect
                           chakraStyles={chakraStyles}
                           isClearable={false}
                           isMulti={true}
@@ -328,75 +406,120 @@ export const FamilyForm = () => {
                           )}
                           {...field}
                         />
+
+                        <FormHelperText>
+                          You are able to search and can select multiple
+                          options.
+                        </FormHelperText>
                       </FormControl>
                     )
                   }}
                 />
-                {/* <FormControl>
-                  <FormLabel>Hazards</FormLabel>
-                  <Select background="white" {...register('hazard')}>
-                    <option value="">Please select</option>
-                    {config?.taxonomies.CCLW.hazard.allowed_values.map(
-                      (option) => (
-                        <option key={option} value={option}>
-                          {option}
-                        </option>
-                      ),
-                    )}
-                  </Select>
-                </FormControl>
-                <FormControl>
-                  <FormLabel>Sectors</FormLabel>
-                  <Select background="white" {...register('sector')}>
-                    <option value="">Please select</option>
-                    {config?.taxonomies.CCLW.sector.allowed_values.map(
-                      (option) => (
-                        <option key={option} value={option}>
-                          {option}
-                        </option>
-                      ),
-                    )}
-                  </Select>
-                </FormControl>
-                <FormControl>
-                  <FormLabel>Keywords</FormLabel>
-                  <Select background="white" {...register('keyword')}>
-                    <option value="">Please select</option>
-                    {config?.taxonomies.CCLW.keyword.allowed_values.map(
-                      (option) => (
-                        <option key={option} value={option}>
-                          {option}
-                        </option>
-                      ),
-                    )}
-                  </Select>
-                </FormControl>
-                <FormControl>
-                  <FormLabel>Frameworks</FormLabel>
-                  <Select background="white" {...register('framework')}>
-                    <option value="">Please select</option>
-                    {config?.taxonomies.CCLW.framework.allowed_values.map(
-                      (option) => (
-                        <option key={option} value={option}>
-                          {option}
-                        </option>
-                      ),
-                    )}
-                  </Select>
-                </FormControl>
-                <FormControl>
-                  <FormLabel>Instruments</FormLabel>
-                  <Select background="white" {...register('instrument')}>
-                    <option value="">Please select</option>
-                    {config?.taxonomies.CCLW.instrument.allowed_values.map(
-                      (option) => (
-                        <option key={option} value={option}>
-                          {option}
-                        </option>
-                      ),
-                    )}
-                  </Select>
-                </FormControl> */}
+                <Controller
+                  control={control}
+                  name="hazard"
+                  render={({ field }) => {
+                    return (
+                      <FormControl>
+                        <FormLabel>Hazards</FormLabel>
+                        <CRSelect
+                          chakraStyles={chakraStyles}
+                          isClearable={false}
+                          isMulti={true}
+                          isSearchable={true}
+                          options={generateOptions(
+                            config?.taxonomies.CCLW.hazard.allowed_values,
+                          )}
+                          {...field}
+                        />
+                      </FormControl>
+                    )
+                  }}
+                />
+                <Controller
+                  control={control}
+                  name="sector"
+                  render={({ field }) => {
+                    return (
+                      <FormControl>
+                        <FormLabel>Sectors</FormLabel>
+                        <CRSelect
+                          chakraStyles={chakraStyles}
+                          isClearable={false}
+                          isMulti={true}
+                          isSearchable={true}
+                          options={generateOptions(
+                            config?.taxonomies.CCLW.sector.allowed_values,
+                          )}
+                          {...field}
+                        />
+                      </FormControl>
+                    )
+                  }}
+                />
+                <Controller
+                  control={control}
+                  name="keyword"
+                  render={({ field }) => {
+                    return (
+                      <FormControl>
+                        <FormLabel>Keywords</FormLabel>
+                        <CRSelect
+                          chakraStyles={chakraStyles}
+                          isClearable={false}
+                          isMulti={true}
+                          isSearchable={true}
+                          options={generateOptions(
+                            config?.taxonomies.CCLW.keyword.allowed_values,
+                          )}
+                          {...field}
+                        />
+                      </FormControl>
+                    )
+                  }}
+                />
+                <Controller
+                  control={control}
+                  name="framework"
+                  render={({ field }) => {
+                    return (
+                      <FormControl>
+                        <FormLabel>Frameworks</FormLabel>
+                        <CRSelect
+                          chakraStyles={chakraStyles}
+                          isClearable={false}
+                          isMulti={true}
+                          isSearchable={true}
+                          options={generateOptions(
+                            config?.taxonomies.CCLW.framework.allowed_values,
+                          )}
+                          {...field}
+                        />
+                      </FormControl>
+                    )
+                  }}
+                />
+                <Controller
+                  control={control}
+                  name="instrument"
+                  render={({ field }) => {
+                    return (
+                      <FormControl>
+                        <FormLabel>Instruments</FormLabel>
+                        <CRSelect
+                          chakraStyles={chakraStyles}
+                          isClearable={false}
+                          isMulti={true}
+                          isSearchable={true}
+                          options={generateOptions(
+                            config?.taxonomies.CCLW.instrument.allowed_values,
+                          )}
+                          {...field}
+                        />
+                      </FormControl>
+                    )
+                  }}
+                />
               </>
             )}
           </VStack>
