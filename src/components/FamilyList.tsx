@@ -1,6 +1,6 @@
 import { Link, useLoaderData } from 'react-router-dom'
 import { deleteFamily, getFamilies } from '@/api/Families'
-import { IError, IFamily } from '@/interfaces'
+import { IError, TFamily } from '@/interfaces'
 import { formatDate } from '@/utils/Date'
 import {
   Table,
@@ -40,7 +40,7 @@ export async function loader({ request }: ILoaderProps) {
 export default function FamilyList() {
   const {
     response: { data: families },
-  } = useLoaderData() as { response: { data: IFamily[] } }
+  } = useLoaderData() as { response: { data: TFamily[] } }
   const toast = useToast()
   const [familyError, setFamilyError] = useState<string | null | undefined>()
   const [formError, setFormError] = useState<IError | null | undefined>()

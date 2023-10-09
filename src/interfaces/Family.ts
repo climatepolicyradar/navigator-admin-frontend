@@ -1,6 +1,7 @@
 import { TOrganisation } from './Organisation'
 
 interface IFamilyBase {
+  import_id: string
   title: string
   summary: string
   geography: string

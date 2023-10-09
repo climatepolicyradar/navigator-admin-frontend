@@ -7,9 +7,6 @@ import Login from '@/views/auth/Login'
 import Dashboard from '@/views/dashboard/Dashboard'
 import ErrorPage from '@views/Error'
 import Family from '@/views/family/Family'
-import FamilyEdit, {
-  loader as familyEditLoader,
-} from '@/views/family/FamilyEdit'
 import Families from '@/views/family/Families'
 import FamilyList, { loader as familiesLoader } from '@components/FamilyList'
 import { ProtectedRoute } from './ProtectedRoute'
@@ -39,8 +36,7 @@ const authenticatedRoutes = [
               },
               {
                 path: 'family/:importId/edit',
-                element: <FamilyEdit />,
-                loader: familyEditLoader,
+                element: <Family />,
                 errorElement: <ErrorPage />,
               },
               {
