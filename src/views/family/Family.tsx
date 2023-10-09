@@ -9,11 +9,15 @@ export default function Family() {
   const { family, loading, error } = useFamily(importId)
 
   const canLoadForm = !loading && !error
-  // const canLoadForm = false
+  const pageTitle = loading
+    ? 'Loading...'
+    : family
+    ? `Editing: ${family.title}`
+    : 'Create new family'
 
   return (
     <>
-      <Heading as={'h1'}>Create new family</Heading>
+      <Heading as={'h1'}>{pageTitle}</Heading>
       <Text>
         <Text as="span" color={'red.500'}>
           *
