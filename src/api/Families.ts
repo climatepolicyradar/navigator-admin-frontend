@@ -35,7 +35,7 @@ export async function getFamilies(query: string | undefined | null) {
 export async function getFamily(id: string) {
   checkAuth()
 
-  const response = await API.get<TFamily[]>('/v1/families/' + id)
+  const response = await API.get<TFamily>('/v1/families/' + id)
     .then((response) => {
       return response
     })
