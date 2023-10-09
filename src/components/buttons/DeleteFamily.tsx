@@ -13,10 +13,10 @@ import {
   Tooltip,
 } from '@chakra-ui/react'
 import { GoX } from 'react-icons/go'
-import { IFamily } from '@/interfaces'
+import { TFamily } from '@/interfaces'
 
 interface IProps {
-  family: IFamily
+  family: TFamily
   callback?: () => void
 }
 

@@ -1,6 +1,6 @@
 import { Link, useLoaderData } from 'react-router-dom'
 import { deleteFamily, getFamilies } from '@/api/Families'
-import { IError, IFamily } from '@/interfaces'
+import { IError, TFamily } from '@/interfaces'
 import { formatDate } from '@/utils/Date'
 import {
   Table,
@@ -14,12 +14,14 @@ import {
   Badge,
   Box,
   HStack,
+  Text,
   Tooltip,
   useToast,
 } from '@chakra-ui/react'
 import { GoPencil } from 'react-icons/go'
 
 import { DeleteFamily } from './buttons/DeleteFamily'
+import { useState } from 'react'
 
 interface ILoaderProps {
   request: {
@@ -38,10 +40,15 @@ export async function loader({ request }: ILoaderProps) {
 export default function FamilyList() {
   const {
     response: { data: families },
-  } = useLoaderData() as { response: { data: IFamily[] } }
+  } = useLoaderData() as { response: { data: TFamily[] } }
   const toast = useToast()
+  const [familyError, setFamilyError] = useState<string | null | undefined>()
+  const [formError, setFormError] = useState<IError | null | undefined>()
 
   const handleDeleteClick = async (id: string) => {
+    setFormError(null)
+    setFamilyError(null)
+
     toast({
       title: 'Family deletion in progress',
       status: 'info',
@@ -56,7 +63,8 @@ export default function FamilyList() {
         })
       })
       .catch((error: IError) => {
-        console.log(error)
+        setFamilyError(id)
+        setFormError(error)
         toast({
           title: 'Family has not been deleted',
           description: error.message,
@@ -68,6 +76,16 @@ export default function FamilyList() {
 
   return (
     <Box flex={1}>
+      <Box>
+        {formError && (
+          <Box>
+            <Text color={'red.500'}>{formError.message}</Text>
+            <Text fontSize="xs" color={'gray.500'}>
+              {formError.detail}
+            </Text>
+          </Box>
+        )}
+      </Box>
       <TableContainer height={'100%'} whiteSpace={'normal'}>
         <Table size="sm" variant={'striped'}>
           <Thead>
@@ -76,7 +94,6 @@ export default function FamilyList() {
               <Th>Title</Th>
               <Th>Category</Th>
               <Th>Geography</Th>
-              <Th>Collection IDs</Th>
               <Th>Published date</Th>
               <Th>Updated date</Th>
               <Th>Status</Th>
@@ -85,12 +102,19 @@ export default function FamilyList() {
           </Thead>
           <Tbody>
             {families.map((family) => (
-              <Tr key={family.import_id}>
+              <Tr
+                key={family.import_id}
+                borderLeft={
+                  family.import_id === familyError ? '2px' : 'inherit'
+                }
+                borderColor={
+                  family.import_id === familyError ? 'red.500' : 'inherit'
+                }
+              >
                 <Td>{family.import_id}</Td>
                 <Td>{family.title}</Td>
                 <Td>{family.category}</Td>
                 <Td>{family.geography}</Td>
-                <Td>{family.collections}</Td>
                 <Td>{formatDate(family.published_date)}</Td>
                 <Td>{formatDate(family.last_updated_date)}</Td>
                 <Td>

@@ -8,7 +8,7 @@ export const BreadCrumbs = () => {
 
   useEffect(() => {
     if (pathname.includes('edit'))
-      return setCurrentPage('Edit: ' + pathname.split('/').reverse()[1])
+      return setCurrentPage(pathname.split('/').reverse()[1])
     if (pathname.includes('new')) return setCurrentPage('New family')
     return setCurrentPage(null)
   }, [pathname])

@@ -31,7 +31,7 @@ import {
   Button,
 } from '@chakra-ui/react'
 
-import { IFamily } from '@/interfaces'
+import { TFamily } from '@/interfaces'
 import { formatDate, formatDateISO } from '@/utils/Date'
 import { SECTORS } from '@/data/Sectors'
 import { CloseIcon } from '@chakra-ui/icons'
@@ -58,27 +58,29 @@ export async function loader({ params }: Args) {
 export default function FamilyEdit() {
   const {
     response: { data: family },
-  } = useLoaderData() as { response: { data: IFamily } }
+  } = useLoaderData() as { response: { data: TFamily } }
 
   return (
     <>
-      <Heading as={'h1'}>Edit: {family.title}</Heading>
-      <Flex alignItems="center" gap="4">
-        <Tag size="sm">id: {family.import_id}</Tag>
-        <Badge colorScheme="green" size="sm">
-          {family.status}
-        </Badge>
+      <Flex flexDirection={'column'} gap="2">
+        <Heading as={'h1'}>Edit: {family.title}</Heading>
+        <Flex alignItems="center" gap="4">
+          <Tag size="sm">id: {family.import_id}</Tag>
+          <Badge colorScheme="green" size="sm">
+            {family.status}
+          </Badge>
+        </Flex>
+        <Text fontSize="sm">
+          Last updated: {formatDate(family.last_updated_date)}
+        </Text>
       </Flex>
-      <Text fontSize="sm">
-        Last updated: {formatDate(family.last_updated_date)}
-      </Text>
       <Form>
         <Grid templateColumns="2fr 1fr" gap="4">
           <Box my={4} p={4} bg={'gray.50'} boxShadow="base">
             <VStack gap="6">
               <FormControl isRequired>
                 <FormLabel>Title</FormLabel>
-                <Input bg="white" defaultValue={family.title} />~
+                <Input bg="white" defaultValue={family.title} />
               </FormControl>
               <FormControl isRequired>
                 <FormLabel>Published date</FormLabel>
