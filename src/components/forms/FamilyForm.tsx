@@ -10,8 +10,9 @@ import {
   TFamilyFormPostMetadata,
   IUNFCCCMetadata,
   ICCLWMetadata,
+  TFamily,
 } from '@/interfaces'
-import { createFamily } from '@/api/Families'
+import { createFamily, updateFamily } from '@/api/Families'
 import useConfig from '@/hooks/useConfig'
 
 import {
@@ -98,14 +99,17 @@ const chakraStyles: ChakraStylesConfig = {
   }),
 }
 
-export const FamilyForm = () => {
+type TProps = {
+  family?: TFamily
+}
+
+export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   const { config, error: configError, loading: configLoading } = useConfig()
   const {
     collections,
     error: collectionsError,
     loading: collectionsLoading,
   } = useCollections()
-
   const toast = useToast()
   const [formError, setFormError] = useState<IError | null | undefined>()
   const {
@@ -153,7 +157,28 @@ export const FamilyForm = () => {
       metadata: familyMetadata,
     }
 
-    await createFamily(familyData)
+    if (loadedFamily) {
+      return await updateFamily(loadedFamily.import_id, familyData)
+        .then(() => {
+          toast.closeAll()
+          toast({
+            title: 'Family has been successfully updated',
+            status: 'success',
+            position: 'top',
+          })
+        })
+        .catch((error: IError) => {
+          setFormError(error)
+          toast({
+            title: 'Family has not been updated',
+            description: error.message,
+            status: 'error',
+            position: 'top',
+          })
+        })
+    }
+
+    return await createFamily(familyData)
       .then(() => {
         toast.closeAll()
         toast({
@@ -529,7 +554,7 @@ export const FamilyForm = () => {
               onSubmit={handleSubmit(onSubmit)}
               disabled={isSubmitting}
             >
-              Create new Family
+              {(loadedFamily ? 'Update ' : 'Create new ') + ' Family'}
             </Button>
           </ButtonGroup>
         </form>
