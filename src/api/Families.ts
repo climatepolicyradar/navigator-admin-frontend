@@ -70,10 +70,10 @@ export async function createFamily(data: TFamilyFormPost) {
   return { response }
 }
 
-export async function updateFamily(id: string, data: TFamilyFormPost) {
+export async function updateFamily(data: TFamilyFormPost) {
   checkAuth()
 
-  const response = await API.put<TFamily>('/v1/families/' + id, data)
+  const response = await API.put<TFamily>('/v1/families', data)
     .then((response) => {
       return response
     })

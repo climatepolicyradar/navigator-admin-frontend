@@ -134,7 +134,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     }
 
     if (loadedFamily) {
-      return await updateFamily(loadedFamily.import_id, familyData)
+      return await updateFamily(familyData)
         .then(() => {
           toast.closeAll()
           toast({
@@ -320,56 +320,68 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 ))}
               </Select>
             </FormControl>
-            <FormControl isRequired as="fieldset" isInvalid={!!errors.category}>
-              <FormLabel as="legend">Category</FormLabel>
-              <RadioGroup>
-                <HStack gap={4}>
-                  <Radio bg="white" value="Executive" {...register('category')}>
-                    Executive
-                  </Radio>
-                  <Radio
-                    bg="white"
-                    value="Legislative"
-                    {...register('category')}
+            <Controller
+              control={control}
+              name="category"
+              render={({ field }) => {
+                return (
+                  <FormControl
+                    isRequired
+                    as="fieldset"
+                    isInvalid={!!errors.category}
                   >
-                    Legislative
-                  </Radio>
-                  <Radio
-                    bg="white"
-                    value="Litigation"
-                    {...register('category')}
+                    <FormLabel as="legend">Category</FormLabel>
+                    <RadioGroup {...field}>
+                      <HStack gap={4}>
+                        <Radio bg="white" value="Executive">
+                          Executive
+                        </Radio>
+                        <Radio bg="white" value="Legislative">
+                          Legislative
+                        </Radio>
+                        <Radio bg="white" value="Litigation">
+                          Litigation
+                        </Radio>
+                        <Radio bg="white" value="UNFCCC">
+                          UNFCCC
+                        </Radio>
+                      </HStack>
+                    </RadioGroup>
+                    <FormErrorMessage>
+                      Please select a category
+                    </FormErrorMessage>
+                  </FormControl>
+                )
+              }}
+            />
+            <Controller
+              control={control}
+              name="organisation"
+              render={({ field }) => {
+                return (
+                  <FormControl
+                    isRequired
+                    as="fieldset"
+                    isInvalid={!!errors.organisation}
                   >
-                    Litigation
-                  </Radio>
-                  <Radio bg="white" value="UNFCCC" {...register('category')}>
-                    UNFCCC
-                  </Radio>
-                </HStack>
-              </RadioGroup>
-              <FormErrorMessage>Please select a category</FormErrorMessage>
-            </FormControl>
-            <FormControl
-              isRequired
-              as="fieldset"
-              isInvalid={!!errors.organisation}
-            >
-              <FormLabel as="legend">Organisation</FormLabel>
-              <RadioGroup>
-                <HStack gap={4}>
-                  <Radio bg="white" value="CCLW" {...register('organisation')}>
-                    CCLW
-                  </Radio>
-                  <Radio
-                    bg="white"
-                    value="UNFCCC"
-                    {...register('organisation')}
-                  >
-                    UNFCCC
-                  </Radio>
-                </HStack>
-              </RadioGroup>
-              <FormErrorMessage>Please select an organisation</FormErrorMessage>
-            </FormControl>
+                    <FormLabel as="legend">Organisation</FormLabel>
+                    <RadioGroup {...field}>
+                      <HStack gap={4}>
+                        <Radio bg="white" value="CCLW">
+                          CCLW
+                        </Radio>
+                        <Radio bg="white" value="UNFCCC">
+                          UNFCCC
+                        </Radio>
+                      </HStack>
+                    </RadioGroup>
+                    <FormErrorMessage>
+                      Please select an organisation
+                    </FormErrorMessage>
+                  </FormControl>
+                )
+              }}
+            />
             {!!watchOrganisation && (
               <Box position="relative" padding="10">
                 <Divider />
@@ -384,32 +396,39 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                   <FormLabel>Author</FormLabel>
                   <Input bg="white" {...register('author')} />
                 </FormControl>
-                <FormControl
-                  isRequired
-                  as="fieldset"
-                  isInvalid={!!errors.author_type}
-                >
-                  <FormLabel as="legend">Author type</FormLabel>
-                  <RadioGroup>
-                    <HStack gap={4}>
-                      {config?.taxonomies.UNFCCC.author_type.allowed_values.map(
-                        (authorType) => (
-                          <Radio
-                            bg="white"
-                            value={authorType}
-                            {...register('author_type')}
-                            key={authorType}
-                          >
-                            {authorType}
-                          </Radio>
-                        ),
-                      )}
-                    </HStack>
-                  </RadioGroup>
-                  <FormErrorMessage>
-                    Please select an author type
-                  </FormErrorMessage>
-                </FormControl>
+                <Controller
+                  control={control}
+                  name="author_type"
+                  render={({ field }) => {
+                    return (
+                      <FormControl
+                        isRequired
+                        as="fieldset"
+                        isInvalid={!!errors.author_type}
+                      >
+                        <FormLabel as="legend">Author type</FormLabel>
+                        <RadioGroup {...field}>
+                          <HStack gap={4}>
+                            {config?.taxonomies.UNFCCC.author_type.allowed_values.map(
+                              (authorType) => (
+                                <Radio
+                                  bg="white"
+                                  value={authorType}
+                                  key={authorType}
+                                >
+                                  {authorType}
+                                </Radio>
+                              ),
+                            )}
+                          </HStack>
+                        </RadioGroup>
+                        <FormErrorMessage>
+                          Please select an author type
+                        </FormErrorMessage>
+                      </FormControl>
+                    )
+                  }}
+                />
               </>
             )}
             {watchOrganisation === 'CCLW' && (
