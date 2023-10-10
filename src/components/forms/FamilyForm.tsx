@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import * as yup from 'yup'
 
 import {
   IError,
@@ -40,6 +39,8 @@ import { Select as CRSelect, ChakraStylesConfig } from 'chakra-react-select'
 import useCollections from '@/hooks/useCollections'
 import { Loader } from '../Loader'
 import { getCountries } from '@/utils/extractNestedGeographyData'
+import { generateOptions } from '@/utils/generateOptions'
+import { familySchema } from '@/schemas/familySchema'
 
 type TMultiSelect = {
   value: string
@@ -61,35 +62,6 @@ interface IFamilyForm {
   keyword?: TMultiSelect[]
   framework?: TMultiSelect[]
   instrument?: TMultiSelect[]
-}
-
-const schema = yup
-  .object({
-    import_id: yup.string().required(),
-    title: yup.string().required(),
-    summary: yup.string().required(),
-    geography: yup.string().required(),
-    category: yup.string().required(),
-    organisation: yup.string().required(),
-    author: yup.string().when('organisation', {
-      is: 'UNFCCC',
-      then: (schema) => schema.required(),
-    }),
-    author_type: yup.string().when('organisation', {
-      is: 'UNFCCC',
-      then: (schema) => schema.required(),
-    }),
-    topic: yup.array().optional(),
-    hazard: yup.array().optional(),
-    sector: yup.array().optional(),
-    keyword: yup.array().optional(),
-    framework: yup.array().optional(),
-    instrument: yup.array().optional(),
-  })
-  .required()
-
-const generateOptions = (values?: string[]) => {
-  return values?.map((value) => ({ value, label: value })) || []
 }
 
 const chakraStyles: ChakraStylesConfig = {
@@ -119,7 +91,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     control,
     formState: { errors, isSubmitting },
   } = useForm({
-    resolver: yupResolver(schema),
+    resolver: yupResolver(familySchema),
   })
 
   const watchOrganisation = watch('organisation')
