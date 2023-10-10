@@ -54,6 +54,7 @@ interface IFamilyForm {
   geography: string
   category: string
   organisation: string
+  collections?: TMultiSelect[]
   author?: string
   author_type?: string
   topic?: TMultiSelect[]
@@ -127,6 +128,8 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       geography: family.geography,
       category: family.category,
       organisation: family.organisation as TOrganisation,
+      collections:
+        family.collections?.map((collection) => collection.value) || [],
       metadata: familyMetadata,
     }
 
@@ -282,20 +285,30 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               <FormLabel>Summary</FormLabel>
               <Textarea height={'300px'} bg="white" {...register('summary')} />
             </FormControl>
-            <FormControl>
-              <FormLabel>Collection</FormLabel>
-              <Select background="white">
-                <option value="">Please select</option>
-                {collections?.map((collection) => (
-                  <option
-                    key={collection.import_id}
-                    value={collection.import_id}
-                  >
-                    {collection.title}
-                  </option>
-                ))}
-              </Select>
-            </FormControl>
+            <Controller
+              control={control}
+              name="collections"
+              render={({ field }) => {
+                return (
+                  <FormControl>
+                    <FormLabel>Collections</FormLabel>
+                    <CRSelect
+                      chakraStyles={chakraStyles}
+                      isClearable={false}
+                      isMulti={true}
+                      isSearchable={true}
+                      options={
+                        collections?.map((collection) => ({
+                          value: collection.import_id,
+                          label: collection.title,
+                        })) || []
+                      }
+                      {...field}
+                    />
+                  </FormControl>
+                )
+              }}
+            />
             <FormControl isRequired>
               <FormLabel>Geography</FormLabel>
               <Select background="white" {...register('geography')}>

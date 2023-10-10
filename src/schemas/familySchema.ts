@@ -8,6 +8,7 @@ export const familySchema = yup
     geography: yup.string().required(),
     category: yup.string().required(),
     organisation: yup.string().required(),
+    collections: yup.array().optional(),
     author: yup.string().when('organisation', {
       is: 'UNFCCC',
       then: (schema) => schema.required(),
