@@ -1,7 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import * as yup from 'yup'
 
 import {
   IError,
@@ -10,8 +9,9 @@ import {
   TFamilyFormPostMetadata,
   IUNFCCCMetadata,
   ICCLWMetadata,
+  TFamily,
 } from '@/interfaces'
-import { createFamily } from '@/api/Families'
+import { createFamily, updateFamily } from '@/api/Families'
 import useConfig from '@/hooks/useConfig'
 
 import {
@@ -39,6 +39,8 @@ import { Select as CRSelect, ChakraStylesConfig } from 'chakra-react-select'
 import useCollections from '@/hooks/useCollections'
 import { Loader } from '../Loader'
 import { getCountries } from '@/utils/extractNestedGeographyData'
+import { generateOptions } from '@/utils/generateOptions'
+import { familySchema } from '@/schemas/familySchema'
 
 type TMultiSelect = {
   value: string
@@ -52,6 +54,7 @@ interface IFamilyForm {
   geography: string
   category: string
   organisation: string
+  collections?: TMultiSelect[]
   author?: string
   author_type?: string
   topic?: TMultiSelect[]
@@ -62,35 +65,6 @@ interface IFamilyForm {
   instrument?: TMultiSelect[]
 }
 
-const schema = yup
-  .object({
-    import_id: yup.string().required(),
-    title: yup.string().required(),
-    summary: yup.string().required(),
-    geography: yup.string().required(),
-    category: yup.string().required(),
-    organisation: yup.string().required(),
-    author: yup.string().when('organisation', {
-      is: 'UNFCCC',
-      then: (schema) => schema.required(),
-    }),
-    author_type: yup.string().when('organisation', {
-      is: 'UNFCCC',
-      then: (schema) => schema.required(),
-    }),
-    topic: yup.array().optional(),
-    hazard: yup.array().optional(),
-    sector: yup.array().optional(),
-    keyword: yup.array().optional(),
-    framework: yup.array().optional(),
-    instrument: yup.array().optional(),
-  })
-  .required()
-
-const generateOptions = (values?: string[]) => {
-  return values?.map((value) => ({ value, label: value })) || []
-}
-
 const chakraStyles: ChakraStylesConfig = {
   container: (provided) => ({
     ...provided,
@@ -98,14 +72,17 @@ const chakraStyles: ChakraStylesConfig = {
   }),
 }
 
-export const FamilyForm = () => {
+type TProps = {
+  family?: TFamily
+}
+
+export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   const { config, error: configError, loading: configLoading } = useConfig()
   const {
     collections,
     error: collectionsError,
     loading: collectionsLoading,
   } = useCollections()
-
   const toast = useToast()
   const [formError, setFormError] = useState<IError | null | undefined>()
   const {
@@ -113,9 +90,10 @@ export const FamilyForm = () => {
     watch,
     handleSubmit,
     control,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm({
-    resolver: yupResolver(schema),
+    resolver: yupResolver(familySchema),
   })
 
   const watchOrganisation = watch('organisation')
@@ -150,10 +128,33 @@ export const FamilyForm = () => {
       geography: family.geography,
       category: family.category,
       organisation: family.organisation as TOrganisation,
+      collections:
+        family.collections?.map((collection) => collection.value) || [],
       metadata: familyMetadata,
     }
 
-    await createFamily(familyData)
+    if (loadedFamily) {
+      return await updateFamily(familyData)
+        .then(() => {
+          toast.closeAll()
+          toast({
+            title: 'Family has been successfully updated',
+            status: 'success',
+            position: 'top',
+          })
+        })
+        .catch((error: IError) => {
+          setFormError(error)
+          toast({
+            title: 'Family has not been updated',
+            description: error.message,
+            status: 'error',
+            position: 'top',
+          })
+        })
+    }
+
+    return await createFamily(familyData)
       .then(() => {
         toast.closeAll()
         toast({
@@ -171,13 +172,59 @@ export const FamilyForm = () => {
           position: 'top',
         })
       })
-  }
+  } // end handleFamilyCreate
 
   const onSubmit: SubmitHandler<IFamilyForm> = (data) =>
     handleFamilyCreate(data)
 
   const canLoadForm =
     !configLoading && !collectionsLoading && !configError && !collectionsError
+
+  useEffect(() => {
+    if (loadedFamily) {
+      // set the form values to that of the loaded family
+      reset({
+        import_id: loadedFamily.import_id,
+        title: loadedFamily.title,
+        summary: loadedFamily.summary,
+        geography: loadedFamily.geography,
+        category: loadedFamily.category,
+        organisation: loadedFamily.organisation,
+        topic:
+          'topic' in loadedFamily.metadata
+            ? generateOptions(loadedFamily.metadata.topic)
+            : [],
+        hazard:
+          'hazard' in loadedFamily.metadata
+            ? generateOptions(loadedFamily.metadata.hazard)
+            : [],
+        sector:
+          'sector' in loadedFamily.metadata
+            ? generateOptions(loadedFamily.metadata.sector)
+            : [],
+        keyword:
+          'keyword' in loadedFamily.metadata
+            ? generateOptions(loadedFamily.metadata.keyword)
+            : [],
+        framework:
+          'framework' in loadedFamily.metadata
+            ? generateOptions(loadedFamily.metadata.framework)
+            : [],
+        instrument:
+          'instrument' in loadedFamily.metadata
+            ? generateOptions(loadedFamily.metadata.instrument)
+            : [],
+        author:
+          'author' in loadedFamily.metadata
+            ? loadedFamily.metadata.author[0]
+            : '',
+        author_type:
+          'author_type' in loadedFamily.metadata
+            ? loadedFamily.metadata.author_type[0]
+            : '',
+      })
+    }
+  }, [loadedFamily, reset])
 
   return (
     <>
@@ -238,20 +285,30 @@ export const FamilyForm = () => {
               <FormLabel>Summary</FormLabel>
               <Textarea height={'300px'} bg="white" {...register('summary')} />
             </FormControl>
-            <FormControl>
-              <FormLabel>Collection</FormLabel>
-              <Select background="white">
-                <option value="">Please select</option>
-                {collections?.map((collection) => (
-                  <option
-                    key={collection.import_id}
-                    value={collection.import_id}
-                  >
-                    {collection.title}
-                  </option>
-                ))}
-              </Select>
-            </FormControl>
+            <Controller
+              control={control}
+              name="collections"
+              render={({ field }) => {
+                return (
+                  <FormControl>
+                    <FormLabel>Collections</FormLabel>
+                    <CRSelect
+                      chakraStyles={chakraStyles}
+                      isClearable={false}
+                      isMulti={true}
+                      isSearchable={true}
+                      options={
+                        collections?.map((collection) => ({
+                          value: collection.import_id,
+                          label: collection.title,
+                        })) || []
+                      }
+                      {...field}
+                    />
+                  </FormControl>
+                )
+              }}
+            />
             <FormControl isRequired>
               <FormLabel>Geography</FormLabel>
               <Select background="white" {...register('geography')}>
@@ -263,56 +320,68 @@ export const FamilyForm = () => {
                 ))}
               </Select>
             </FormControl>
-            <FormControl isRequired as="fieldset" isInvalid={!!errors.category}>
-              <FormLabel as="legend">Category</FormLabel>
-              <RadioGroup>
-                <HStack gap={4}>
-                  <Radio bg="white" value="Executive" {...register('category')}>
-                    Executive
-                  </Radio>
-                  <Radio
-                    bg="white"
-                    value="Legislative"
-                    {...register('category')}
+            <Controller
+              control={control}
+              name="category"
+              render={({ field }) => {
+                return (
+                  <FormControl
+                    isRequired
+                    as="fieldset"
+                    isInvalid={!!errors.category}
                   >
-                    Legislative
-                  </Radio>
-                  <Radio
-                    bg="white"
-                    value="Litigation"
-                    {...register('category')}
+                    <FormLabel as="legend">Category</FormLabel>
+                    <RadioGroup {...field}>
+                      <HStack gap={4}>
+                        <Radio bg="white" value="Executive">
+                          Executive
+                        </Radio>
+                        <Radio bg="white" value="Legislative">
+                          Legislative
+                        </Radio>
+                        <Radio bg="white" value="Litigation">
+                          Litigation
+                        </Radio>
+                        <Radio bg="white" value="UNFCCC">
+                          UNFCCC
+                        </Radio>
+                      </HStack>
+                    </RadioGroup>
+                    <FormErrorMessage>
+                      Please select a category
+                    </FormErrorMessage>
+                  </FormControl>
+                )
+              }}
+            />
+            <Controller
+              control={control}
+              name="organisation"
+              render={({ field }) => {
+                return (
+                  <FormControl
+                    isRequired
+                    as="fieldset"
+                    isInvalid={!!errors.organisation}
                   >
-                    Litigation
-                  </Radio>
-                  <Radio bg="white" value="UNFCCC" {...register('category')}>
-                    UNFCCC
-                  </Radio>
-                </HStack>
-              </RadioGroup>
-              <FormErrorMessage>Please select a category</FormErrorMessage>
-            </FormControl>
-            <FormControl
-              isRequired
-              as="fieldset"
-              isInvalid={!!errors.organisation}
-            >
-              <FormLabel as="legend">Organisation</FormLabel>
-              <RadioGroup>
-                <HStack gap={4}>
-                  <Radio bg="white" value="CCLW" {...register('organisation')}>
-                    CCLW
-                  </Radio>
-                  <Radio
-                    bg="white"
-                    value="UNFCCC"
-                    {...register('organisation')}
-                  >
-                    UNFCCC
-                  </Radio>
-                </HStack>
-              </RadioGroup>
-              <FormErrorMessage>Please select an organisation</FormErrorMessage>
-            </FormControl>
+                    <FormLabel as="legend">Organisation</FormLabel>
+                    <RadioGroup {...field}>
+                      <HStack gap={4}>
+                        <Radio bg="white" value="CCLW">
+                          CCLW
+                        </Radio>
+                        <Radio bg="white" value="UNFCCC">
+                          UNFCCC
+                        </Radio>
+                      </HStack>
+                    </RadioGroup>
+                    <FormErrorMessage>
+                      Please select an organisation
+                    </FormErrorMessage>
+                  </FormControl>
+                )
+              }}
+            />
             {!!watchOrganisation && (
               <Box position="relative" padding="10">
                 <Divider />
@@ -327,66 +396,43 @@ export const FamilyForm = () => {
                   <FormLabel>Author</FormLabel>
                   <Input bg="white" {...register('author')} />
                 </FormControl>
-                <FormControl
-                  isRequired
-                  as="fieldset"
-                  isInvalid={!!errors.author_type}
-                >
-                  <FormLabel as="legend">Author type</FormLabel>
-                  <RadioGroup>
-                    <HStack gap={4}>
-                      {config?.taxonomies.UNFCCC.author_type.allowed_values.map(
-                        (authorType) => (
-                          <Radio
-                            bg="white"
-                            value={authorType}
-                            {...register('author_type')}
-                            key={authorType}
-                          >
-                            {authorType}
-                          </Radio>
-                        ),
-                      )}
-                    </HStack>
-                  </RadioGroup>
-                  <FormErrorMessage>
-                    Please select an author type
-                  </FormErrorMessage>
-                </FormControl>
+                <Controller
+                  control={control}
+                  name="author_type"
+                  render={({ field }) => {
+                    return (
+                      <FormControl
+                        isRequired
+                        as="fieldset"
+                        isInvalid={!!errors.author_type}
+                      >
+                        <FormLabel as="legend">Author type</FormLabel>
+                        <RadioGroup {...field}>
+                          <HStack gap={4}>
+                            {config?.taxonomies.UNFCCC.author_type.allowed_values.map(
+                              (authorType) => (
+                                <Radio
+                                  bg="white"
+                                  value={authorType}
+                                  key={authorType}
+                                >
+                                  {authorType}
+                                </Radio>
+                              ),
+                            )}
+                          </HStack>
+                        </RadioGroup>
+                        <FormErrorMessage>
+                          Please select an author type
+                        </FormErrorMessage>
+                      </FormControl>
+                    )
+                  }}
+                />
               </>
             )}
             {watchOrganisation === 'CCLW' && (
               <>
-                {/* {Object.keys(config?.taxonomies.CCLW || {}).map(
-                  (taxonomy: TCCLWTaxonomy | null) => {
-                    if (Object.keys.length === 0 || !taxonomy) return null
-
-                    const options = config.taxonomies.CCLW[taxonomy]
-                      .allowed_values as string[]
-                    return (
-                      <Controller
-                        control={control}
-                        name={taxonomy}
-                        key={taxonomy}
-                        render={({ field }) => {
-                          return (
-                            <FormControl>
-                              <FormLabel>{taxonomy}</FormLabel>
-                              <CRSelect
-                                chakraStyles={chakraStyles}
-                                isClearable={false}
-                                isMulti={true}
-                                isSearchable={true}
-                                options={generateOptions(options)}
-                                {...field}
-                              />
-                            </FormControl>
-                          )
-                        }}
-                      />
-                    )
-                  },
-                )} */}
                 <Controller
                   control={control}
                   name="topic"
@@ -529,7 +575,7 @@ export const FamilyForm = () => {
               onSubmit={handleSubmit(onSubmit)}
               disabled={isSubmitting}
             >
-              Create new Family
+              {(loadedFamily ? 'Update ' : 'Create new ') + ' Family'}
             </Button>
           </ButtonGroup>
         </form>

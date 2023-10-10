@@ -49,6 +49,7 @@ interface IFamilyFormPostBase {
   geography: string
   category: string
   organisation: string
+  collections: string[]
 }
 
 export interface ICCLWFamilyFormPost extends IFamilyFormPostBase {
