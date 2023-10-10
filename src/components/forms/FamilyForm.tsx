@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 
@@ -89,6 +89,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     watch,
     handleSubmit,
     control,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: yupResolver(familySchema),
@@ -168,13 +169,59 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
           position: 'top',
         })
       })
-  }
+  } // end handleFamilyCreate
 
   const onSubmit: SubmitHandler<IFamilyForm> = (data) =>
     handleFamilyCreate(data)
 
   const canLoadForm =
     !configLoading && !collectionsLoading && !configError && !collectionsError
+
+  useEffect(() => {
+    if (loadedFamily) {
+      // set the form values to that of the loaded family
+      reset({
+        import_id: loadedFamily.import_id,
+        title: loadedFamily.title,
+        summary: loadedFamily.summary,
+        geography: loadedFamily.geography,
+        category: loadedFamily.category,
+        organisation: loadedFamily.organisation,
+        topic:
+          'topic' in loadedFamily.metadata
+            ? generateOptions(loadedFamily.metadata.topic)
+            : [],
+        hazard:
+          'hazard' in loadedFamily.metadata
+            ? generateOptions(loadedFamily.metadata.hazard)
+            : [],
+        sector:
+          'sector' in loadedFamily.metadata
+            ? generateOptions(loadedFamily.metadata.sector)
+            : [],
+        keyword:
+          'keyword' in loadedFamily.metadata
+            ? generateOptions(loadedFamily.metadata.keyword)
+            : [],
+        framework:
+          'framework' in loadedFamily.metadata
+            ? generateOptions(loadedFamily.metadata.framework)
+            : [],
+        instrument:
+          'instrument' in loadedFamily.metadata
+            ? generateOptions(loadedFamily.metadata.instrument)
+            : [],
+        author:
+          'author' in loadedFamily.metadata
+            ? loadedFamily.metadata.author[0]
+            : '',
+        author_type:
+          'author_type' in loadedFamily.metadata
+            ? loadedFamily.metadata.author_type[0]
+            : '',
+      })
+    }
+  }, [loadedFamily, reset])
 
   return (
     <>
@@ -354,36 +401,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
             )}
             {watchOrganisation === 'CCLW' && (
               <>
-                {/* {Object.keys(config?.taxonomies.CCLW || {}).map(
-                  (taxonomy: TCCLWTaxonomy | null) => {
-                    if (Object.keys.length === 0 || !taxonomy) return null
-
-                    const options = config.taxonomies.CCLW[taxonomy]
-                      .allowed_values as string[]
-                    return (
-                      <Controller
-                        control={control}
-                        name={taxonomy}
-                        key={taxonomy}
-                        render={({ field }) => {
-                          return (
-                            <FormControl>
-                              <FormLabel>{taxonomy}</FormLabel>
-                              <CRSelect
-                                chakraStyles={chakraStyles}
-                                isClearable={false}
-                                isMulti={true}
-                                isSearchable={true}
-                                options={generateOptions(options)}
-                                {...field}
-                              />
-                            </FormControl>
-                          )
-                        }}
-                      />
-                    )
-                  },
-                )} */}
                 <Controller
                   control={control}
                   name="topic"
