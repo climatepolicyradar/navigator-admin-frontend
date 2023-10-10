@@ -70,6 +70,25 @@ export async function createFamily(data: TFamilyFormPost) {
   return { response }
 }
 
+export async function updateFamily(id: string, data: TFamilyFormPost) {
+  checkAuth()
+
+  const response = await API.put<TFamily>('/v1/families/' + id, data)
+    .then((response) => {
+      return response
+    })
+    .catch((error: AxiosError<{ detail: string }>) => {
+      const e: IError = {
+        status: error.response?.status || 500,
+        detail: error.response?.data?.detail || 'Unknown error',
+        message: error.message,
+      }
+      throw e
+    })
+
+  return { response }
+}
+
 export async function deleteFamily(id: string) {
   checkAuth()
 
