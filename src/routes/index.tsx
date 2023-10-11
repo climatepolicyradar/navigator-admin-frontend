@@ -8,6 +8,7 @@ import Dashboard from '@/views/dashboard/Dashboard'
 import ErrorPage from '@views/Error'
 import Family from '@/views/family/Family'
 import Families from '@/views/family/Families'
+import Collections from '@/views/collection/Collections'
 import FamilyList, { loader as familiesLoader } from '@components/FamilyList'
 import { ProtectedRoute } from './ProtectedRoute'
 
@@ -51,6 +52,11 @@ const authenticatedRoutes = [
                     errorElement: <ErrorPage />,
                   },
                 ],
+              },
+              {
+                path: 'collections',
+                element: <Collections />,
+                errorElement: <ErrorPage />,
               },
             ],
           },
