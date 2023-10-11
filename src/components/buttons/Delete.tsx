@@ -13,14 +13,14 @@ import {
   Tooltip,
 } from '@chakra-ui/react'
 import { GoX } from 'react-icons/go'
-import { TFamily } from '@/interfaces'
 
 interface IProps {
-  family: TFamily
+  entityName: string
+  entityTitle: string
   callback?: () => void
 }
 
-export const DeleteFamily = ({ family, callback }: IProps) => {
+export const DeleteButton = ({ entityName, entityTitle, callback }: IProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const cancelRef = useRef(null)
 
@@ -33,7 +33,7 @@ export const DeleteFamily = ({ family, callback }: IProps) => {
     <>
       <Tooltip label="Delete">
         <IconButton
-          aria-label="Edit document"
+          aria-label="Edit"
           icon={<GoX />}
           variant="outline"
           size="sm"
@@ -51,12 +51,12 @@ export const DeleteFamily = ({ family, callback }: IProps) => {
         <AlertDialogOverlay />
 
         <AlertDialogContent>
-          <AlertDialogHeader>Delete family?</AlertDialogHeader>
+          <AlertDialogHeader>Delete {entityName}?</AlertDialogHeader>
           <AlertDialogCloseButton />
           <AlertDialogBody>
-            Please confirm that you want to delete this family:
+            Please confirm that you want to delete this {entityName}:
             <br />
-            <strong>{family.title}</strong>
+            <strong>{entityTitle}</strong>
           </AlertDialogBody>
           <AlertDialogFooter>
             <Button ref={cancelRef} onClick={onClose}>
