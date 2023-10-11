@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
 import { IError, ICollection } from '@/interfaces'
 import { getCollections } from '@/api/Collections'
@@ -8,13 +8,12 @@ const useCollections = (query: string) => {
   const [error, setError] = useState<IError | null | undefined>()
   const [loading, setLoading] = useState<boolean>(false)
 
-  useEffect(() => {
-    let ignore = false
+  const handleGetCollections = useCallback(() => {
     setLoading(true)
 
     getCollections(query)
       .then(({ response }) => {
-        if (!ignore) setCollections(response)
+        setCollections(response)
       })
       .catch((error: IError) => {
         setError(error)
@@ -22,13 +21,18 @@ const useCollections = (query: string) => {
       .finally(() => {
         setLoading(false)
       })
-
-    return () => {
-      ignore = true
-    }
   }, [query])
 
-  return { collections, error, loading }
+  const reload = () => {
+    handleGetCollections()
+  }
+
+  useEffect(() => {
+    setLoading(true)
+    handleGetCollections()
+  }, [handleGetCollections])
+
+  return { collections, error, loading, reload }
 }
 
 export default useCollections

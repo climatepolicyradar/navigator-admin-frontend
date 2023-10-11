@@ -26,7 +26,7 @@ import { Loader } from './Loader'
 
 export default function CollectionList() {
   const [searchParams] = useSearchParams()
-  const { collections, loading, error } = useCollections(
+  const { collections, loading, error, reload } = useCollections(
     searchParams.get('q') ?? '',
   )
   const toast = useToast()
@@ -51,6 +51,7 @@ export default function CollectionList() {
           status: 'success',
           position: 'top',
         })
+        reload()
       })
       .catch((error: IError) => {
         setCollectionError(id)
