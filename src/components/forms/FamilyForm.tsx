@@ -82,7 +82,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     collections,
     error: collectionsError,
     loading: collectionsLoading,
-  } = useCollections()
+  } = useCollections('')
   const toast = useToast()
   const [formError, setFormError] = useState<IError | null | undefined>()
   const {
