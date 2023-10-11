@@ -7,3 +7,9 @@ export interface ICollection {
   families: string[]
   organisation: TOrganisation
 }
+
+export interface ICollectionFormPost {
+  title: string
+  description: string
+  organisation: TOrganisation
+}
