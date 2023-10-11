@@ -7,22 +7,13 @@ import {
   Heading,
   IconButton,
   Input,
-  SkeletonText,
   Spacer,
 } from '@chakra-ui/react'
-import {
-  Link,
-  Form,
-  Outlet,
-  useNavigation,
-  useSearchParams,
-} from 'react-router-dom'
+import { Link, Form, Outlet, useSearchParams } from 'react-router-dom'
 
-import { Loader } from '@/components/Loader'
 import { SearchIcon } from '@chakra-ui/icons'
 
 export default function Collections() {
-  const navigation = useNavigation()
   const [searchParams] = useSearchParams()
 
   return (
@@ -59,14 +50,7 @@ export default function Collections() {
           </Button>
         </ButtonGroup>
       </Flex>
-      {navigation.state === 'loading' ? (
-        <Box padding="4" bg="white">
-          <Loader />
-          <SkeletonText mt="4" noOfLines={3} spacing="4" skeletonHeight="2" />
-        </Box>
-      ) : (
-        <Outlet />
-      )}
+      <Outlet />
     </Flex>
   )
 }
