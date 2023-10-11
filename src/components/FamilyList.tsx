@@ -1,7 +1,7 @@
 import { Link, useLoaderData } from 'react-router-dom'
 import { deleteFamily, getFamilies } from '@/api/Families'
 import { IError, TFamily } from '@/interfaces'
-import { formatDate } from '@/utils/Date'
+import { formatDate } from '@/utils/formatDate'
 import {
   Table,
   Thead,

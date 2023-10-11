@@ -1,17 +1,11 @@
 import { AxiosError } from 'axios'
 
 import API from '@/api'
+import { setToken } from '@/api/Auth'
 import { TFamily, IError, TFamilyFormPost } from '@/interfaces'
 
-const checkAuth = () => {
-  if (!API.defaults.headers.common['Authorization']) {
-    API.defaults.headers.common['Authorization'] =
-      'Bearer ' + (localStorage.getItem('token') ?? '')
-  }
-}
-
 export async function getFamilies(query: string | undefined | null) {
-  checkAuth()
+  setToken(API)
 
   const response = await API.get<TFamily[]>('/v1/families/', {
     params: { q: query || 'redd' },
@@ -33,7 +27,7 @@ export async function getFamilies(query: string | undefined | null) {
 }
 
 export async function getFamily(id: string) {
-  checkAuth()
+  setToken(API)
 
   const response = await API.get<TFamily>('/v1/families/' + id)
     .then((response) => {
@@ -52,7 +46,7 @@ export async function getFamily(id: string) {
 }
 
 export async function createFamily(data: TFamilyFormPost) {
-  checkAuth()
+  setToken(API)
 
   const response = await API.post<TFamily>('/v1/families', data)
     .then((response) => {
@@ -71,7 +65,7 @@ export async function createFamily(data: TFamilyFormPost) {
 }
 
 export async function updateFamily(data: TFamilyFormPost) {
-  checkAuth()
+  setToken(API)
 
   const response = await API.put<TFamily>('/v1/families', data)
     .then((response) => {
@@ -90,7 +84,7 @@ export async function updateFamily(data: TFamilyFormPost) {
 }
 
 export async function deleteFamily(id: string) {
-  checkAuth()
+  setToken(API)
 
   const response = await API.delete('/v1/families/' + id)
     .then((response) => {

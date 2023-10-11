@@ -2,10 +2,10 @@ import { AxiosError } from 'axios'
 
 import API from '@/api'
 import { IConfig, IError } from '@/interfaces'
-import { checkAuth } from '@/utils/checkAuth'
+import { setToken } from '@/api/Auth'
 
 export async function getConfig() {
-  checkAuth(API)
+  setToken(API)
 
   const response = await API.get<IConfig>('/v1/config')
     .then((response) => {
