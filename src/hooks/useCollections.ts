@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { IError, ICollection } from '@/interfaces'
 import { getCollections } from '@/api/Collections'
 
-const useCollections = () => {
+const useCollections = (query: string) => {
   const [collections, setCollections] = useState<ICollection[]>([])
   const [error, setError] = useState<IError | null | undefined>()
   const [loading, setLoading] = useState<boolean>(false)
@@ -12,7 +12,7 @@ const useCollections = () => {
     let ignore = false
     setLoading(true)
 
-    getCollections()
+    getCollections(query)
       .then(({ response }) => {
         if (!ignore) setCollections(response)
       })
@@ -26,7 +26,7 @@ const useCollections = () => {
     return () => {
       ignore = true
     }
-  }, [])
+  }, [query])
 
   return { collections, error, loading }
 }

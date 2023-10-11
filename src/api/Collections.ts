@@ -4,10 +4,12 @@ import API from '@/api'
 import { ICollection, ICollectionFormPost, IError } from '@/interfaces'
 import { setToken } from '@/api/Auth'
 
-export async function getCollections() {
+export async function getCollections(query?: string) {
   setToken(API)
 
-  const response = await API.get<ICollection[]>('/v1/collections')
+  const response = await API.get<ICollection[]>('/v1/collections/', {
+    params: { q: query || '' },
+  })
     .then((response) => {
       return response.data
     })
