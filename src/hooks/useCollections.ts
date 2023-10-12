@@ -10,6 +10,7 @@ const useCollections = (query: string) => {
 
   const handleGetCollections = useCallback(() => {
     setLoading(true)
+    setError(null)
 
     getCollections(query)
       .then(({ response }) => {
