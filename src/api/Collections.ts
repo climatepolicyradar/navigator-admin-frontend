@@ -26,10 +26,29 @@ export async function getCollections(query?: string) {
   return { response }
 }
 
+export async function getCollection(id: string) {
+  setToken(API)
+
+  const response = await API.get<ICollection>('/v1/collections/' + id)
+    .then((response) => {
+      return response
+    })
+    .catch((error: AxiosError<{ detail: string }>) => {
+      const e: IError = {
+        status: error.response?.status || 500,
+        detail: error.response?.data?.detail || 'Unknown error',
+        message: error.message,
+      }
+      throw e
+    })
+
+  return { response }
+}
+
 export async function createCollection(data: ICollectionFormPost) {
   setToken(API)
 
-  const response = await API.post<ICollection>('/v1/collection', data)
+  const response = await API.post<ICollection>('/v1/collections', data)
     .then((response) => {
       return response
     })

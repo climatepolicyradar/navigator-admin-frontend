@@ -9,6 +9,7 @@ export interface ICollection {
 }
 
 export interface ICollectionFormPost {
+  import_id: string
   title: string
   description: string
   organisation: TOrganisation
