@@ -12,6 +12,7 @@ import Families from '@/views/family/Families'
 import FamilyList, { loader as familiesLoader } from '@components/FamilyList'
 import Collections from '@/views/collection/Collections'
 import CollectionList from '@/components/CollectionList'
+import Collection from '@/views/collection/Collection'
 
 const authenticatedRoutes = [
   {
@@ -53,6 +54,16 @@ const authenticatedRoutes = [
                     errorElement: <ErrorPage />,
                   },
                 ],
+              },
+              {
+                path: '/collection/new',
+                element: <Collection />,
+                errorElement: <ErrorPage />,
+              },
+              {
+                path: 'collection/:importId/edit',
+                element: <Collection />,
+                errorElement: <ErrorPage />,
               },
               {
                 path: 'collections',
