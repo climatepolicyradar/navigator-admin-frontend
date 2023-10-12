@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react'
 import { IError, IConfig } from '@/interfaces'
 import { getConfig } from '@/api/Config'
 
+let cache: IConfig | null = null
+
 const useConfig = () => {
   const [config, setConfig] = useState<IConfig | null>(null)
   const [error, setError] = useState<IError | null | undefined>()
@@ -12,9 +14,18 @@ const useConfig = () => {
     let ignore = false
     setLoading(true)
 
+    if (cache) {
+      setConfig(cache)
+      setLoading(false)
+      return
+    }
+
     getConfig()
       .then(({ response }) => {
-        if (!ignore) setConfig(response)
+        if (!ignore) {
+          cache = response
+          setConfig(response)
+        }
       })
       .catch((error: IError) => {
         setError(error)

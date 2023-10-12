@@ -82,7 +82,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     collections,
     error: collectionsError,
     loading: collectionsLoading,
-  } = useCollections()
+  } = useCollections('')
   const toast = useToast()
   const [formError, setFormError] = useState<IError | null | undefined>()
   const {
@@ -98,7 +98,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
 
   const watchOrganisation = watch('organisation')
 
-  const handleFamilyCreate = async (family: IFamilyForm) => {
+  const handleFormSubmission = async (family: IFamilyForm) => {
     setFormError(null)
 
     let familyMetadata = {} as TFamilyFormPostMetadata
@@ -172,10 +172,10 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
           position: 'top',
         })
       })
-  } // end handleFamilyCreate
+  } // end handleFormSubmission
 
   const onSubmit: SubmitHandler<IFamilyForm> = (data) =>
-    handleFamilyCreate(data)
+    handleFormSubmission(data)
 
   const canLoadForm =
     !configLoading && !collectionsLoading && !configError && !collectionsError

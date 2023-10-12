@@ -1,7 +1,7 @@
 import { Link, useLoaderData } from 'react-router-dom'
 import { deleteFamily, getFamilies } from '@/api/Families'
 import { IError, TFamily } from '@/interfaces'
-import { formatDate } from '@/utils/Date'
+import { formatDate } from '@/utils/formatDate'
 import {
   Table,
   Thead,
@@ -20,7 +20,7 @@ import {
 } from '@chakra-ui/react'
 import { GoPencil } from 'react-icons/go'
 
-import { DeleteFamily } from './buttons/DeleteFamily'
+import { DeleteButton } from './buttons/Delete'
 import { useState } from 'react'
 
 interface ILoaderProps {
@@ -135,8 +135,9 @@ export default function FamilyList() {
                         />
                       </Link>
                     </Tooltip>
-                    <DeleteFamily
-                      family={family}
+                    <DeleteButton
+                      entityName="family"
+                      entityTitle={family.title}
                       callback={() => handleDeleteClick(family.import_id)}
                     />
                   </HStack>

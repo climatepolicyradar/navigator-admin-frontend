@@ -1,4 +1,4 @@
-import { AxiosError } from 'axios'
+import { AxiosError, AxiosInstance } from 'axios'
 
 import API from '@/api'
 import { IError } from '@/interfaces'
@@ -40,4 +40,12 @@ export async function login({ username, password }: TLogin) {
     })
 
   return { response }
+}
+
+// If user refreshes the page - ensure we use the token from localStorage
+export const setToken = (API: AxiosInstance) => {
+  if (!API.defaults.headers.common['Authorization']) {
+    API.defaults.headers.common['Authorization'] =
+      'Bearer ' + (localStorage.getItem('token') ?? '')
+  }
 }

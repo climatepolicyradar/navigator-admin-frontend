@@ -1,13 +1,15 @@
 import { AxiosError } from 'axios'
 
 import API from '@/api'
-import { ICollection, IError } from '@/interfaces'
-import { checkAuth } from '@/utils/checkAuth'
+import { ICollection, ICollectionFormPost, IError } from '@/interfaces'
+import { setToken } from '@/api/Auth'
 
-export async function getCollections() {
-  checkAuth(API)
+export async function getCollections(query?: string) {
+  setToken(API)
 
-  const response = await API.get<ICollection[]>('/v1/collections')
+  const response = await API.get<ICollection[]>('/v1/collections/', {
+    params: { q: query || '' },
+  })
     .then((response) => {
       return response.data
     })
@@ -16,7 +18,83 @@ export async function getCollections() {
         status: error.response?.status || 500,
         detail: error.response?.data?.detail || 'Unknown error',
         message: error.message,
-        returnPage: '/families',
+        returnPage: '/collections',
+      }
+      throw e
+    })
+
+  return { response }
+}
+
+export async function getCollection(id: string) {
+  setToken(API)
+
+  const response = await API.get<ICollection>('/v1/collections/' + id)
+    .then((response) => {
+      return response
+    })
+    .catch((error: AxiosError<{ detail: string }>) => {
+      const e: IError = {
+        status: error.response?.status || 500,
+        detail: error.response?.data?.detail || 'Unknown error',
+        message: error.message,
+      }
+      throw e
+    })
+
+  return { response }
+}
+
+export async function createCollection(data: ICollectionFormPost) {
+  setToken(API)
+
+  const response = await API.post<ICollection>('/v1/collections', data)
+    .then((response) => {
+      return response
+    })
+    .catch((error: AxiosError<{ detail: string }>) => {
+      const e: IError = {
+        status: error.response?.status || 500,
+        detail: error.response?.data?.detail || 'Unknown error',
+        message: error.message,
+      }
+      throw e
+    })
+
+  return { response }
+}
+
+export async function updateCollection(data: ICollectionFormPost) {
+  setToken(API)
+
+  const response = await API.put<ICollection>('/v1/collections', data)
+    .then((response) => {
+      return response
+    })
+    .catch((error: AxiosError<{ detail: string }>) => {
+      const e: IError = {
+        status: error.response?.status || 500,
+        detail: error.response?.data?.detail || 'Unknown error',
+        message: error.message,
+      }
+      throw e
+    })
+
+  return { response }
+}
+
+export async function deleteCollection(id: string) {
+  setToken(API)
+
+  const response = await API.delete('/v1/collections/' + id)
+    .then((response) => {
+      return response
+    })
+    .catch((error: AxiosError<{ detail: string }>) => {
+      const e: IError = {
+        status: error.response?.status || 500,
+        detail: error.response?.data?.detail || 'Unknown error',
+        message: error.message,
       }
       throw e
     })

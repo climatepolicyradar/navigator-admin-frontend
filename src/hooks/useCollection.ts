@@ -1,0 +1,36 @@
+import { useState, useEffect } from 'react'
+
+import { IError, ICollection } from '@/interfaces'
+import { getCollection } from '@/api/Collections'
+
+const useCollection = (id?: string) => {
+  const [collection, setFamily] = useState<ICollection | null>(null)
+  const [error, setError] = useState<IError | null | undefined>()
+  const [loading, setLoading] = useState<boolean>(false)
+
+  useEffect(() => {
+    let ignore = false
+    if (id) {
+      setLoading(true)
+
+      getCollection(id)
+        .then(({ response }) => {
+          if (!ignore) setFamily(response.data)
+        })
+        .catch((error: IError) => {
+          setError(error)
+        })
+        .finally(() => {
+          setLoading(false)
+        })
+    }
+
+    return () => {
+      ignore = true
+    }
+  }, [id])
+
+  return { collection, error, loading }
+}
+
+export default useCollection
