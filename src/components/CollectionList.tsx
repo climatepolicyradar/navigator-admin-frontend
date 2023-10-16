@@ -1,6 +1,7 @@
+import { useState, useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { deleteCollection } from '@/api/Collections'
-import { IError } from '@/interfaces'
+import { ICollection, IError } from '@/interfaces'
 import {
   Table,
   Thead,
@@ -20,11 +21,17 @@ import {
 import { GoPencil } from 'react-icons/go'
 
 import { DeleteButton } from './buttons/Delete'
-import { useState } from 'react'
 import useCollections from '@/hooks/useCollections'
 import { Loader } from './Loader'
+import { sortBy } from '@/utils/sortBy'
+import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from '@chakra-ui/icons'
 
 export default function CollectionList() {
+  const [sortControls, setSortControls] = useState<{
+    key: keyof ICollection
+    reverse: boolean
+  }>({ key: 'import_id', reverse: false })
+  const [filteredItems, setFilteredItems] = useState<ICollection[]>([])
   const [searchParams] = useSearchParams()
   const { collections, loading, error, reload } = useCollections(
     searchParams.get('q') ?? '',
@@ -34,6 +41,17 @@ export default function CollectionList() {
     string | null | undefined
   >()
   const [formError, setFormError] = useState<IError | null | undefined>()
+
+  const renderSortIcon = (key: keyof ICollection) => {
+    if (sortControls.key !== key) {
+      return <ArrowUpDownIcon />
+    }
+    if (sortControls.reverse) {
+      return <ArrowDownIcon />
+    } else {
+      return <ArrowUpIcon />
+    }
+  }
 
   const handleDeleteClick = async (id: string) => {
     setFormError(null)
@@ -64,6 +82,25 @@ export default function CollectionList() {
         })
       })
   }
+
+  const handleHeaderClick = (key: keyof ICollection) => {
+    if (sortControls.key === key) {
+      setSortControls({ key, reverse: !sortControls.reverse })
+    } else {
+      setSortControls({ key, reverse: false })
+    }
+  }
+
+  useEffect(() => {
+    const sortedItems = collections
+      .slice()
+      .sort(sortBy(sortControls.key, sortControls.reverse))
+    setFilteredItems(sortedItems)
+  }, [sortControls, collections])
+
+  useEffect(() => {
+    setFilteredItems(collections)
+  }, [collections])
 
   return (
     <>
@@ -97,15 +134,19 @@ export default function CollectionList() {
             <Table size="sm" variant={'striped'}>
               <Thead>
                 <Tr>
-                  <Th>ID</Th>
-                  <Th>Title</Th>
-                  <Th>Organisation</Th>
+                  {/* <Th onClick={() => handleHeaderClick('import_id')}>ID</Th> */}
+                  <Th onClick={() => handleHeaderClick('title')} cursor='pointer'>
+                    Title {renderSortIcon('title')}
+                  </Th>
+                  <Th onClick={() => handleHeaderClick('organisation')} cursor='pointer'>
+                    Organisation {renderSortIcon('organisation')}
+                  </Th>
                   <Th>Families</Th>
                   <Th></Th>
                 </Tr>
               </Thead>
               <Tbody>
-                {collections.map((collection) => (
+                {filteredItems.map((collection) => (
                   <Tr
                     key={collection.import_id}
                     borderLeft={
@@ -119,7 +160,7 @@ export default function CollectionList() {
                         : 'inherit'
                     }
                   >
-                    <Td>{collection.import_id}</Td>
+                    {/* <Td>{collection.import_id}</Td> */}
                     <Td>{collection.title}</Td>
                     <Td>{collection.organisation}</Td>
                     <Td>{collection.families.length}</Td>
