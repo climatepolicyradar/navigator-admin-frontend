@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { Link, useLoaderData } from 'react-router-dom'
 import { deleteFamily, getFamilies } from '@/api/Families'
 import { IError, TFamily } from '@/interfaces'
@@ -21,7 +22,7 @@ import {
 import { GoPencil } from 'react-icons/go'
 
 import { DeleteButton } from './buttons/Delete'
-import { useState } from 'react'
+import { sortBy } from '@/utils/sortBy'
 
 interface ILoaderProps {
   request: {
@@ -38,6 +39,7 @@ export async function loader({ request }: ILoaderProps) {
 }
 
 export default function FamilyList() {
+  const [filteredItems, setFilteredItems] = useState<TFamily[]>([])
   const {
     response: { data: families },
   } = useLoaderData() as { response: { data: TFamily[] } }
@@ -74,6 +76,15 @@ export default function FamilyList() {
       })
   }
 
+  const handleHeaderClick = (key: keyof TFamily) => {
+    const sortedItems = filteredItems.slice().sort(sortBy(key))
+    setFilteredItems(sortedItems)
+  }
+
+  useEffect(() => {
+    setFilteredItems(families)
+  }, [families])
+
   return (
     <Box flex={1}>
       <Box>
@@ -90,18 +101,22 @@ export default function FamilyList() {
         <Table size="sm" variant={'striped'}>
           <Thead>
             <Tr>
-              <Th>ID</Th>
-              <Th>Title</Th>
-              <Th>Category</Th>
-              <Th>Geography</Th>
-              <Th>Published date</Th>
-              <Th>Updated date</Th>
-              <Th>Status</Th>
+              <Th onClick={() => handleHeaderClick('import_id')}>ID</Th>
+              <Th onClick={() => handleHeaderClick('title')}>Title</Th>
+              <Th onClick={() => handleHeaderClick('category')}>Category</Th>
+              <Th onClick={() => handleHeaderClick('geography')}>Geography</Th>
+              <Th onClick={() => handleHeaderClick('published_date')}>
+                Published date
+              </Th>
+              <Th onClick={() => handleHeaderClick('last_updated_date')}>
+                Updated date
+              </Th>
+              <Th onClick={() => handleHeaderClick('status')}>Status</Th>
               <Th></Th>
             </Tr>
           </Thead>
           <Tbody>
-            {families.map((family) => (
+            {filteredItems.map((family) => (
               <Tr
                 key={family.import_id}
                 borderLeft={

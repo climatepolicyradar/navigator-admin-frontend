@@ -1,6 +1,7 @@
+import { useState, useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { deleteCollection } from '@/api/Collections'
-import { IError } from '@/interfaces'
+import { ICollection, IError } from '@/interfaces'
 import {
   Table,
   Thead,
@@ -20,11 +21,12 @@ import {
 import { GoPencil } from 'react-icons/go'
 
 import { DeleteButton } from './buttons/Delete'
-import { useState } from 'react'
 import useCollections from '@/hooks/useCollections'
 import { Loader } from './Loader'
+import { sortBy } from '@/utils/sortBy'
 
 export default function CollectionList() {
+  const [filteredItems, setFilteredItems] = useState<ICollection[]>([])
   const [searchParams] = useSearchParams()
   const { collections, loading, error, reload } = useCollections(
     searchParams.get('q') ?? '',
@@ -65,6 +67,15 @@ export default function CollectionList() {
       })
   }
 
+  const handleHeaderClick = (key: keyof ICollection) => {
+    const sortedItems = filteredItems.slice().sort(sortBy(key))
+    setFilteredItems(sortedItems)
+  }
+
+  useEffect(() => {
+    setFilteredItems(collections)
+  }, [collections])
+
   return (
     <>
       {loading && (
@@ -97,15 +108,17 @@ export default function CollectionList() {
             <Table size="sm" variant={'striped'}>
               <Thead>
                 <Tr>
-                  <Th>ID</Th>
-                  <Th>Title</Th>
-                  <Th>Organisation</Th>
+                  <Th onClick={() => handleHeaderClick('import_id')}>ID</Th>
+                  <Th onClick={() => handleHeaderClick('title')}>Title</Th>
+                  <Th onClick={() => handleHeaderClick('organisation')}>
+                    Organisation
+                  </Th>
                   <Th>Families</Th>
                   <Th></Th>
                 </Tr>
               </Thead>
               <Tbody>
-                {collections.map((collection) => (
+                {filteredItems.map((collection) => (
                   <Tr
                     key={collection.import_id}
                     borderLeft={
