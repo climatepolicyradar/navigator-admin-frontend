@@ -23,6 +23,7 @@ import { GoPencil } from 'react-icons/go'
 
 import { DeleteButton } from './buttons/Delete'
 import { sortBy } from '@/utils/sortBy'
+import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from '@chakra-ui/icons'
 
 interface ILoaderProps {
   request: {
@@ -39,6 +40,10 @@ export async function loader({ request }: ILoaderProps) {
 }
 
 export default function FamilyList() {
+  const [sortControls, setSortControls] = useState<{
+    key: keyof TFamily
+    reverse: boolean
+  }>({ key: 'slug', reverse: false })
   const [filteredItems, setFilteredItems] = useState<TFamily[]>([])
   const {
     response: { data: families },
@@ -46,6 +51,17 @@ export default function FamilyList() {
   const toast = useToast()
   const [familyError, setFamilyError] = useState<string | null | undefined>()
   const [formError, setFormError] = useState<IError | null | undefined>()
+
+  const renderSortIcon = (key: keyof TFamily) => {
+    if (sortControls.key !== key) {
+      return <ArrowUpDownIcon />
+    }
+    if (sortControls.reverse) {
+      return <ArrowDownIcon />
+    } else {
+      return <ArrowUpIcon />
+    }
+  }
 
   const handleDeleteClick = async (id: string) => {
     setFormError(null)
@@ -77,9 +93,19 @@ export default function FamilyList() {
   }
 
   const handleHeaderClick = (key: keyof TFamily) => {
-    const sortedItems = filteredItems.slice().sort(sortBy(key))
-    setFilteredItems(sortedItems)
+    if (sortControls.key === key) {
+      setSortControls({ key, reverse: !sortControls.reverse })
+    } else {
+      setSortControls({ key, reverse: false })
+    }
   }
+
+  useEffect(() => {
+    const sortedItems = families
+      .slice()
+      .sort(sortBy(sortControls.key, sortControls.reverse))
+    setFilteredItems(sortedItems)
+  }, [sortControls, families])
 
   useEffect(() => {
     setFilteredItems(families)
@@ -101,17 +127,39 @@ export default function FamilyList() {
         <Table size="sm" variant={'striped'}>
           <Thead>
             <Tr>
-              <Th onClick={() => handleHeaderClick('import_id')}>ID</Th>
-              <Th onClick={() => handleHeaderClick('title')}>Title</Th>
-              <Th onClick={() => handleHeaderClick('category')}>Category</Th>
-              <Th onClick={() => handleHeaderClick('geography')}>Geography</Th>
-              <Th onClick={() => handleHeaderClick('published_date')}>
-                Published date
+              {/* <Th onClick={() => handleHeaderClick('import_id')}>
+                ID {renderSortIcon('import_id')}
+              </Th> */}
+              <Th onClick={() => handleHeaderClick('title')} cursor="pointer">
+                Title {renderSortIcon('title')}
               </Th>
-              <Th onClick={() => handleHeaderClick('last_updated_date')}>
-                Updated date
+              <Th
+                onClick={() => handleHeaderClick('category')}
+                cursor="pointer"
+              >
+                Category {renderSortIcon('category')}
               </Th>
-              <Th onClick={() => handleHeaderClick('status')}>Status</Th>
+              <Th
+                onClick={() => handleHeaderClick('geography')}
+                cursor="pointer"
+              >
+                Geography {renderSortIcon('geography')}
+              </Th>
+              <Th
+                onClick={() => handleHeaderClick('published_date')}
+                cursor="pointer"
+              >
+                Published date {renderSortIcon('published_date')}
+              </Th>
+              <Th
+                onClick={() => handleHeaderClick('last_updated_date')}
+                cursor="pointer"
+              >
+                Updated date {renderSortIcon('last_updated_date')}
+              </Th>
+              <Th onClick={() => handleHeaderClick('status')} cursor="pointer">
+                Status {renderSortIcon('status')}
+              </Th>
               <Th></Th>
             </Tr>
           </Thead>
@@ -126,7 +174,7 @@ export default function FamilyList() {
                   family.import_id === familyError ? 'red.500' : 'inherit'
                 }
               >
-                <Td>{family.import_id}</Td>
+                {/* <Td>{family.import_id}</Td> */}
                 <Td>{family.title}</Td>
                 <Td>{family.category}</Td>
                 <Td>{family.geography}</Td>

@@ -24,8 +24,13 @@ import { DeleteButton } from './buttons/Delete'
 import useCollections from '@/hooks/useCollections'
 import { Loader } from './Loader'
 import { sortBy } from '@/utils/sortBy'
+import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from '@chakra-ui/icons'
 
 export default function CollectionList() {
+  const [sortControls, setSortControls] = useState<{
+    key: keyof ICollection
+    reverse: boolean
+  }>({ key: 'import_id', reverse: false })
   const [filteredItems, setFilteredItems] = useState<ICollection[]>([])
   const [searchParams] = useSearchParams()
   const { collections, loading, error, reload } = useCollections(
@@ -36,6 +41,17 @@ export default function CollectionList() {
     string | null | undefined
   >()
   const [formError, setFormError] = useState<IError | null | undefined>()
+
+  const renderSortIcon = (key: keyof ICollection) => {
+    if (sortControls.key !== key) {
+      return <ArrowUpDownIcon />
+    }
+    if (sortControls.reverse) {
+      return <ArrowDownIcon />
+    } else {
+      return <ArrowUpIcon />
+    }
+  }
 
   const handleDeleteClick = async (id: string) => {
     setFormError(null)
@@ -68,9 +84,19 @@ export default function CollectionList() {
   }
 
   const handleHeaderClick = (key: keyof ICollection) => {
-    const sortedItems = filteredItems.slice().sort(sortBy(key))
-    setFilteredItems(sortedItems)
+    if (sortControls.key === key) {
+      setSortControls({ key, reverse: !sortControls.reverse })
+    } else {
+      setSortControls({ key, reverse: false })
+    }
   }
+
+  useEffect(() => {
+    const sortedItems = collections
+      .slice()
+      .sort(sortBy(sortControls.key, sortControls.reverse))
+    setFilteredItems(sortedItems)
+  }, [sortControls, collections])
 
   useEffect(() => {
     setFilteredItems(collections)
@@ -108,10 +134,12 @@ export default function CollectionList() {
             <Table size="sm" variant={'striped'}>
               <Thead>
                 <Tr>
-                  <Th onClick={() => handleHeaderClick('import_id')}>ID</Th>
-                  <Th onClick={() => handleHeaderClick('title')}>Title</Th>
-                  <Th onClick={() => handleHeaderClick('organisation')}>
-                    Organisation
+                  {/* <Th onClick={() => handleHeaderClick('import_id')}>ID</Th> */}
+                  <Th onClick={() => handleHeaderClick('title')} cursor='pointer'>
+                    Title {renderSortIcon('title')}
+                  </Th>
+                  <Th onClick={() => handleHeaderClick('organisation')} cursor='pointer'>
+                    Organisation {renderSortIcon('organisation')}
                   </Th>
                   <Th>Families</Th>
                   <Th></Th>
@@ -132,7 +160,7 @@ export default function CollectionList() {
                         : 'inherit'
                     }
                   >
-                    <Td>{collection.import_id}</Td>
+                    {/* <Td>{collection.import_id}</Td> */}
                     <Td>{collection.title}</Td>
                     <Td>{collection.organisation}</Td>
                     <Td>{collection.families.length}</Td>
