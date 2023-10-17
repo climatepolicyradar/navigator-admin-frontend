@@ -17,6 +17,7 @@ import {
   Tooltip,
   useToast,
   SkeletonText,
+  Badge,
 } from '@chakra-ui/react'
 import { GoPencil } from 'react-icons/go'
 
@@ -25,6 +26,7 @@ import useDocuments from '@/hooks/useDocuments'
 import { Loader } from '../Loader'
 import { sortBy } from '@/utils/sortBy'
 import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from '@chakra-ui/icons'
+import { getStatusColour } from '@/utils/getStatusColour'
 
 export default function DocumentList() {
   const [sortControls, setSortControls] = useState<{
@@ -141,6 +143,12 @@ export default function DocumentList() {
                   >
                     Title {renderSortIcon('title')}
                   </Th>
+                  <Th
+                    onClick={() => handleHeaderClick('status')}
+                    cursor="pointer"
+                  >
+                    Status {renderSortIcon('status')}
+                  </Th>
                   <Th></Th>
                 </Tr>
               </Thead>
@@ -159,6 +167,14 @@ export default function DocumentList() {
                   >
                     {/* <Td>{document.import_id}</Td> */}
                     <Td>{document.title}</Td>
+                    <Td>
+                      <Badge
+                        colorScheme={getStatusColour(document.status)}
+                        size="sm"
+                      >
+                        {document.status}
+                      </Badge>
+                    </Td>
                     <Td>
                       <HStack gap={2}>
                         <Tooltip label="Edit">
