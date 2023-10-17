@@ -13,6 +13,9 @@ import FamilyList, { loader as familiesLoader } from '@components/FamilyList'
 import Collections from '@/views/collection/Collections'
 import CollectionList from '@/components/CollectionList'
 import Collection from '@/views/collection/Collection'
+import Documents from '@/views/document/Documents'
+// import DocumentList from '@/components/DocumentList'
+// import Document from '@/views/document/Document'
 
 const authenticatedRoutes = [
   {
@@ -76,6 +79,28 @@ const authenticatedRoutes = [
                     errorElement: <ErrorPage />,
                   },
                 ],
+              },
+              // {
+              //   path: '/collection/new',
+              //   element: <Collection />,
+              //   errorElement: <ErrorPage />,
+              // },
+              // {
+              //   path: 'collection/:importId/edit',
+              //   element: <Collection />,
+              //   errorElement: <ErrorPage />,
+              // },
+              {
+                path: 'documents',
+                element: <Documents />,
+                errorElement: <ErrorPage />,
+                // children: [
+                //   {
+                //     path: '',
+                //     element: <CollectionList />,
+                //     errorElement: <ErrorPage />,
+                //   },
+                // ],
               },
             ],
           },
