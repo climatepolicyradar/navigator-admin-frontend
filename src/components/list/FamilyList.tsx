@@ -21,7 +21,7 @@ import {
 } from '@chakra-ui/react'
 import { GoPencil } from 'react-icons/go'
 
-import { DeleteButton } from './buttons/Delete'
+import { DeleteButton } from '../buttons/Delete'
 import { sortBy } from '@/utils/sortBy'
 import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from '@chakra-ui/icons'
 

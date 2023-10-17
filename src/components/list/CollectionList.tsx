@@ -20,9 +20,9 @@ import {
 } from '@chakra-ui/react'
 import { GoPencil } from 'react-icons/go'
 
-import { DeleteButton } from './buttons/Delete'
+import { DeleteButton } from '../buttons/Delete'
 import useCollections from '@/hooks/useCollections'
-import { Loader } from './Loader'
+import { Loader } from '../Loader'
 import { sortBy } from '@/utils/sortBy'
 import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from '@chakra-ui/icons'
 
