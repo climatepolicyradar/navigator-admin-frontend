@@ -9,12 +9,12 @@ import Dashboard from '@/views/dashboard/Dashboard'
 import ErrorPage from '@views/Error'
 import Family from '@/views/family/Family'
 import Families from '@/views/family/Families'
-import FamilyList, { loader as familiesLoader } from '@components/FamilyList'
+import FamilyList, { loader as familiesLoader } from '@/components/list/FamilyList'
 import Collections from '@/views/collection/Collections'
-import CollectionList from '@/components/CollectionList'
+import CollectionList from '@/components/list/CollectionList'
 import Collection from '@/views/collection/Collection'
 import Documents from '@/views/document/Documents'
-// import DocumentList from '@/components/DocumentList'
+import DocumentList from '@/components/list/DocumentList'
 // import Document from '@/views/document/Document'
 
 const authenticatedRoutes = [
@@ -94,13 +94,13 @@ const authenticatedRoutes = [
                 path: 'documents',
                 element: <Documents />,
                 errorElement: <ErrorPage />,
-                // children: [
-                //   {
-                //     path: '',
-                //     element: <CollectionList />,
-                //     errorElement: <ErrorPage />,
-                //   },
-                // ],
+                children: [
+                  {
+                    path: '',
+                    element: <DocumentList />,
+                    errorElement: <ErrorPage />,
+                  },
+                ],
               },
             ],
           },
