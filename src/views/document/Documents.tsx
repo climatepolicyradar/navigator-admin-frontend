@@ -1,15 +1,5 @@
-import {
-  Box,
-  Button,
-  ButtonGroup,
-  Flex,
-  HStack,
-  Heading,
-  IconButton,
-  Input,
-  Spacer,
-} from '@chakra-ui/react'
-import { Link, Form, Outlet, useSearchParams } from 'react-router-dom'
+import { Box, Flex, HStack, Heading, IconButton, Input } from '@chakra-ui/react'
+import { Form, Outlet, useSearchParams } from 'react-router-dom'
 
 import { SearchIcon } from '@chakra-ui/icons'
 
@@ -22,7 +12,7 @@ export default function Documents() {
         <Box>
           <Heading as={'h1'}>Documents</Heading>
         </Box>
-        <Box>
+        <Box flex="1">
           <Form id="search-form" role="search">
             <HStack spacing="0">
               <Input
@@ -33,6 +23,7 @@ export default function Documents() {
                 name="q"
                 defaultValue={searchParams.get('q') ?? ''}
                 roundedRight={0}
+                maxW="600px"
               />
               <IconButton
                 type="submit"
@@ -43,12 +34,6 @@ export default function Documents() {
             </HStack>
           </Form>
         </Box>
-        <Spacer />
-        <ButtonGroup>
-          <Button as={Link} colorScheme="blue" to="/document/new">
-            Add new Document
-          </Button>
-        </ButtonGroup>
       </Flex>
       <Outlet />
     </Flex>
