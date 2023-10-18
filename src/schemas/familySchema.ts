@@ -2,7 +2,6 @@ import * as yup from 'yup'
 
 export const familySchema = yup
   .object({
-    import_id: yup.string().required(),
     title: yup.string().required(),
     summary: yup.string().required(),
     geography: yup.string().required(),

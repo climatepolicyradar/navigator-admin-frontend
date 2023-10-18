@@ -43,7 +43,6 @@ export interface ICCLWFamily extends IFamilyBase {
 export type TFamily = IUNFCCCFamily | ICCLWFamily
 
 interface IFamilyFormPostBase {
-  import_id: string
   title: string
   summary: string
   geography: string
