@@ -64,10 +64,10 @@ export async function createFamily(data: TFamilyFormPost) {
   return { response }
 }
 
-export async function updateFamily(data: TFamilyFormPost) {
+export async function updateFamily(data: TFamilyFormPost, importId: string) {
   setToken(API)
 
-  const response = await API.put<TFamily>('/v1/families', data)
+  const response = await API.put<TFamily>('/v1/families/' + importId, data)
     .then((response) => {
       return response
     })
