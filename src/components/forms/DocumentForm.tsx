@@ -20,9 +20,13 @@ import {
 
 type TProps = {
   document?: IDocument
+  familyId?: string
 }
 
-export const DocumentForm = ({ document: loadedDocument }: TProps) => {
+export const DocumentForm = ({
+  document: loadedDocument,
+  familyId,
+}: TProps) => {
   const toast = useToast()
   const [formError, setFormError] = useState<IError | null | undefined>()
   const {
@@ -81,6 +85,8 @@ export const DocumentForm = ({ document: loadedDocument }: TProps) => {
   const onSubmit: SubmitHandler<IDocumentFormPost> = (data) =>
     handleFormSubmission(data)
 
+  const invalidDocumentCreation = !loadedDocument && !familyId
+
   useEffect(() => {
     if (loadedDocument) {
       reset({
@@ -96,56 +102,66 @@ export const DocumentForm = ({ document: loadedDocument }: TProps) => {
   }, [loadedDocument, reset])
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <VStack gap="4" mb={12} align={'stretch'}>
-        {formError && (
-          <Box>
-            <Text color={'red.500'}>{formError.message}</Text>
-            <Text fontSize="xs" color={'gray.500'}>
-              {formError.detail}
-            </Text>
-          </Box>
-        )}
-        <FormControl isRequired isReadOnly isDisabled>
-          <FormLabel>Family ID</FormLabel>
-          <Input bg="white" {...register('family_import_id')} />
-          <FormHelperText>This field is not editable</FormHelperText>
-        </FormControl>
-        <FormControl isRequired>
-          <FormLabel>Title</FormLabel>
-          <Input bg="white" {...register('title')} />
-        </FormControl>
-        <FormControl isRequired>
-          <FormLabel>Source URL</FormLabel>
-          <Input bg="white" {...register('source_url')} />
-        </FormControl>
-        <FormControl isRequired>
-          <FormLabel>Role</FormLabel>
-          <Input bg="white" {...register('role')} />
-        </FormControl>
-        <FormControl isRequired>
-          <FormLabel>Type</FormLabel>
-          <Input bg="white" {...register('type')} />
-        </FormControl>
-        <FormControl isRequired>
-          <FormLabel>Variant</FormLabel>
-          <Input bg="white" {...register('variant_name')} />
-        </FormControl>
-        <FormControl isRequired>
-          <FormLabel>Language</FormLabel>
-          <Input bg="white" {...register('user_language_name')} />
-        </FormControl>
-        <ButtonGroup>
-          <Button
-            type="submit"
-            colorScheme="blue"
-            onSubmit={handleSubmit(onSubmit)}
-            disabled={isSubmitting}
-          >
-            {(loadedDocument ? 'Update ' : 'Create new ') + ' Docuement'}
-          </Button>
-        </ButtonGroup>
-      </VStack>
-    </form>
+    <>
+      {invalidDocumentCreation && (
+        <Box>
+          <Text color={'red.500'}>Invalid Document creation</Text>
+          <Text fontSize="xs" color={'gray.500'}>
+            A document must be linked to a family, please select a family
+          </Text>
+        </Box>
+      )}
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <VStack gap="4" mb={12} align={'stretch'}>
+          {formError && (
+            <Box>
+              <Text color={'red.500'}>{formError.message}</Text>
+              <Text fontSize="xs" color={'gray.500'}>
+                {formError.detail}
+              </Text>
+            </Box>
+          )}
+          <FormControl isRequired isReadOnly isDisabled>
+            <FormLabel>Family ID</FormLabel>
+            <Input bg="white" {...register('family_import_id')} />
+            <FormHelperText>This field is not editable</FormHelperText>
+          </FormControl>
+          <FormControl isRequired>
+            <FormLabel>Title</FormLabel>
+            <Input bg="white" {...register('title')} />
+          </FormControl>
+          <FormControl isRequired>
+            <FormLabel>Source URL</FormLabel>
+            <Input bg="white" {...register('source_url')} />
+          </FormControl>
+          <FormControl isRequired>
+            <FormLabel>Role</FormLabel>
+            <Input bg="white" {...register('role')} />
+          </FormControl>
+          <FormControl>
+            <FormLabel>Type</FormLabel>
+            <Input bg="white" {...register('type')} />
+          </FormControl>
+          <FormControl>
+            <FormLabel>Variant</FormLabel>
+            <Input bg="white" {...register('variant_name')} />
+          </FormControl>
+          <FormControl isRequired>
+            <FormLabel>Language</FormLabel>
+            <Input bg="white" {...register('user_language_name')} />
+          </FormControl>
+          <ButtonGroup>
+            <Button
+              type="submit"
+              colorScheme="blue"
+              onSubmit={handleSubmit(onSubmit)}
+              disabled={isSubmitting}
+            >
+              {(loadedDocument ? 'Update ' : 'Create new ') + ' Docuement'}
+            </Button>
+          </ButtonGroup>
+        </VStack>
+      </form>
+    </>
   )
 }
