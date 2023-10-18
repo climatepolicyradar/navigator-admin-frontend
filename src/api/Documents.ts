@@ -43,3 +43,22 @@ export async function getDocument(id: string) {
 
   return { response }
 }
+
+export async function deleteDocument(id: string) {
+  setToken(API)
+
+  const response = await API.delete('/v1/documents/' + id)
+    .then((response) => {
+      return response
+    })
+    .catch((error: AxiosError<{ detail: string }>) => {
+      const e: IError = {
+        status: error.response?.status || 500,
+        detail: error.response?.data?.detail || 'Unknown error',
+        message: error.message,
+      }
+      throw e
+    })
+
+  return { response }
+}

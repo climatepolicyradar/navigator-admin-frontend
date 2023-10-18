@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { deleteCollection } from '@/api/Collections'
+import { deleteDocument } from '@/api/Documents'
 import { IDocument, IError } from '@/interfaces'
 import {
   Table,
@@ -64,7 +64,7 @@ export default function DocumentList() {
       status: 'info',
       position: 'top',
     })
-    await deleteCollection(id)
+    await deleteDocument(id)
       .then(() => {
         toast({
           title: 'Collection has been successful deleted',
