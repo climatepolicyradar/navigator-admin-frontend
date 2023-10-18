@@ -56,7 +56,6 @@ type TMultiSelect = {
 }
 
 interface IFamilyForm {
-  import_id: string
   title: string
   summary: string
   geography: string
@@ -132,7 +131,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
 
     // @ts-expect-error: TODO: fix this
     const familyData: TFamilyFormPost = {
-      import_id: family.import_id,
       title: family.title,
       summary: family.summary,
       geography: family.geography,
@@ -144,7 +142,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     }
 
     if (loadedFamily) {
-      return await updateFamily(familyData)
+      return await updateFamily(familyData, loadedFamily.import_id)
         .then(() => {
           toast.closeAll()
           toast({
@@ -201,7 +199,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     if (loadedFamily) {
       // set the form values to that of the loaded family
       reset({
-        import_id: loadedFamily.import_id,
         title: loadedFamily.title,
         summary: loadedFamily.summary,
         geography: loadedFamily.geography,
@@ -287,14 +284,12 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                   </Text>
                 </Box>
               )}
-              <FormControl isRequired>
-                <FormLabel>Import ID</FormLabel>
-                <Input bg="white" {...register('import_id')} />
-                <FormHelperText>
-                  Must be in the format of: a.b.c.d where each letter represents
-                  a word or number for example: CCLW.family.1234.5678
-                </FormHelperText>
-              </FormControl>
+              {loadedFamily && (
+                <FormControl isRequired isReadOnly isDisabled>
+                  <FormLabel>Import ID</FormLabel>
+                  <Input bg="white" value={loadedFamily?.import_id} />
+                </FormControl>
+              )}
               <FormControl isRequired>
                 <FormLabel>Title</FormLabel>
                 <Input bg="white" {...register('title')} />

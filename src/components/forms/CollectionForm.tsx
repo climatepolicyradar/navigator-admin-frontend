@@ -27,9 +27,9 @@ import {
   useToast,
   FormHelperText,
 } from '@chakra-ui/react'
+import { useNavigate } from 'react-router-dom'
 
 interface ICollectionForm {
-  import_id: string
   title: string
   description: string
   organisation: string
@@ -40,6 +40,7 @@ type TProps = {
 }
 
 export const CollectionForm = ({ collection: loadedCollection }: TProps) => {
+  const navigate = useNavigate()
   const toast = useToast()
   const [formError, setFormError] = useState<IError | null | undefined>()
   const {
@@ -56,14 +57,13 @@ export const CollectionForm = ({ collection: loadedCollection }: TProps) => {
     setFormError(null)
 
     const collectionData: ICollectionFormPost = {
-      import_id: collection.import_id,
       title: collection.title,
       description: collection.description,
       organisation: collection.organisation as TOrganisation,
     }
 
     if (loadedCollection) {
-      return await updateCollection(collectionData)
+      return await updateCollection(collectionData, loadedCollection.import_id)
         .then(() => {
           toast.closeAll()
           toast({
@@ -84,13 +84,14 @@ export const CollectionForm = ({ collection: loadedCollection }: TProps) => {
     }
 
     return await createCollection(collectionData)
-      .then(() => {
+      .then((data) => {
         toast.closeAll()
         toast({
           title: 'Collection has been successfully created',
           status: 'success',
           position: 'top',
         })
+        navigate(`/collection/${data.response}/edit`, { replace: true })
       })
       .catch((error: IError) => {
         setFormError(error)
@@ -109,7 +110,6 @@ export const CollectionForm = ({ collection: loadedCollection }: TProps) => {
   useEffect(() => {
     if (loadedCollection) {
       reset({
-        import_id: loadedCollection.import_id,
         title: loadedCollection.title,
         description: loadedCollection.description,
         organisation: loadedCollection.organisation,
@@ -128,14 +128,13 @@ export const CollectionForm = ({ collection: loadedCollection }: TProps) => {
             </Text>
           </Box>
         )}
-        <FormControl isRequired>
-          <FormLabel>Import ID</FormLabel>
-          <Input bg="white" {...register('import_id')} />
-          <FormHelperText>
-            Must be in the format of: a.b.c.d where each letter represents a
-            word or number for example: abcd.collection.1234.5678
-          </FormHelperText>
-        </FormControl>
+        {loadedCollection && (
+          <FormControl isRequired isReadOnly isDisabled>
+            <FormLabel>Import ID</FormLabel>
+            <Input bg="white" value={loadedCollection?.import_id} />
+            <FormHelperText>You cannot edit this</FormHelperText>
+          </FormControl>
+        )}
         <FormControl isRequired>
           <FormLabel>Title</FormLabel>
           <Input bg="white" {...register('title')} />

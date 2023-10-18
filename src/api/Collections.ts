@@ -48,9 +48,9 @@ export async function getCollection(id: string) {
 export async function createCollection(data: ICollectionFormPost) {
   setToken(API)
 
-  const response = await API.post<ICollection>('/v1/collections', data)
+  const response = await API.post<string>('/v1/collections', data)
     .then((response) => {
-      return response
+      return response.data
     })
     .catch((error: AxiosError<{ detail: string }>) => {
       const e: IError = {
@@ -64,12 +64,18 @@ export async function createCollection(data: ICollectionFormPost) {
   return { response }
 }
 
-export async function updateCollection(data: ICollectionFormPost) {
+export async function updateCollection(
+  data: ICollectionFormPost,
+  importId: string,
+) {
   setToken(API)
 
-  const response = await API.put<ICollection>('/v1/collections', data)
+  const response = await API.put<ICollection>(
+    '/v1/collections/' + importId,
+    data,
+  )
     .then((response) => {
-      return response
+      return response.data
     })
     .catch((error: AxiosError<{ detail: string }>) => {
       const e: IError = {
