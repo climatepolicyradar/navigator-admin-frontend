@@ -82,11 +82,6 @@ const authenticatedRoutes = [
                   },
                 ],
               },
-              // {
-              //   path: '/collection/new',
-              //   element: <Collection />,
-              //   errorElement: <ErrorPage />,
-              // },
               {
                 path: 'document/:importId/edit',
                 element: <Document />,
