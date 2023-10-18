@@ -4,7 +4,7 @@ import { IError, ICollection } from '@/interfaces'
 import { getCollection } from '@/api/Collections'
 
 const useCollection = (id?: string) => {
-  const [collection, setFamily] = useState<ICollection | null>(null)
+  const [collection, setCollection] = useState<ICollection | null>(null)
   const [error, setError] = useState<IError | null | undefined>()
   const [loading, setLoading] = useState<boolean>(false)
 
@@ -15,7 +15,7 @@ const useCollection = (id?: string) => {
 
       getCollection(id)
         .then(({ response }) => {
-          if (!ignore) setFamily(response.data)
+          if (!ignore) setCollection(response.data)
         })
         .catch((error: IError) => {
           setError(error)
