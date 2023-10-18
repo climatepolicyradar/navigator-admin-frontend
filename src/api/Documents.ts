@@ -49,7 +49,7 @@ export async function createDocument(data: IDocumentFormPost) {
 
   const response = await API.post<IDocument>('/v1/documents', data)
     .then((response) => {
-      return response
+      return response.data
     })
     .catch((error: AxiosError<{ detail: string }>) => {
       const e: IError = {
@@ -68,7 +68,7 @@ export async function updateDocument(data: IDocumentFormPost) {
 
   const response = await API.put<IDocument>('/v1/documents', data)
     .then((response) => {
-      return response
+      return response.data
     })
     .catch((error: AxiosError<{ detail: string }>) => {
       const e: IError = {

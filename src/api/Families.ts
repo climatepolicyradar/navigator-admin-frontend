@@ -50,7 +50,7 @@ export async function createFamily(data: TFamilyFormPost) {
 
   const response = await API.post<TFamily>('/v1/families', data)
     .then((response) => {
-      return response
+      return response.data
     })
     .catch((error: AxiosError<{ detail: string }>) => {
       const e: IError = {

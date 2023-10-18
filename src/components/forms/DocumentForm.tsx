@@ -21,11 +21,13 @@ import {
 type TProps = {
   document?: IDocument
   familyId?: string
+  onSuccess?: (documentId: string) => void
 }
 
 export const DocumentForm = ({
   document: loadedDocument,
   familyId,
+  onSuccess,
 }: TProps) => {
   const toast = useToast()
   const [formError, setFormError] = useState<IError | null | undefined>()
@@ -43,13 +45,14 @@ export const DocumentForm = ({
 
     if (loadedDocument) {
       return await updateDocument(documentData)
-        .then(() => {
+        .then((data) => {
           toast.closeAll()
           toast({
             title: 'Document has been successfully updated',
             status: 'success',
             position: 'top',
           })
+          onSuccess && onSuccess(data.response.import_id)
         })
         .catch((error: IError) => {
           setFormError(error)
@@ -63,13 +66,14 @@ export const DocumentForm = ({
     }
 
     return await createDocument(documentData)
-      .then(() => {
+      .then((data) => {
         toast.closeAll()
         toast({
           title: 'Collection has been successfully created',
           status: 'success',
           position: 'top',
         })
+        onSuccess && onSuccess(data.response.import_id)
       })
       .catch((error: IError) => {
         setFormError(error)
@@ -100,6 +104,14 @@ export const DocumentForm = ({
       })
     }
   }, [loadedDocument, reset])
+
+  useEffect(() => {
+    if (familyId) {
+      reset({
+        family_import_id: familyId,
+      })
+    }
+  }, [familyId, reset])
 
   return (
     <>
