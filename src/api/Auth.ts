@@ -27,6 +27,8 @@ export async function login({ username, password }: TLogin) {
     },
   )
     .then((response) => {
+      API.defaults.headers.common['Authorization'] =
+        'Bearer ' + response.data.access_token
       return response.data.access_token
     })
     .catch((error: AxiosError<{ detail: string }>) => {
