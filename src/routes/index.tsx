@@ -9,13 +9,15 @@ import Dashboard from '@/views/dashboard/Dashboard'
 import ErrorPage from '@views/Error'
 import Family from '@/views/family/Family'
 import Families from '@/views/family/Families'
-import FamilyList, { loader as familiesLoader } from '@/components/list/FamilyList'
+import FamilyList, {
+  loader as familiesLoader,
+} from '@/components/list/FamilyList'
 import Collections from '@/views/collection/Collections'
 import CollectionList from '@/components/list/CollectionList'
 import Collection from '@/views/collection/Collection'
 import Documents from '@/views/document/Documents'
 import DocumentList from '@/components/list/DocumentList'
-// import Document from '@/views/document/Document'
+import Document from '@/views/document/Document'
 
 const authenticatedRoutes = [
   {
@@ -85,11 +87,11 @@ const authenticatedRoutes = [
               //   element: <Collection />,
               //   errorElement: <ErrorPage />,
               // },
-              // {
-              //   path: 'collection/:importId/edit',
-              //   element: <Collection />,
-              //   errorElement: <ErrorPage />,
-              // },
+              {
+                path: 'document/:importId/edit',
+                element: <Document />,
+                errorElement: <ErrorPage />,
+              },
               {
                 path: 'documents',
                 element: <Documents />,
