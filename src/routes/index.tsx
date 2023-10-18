@@ -11,12 +11,12 @@ import Family from '@/views/family/Family'
 import Families from '@/views/family/Families'
 import FamilyList, {
   loader as familiesLoader,
-} from '@/components/list/FamilyList'
+} from '@/components/lists/FamilyList'
 import Collections from '@/views/collection/Collections'
-import CollectionList from '@/components/list/CollectionList'
+import CollectionList from '@/components/lists/CollectionList'
 import Collection from '@/views/collection/Collection'
 import Documents from '@/views/document/Documents'
-import DocumentList from '@/components/list/DocumentList'
+import DocumentList from '@/components/lists/DocumentList'
 import Document from '@/views/document/Document'
 
 const authenticatedRoutes = [
