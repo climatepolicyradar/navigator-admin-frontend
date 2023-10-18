@@ -2,6 +2,7 @@ import { useParams, Link } from 'react-router-dom'
 import { Box, Heading, Text, Button, SkeletonText } from '@chakra-ui/react'
 import useDocument from '@/hooks/useDocument'
 import { Loader } from '@/components/Loader'
+import { DocumentForm } from '@/components/forms/DocumentForm'
 
 export default function Collection() {
   const { importId } = useParams()
@@ -48,7 +49,7 @@ export default function Collection() {
             </Box>
           </>
         )}
-        {/* {canLoadForm && <DocumentForm document={document ?? undefined} />} */}
+        {canLoadForm && <DocumentForm document={document ?? undefined} />}
       </Box>
     </>
   )

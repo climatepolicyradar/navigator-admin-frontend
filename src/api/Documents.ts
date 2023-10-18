@@ -2,7 +2,7 @@ import { AxiosError } from 'axios'
 
 import API from '@/api'
 import { setToken } from '@/api/Auth'
-import { IDocument, IError } from '@/interfaces'
+import { IDocument, IDocumentFormPost, IError } from '@/interfaces'
 
 export async function getDocuments(query: string | undefined | null) {
   setToken(API)
@@ -29,6 +29,44 @@ export async function getDocument(id: string) {
   setToken(API)
 
   const response = await API.get<IDocument>('/v1/documents/' + id)
+    .then((response) => {
+      return response
+    })
+    .catch((error: AxiosError<{ detail: string }>) => {
+      const e: IError = {
+        status: error.response?.status || 500,
+        detail: error.response?.data?.detail || 'Unknown error',
+        message: error.message,
+      }
+      throw e
+    })
+
+  return { response }
+}
+
+export async function createDocument(data: IDocumentFormPost) {
+  setToken(API)
+
+  const response = await API.post<IDocument>('/v1/documents', data)
+    .then((response) => {
+      return response
+    })
+    .catch((error: AxiosError<{ detail: string }>) => {
+      const e: IError = {
+        status: error.response?.status || 500,
+        detail: error.response?.data?.detail || 'Unknown error',
+        message: error.message,
+      }
+      throw e
+    })
+
+  return { response }
+}
+
+export async function updateDocument(data: IDocumentFormPost) {
+  setToken(API)
+
+  const response = await API.put<IDocument>('/v1/documents', data)
     .then((response) => {
       return response
     })

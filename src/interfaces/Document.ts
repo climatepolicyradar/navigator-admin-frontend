@@ -12,5 +12,16 @@ export interface IDocument {
   cdn_object: string | null
   source_url: string | null
   content_type: string | null
-  user_language_name: string[] | null
+  user_language_name: string | null
+}
+
+export interface IDocumentFormPost {
+  family_import_id: string
+  variant_name: string
+  role: string
+  type: string
+  title: string
+  source_url: string
+  user_language_name: string
+  // languages: list[]
 }
