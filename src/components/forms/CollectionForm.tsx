@@ -28,7 +28,7 @@ import {
   FormHelperText,
 } from '@chakra-ui/react'
 
-interface IFamilyForm {
+interface ICollectionForm {
   import_id: string
   title: string
   description: string
@@ -52,7 +52,7 @@ export const CollectionForm = ({ collection: loadedCollection }: TProps) => {
     resolver: yupResolver(collectionSchema),
   })
 
-  const handleFormSubmission = async (collection: IFamilyForm) => {
+  const handleFormSubmission = async (collection: ICollectionForm) => {
     setFormError(null)
 
     const collectionData: ICollectionFormPost = {
@@ -103,7 +103,7 @@ export const CollectionForm = ({ collection: loadedCollection }: TProps) => {
       })
   } // end handleFormSubmission
 
-  const onSubmit: SubmitHandler<IFamilyForm> = (data) =>
+  const onSubmit: SubmitHandler<ICollectionForm> = (data) =>
     handleFormSubmission(data)
 
   useEffect(() => {
