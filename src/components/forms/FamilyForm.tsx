@@ -309,17 +309,29 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 )
               }}
             />
-            <FormControl isRequired>
-              <FormLabel>Geography</FormLabel>
-              <Select background="white" {...register('geography')}>
-                <option value="">Please select</option>
-                {getCountries(config?.geographies).map((country) => (
-                  <option key={country.id} value={country.value}>
-                    {country.display_value}
-                  </option>
-                ))}
-              </Select>
-            </FormControl>
+            <Controller
+              control={control}
+              name="geography"
+              render={({ field }) => {
+                return (
+                  <FormControl
+                    isRequired
+                    as="fieldset"
+                    isInvalid={!!errors.geography}
+                  >
+                    <FormLabel>Geography</FormLabel>
+                    <Select background="white" {...field}>
+                      <option value="">Please select</option>
+                      {getCountries(config?.geographies).map((country) => (
+                        <option key={country.id} value={country.value}>
+                          {country.display_value}
+                        </option>
+                      ))}
+                    </Select>
+                  </FormControl>
+                )
+              }}
+            />
             <Controller
               control={control}
               name="category"
