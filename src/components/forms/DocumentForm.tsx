@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { useForm, SubmitHandler } from 'react-hook-form'
+import { useEffect, useState, useMemo } from 'react'
+import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { IDocument, IDocumentFormPost, IError } from '@/interfaces'
 import { createDocument, updateDocument } from '@/api/Documents'
@@ -16,7 +16,26 @@ import {
   ButtonGroup,
   useToast,
   FormHelperText,
+  Select,
+  FormErrorMessage,
 } from '@chakra-ui/react'
+import useConfig from '@/hooks/useConfig'
+import { FormLoader } from '../feedback/FormLoader'
+import { ApiError } from '../feedback/ApiError'
+
+// import { generateLanguageOptions } from '@/utils/generateOptions'
+// import { Select as CRSelect, ChakraStylesConfig } from 'chakra-react-select'
+
+// const chakraStyles: ChakraStylesConfig = {
+//   container: (provided) => ({
+//     ...provided,
+//     background: 'white',
+//   }),
+// }
+
+// interface IDocumentForm extends Omit<IDocumentFormPost, 'user_language_name'> {
+//   user_language_name: { label: string; value: string }
+// }
 
 type TProps = {
   document?: IDocument
@@ -29,19 +48,30 @@ export const DocumentForm = ({
   familyId,
   onSuccess,
 }: TProps) => {
+  const { config, loading: configLoading, error: configError } = useConfig()
   const toast = useToast()
   const [formError, setFormError] = useState<IError | null | undefined>()
   const {
+    control,
     register,
     handleSubmit,
     reset,
-    formState: { isSubmitting },
+    formState: { errors, isSubmitting },
   } = useForm({
     resolver: yupResolver(documentSchema),
   })
 
+  // const languages = useMemo(() => {
+  //   return generateLanguageOptions(config?.languages || {})
+  // }, [config])
+
   const handleFormSubmission = async (documentData: IDocumentFormPost) => {
     setFormError(null)
+
+    // const documentDataWithLanguage: IDocumentFormPost = {
+    //   ...documentData,
+    //   user_language_name: documentData.user_language_name.value,
+    // }
 
     if (loadedDocument) {
       return await updateDocument(documentData)
@@ -120,6 +150,8 @@ export const DocumentForm = ({
           </Text>
         </Box>
       )}
+      {configError && <ApiError error={configError} />}
+      {configLoading && <FormLoader />}
       <form onSubmit={handleSubmit(onSubmit)}>
         <VStack gap="4" mb={12} align={'stretch'}>
           {formError && (
@@ -143,22 +175,114 @@ export const DocumentForm = ({
             <FormLabel>Source URL</FormLabel>
             <Input bg="white" {...register('source_url')} />
           </FormControl>
-          <FormControl isRequired>
-            <FormLabel>Role</FormLabel>
-            <Input bg="white" {...register('role')} />
-          </FormControl>
-          <FormControl>
-            <FormLabel>Type</FormLabel>
-            <Input bg="white" {...register('type')} />
-          </FormControl>
-          <FormControl>
-            <FormLabel>Variant</FormLabel>
-            <Input bg="white" {...register('variant_name')} />
-          </FormControl>
-          <FormControl isRequired>
-            <FormLabel>Language</FormLabel>
-            <Input bg="white" {...register('user_language_name')} />
-          </FormControl>
+          <Controller
+            control={control}
+            name="role"
+            render={({ field }) => {
+              return (
+                <FormControl isRequired as="fieldset" isInvalid={!!errors.role}>
+                  <FormLabel as="legend">Role</FormLabel>
+                  <Select background="white" {...field}>
+                    <option value="">Please select</option>
+                    {config?.document?.roles.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </Select>
+                  <FormErrorMessage>Please select a role</FormErrorMessage>
+                </FormControl>
+              )
+            }}
+          />
+          <Controller
+            control={control}
+            name="type"
+            render={({ field }) => {
+              return (
+                <FormControl isRequired as="fieldset" isInvalid={!!errors.type}>
+                  <FormLabel as="legend">Type</FormLabel>
+                  <Select background="white" {...field}>
+                    <option value="">Please select</option>
+                    {config?.document?.types.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </Select>
+                  <FormErrorMessage>Please select a type</FormErrorMessage>
+                </FormControl>
+              )
+            }}
+          />
+          <Controller
+            control={control}
+            name="variant_name"
+            render={({ field }) => {
+              return (
+                <FormControl as="fieldset" isInvalid={!!errors.variant_name}>
+                  <FormLabel as="legend">Variant</FormLabel>
+                  <Select background="white" {...field}>
+                    <option value="">Please select</option>
+                    {config?.document?.variants.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </Select>
+                  <FormErrorMessage>Please select a type</FormErrorMessage>
+                </FormControl>
+              )
+            }}
+          />
+          <Controller
+            control={control}
+            name="user_language_name"
+            render={({ field }) => {
+              return (
+                <FormControl
+                  isRequired
+                  as="fieldset"
+                  isInvalid={!!errors.user_language_name}
+                >
+                  <FormLabel as="legend">Language</FormLabel>
+                  <Select background="white" {...field}>
+                    <option value="">Please select</option>
+                    {Object.keys(config?.languages || {}).map((key) => (
+                      <option key={key} value={config?.languages[key]}>
+                        {config?.languages[key]}
+                      </option>
+                    ))}
+                  </Select>
+                  <FormErrorMessage>Please select a language</FormErrorMessage>
+                </FormControl>
+              )
+            }}
+          />
+          {/* <Controller
+            control={control}
+            name="user_language_name"
+            render={({ field }) => {
+              return (
+                <FormControl
+                  isRequired
+                  as="fieldset"
+                  isInvalid={!!errors.user_language_name}
+                >
+                  <FormLabel as="legend">Language</FormLabel>
+                  <CRSelect
+                    chakraStyles={chakraStyles}
+                    isClearable={false}
+                    isMulti={false}
+                    isSearchable={true}
+                    options={languages}
+                    {...field}
+                  />
+                  <FormErrorMessage>Please select a language</FormErrorMessage>
+                </FormControl>
+              )
+            }}
+          /> */}
           <ButtonGroup>
             <Button
               type="submit"
