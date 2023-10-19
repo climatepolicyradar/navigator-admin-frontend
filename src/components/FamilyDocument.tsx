@@ -34,7 +34,13 @@ export const FamilyDocument = ({ documentId, onEdit, onDelete }: TProps) => {
   }
 
   if (error) {
-    return <ApiError error={error} />
+    return (
+      <Card direction="row">
+        <CardBody>
+          <ApiError error={error} />
+        </CardBody>
+      </Card>
+    )
   }
 
   return (
