@@ -42,6 +42,7 @@ import {
   DrawerContent,
   DrawerHeader,
   DrawerBody,
+  Flex,
 } from '@chakra-ui/react'
 import { Select as CRSelect, ChakraStylesConfig } from 'chakra-react-select'
 import useCollections from '@/hooks/useCollections'
@@ -198,10 +199,9 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   const onSubmit: SubmitHandler<IFamilyForm> = (data) =>
     handleFormSubmission(data)
 
-  const onDocumentFormSuccess = (newDocumentId: string) => {
-    console.log(
-      `document: ${newDocumentId} added success handler in family form`,
-    )
+  const onDocumentFormSuccess = () => {
+    onClose()
+    // reload family
   }
 
   const onDocumentFormEdit = (document: IDocument) => {
@@ -603,7 +603,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               )}
               {!!loadedFamily && (
                 <>
-                  <Box>
+                  <Flex direction="column" gap={4}>
                     {loadedFamily.documents.map((familyDoc) => (
                       <FamilyDocument
                         documentId={familyDoc}
@@ -611,7 +611,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                         onEdit={onDocumentFormEdit}
                       />
                     ))}
-                  </Box>
+                  </Flex>
                   <Box>
                     <Button onClick={handleAddNewDocumentClick}>
                       Add new Document
