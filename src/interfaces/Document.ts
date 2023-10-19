@@ -19,7 +19,7 @@ export interface IDocumentFormPost {
   family_import_id: string
   variant_name?: string
   role: string
-  type?: string
+  type: string
   title: string
   source_url: string
   user_language_name: string
