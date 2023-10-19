@@ -63,10 +63,10 @@ export async function createDocument(data: IDocumentFormPost) {
   return { response }
 }
 
-export async function updateDocument(data: IDocumentFormPost) {
+export async function updateDocument(data: IDocumentFormPost, id: string) {
   setToken(API)
 
-  const response = await API.put<IDocument>('/v1/documents', data)
+  const response = await API.put<IDocument>('/v1/documents/' + id, data)
     .then((response) => {
       return response.data
     })

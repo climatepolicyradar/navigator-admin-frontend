@@ -53,7 +53,7 @@ export function SideMenu() {
         <DrawerOverlay />
         <DrawerContent borderRightRadius="lg">
           <DrawerCloseButton />
-          <DrawerHeader>Detail menu</DrawerHeader>
+          <DrawerHeader>Menu</DrawerHeader>
 
           <DrawerBody>
             <Stack divider={<StackDivider />} spacing="4">

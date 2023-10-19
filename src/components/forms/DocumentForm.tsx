@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { IDocument, IDocumentFormPost, IError } from '@/interfaces'
@@ -74,7 +74,7 @@ export const DocumentForm = ({
     // }
 
     if (loadedDocument) {
-      return await updateDocument(documentData)
+      return await updateDocument(documentData, loadedDocument.import_id)
         .then((data) => {
           toast.closeAll()
           toast({
