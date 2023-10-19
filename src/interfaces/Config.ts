@@ -37,4 +37,12 @@ export interface IConfig {
       author_type: IConfigMeta
     }
   }
+  document: {
+    roles: string[]
+    types: string[]
+    variants: string[]
+  }
+  event: {
+    types: string[]
+  }
 }
