@@ -205,7 +205,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   }
 
   const onDocumentFormEdit = (document: IDocument) => {
-    console.log('inFamilyForm, document: ', document)
     setEditingDocument(document)
     onOpen()
   }
