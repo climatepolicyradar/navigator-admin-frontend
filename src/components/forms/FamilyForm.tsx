@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useNavigate } from 'react-router-dom'
@@ -49,6 +49,8 @@ import { getCountries } from '@/utils/extractNestedGeographyData'
 import { generateOptions } from '@/utils/generateOptions'
 import { familySchema } from '@/schemas/familySchema'
 import { DocumentForm } from './DocumentForm'
+import { FamilyDocument } from '../FamilyDocument'
+import { ApiError } from '../feedback/ApiError'
 
 type TMultiSelect = {
   value: string
@@ -248,42 +250,19 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
           <SkeletonText mt="4" noOfLines={12} spacing="4" skeletonHeight="2" />
         </Box>
       )}
-      {configError && (
-        <Box padding="4" bg="white">
-          <Text color={'red.500'}>{configError.message}</Text>
-          <Text fontSize="xs" color={'gray.500'}>
-            {configError.detail}
-          </Text>
-        </Box>
-      )}
-      {collectionsError && (
-        <Box padding="4" bg="white">
-          <Text color={'red.500'}>{collectionsError.message}</Text>
-          <Text fontSize="xs" color={'gray.500'}>
-            {collectionsError.detail}
-          </Text>
-        </Box>
-      )}
+      {configError && <ApiError error={configError} />}
+      {collectionsError && <ApiError error={collectionsError} />}
       {(configError || collectionsError) && (
-        <Box padding="4" bg="white">
-          <Text color={'red.500'}>Please create a collection first</Text>
-          <Text fontSize="xs" color={'gray.500'}>
-            You can do this by clicking the button below
-          </Text>
-        </Box>
+        <ApiError
+          message="Please create a collection first"
+          detail="You can do this by clicking the button below"
+        />
       )}
       {canLoadForm && (
         <>
           <form onSubmit={handleSubmit(onSubmit)}>
             <VStack gap="4" mb={12} align={'stretch'}>
-              {formError && (
-                <Box>
-                  <Text color={'red.500'}>{formError.message}</Text>
-                  <Text fontSize="xs" color={'gray.500'}>
-                    {formError.detail}
-                  </Text>
-                </Box>
-              )}
+              {formError && <ApiError error={formError} />}
               {loadedFamily && (
                 <FormControl isRequired isReadOnly isDisabled>
                   <FormLabel>Import ID</FormLabel>
@@ -603,13 +582,21 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               </Box>
               {!loadedFamily && (
                 <Text>
-                  Please create the family first before adding documents
+                  Please create the family first before attempting to add
+                  documents
                 </Text>
               )}
               {!!loadedFamily && (
-                <Box>
-                  <Button onClick={onOpen}>Add new Document</Button>
-                </Box>
+                <>
+                  <Box>
+                    {loadedFamily.documents.map((familyDoc) => (
+                      <FamilyDocument documentId={familyDoc} key={familyDoc} />
+                    ))}
+                  </Box>
+                  <Box>
+                    <Button onClick={onOpen}>Add new Document</Button>
+                  </Box>
+                </>
               )}
             </VStack>
 
