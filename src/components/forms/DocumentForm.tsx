@@ -92,6 +92,7 @@ export const DocumentForm = ({
   const invalidDocumentCreation = !loadedDocument && !familyId
 
   useEffect(() => {
+    // Handle both loading an existing document and creating a new one (for a given family)
     if (loadedDocument) {
       reset({
         family_import_id: loadedDocument.family_import_id,
@@ -102,16 +103,12 @@ export const DocumentForm = ({
         source_url: loadedDocument.source_url ?? '',
         user_language_name: loadedDocument.user_language_name ?? '',
       })
-    }
-  }, [loadedDocument, reset])
-
-  useEffect(() => {
-    if (familyId) {
+    } else if (familyId) {
       reset({
         family_import_id: familyId,
       })
     }
-  }, [familyId, reset])
+  }, [loadedDocument, familyId, reset])
 
   return (
     <>
@@ -169,7 +166,7 @@ export const DocumentForm = ({
               onSubmit={handleSubmit(onSubmit)}
               disabled={isSubmitting}
             >
-              {(loadedDocument ? 'Update ' : 'Create new ') + ' Docuement'}
+              {(loadedDocument ? 'Update ' : 'Create new ') + ' Document'}
             </Button>
           </ButtonGroup>
         </VStack>

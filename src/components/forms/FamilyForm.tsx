@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useNavigate } from 'react-router-dom'
@@ -11,6 +11,7 @@ import {
   IUNFCCCMetadata,
   ICCLWMetadata,
   TFamily,
+  IDocument,
 } from '@/interfaces'
 import { createFamily, updateFamily } from '@/api/Families'
 import useConfig from '@/hooks/useConfig'
@@ -106,9 +107,13 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   } = useForm({
     resolver: yupResolver(familySchema),
   })
+  const [editingDocument, setEditingDocument] = useState<
+    IDocument | undefined
+  >()
 
   const watchOrganisation = watch('organisation')
 
+  // Handlers
   const handleFormSubmission = async (family: IFamilyForm) => {
     setFormError(null)
 
@@ -185,6 +190,11 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       })
   } // end handleFormSubmission
 
+  const handleAddNewDocumentClick = () => {
+    setEditingDocument(undefined)
+    onOpen()
+  }
+
   const onSubmit: SubmitHandler<IFamilyForm> = (data) =>
     handleFormSubmission(data)
 
@@ -192,6 +202,12 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     console.log(
       `document: ${newDocumentId} added success handler in family form`,
     )
+  }
+
+  const onDocumentFormEdit = (document: IDocument) => {
+    console.log('inFamilyForm, document: ', document)
+    setEditingDocument(document)
+    onOpen()
   }
 
   const canLoadForm =
@@ -590,11 +606,17 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 <>
                   <Box>
                     {loadedFamily.documents.map((familyDoc) => (
-                      <FamilyDocument documentId={familyDoc} key={familyDoc} />
+                      <FamilyDocument
+                        documentId={familyDoc}
+                        key={familyDoc}
+                        onEdit={onDocumentFormEdit}
+                      />
                     ))}
                   </Box>
                   <Box>
-                    <Button onClick={onOpen}>Add new Document</Button>
+                    <Button onClick={handleAddNewDocumentClick}>
+                      Add new Document
+                    </Button>
                   </Box>
                 </>
               )}
@@ -621,6 +643,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 <DocumentForm
                   familyId={loadedFamily?.import_id}
                   onSuccess={onDocumentFormSuccess}
+                  document={editingDocument}
                 />
               </DrawerBody>
             </DrawerContent>
