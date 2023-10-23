@@ -11,6 +11,7 @@ import {
 } from '@chakra-ui/react'
 import { ApiError } from './feedback/ApiError'
 import { IDocument } from '@/interfaces'
+import { DeleteButton } from './buttons/Delete'
 
 type TProps = {
   documentId: string
@@ -56,11 +57,13 @@ export const FamilyDocument = ({ documentId, onEdit, onDelete }: TProps) => {
       {(!!onEdit || !!onDelete) && (
         <CardFooter>
           <Stack direction="row" spacing={4}>
-            {!!onEdit && <Button onClick={handleEditClick}>Edit</Button>}
+            {!!onEdit && <Button size='sm' onClick={handleEditClick}>Edit</Button>}
             {!!onDelete && (
-              <Button onClick={handleDeleteClick} colorScheme="red">
-                Delete
-              </Button>
+              <DeleteButton
+                entityName="document"
+                entityTitle={document?.title || ''}
+                callback={handleDeleteClick}
+              />
             )}
           </Stack>
         </CardFooter>

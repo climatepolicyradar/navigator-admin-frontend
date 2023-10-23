@@ -14,6 +14,7 @@ import {
   IDocument,
 } from '@/interfaces'
 import { createFamily, updateFamily } from '@/api/Families'
+import { deleteDocument } from '@/api/Documents'
 import useConfig from '@/hooks/useConfig'
 
 import {
@@ -207,10 +208,34 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     else setFamilyDocuments([...familyDocuments, documentId])
   }
 
-  const onDocumentDeleteClick = (documentId: string) => {
-    console.log('onDocumentDeleteClick', documentId)
-    // confirm + delete document
-    // reload family
+  const onDocumentDeleteClick = async (documentId: string) => {
+    toast({
+      title: 'Document deletion in progress',
+      status: 'info',
+      position: 'top',
+    })
+    await deleteDocument(documentId)
+      .then(() => {
+        toast({
+          title: 'Document has been successful deleted',
+          status: 'success',
+          position: 'top',
+        })
+        const index = familyDocuments.indexOf(documentId)
+        if (index > -1) {
+          const newDocs = [...familyDocuments]
+          newDocs.splice(index, 1)
+          setFamilyDocuments(newDocs)
+        }
+      })
+      .catch((error: IError) => {
+        toast({
+          title: 'Document has not been deleted',
+          description: error.message,
+          status: 'error',
+          position: 'top',
+        })
+      })
   }
 
   const onDocumentFormEdit = (document: IDocument) => {

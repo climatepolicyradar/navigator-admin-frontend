@@ -60,14 +60,14 @@ export default function DocumentList() {
     setDocumentError(null)
 
     toast({
-      title: 'Collection deletion in progress',
+      title: 'Document deletion in progress',
       status: 'info',
       position: 'top',
     })
     await deleteDocument(id)
       .then(() => {
         toast({
-          title: 'Collection has been successful deleted',
+          title: 'Document has been successful deleted',
           status: 'success',
           position: 'top',
         })
@@ -77,7 +77,7 @@ export default function DocumentList() {
         setDocumentError(id)
         setFormError(error)
         toast({
-          title: 'Collection has not been deleted',
+          title: 'Document has not been deleted',
           description: error.message,
           status: 'error',
           position: 'top',
