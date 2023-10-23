@@ -17,19 +17,9 @@ export const BreadCrumbs = () => {
     <Breadcrumb fontSize="sm">
       <BreadcrumbItem>
         <BreadcrumbLink to="/" fontWeight="bold" as={Link}>
-          Climate Policy Radar
+          Climate Policy Radar Admin
         </BreadcrumbLink>
       </BreadcrumbItem>
-      <BreadcrumbItem>
-        <BreadcrumbLink to="/families" fontWeight="bold" as={Link}>
-          Families
-        </BreadcrumbLink>
-      </BreadcrumbItem>
-      {currentPage && (
-        <BreadcrumbItem isCurrentPage>
-          <BreadcrumbLink>{currentPage}</BreadcrumbLink>
-        </BreadcrumbItem>
-      )}
     </Breadcrumb>
   )
 }
