@@ -16,6 +16,7 @@ import {
 import { Link as RouterLink, useLocation } from 'react-router-dom'
 import { HamburgerIcon } from '@chakra-ui/icons'
 import {
+  GoHome,
   GoRepo,
   GoProjectRoadmap,
   GoVersions,
@@ -77,6 +78,13 @@ export function SideMenu() {
           <DrawerBody>
             <Stack divider={<StackDivider />} spacing="4">
               <nav onClick={onClose}>
+                <IconLink
+                  icon={<Icon as={GoHome} mr="2" />}
+                  to="/"
+                  current={isCurrentPage('')}
+                >
+                  Dashboard
+                </IconLink>
                 <IconLink
                   icon={<Icon as={GoRepo} mr="2" />}
                   to="/families"
