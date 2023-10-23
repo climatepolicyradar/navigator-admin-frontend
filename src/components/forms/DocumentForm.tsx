@@ -103,7 +103,7 @@ export const DocumentForm = ({
           status: 'success',
           position: 'top',
         })
-        onSuccess && onSuccess(data.response.import_id)
+        onSuccess && onSuccess(data.response)
       })
       .catch((error: IError) => {
         setFormError(error)

@@ -111,6 +111,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   const [editingDocument, setEditingDocument] = useState<
     IDocument | undefined
   >()
+  const [familyDocuments, setFamilyDocuments] = useState<string[]>([])
 
   const watchOrganisation = watch('organisation')
 
@@ -199,8 +200,16 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   const onSubmit: SubmitHandler<IFamilyForm> = (data) =>
     handleFormSubmission(data)
 
-  const onDocumentFormSuccess = () => {
+  const onDocumentFormSuccess = (documentId: string) => {
     onClose()
+    if (familyDocuments.includes(documentId))
+      setFamilyDocuments([...familyDocuments])
+    else setFamilyDocuments([...familyDocuments, documentId])
+  }
+
+  const onDocumentDeleteClick = (documentId: string) => {
+    console.log('onDocumentDeleteClick', documentId)
+    // confirm + delete document
     // reload family
   }
 
@@ -214,6 +223,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
 
   useEffect(() => {
     if (loadedFamily) {
+      setFamilyDocuments(loadedFamily.documents)
       // set the form values to that of the loaded family
       reset({
         title: loadedFamily.title,
@@ -601,14 +611,15 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                   documents
                 </Text>
               )}
-              {!!loadedFamily && (
+              {familyDocuments.length && (
                 <>
                   <Flex direction="column" gap={4}>
-                    {loadedFamily.documents.map((familyDoc) => (
+                    {familyDocuments.map((familyDoc) => (
                       <FamilyDocument
                         documentId={familyDoc}
                         key={familyDoc}
                         onEdit={onDocumentFormEdit}
+                        onDelete={onDocumentDeleteClick}
                       />
                     ))}
                   </Flex>

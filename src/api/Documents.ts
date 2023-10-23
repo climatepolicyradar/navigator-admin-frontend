@@ -47,7 +47,7 @@ export async function getDocument(id: string) {
 export async function createDocument(data: IDocumentFormPost) {
   setToken(API)
 
-  const response = await API.post<IDocument>('/v1/documents', data)
+  const response = await API.post<string>('/v1/documents', data)
     .then((response) => {
       return response.data
     })

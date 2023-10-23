@@ -47,7 +47,7 @@ export const FamilyDocument = ({ documentId, onEdit, onDelete }: TProps) => {
     <Card direction="row">
       <CardBody>
         <Text mb="2">{document?.title}</Text>
-        <HStack divider={<Text>·</Text>} spacing={4}>
+        <HStack divider={<Text>·</Text>} gap={4}>
           {document?.role && <Text>Role: {document.role}</Text>}
           {document?.type && <Text>Type: {document.type}</Text>}
           {document?.variant_name && (
