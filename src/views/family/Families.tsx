@@ -31,7 +31,7 @@ export default function Families() {
         <Box>
           <Heading as={'h1'}>Families</Heading>
         </Box>
-        <Box>
+        <Box flex="1">
           <Form id="search-form" role="search">
             <HStack spacing="0">
               <Input
@@ -42,6 +42,7 @@ export default function Families() {
                 name="q"
                 defaultValue={searchParams.get('q') ?? ''}
                 roundedRight={0}
+                maxW="600px"
               />
               <IconButton
                 type="submit"
