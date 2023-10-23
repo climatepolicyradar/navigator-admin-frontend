@@ -1,6 +1,7 @@
 config:
   admin_frontend:api_url:
-    secure: AAABAGqJP87nIc4JQx4exmHb9B8CwoSEsh7fIE91dGHCBpmjwmYpUlAKSu6QkoypD27IPR1Re/Qcjy4gtrq0SfEGKZFrxY3tSMFY1qw=
+    secure: AAABAD6VuFXJBe8uDJEnuAnNjgpF5m00VR8RFHipkGLhjm7eq6tMi572yvMF0SIWwP97Kqo3Y22D/CUL7syGt4oX1iycUG07gKUxBQ==
+  admin_frontend:api_version: v1
   admin_frontend:apprunner_frontend_max_concurrency: "50"
   admin_frontend:apprunner_frontend_max_instance_count: "10"
   admin_frontend:apprunner_frontend_min_instance_count: "1"
