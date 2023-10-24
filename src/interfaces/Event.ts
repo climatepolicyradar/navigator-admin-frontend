@@ -5,11 +5,13 @@ export interface IEvent {
   event_type_value: string
   event_status: string
   family_import_id: string
-  family_document_import_id: string | null
+  family_document_import_id?: string | null
 }
 
 export interface IEventFormPost {
   event_title: string
-  date: string
+  date: Date
   event_type_value: string
+  family_import_id: string
+  family_document_import_id?: string | null
 }

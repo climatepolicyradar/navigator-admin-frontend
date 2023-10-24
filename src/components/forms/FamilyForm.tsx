@@ -57,7 +57,7 @@ import { FamilyDocument } from '../family/FamilyDocument'
 import { ApiError } from '../feedback/ApiError'
 import { FamilyEvent } from '../family/FamilyEvent'
 import { deleteEvent } from '@/api/Events'
-import { formatDate, formatDateISO } from '@/utils/formatDate'
+import { EventForm } from './EventForm'
 
 type TMultiSelect = {
   value: string
@@ -116,9 +116,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     resolver: yupResolver(familySchema),
   })
   const [editingEntity, setEditingEntity] = useState<TChildEntity | undefined>()
-  const [editingEvent, setEditingEvent] = useState<IEvent | undefined>(
-    undefined,
-  )
+  const [editingEvent, setEditingEvent] = useState<IEvent | undefined>()
   const [editingDocument, setEditingDocument] = useState<
     IDocument | undefined
   >()
@@ -211,7 +209,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   const onAddNewEntityClick = (entityType: TChildEntity) => {
     setEditingEntity(entityType)
     if (entityType === 'document') setEditingDocument(undefined)
-    else if (entityType === 'event') setEditingEvent(undefined)
     onOpen()
   }
 
@@ -221,7 +218,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   ) => {
     setEditingEntity(entityType)
     if (entityType === 'document') setEditingDocument(entity as IDocument)
-    else if (entityType === 'event') setEditingEvent(entity as IEvent)
+    if (entityType === 'event') setEditingEvent(entity as IEvent)
     onOpen()
   }
 
@@ -731,7 +728,9 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                       <FamilyEvent
                         eventId={familyEvent}
                         key={familyEvent}
-                        onEditClick={(id) => onEditEntityClick('event', id)}
+                        onEditClick={(event) =>
+                          onEditEntityClick('event', event)
+                        }
                         onDeleteClick={onEventDeleteClick}
                       />
                     ))}
@@ -774,15 +773,18 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 </DrawerBody>
               </DrawerContent>
             )}
-            {editingEntity === 'event' && (
+            {editingEntity === 'event' && loadedFamily?.import_id && (
               <DrawerContent>
                 <DrawerHeader borderBottomWidth="1px">
-                  {editingEvent
-                    ? `Edit: ${editingEvent.event_title} on ${formatDate(
-                        editingEvent.date,
-                      )}`
-                    : 'Add new Event'}
+                  Add new Event
                 </DrawerHeader>
+                <DrawerBody>
+                  <EventForm
+                    familyId={loadedFamily.import_id}
+                    onSuccess={onEventFormSuccess}
+                    event={editingEvent}
+                  />
+                </DrawerBody>
               </DrawerContent>
             )}
           </Drawer>

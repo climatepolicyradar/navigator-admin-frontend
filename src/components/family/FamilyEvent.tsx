@@ -3,20 +3,20 @@ import {
   Card,
   CardBody,
   CardFooter,
-  Button,
   Text,
   Stack,
   HStack,
   Spinner,
+  Button,
 } from '@chakra-ui/react'
 import { ApiError } from '../feedback/ApiError'
-import { IEvent } from '@/interfaces'
 import { DeleteButton } from '../buttons/Delete'
 import { formatDate } from '@/utils/formatDate'
+import { IEvent } from '@/interfaces'
 
 type TProps = {
   eventId: string
-  onEditClick?: (Event: IEvent) => void
+  onEditClick?: (event: IEvent) => void
   onDeleteClick?: (eventId: string) => void
 }
 
