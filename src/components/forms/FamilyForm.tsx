@@ -12,6 +12,7 @@ import {
   ICCLWMetadata,
   TFamily,
   IDocument,
+  IEvent,
 } from '@/interfaces'
 import { createFamily, updateFamily } from '@/api/Families'
 import { deleteDocument } from '@/api/Documents'
@@ -54,6 +55,9 @@ import { familySchema } from '@/schemas/familySchema'
 import { DocumentForm } from './DocumentForm'
 import { FamilyDocument } from '../family/FamilyDocument'
 import { ApiError } from '../feedback/ApiError'
+import { FamilyEvent } from '../family/FamilyEvent'
+import { deleteEvent } from '@/api/Events'
+import { formatDate, formatDateISO } from '@/utils/formatDate'
 
 type TMultiSelect = {
   value: string
@@ -76,6 +80,8 @@ interface IFamilyForm {
   framework?: TMultiSelect[]
   instrument?: TMultiSelect[]
 }
+
+type TChildEntity = 'document' | 'event'
 
 const chakraStyles: ChakraStylesConfig = {
   container: (provided) => ({
@@ -109,14 +115,19 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   } = useForm({
     resolver: yupResolver(familySchema),
   })
+  const [editingEntity, setEditingEntity] = useState<TChildEntity | undefined>()
+  const [editingEvent, setEditingEvent] = useState<IEvent | undefined>(
+    undefined,
+  )
   const [editingDocument, setEditingDocument] = useState<
     IDocument | undefined
   >()
   const [familyDocuments, setFamilyDocuments] = useState<string[]>([])
+  const [familyEvents, setFamilyEvents] = useState<string[]>([])
 
   const watchOrganisation = watch('organisation')
 
-  // Handlers
+  // Family handlers
   const handleFormSubmission = async (family: IFamilyForm) => {
     setFormError(null)
 
@@ -193,14 +204,28 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       })
   } // end handleFormSubmission
 
-  const handleAddNewDocumentClick = () => {
-    setEditingDocument(undefined)
-    onOpen()
-  }
-
   const onSubmit: SubmitHandler<IFamilyForm> = (data) =>
     handleFormSubmission(data)
 
+  // Child entity handlers
+  const onAddNewEntityClick = (entityType: TChildEntity) => {
+    setEditingEntity(entityType)
+    if (entityType === 'document') setEditingDocument(undefined)
+    else if (entityType === 'event') setEditingEvent(undefined)
+    onOpen()
+  }
+
+  const onEditEntityClick = (
+    entityType: TChildEntity,
+    entity: IEvent | IDocument,
+  ) => {
+    setEditingEntity(entityType)
+    if (entityType === 'document') setEditingDocument(entity as IDocument)
+    else if (entityType === 'event') setEditingEvent(entity as IEvent)
+    onOpen()
+  }
+
+  // Document handlers
   const onDocumentFormSuccess = (documentId: string) => {
     onClose()
     if (familyDocuments.includes(documentId))
@@ -238,9 +263,41 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       })
   }
 
-  const onDocumentFormEdit = (document: IDocument) => {
-    setEditingDocument(document)
-    onOpen()
+  // Event handlers
+  const onEventFormSuccess = (eventId: string) => {
+    onClose()
+    if (familyEvents.includes(eventId)) setFamilyEvents([...familyEvents])
+    else setFamilyEvents([...familyEvents, eventId])
+  }
+
+  const onEventDeleteClick = async (eventId: string) => {
+    toast({
+      title: 'Event deletion in progress',
+      status: 'info',
+      position: 'top',
+    })
+    await deleteEvent(eventId)
+      .then(() => {
+        toast({
+          title: 'Document has been successful deleted',
+          status: 'success',
+          position: 'top',
+        })
+        const index = familyEvents.indexOf(eventId)
+        if (index > -1) {
+          const newEvents = [...familyEvents]
+          newEvents.splice(index, 1)
+          setFamilyEvents(newEvents)
+        }
+      })
+      .catch((error: IError) => {
+        toast({
+          title: 'Event has not been deleted',
+          description: error.message,
+          status: 'error',
+          position: 'top',
+        })
+      })
   }
 
   const canLoadForm =
@@ -249,6 +306,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   useEffect(() => {
     if (loadedFamily) {
       setFamilyDocuments(loadedFamily.documents)
+      setFamilyEvents(loadedFamily.events)
       // set the form values to that of the loaded family
       reset({
         title: loadedFamily.title,
@@ -643,14 +701,44 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                       <FamilyDocument
                         documentId={familyDoc}
                         key={familyDoc}
-                        onEdit={onDocumentFormEdit}
-                        onDelete={onDocumentDeleteClick}
+                        onEditClick={(id) => onEditEntityClick('document', id)}
+                        onDeleteClick={onDocumentDeleteClick}
                       />
                     ))}
                   </Flex>
                   <Box>
-                    <Button onClick={handleAddNewDocumentClick}>
+                    <Button onClick={() => onAddNewEntityClick('document')}>
                       Add new Document
+                    </Button>
+                  </Box>
+                </>
+              )}
+              <Box position="relative" padding="10">
+                <Divider />
+                <AbsoluteCenter bg="gray.50" px="4">
+                  Events
+                </AbsoluteCenter>
+              </Box>
+              {!loadedFamily && (
+                <Text>
+                  Please create the family first before attempting to add events
+                </Text>
+              )}
+              {familyEvents.length && (
+                <>
+                  <Flex direction="column" gap={4}>
+                    {familyEvents.map((familyEvent) => (
+                      <FamilyEvent
+                        eventId={familyEvent}
+                        key={familyEvent}
+                        onEditClick={(id) => onEditEntityClick('event', id)}
+                        onDeleteClick={onEventDeleteClick}
+                      />
+                    ))}
+                  </Flex>
+                  <Box>
+                    <Button onClick={() => onAddNewEntityClick('event')}>
+                      Add new Event
                     </Button>
                   </Box>
                 </>
@@ -670,18 +758,33 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
           </form>
           <Drawer placement="right" onClose={onClose} isOpen={isOpen} size="lg">
             <DrawerOverlay />
-            <DrawerContent>
-              <DrawerHeader borderBottomWidth="1px">
-                Add new Document
-              </DrawerHeader>
-              <DrawerBody>
-                <DocumentForm
-                  familyId={loadedFamily?.import_id}
-                  onSuccess={onDocumentFormSuccess}
-                  document={editingDocument}
-                />
-              </DrawerBody>
-            </DrawerContent>
+            {editingEntity === 'document' && (
+              <DrawerContent>
+                <DrawerHeader borderBottomWidth="1px">
+                  {editingDocument
+                    ? `Edit: ${editingDocument.title}`
+                    : 'Add new Document'}
+                </DrawerHeader>
+                <DrawerBody>
+                  <DocumentForm
+                    familyId={loadedFamily?.import_id}
+                    onSuccess={onDocumentFormSuccess}
+                    document={editingDocument}
+                  />
+                </DrawerBody>
+              </DrawerContent>
+            )}
+            {editingEntity === 'event' && (
+              <DrawerContent>
+                <DrawerHeader borderBottomWidth="1px">
+                  {editingEvent
+                    ? `Edit: ${editingEvent.event_title} on ${formatDate(
+                        editingEvent.date,
+                      )}`
+                    : 'Add new Event'}
+                </DrawerHeader>
+              </DrawerContent>
+            )}
           </Drawer>
         </>
       )}
