@@ -9,6 +9,7 @@ export const documentSchema = yup
     title: yup.string().required(),
     source_url: yup.string().required(),
     user_language_name: yup.string().required(),
+    // TODO: update this if we use the react-chakra-select
     // user_language_name: yup
     //   .object<{ label: string; value: string }>({
     //     label: yup.string().required(),

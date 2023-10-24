@@ -136,7 +136,6 @@ export default function DocumentList() {
             <Table size="sm" variant={'striped'}>
               <Thead>
                 <Tr>
-                  {/* <Th onClick={() => handleHeaderClick('import_id')}>ID</Th> */}
                   <Th
                     onClick={() => handleHeaderClick('title')}
                     cursor="pointer"
@@ -165,7 +164,6 @@ export default function DocumentList() {
                         : 'inherit'
                     }
                   >
-                    {/* <Td>{document.import_id}</Td> */}
                     <Td>{document.title}</Td>
                     <Td>
                       <Badge

@@ -23,5 +23,4 @@ export interface IDocumentFormPost {
   title: string
   source_url: string
   user_language_name: string
-  // languages: list[]
 }

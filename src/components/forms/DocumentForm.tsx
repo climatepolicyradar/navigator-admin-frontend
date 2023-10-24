@@ -23,6 +23,7 @@ import useConfig from '@/hooks/useConfig'
 import { FormLoader } from '../feedback/FormLoader'
 import { ApiError } from '../feedback/ApiError'
 
+// TODO: update this if we use the react-chakra-select
 // import { generateLanguageOptions } from '@/utils/generateOptions'
 // import { Select as CRSelect, ChakraStylesConfig } from 'chakra-react-select'
 
@@ -61,6 +62,7 @@ export const DocumentForm = ({
     resolver: yupResolver(documentSchema),
   })
 
+  // TODO: update this if we use the react-chakra-select
   // const languages = useMemo(() => {
   //   return generateLanguageOptions(config?.languages || {})
   // }, [config])
@@ -68,6 +70,7 @@ export const DocumentForm = ({
   const handleFormSubmission = async (documentData: IDocumentFormPost) => {
     setFormError(null)
 
+    // TODO: update this if we use the react-chakra-select
     // const documentDataWithLanguage: IDocumentFormPost = {
     //   ...documentData,
     //   user_language_name: documentData.user_language_name.value,
@@ -259,7 +262,10 @@ export const DocumentForm = ({
               )
             }}
           />
-          {/* <Controller
+          
+          {/* 
+          // TODO: update this if we use the react-chakra-select
+          <Controller
             control={control}
             name="user_language_name"
             render={({ field }) => {
