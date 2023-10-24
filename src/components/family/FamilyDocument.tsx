@@ -15,19 +15,23 @@ import { DeleteButton } from '../buttons/Delete'
 
 type TProps = {
   documentId: string
-  onEdit?: (document: IDocument) => void
-  onDelete?: (documentId: string) => void
+  onEditClick?: (document: IDocument) => void
+  onDeleteClick?: (documentId: string) => void
 }
 
-export const FamilyDocument = ({ documentId, onEdit, onDelete }: TProps) => {
+export const FamilyDocument = ({
+  documentId,
+  onEditClick,
+  onDeleteClick,
+}: TProps) => {
   const { document, loading, error } = useDocument(documentId)
 
   const handleEditClick = () => {
-    onEdit && document ? onEdit(document) : null
+    onEditClick && document ? onEditClick(document) : null
   }
 
   const handleDeleteClick = () => {
-    onDelete && onDelete(documentId)
+    onDeleteClick && onDeleteClick(documentId)
   }
 
   if (loading) {
@@ -54,11 +58,15 @@ export const FamilyDocument = ({ documentId, onEdit, onDelete }: TProps) => {
           )}
         </HStack>
       </CardBody>
-      {(!!onEdit || !!onDelete) && (
+      {(!!onEditClick || !!onDeleteClick) && (
         <CardFooter>
           <Stack direction="row" spacing={4}>
-            {!!onEdit && <Button size='sm' onClick={handleEditClick}>Edit</Button>}
-            {!!onDelete && (
+            {!!onEditClick && (
+              <Button size="sm" onClick={handleEditClick}>
+                Edit
+              </Button>
+            )}
+            {!!onDeleteClick && (
               <DeleteButton
                 entityName="document"
                 entityTitle={document?.title || ''}
