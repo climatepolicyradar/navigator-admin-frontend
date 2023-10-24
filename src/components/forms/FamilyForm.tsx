@@ -52,7 +52,7 @@ import { getCountries } from '@/utils/extractNestedGeographyData'
 import { generateOptions } from '@/utils/generateOptions'
 import { familySchema } from '@/schemas/familySchema'
 import { DocumentForm } from './DocumentForm'
-import { FamilyDocument } from '../FamilyDocument'
+import { FamilyDocument } from '../family/FamilyDocument'
 import { ApiError } from '../feedback/ApiError'
 
 type TMultiSelect = {

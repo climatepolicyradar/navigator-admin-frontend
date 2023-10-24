@@ -9,9 +9,9 @@ import {
   HStack,
   Spinner,
 } from '@chakra-ui/react'
-import { ApiError } from './feedback/ApiError'
+import { ApiError } from '../feedback/ApiError'
 import { IDocument } from '@/interfaces'
-import { DeleteButton } from './buttons/Delete'
+import { DeleteButton } from '../buttons/Delete'
 
 type TProps = {
   documentId: string
