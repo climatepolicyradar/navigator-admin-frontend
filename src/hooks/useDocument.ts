@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
 
-import { IError, ICollection } from '@/interfaces'
-import { getCollection } from '@/api/Collections'
+import { IError, IDocument } from '@/interfaces'
+import { getDocument } from '@/api/Documents'
 
-const useCollection = (id?: string) => {
-  const [collection, setCollection] = useState<ICollection | null>(null)
+const useDocument = (id?: string) => {
+  const [document, setDocument] = useState<IDocument | null>(null)
   const [error, setError] = useState<IError | null | undefined>()
   const [loading, setLoading] = useState<boolean>(false)
 
@@ -13,9 +13,9 @@ const useCollection = (id?: string) => {
     if (id) {
       setLoading(true)
 
-      getCollection(id)
+      getDocument(id)
         .then(({ response }) => {
-          if (!ignore) setCollection(response.data)
+          if (!ignore) setDocument(response.data)
         })
         .catch((error: IError) => {
           setError(error)
@@ -30,7 +30,7 @@ const useCollection = (id?: string) => {
     }
   }, [id])
 
-  return { collection, error, loading }
+  return { document, error, loading }
 }
 
-export default useCollection
+export default useDocument

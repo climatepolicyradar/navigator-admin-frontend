@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const API = axios.create({
-  baseURL: 'https://m2bv8pdzts.eu-west-1.awsapprunner.com/api/',
+  baseURL: 'https://admin.dev.climatepolicyradar.org/api/',
   headers: {
     'Content-Type': 'application/json',
   },

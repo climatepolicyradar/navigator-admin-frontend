@@ -21,9 +21,10 @@ import {
 } from '@chakra-ui/react'
 import { GoPencil } from 'react-icons/go'
 
-import { DeleteButton } from './buttons/Delete'
+import { DeleteButton } from '../buttons/Delete'
 import { sortBy } from '@/utils/sortBy'
 import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from '@chakra-ui/icons'
+import { getStatusColour } from '@/utils/getStatusColour'
 
 interface ILoaderProps {
   request: {
@@ -181,7 +182,7 @@ export default function FamilyList() {
                 <Td>{formatDate(family.published_date)}</Td>
                 <Td>{formatDate(family.last_updated_date)}</Td>
                 <Td>
-                  <Badge colorScheme="green" size="sm">
+                  <Badge colorScheme={getStatusColour(family.status)} size="sm">
                     {family.status}
                   </Badge>
                 </Td>

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { deleteCollection } from '@/api/Collections'
-import { ICollection, IError } from '@/interfaces'
+import { deleteDocument } from '@/api/Documents'
+import { IDocument, IError } from '@/interfaces'
 import {
   Table,
   Thead,
@@ -17,32 +17,34 @@ import {
   Tooltip,
   useToast,
   SkeletonText,
+  Badge,
 } from '@chakra-ui/react'
 import { GoPencil } from 'react-icons/go'
 
-import { DeleteButton } from './buttons/Delete'
-import useCollections from '@/hooks/useCollections'
-import { Loader } from './Loader'
+import { DeleteButton } from '../buttons/Delete'
+import useDocuments from '@/hooks/useDocuments'
+import { Loader } from '../Loader'
 import { sortBy } from '@/utils/sortBy'
 import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from '@chakra-ui/icons'
+import { getStatusColour } from '@/utils/getStatusColour'
 
-export default function CollectionList() {
+export default function DocumentList() {
   const [sortControls, setSortControls] = useState<{
-    key: keyof ICollection
+    key: keyof IDocument
     reverse: boolean
   }>({ key: 'import_id', reverse: false })
-  const [filteredItems, setFilteredItems] = useState<ICollection[]>([])
+  const [filteredItems, setFilteredItems] = useState<IDocument[]>([])
   const [searchParams] = useSearchParams()
-  const { collections, loading, error, reload } = useCollections(
+  const { documents, loading, error, reload } = useDocuments(
     searchParams.get('q') ?? '',
   )
   const toast = useToast()
-  const [collectionError, setCollectionError] = useState<
+  const [documentError, setDocumentError] = useState<
     string | null | undefined
   >()
   const [formError, setFormError] = useState<IError | null | undefined>()
 
-  const renderSortIcon = (key: keyof ICollection) => {
+  const renderSortIcon = (key: keyof IDocument) => {
     if (sortControls.key !== key) {
       return <ArrowUpDownIcon />
     }
@@ -55,27 +57,27 @@ export default function CollectionList() {
 
   const handleDeleteClick = async (id: string) => {
     setFormError(null)
-    setCollectionError(null)
+    setDocumentError(null)
 
     toast({
-      title: 'Collection deletion in progress',
+      title: 'Document deletion in progress',
       status: 'info',
       position: 'top',
     })
-    await deleteCollection(id)
+    await deleteDocument(id)
       .then(() => {
         toast({
-          title: 'Collection has been successful deleted',
+          title: 'Document has been successful deleted',
           status: 'success',
           position: 'top',
         })
         reload()
       })
       .catch((error: IError) => {
-        setCollectionError(id)
+        setDocumentError(id)
         setFormError(error)
         toast({
-          title: 'Collection has not been deleted',
+          title: 'Document has not been deleted',
           description: error.message,
           status: 'error',
           position: 'top',
@@ -83,7 +85,7 @@ export default function CollectionList() {
       })
   }
 
-  const handleHeaderClick = (key: keyof ICollection) => {
+  const handleHeaderClick = (key: keyof IDocument) => {
     if (sortControls.key === key) {
       setSortControls({ key, reverse: !sortControls.reverse })
     } else {
@@ -92,15 +94,15 @@ export default function CollectionList() {
   }
 
   useEffect(() => {
-    const sortedItems = collections
+    const sortedItems = documents
       .slice()
       .sort(sortBy(sortControls.key, sortControls.reverse))
     setFilteredItems(sortedItems)
-  }, [sortControls, collections])
+  }, [sortControls, documents])
 
   useEffect(() => {
-    setFilteredItems(collections)
-  }, [collections])
+    setFilteredItems(documents)
+  }, [documents])
 
   return (
     <>
@@ -134,40 +136,47 @@ export default function CollectionList() {
             <Table size="sm" variant={'striped'}>
               <Thead>
                 <Tr>
-                  {/* <Th onClick={() => handleHeaderClick('import_id')}>ID</Th> */}
-                  <Th onClick={() => handleHeaderClick('title')} cursor='pointer'>
+                  <Th
+                    onClick={() => handleHeaderClick('title')}
+                    cursor="pointer"
+                  >
                     Title {renderSortIcon('title')}
                   </Th>
-                  <Th onClick={() => handleHeaderClick('organisation')} cursor='pointer'>
-                    Organisation {renderSortIcon('organisation')}
+                  <Th
+                    onClick={() => handleHeaderClick('status')}
+                    cursor="pointer"
+                  >
+                    Status {renderSortIcon('status')}
                   </Th>
-                  <Th>Families</Th>
                   <Th></Th>
                 </Tr>
               </Thead>
               <Tbody>
-                {filteredItems.map((collection) => (
+                {filteredItems.map((document) => (
                   <Tr
-                    key={collection.import_id}
+                    key={document.import_id}
                     borderLeft={
-                      collection.import_id === collectionError
-                        ? '2px'
-                        : 'inherit'
+                      document.import_id === documentError ? '2px' : 'inherit'
                     }
                     borderColor={
-                      collection.import_id === collectionError
+                      document.import_id === documentError
                         ? 'red.500'
                         : 'inherit'
                     }
                   >
-                    {/* <Td>{collection.import_id}</Td> */}
-                    <Td>{collection.title}</Td>
-                    <Td>{collection.organisation}</Td>
-                    <Td>{collection.families.length}</Td>
+                    <Td>{document.title}</Td>
+                    <Td>
+                      <Badge
+                        colorScheme={getStatusColour(document.status)}
+                        size="sm"
+                      >
+                        {document.status}
+                      </Badge>
+                    </Td>
                     <Td>
                       <HStack gap={2}>
                         <Tooltip label="Edit">
-                          <Link to={`/collection/${collection.import_id}/edit`}>
+                          <Link to={`/document/${document.import_id}/edit`}>
                             <IconButton
                               aria-label="Edit document"
                               icon={<GoPencil />}
@@ -178,11 +187,9 @@ export default function CollectionList() {
                           </Link>
                         </Tooltip>
                         <DeleteButton
-                          entityName="Collection"
-                          entityTitle={collection.title}
-                          callback={() =>
-                            handleDeleteClick(collection.import_id)
-                          }
+                          entityName="document"
+                          entityTitle={document.title}
+                          callback={() => handleDeleteClick(document.import_id)}
                         />
                       </HStack>
                     </Td>

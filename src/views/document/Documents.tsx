@@ -1,35 +1,16 @@
-import {
-  Box,
-  Button,
-  ButtonGroup,
-  Flex,
-  HStack,
-  Heading,
-  IconButton,
-  Input,
-  SkeletonText,
-  Spacer,
-} from '@chakra-ui/react'
-import {
-  Link,
-  Form,
-  Outlet,
-  useNavigation,
-  useSearchParams,
-} from 'react-router-dom'
+import { Box, Flex, HStack, Heading, IconButton, Input } from '@chakra-ui/react'
+import { Form, Outlet, useSearchParams } from 'react-router-dom'
 
-import { Loader } from '@/components/Loader'
 import { SearchIcon } from '@chakra-ui/icons'
 
-export default function Families() {
-  const navigation = useNavigation()
+export default function Documents() {
   const [searchParams] = useSearchParams()
 
   return (
     <Flex gap={4} height={'100%'} flexDirection={'column'}>
       <Flex alignItems="center" gap="4">
         <Box>
-          <Heading as={'h1'}>Families</Heading>
+          <Heading as={'h1'}>Documents</Heading>
         </Box>
         <Box flex="1">
           <Form id="search-form" role="search">
@@ -53,21 +34,8 @@ export default function Families() {
             </HStack>
           </Form>
         </Box>
-        <Spacer />
-        <ButtonGroup>
-          <Button as={Link} colorScheme="blue" to="/family/new">
-            Add new Family
-          </Button>
-        </ButtonGroup>
       </Flex>
-      {navigation.state === 'loading' ? (
-        <Box padding="4" bg="white">
-          <Loader />
-          <SkeletonText mt="4" noOfLines={3} spacing="4" skeletonHeight="2" />
-        </Box>
-      ) : (
-        <Outlet />
-      )}
+      <Outlet />
     </Flex>
   )
 }
