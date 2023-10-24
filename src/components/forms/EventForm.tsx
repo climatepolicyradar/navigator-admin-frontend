@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { IEvent, IEventFormPost, IError } from '@/interfaces'
+import { IEvent, IEventFormPost, IError, IEventFormPut } from '@/interfaces'
 import { eventSchema } from '@/schemas/eventSchema'
 import { createEvent, updateEvent } from '@/api/Events'
 
@@ -58,14 +58,13 @@ export const EventForm = ({
 
     const eventDateFormatted = new Date(event.date)
 
-    const eventPayload: IEventFormPost = {
-      family_import_id: familyId,
-      event_title: event.event_title,
-      date: eventDateFormatted,
-      event_type_value: event.event_type_value,
-    }
-
     if (loadedEvent) {
+      const eventPayload: IEventFormPut = {
+        event_title: event.event_title,
+        date: eventDateFormatted,
+        event_type_value: event.event_type_value,
+      }
+
       return await updateEvent(eventPayload, loadedEvent.import_id)
         .then(() => {
           toast.closeAll()
@@ -84,6 +83,13 @@ export const EventForm = ({
             position: 'top',
           })
         })
+    }
+
+    const eventPayload: IEventFormPost = {
+      family_import_id: familyId,
+      event_title: event.event_title,
+      date: eventDateFormatted,
+      event_type_value: event.event_type_value,
     }
 
     return await createEvent(eventPayload)

@@ -15,3 +15,9 @@ export interface IEventFormPost {
   family_import_id: string
   family_document_import_id?: string | null
 }
+
+export interface IEventFormPut {
+  event_title: string
+  date: Date
+  event_type_value: string
+}

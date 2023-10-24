@@ -2,7 +2,7 @@ import { AxiosError } from 'axios'
 
 import API from '@/api'
 import { setToken } from '@/api/Auth'
-import { IEvent, IEventFormPost, IError } from '@/interfaces'
+import { IEvent, IEventFormPost, IError, IEventFormPut } from '@/interfaces'
 
 export async function getEvents(query: string | undefined | null) {
   setToken(API)
@@ -63,7 +63,7 @@ export async function createEvent(data: IEventFormPost) {
   return { response }
 }
 
-export async function updateEvent(data: IEventFormPost, id: string) {
+export async function updateEvent(data: IEventFormPut, id: string) {
   setToken(API)
 
   const response = await API.put<IEvent>('/v1/events/' + id, data)
