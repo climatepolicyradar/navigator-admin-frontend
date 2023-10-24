@@ -209,6 +209,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   const onAddNewEntityClick = (entityType: TChildEntity) => {
     setEditingEntity(entityType)
     if (entityType === 'document') setEditingDocument(undefined)
+    if (entityType === 'event') setEditingEvent(undefined)
     onOpen()
   }
 
