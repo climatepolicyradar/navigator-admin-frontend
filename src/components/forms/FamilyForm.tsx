@@ -58,6 +58,7 @@ import { ApiError } from '../feedback/ApiError'
 import { FamilyEvent } from '../family/FamilyEvent'
 import { deleteEvent } from '@/api/Events'
 import { EventForm } from './EventForm'
+import { formatDate } from '@/utils/formatDate'
 
 type TMultiSelect = {
   value: string
@@ -774,10 +775,14 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 </DrawerBody>
               </DrawerContent>
             )}
-            {editingEntity === 'event' && loadedFamily?.import_id && (
+            {editingEntity === 'event' && loadedFamily && (
               <DrawerContent>
                 <DrawerHeader borderBottomWidth="1px">
-                  Add new Event
+                  {editingEvent
+                    ? `Edit: ${editingEvent.event_title}, on ${formatDate(
+                        editingEvent.date,
+                      )}`
+                    : 'Add new Event'}
                 </DrawerHeader>
                 <DrawerBody>
                   <EventForm
