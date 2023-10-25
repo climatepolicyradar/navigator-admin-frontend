@@ -759,7 +759,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
           </form>
           <Drawer placement="right" onClose={onClose} isOpen={isOpen} size="lg">
             <DrawerOverlay />
-            {editingEntity === 'document' && (
+            {editingEntity === 'document' && loadedFamily && (
               <DrawerContent>
                 <DrawerHeader borderBottomWidth="1px">
                   {editingDocument
@@ -768,7 +768,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 </DrawerHeader>
                 <DrawerBody>
                   <DocumentForm
-                    familyId={loadedFamily?.import_id}
+                    familyId={loadedFamily.import_id}
                     onSuccess={onDocumentFormSuccess}
                     document={editingDocument}
                   />
