@@ -190,8 +190,8 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
           status: 'success',
           position: 'top',
         })
-        navigate(`/family/${data.response.import_id}/edit`)
-      })
+        navigate(`/family/${data.response}/edit`)
+      })  
       .catch((error: IError) => {
         setFormError(error)
         toast({
@@ -694,23 +694,23 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 </Text>
               )}
               {familyDocuments.length && (
-                <>
-                  <Flex direction="column" gap={4}>
-                    {familyDocuments.map((familyDoc) => (
-                      <FamilyDocument
-                        documentId={familyDoc}
-                        key={familyDoc}
-                        onEditClick={(id) => onEditEntityClick('document', id)}
-                        onDeleteClick={onDocumentDeleteClick}
-                      />
-                    ))}
-                  </Flex>
-                  <Box>
-                    <Button onClick={() => onAddNewEntityClick('document')}>
-                      Add new Document
-                    </Button>
-                  </Box>
-                </>
+                <Flex direction="column" gap={4}>
+                  {familyDocuments.map((familyDoc) => (
+                    <FamilyDocument
+                      documentId={familyDoc}
+                      key={familyDoc}
+                      onEditClick={(id) => onEditEntityClick('document', id)}
+                      onDeleteClick={onDocumentDeleteClick}
+                    />
+                  ))}
+                </Flex>
+              )}
+              {loadedFamily && (
+                <Box>
+                  <Button onClick={() => onAddNewEntityClick('document')}>
+                    Add new Document
+                  </Button>
+                </Box>
               )}
               <Box position="relative" padding="10">
                 <Divider />
@@ -724,25 +724,23 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 </Text>
               )}
               {familyEvents.length && (
-                <>
-                  <Flex direction="column" gap={4}>
-                    {familyEvents.map((familyEvent) => (
-                      <FamilyEvent
-                        eventId={familyEvent}
-                        key={familyEvent}
-                        onEditClick={(event) =>
-                          onEditEntityClick('event', event)
-                        }
-                        onDeleteClick={onEventDeleteClick}
-                      />
-                    ))}
-                  </Flex>
-                  <Box>
-                    <Button onClick={() => onAddNewEntityClick('event')}>
-                      Add new Event
-                    </Button>
-                  </Box>
-                </>
+                <Flex direction="column" gap={4}>
+                  {familyEvents.map((familyEvent) => (
+                    <FamilyEvent
+                      eventId={familyEvent}
+                      key={familyEvent}
+                      onEditClick={(event) => onEditEntityClick('event', event)}
+                      onDeleteClick={onEventDeleteClick}
+                    />
+                  ))}
+                </Flex>
+              )}
+              {loadedFamily && (
+                <Box>
+                  <Button onClick={() => onAddNewEntityClick('event')}>
+                    Add new Event
+                  </Button>
+                </Box>
               )}
             </VStack>
 
