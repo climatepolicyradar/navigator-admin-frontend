@@ -66,13 +66,14 @@ export const EventForm = ({
       }
 
       return await updateEvent(eventPayload, loadedEvent.import_id)
-        .then(() => {
+        .then((data) => {
           toast.closeAll()
           toast({
             title: 'Event has been successfully updated',
             status: 'success',
             position: 'top',
           })
+          onSuccess && onSuccess(data.response.import_id)
         })
         .catch((error: IError) => {
           setFormError(error)
