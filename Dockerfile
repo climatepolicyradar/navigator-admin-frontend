@@ -1,5 +1,5 @@
 #
-# FIXME: This will do for now - but it does run Vite's hot reloader.
+# TODO: This will do for now - but it does run Vite's hot reloader.
 #
 # To fix it would probably be best to have a 2 stage docker file, this being
 # the first buld stage, then a second stage to build from an nginx container.
