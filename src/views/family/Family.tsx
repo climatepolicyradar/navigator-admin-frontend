@@ -1,5 +1,13 @@
-import { useParams, Link } from 'react-router-dom'
-import { Box, Heading, Text, Button, SkeletonText } from '@chakra-ui/react'
+import { useParams, Link as RouterLink } from 'react-router-dom'
+import {
+  Box,
+  Heading,
+  Text,
+  Button,
+  SkeletonText,
+  Link,
+} from '@chakra-ui/react'
+import { ArrowBackIcon } from '@chakra-ui/icons'
 import { FamilyForm } from '@/components/forms/FamilyForm'
 import useFamily from '@/hooks/useFamily'
 import { Loader } from '@/components/Loader'
@@ -17,6 +25,11 @@ export default function Family() {
 
   return (
     <>
+      <Box display="flex">
+        <Link as={RouterLink} to="/families" display="flex" alignItems="center">
+          <ArrowBackIcon mr="2" /> Back to families
+        </Link>
+      </Box>
       <Heading as={'h1'}>{pageTitle}</Heading>
       <Text>
         <Text as="span" color={'red.500'}>
@@ -31,7 +44,7 @@ export default function Family() {
             <Text fontSize="xs" color={'gray.500'}>
               {error.detail}
             </Text>
-            <Button as={Link} to={'/families'} colorScheme="blue" mt={4}>
+            <Button as={RouterLink} to={'/families'} colorScheme="blue" mt={4}>
               Back to families
             </Button>
           </>
