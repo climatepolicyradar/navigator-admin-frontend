@@ -1,5 +1,13 @@
-import { useParams, Link } from 'react-router-dom'
-import { Box, Heading, Text, Button, SkeletonText } from '@chakra-ui/react'
+import { useParams, Link as RouterLink } from 'react-router-dom'
+import {
+  Link,
+  Box,
+  Heading,
+  Text,
+  Button,
+  SkeletonText,
+} from '@chakra-ui/react'
+import { ArrowBackIcon } from '@chakra-ui/icons'
 import { CollectionForm } from '@/components/forms/CollectionForm'
 import useCollection from '@/hooks/useCollection'
 import { Loader } from '@/components/Loader'
@@ -17,6 +25,16 @@ export default function Collection() {
 
   return (
     <>
+      <Box display='flex'>
+        <Link
+          as={RouterLink}
+          to="/collections"
+          display="flex"
+          alignItems="center"
+        >
+          <ArrowBackIcon mr="2" /> Back to collections
+        </Link>
+      </Box>
       <Heading as={'h1'}>{pageTitle}</Heading>
       <Text>
         <Text as="span" color={'red.500'}>
@@ -31,7 +49,12 @@ export default function Collection() {
             <Text fontSize="xs" color={'gray.500'}>
               {error.detail}
             </Text>
-            <Button as={Link} to={'/collections'} colorScheme="blue" mt={4}>
+            <Button
+              as={RouterLink}
+              to={'/collections'}
+              colorScheme="blue"
+              mt={4}
+            >
               Back to collections
             </Button>
           </>
