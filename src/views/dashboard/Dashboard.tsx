@@ -12,6 +12,7 @@ import {
   CardBody,
 } from '@chakra-ui/react'
 import useSummary from '@/hooks/useSummary'
+import { Draft } from '@/components/WYSIWYG/Draft'
 
 type TCardLink = {
   to: string
@@ -64,6 +65,7 @@ const Dashboard = () => {
           </CardLink>
         </SimpleGrid>
       )}
+      <Draft />
     </Stack>
   )
 }
