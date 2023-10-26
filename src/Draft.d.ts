@@ -1,4 +1,4 @@
 declare module '../../components/WYSIWYG/js/DraftJs.jsx' {
-  const DraftEditor: any
+  const DraftEditor: unknown
   export default DraftEditor
 }
