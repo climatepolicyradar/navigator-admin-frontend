@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useForm, SubmitHandler, Controller } from 'react-hook-form'
+import { useForm, SubmitHandler, Controller, set } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useNavigate } from 'react-router-dom'
 
@@ -59,6 +59,7 @@ import { FamilyEvent } from '../family/FamilyEvent'
 import { deleteEvent } from '@/api/Events'
 import { EventForm } from './EventForm'
 import { formatDate } from '@/utils/formatDate'
+import { Draft } from '../WYSIWYG/Draft'
 
 type TMultiSelect = {
   value: string
@@ -112,6 +113,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     handleSubmit,
     control,
     reset,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: yupResolver(familySchema),
@@ -191,7 +193,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
           position: 'top',
         })
         navigate(`/family/${data.response}/edit`)
-      })  
+      })
       .catch((error: IError) => {
         setFormError(error)
         toast({
@@ -260,6 +262,10 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
           position: 'top',
         })
       })
+  }
+
+  const summaryOnChange = (html: string) => {
+    setValue('summary', html)
   }
 
   // Event handlers
@@ -382,11 +388,15 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               </FormControl>
               <FormControl isRequired>
                 <FormLabel>Summary</FormLabel>
-                <Textarea
+                <Draft
+                  html={loadedFamily?.summary}
+                  onChange={summaryOnChange}
+                />
+                {/* <Textarea
                   height={'300px'}
                   bg="white"
                   {...register('summary')}
-                />
+                /> */}
               </FormControl>
               <Controller
                 control={control}
