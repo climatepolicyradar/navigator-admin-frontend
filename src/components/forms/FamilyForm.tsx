@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useForm, SubmitHandler, Controller, set } from 'react-hook-form'
+import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useNavigate } from 'react-router-dom'
 
@@ -28,7 +28,6 @@ import {
   Radio,
   RadioGroup,
   Select,
-  Textarea,
   VStack,
   Text,
   Button,
@@ -59,7 +58,7 @@ import { FamilyEvent } from '../family/FamilyEvent'
 import { deleteEvent } from '@/api/Events'
 import { EventForm } from './EventForm'
 import { formatDate } from '@/utils/formatDate'
-import { Draft } from '../WYSIWYG/Draft'
+import { WYSIWYG } from '../form-components/WYSIWYG'
 
 type TMultiSelect = {
   value: string
@@ -388,15 +387,10 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               </FormControl>
               <FormControl isRequired>
                 <FormLabel>Summary</FormLabel>
-                <Draft
+                <WYSIWYG
                   html={loadedFamily?.summary}
                   onChange={summaryOnChange}
                 />
-                {/* <Textarea
-                  height={'300px'}
-                  bg="white"
-                  {...register('summary')}
-                /> */}
               </FormControl>
               <Controller
                 control={control}

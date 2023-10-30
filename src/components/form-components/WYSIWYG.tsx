@@ -13,7 +13,7 @@ type TProps = {
 
 const DEFAULT_HTML = '<p></p>'
 
-export const Draft = ({ html = DEFAULT_HTML, onChange }: TProps) => {
+export const WYSIWYG = ({ html = DEFAULT_HTML, onChange }: TProps) => {
   const [editorState, setEditorState] = useState<EditorState>(() =>
     EditorState.createEmpty(),
   )
