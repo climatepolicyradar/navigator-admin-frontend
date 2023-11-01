@@ -102,7 +102,7 @@ export const DocumentForm = ({
       .then((data) => {
         toast.closeAll()
         toast({
-          title: 'Collection has been successfully created',
+          title: 'Document has been successfully created',
           status: 'success',
           position: 'top',
         })
@@ -111,7 +111,7 @@ export const DocumentForm = ({
       .catch((error: IError) => {
         setFormError(error)
         toast({
-          title: 'Collection has not been created',
+          title: 'Document has not been created',
           description: error.message,
           status: 'error',
           position: 'top',
