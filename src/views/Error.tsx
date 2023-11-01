@@ -9,10 +9,10 @@ const ErrorDetail = (errorDetail: string | IDetailedError[]) => {
 
   return errorDetail.map((error, i) => (
     <span key={i}>
-      <b>Error type: {error.type}</b>, on{' '}
-      {error.loc.map((loc) => loc).join(', ')}.
+      Error type: {error.type}
+      <br /> On: {error.loc.map((loc) => loc).join(', ')}
       <br />
-      <b>Message:</b> {error.msg}
+      Message: {error.msg}
     </span>
   ))
 }
