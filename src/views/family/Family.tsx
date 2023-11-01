@@ -11,6 +11,7 @@ import { ArrowBackIcon } from '@chakra-ui/icons'
 import { FamilyForm } from '@/components/forms/FamilyForm'
 import useFamily from '@/hooks/useFamily'
 import { Loader } from '@/components/Loader'
+import { ApiError } from '@/components/feedback/ApiError'
 
 export default function Family() {
   const { importId } = useParams()
@@ -40,10 +41,7 @@ export default function Family() {
       <Box my={4} p={4} bg={'gray.50'} boxShadow="base">
         {error && (
           <>
-            <Text color={'red.500'}>{error.message}</Text>
-            <Text fontSize="xs" color={'gray.500'}>
-              {error.detail}
-            </Text>
+            <ApiError error={error} />
             <Button as={RouterLink} to={'/families'} colorScheme="blue" mt={4}>
               Back to families
             </Button>

@@ -11,6 +11,7 @@ import { ArrowBackIcon } from '@chakra-ui/icons'
 import { CollectionForm } from '@/components/forms/CollectionForm'
 import useCollection from '@/hooks/useCollection'
 import { Loader } from '@/components/Loader'
+import { ApiError } from '@/components/feedback/ApiError'
 
 export default function Collection() {
   const { importId } = useParams()
@@ -25,7 +26,7 @@ export default function Collection() {
 
   return (
     <>
-      <Box display='flex'>
+      <Box display="flex">
         <Link
           as={RouterLink}
           to="/collections"
@@ -45,10 +46,7 @@ export default function Collection() {
       <Box my={4} p={4} bg={'gray.50'} boxShadow="base">
         {error && (
           <>
-            <Text color={'red.500'}>{error.message}</Text>
-            <Text fontSize="xs" color={'gray.500'}>
-              {error.detail}
-            </Text>
+            <ApiError error={error} />
             <Button
               as={RouterLink}
               to={'/collections'}

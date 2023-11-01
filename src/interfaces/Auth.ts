@@ -1,6 +1,13 @@
+export interface IDetailedError {
+  type: string
+  loc: string[]
+  msg: string
+  url: string
+}
+
 export interface IError {
   status: number
-  detail: string
+  detail: string | IDetailedError[]
   message: string
   returnPage?: string
 }

@@ -1,8 +1,21 @@
 import { useNavigate, useRouteError } from 'react-router-dom'
 
-import { IError } from '@/interfaces'
+import { IError, IDetailedError } from '@/interfaces'
 import { useEffect } from 'react'
 import { useAuth } from '@/hooks/useAuth'
+
+const ErrorDetail = (errorDetail: string | IDetailedError[]) => {
+  if (typeof errorDetail === 'string') return errorDetail
+
+  return errorDetail.map((error, i) => (
+    <span key={i}>
+      Error type: {error.type}
+      <br /> On: {error.loc.map((loc) => loc).join(', ')}
+      <br />
+      Message: {error.msg}
+    </span>
+  ))
+}
 
 export default function ErrorPage() {
   const { logout } = useAuth()
@@ -21,7 +34,7 @@ export default function ErrorPage() {
       <h1>Oops!</h1>
       <p>Sorry, an unexpected error has occurred.</p>
       <p>
-        <i>{error.detail || error.message}</i>
+        <i>{error.message || ErrorDetail(error.detail)}</i>
       </p>
     </div>
   )

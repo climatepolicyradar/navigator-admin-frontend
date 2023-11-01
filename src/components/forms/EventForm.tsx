@@ -6,12 +6,10 @@ import { eventSchema } from '@/schemas/eventSchema'
 import { createEvent, updateEvent } from '@/api/Events'
 
 import {
-  Box,
   FormControl,
   FormLabel,
   Input,
   VStack,
-  Text,
   Button,
   ButtonGroup,
   FormErrorMessage,
@@ -135,14 +133,7 @@ export const EventForm = ({
       {configLoading && <FormLoader />}
       <form onSubmit={handleSubmit(onSubmit)}>
         <VStack gap="4" mb={12} align={'stretch'}>
-          {formError && (
-            <Box>
-              <Text color={'red.500'}>{formError.message}</Text>
-              <Text fontSize="xs" color={'gray.500'}>
-                {formError.detail}
-              </Text>
-            </Box>
-          )}
+          {formError && <ApiError error={formError} />}
           <FormControl isRequired>
             <FormLabel>Title</FormLabel>
             <Input bg="white" {...register('event_title')} />
