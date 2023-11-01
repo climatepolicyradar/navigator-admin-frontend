@@ -55,13 +55,15 @@ const Dashboard = () => {
               <StatHelpText>Click here to view collections</StatHelpText>
             </Stat>
           </CardLink>
-          <CardLink to="/events">
-            <Stat>
-              <StatLabel>Events</StatLabel>
-              <StatNumber>{summary?.n_events}</StatNumber>
-              <StatHelpText>Click here to view Events</StatHelpText>
-            </Stat>
-          </CardLink>
+          <Card>
+            <CardBody>
+              <Stat>
+                <StatLabel>Events</StatLabel>
+                <StatNumber>{summary?.n_events}</StatNumber>
+                <StatHelpText>Click here to view Events</StatHelpText>
+              </Stat>
+            </CardBody>
+          </Card>
         </SimpleGrid>
       )}
     </Stack>
