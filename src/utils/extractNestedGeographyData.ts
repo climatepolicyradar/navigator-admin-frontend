@@ -46,6 +46,16 @@ export function getCountries(
         })
       })
       .flat()
+
+    countries.sort((a, b) => {
+      if (a.display_value < b.display_value) {
+        return -1
+      }
+      if (a.display_value > b.display_value) {
+        return 1
+      }
+      return 0
+    })
   }
 
   return countries
