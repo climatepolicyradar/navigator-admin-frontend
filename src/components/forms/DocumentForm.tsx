@@ -157,14 +157,7 @@ export const DocumentForm = ({
       {configLoading && <FormLoader />}
       <form onSubmit={handleSubmit(onSubmit)}>
         <VStack gap="4" mb={12} align={'stretch'}>
-          {formError && (
-            <Box>
-              <Text color={'red.500'}>{formError.message}</Text>
-              <Text fontSize="xs" color={'gray.500'}>
-                {formError.detail}
-              </Text>
-            </Box>
-          )}
+          {formError && <ApiError error={formError} />}
           <FormControl isRequired isReadOnly isDisabled>
             <FormLabel>Family ID</FormLabel>
             <Input bg="white" {...register('family_import_id')} />
@@ -262,7 +255,7 @@ export const DocumentForm = ({
               )
             }}
           />
-          
+
           {/* 
           // TODO: update this if we use the react-chakra-select
           <Controller
