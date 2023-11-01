@@ -67,8 +67,15 @@ export const DocumentForm = ({
   //   return generateLanguageOptions(config?.languages || {})
   // }, [config])
 
-  const handleFormSubmission = async (documentData: IDocumentFormPost) => {
+  const handleFormSubmission = async (
+    submittedDcumentData: IDocumentFormPost,
+  ) => {
     setFormError(null)
+
+    const documentData = {
+      ...submittedDcumentData,
+      variant_name: submittedDcumentData.variant_name || null,
+    }
 
     // TODO: update this if we use the react-chakra-select
     // const documentDataWithLanguage: IDocumentFormPost = {
@@ -262,7 +269,7 @@ export const DocumentForm = ({
               )
             }}
           />
-          
+
           {/* 
           // TODO: update this if we use the react-chakra-select
           <Controller
