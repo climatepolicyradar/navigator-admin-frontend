@@ -13,6 +13,7 @@ import {
   TFamily,
   IDocument,
   IEvent,
+  ICollection,
 } from '@/interfaces'
 import { createFamily, updateFamily } from '@/api/Families'
 import { deleteDocument } from '@/api/Documents'
@@ -94,6 +95,10 @@ const chakraStyles: ChakraStylesConfig = {
 
 type TProps = {
   family?: TFamily
+}
+
+const getCollection = (collectionId: string, collections: ICollection[]) => {
+  return collections.find((collection) => collection.import_id === collectionId)
 }
 
 export const FamilyForm = ({ family: loadedFamily }: TProps) => {
@@ -327,6 +332,14 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       reset({
         title: loadedFamily.title,
         summary: loadedFamily.summary,
+        collections: loadedFamily.collections.map((collectionId) => {
+          const collection = getCollection(collectionId, collections)
+          if (!collection) return null
+          return {
+            value: collection.import_id,
+            label: collection.title,
+          }
+        }),
         geography: loadedFamily.geography,
         category: loadedFamily.category,
         organisation: loadedFamily.organisation,
@@ -364,7 +377,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
             : '',
       })
     }
-  }, [loadedFamily, reset])
+  }, [loadedFamily, collections, reset])
 
   return (
     <>
