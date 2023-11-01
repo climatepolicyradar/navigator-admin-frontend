@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useNavigate } from 'react-router-dom'
@@ -59,6 +59,7 @@ import { deleteEvent } from '@/api/Events'
 import { EventForm } from './EventForm'
 import { formatDate } from '@/utils/formatDate'
 import { WYSIWYG } from '../form-components/WYSIWYG'
+import { decodeToken } from '@/utils/decodeToken'
 
 type TMultiSelect = {
   value: string
@@ -124,8 +125,13 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   >()
   const [familyDocuments, setFamilyDocuments] = useState<string[]>([])
   const [familyEvents, setFamilyEvents] = useState<string[]>([])
-
   const watchOrganisation = watch('organisation')
+  const userAccess = useMemo(() => {
+    const token = localStorage.getItem('token')
+    if (!token) return []
+    const decodedToken = decodeToken(token)
+    return decodedToken?.authorisation
+  }, [])
 
   // Family handlers
   const handleFormSubmission = async (family: IFamilyForm) => {
@@ -307,6 +313,12 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   const canLoadForm =
     !configLoading && !collectionsLoading && !configError && !collectionsError
 
+  const canAccess = (organisation: string) => {
+    if (!organisation) return true
+    if (!userAccess) return false
+    return organisation in userAccess
+  }
+
   useEffect(() => {
     if (loadedFamily) {
       setFamilyDocuments(loadedFamily.documents)
@@ -362,6 +374,12 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
           <SkeletonText mt="4" noOfLines={12} spacing="4" skeletonHeight="2" />
         </Box>
       )}
+      {!canAccess(watchOrganisation) && (
+        <ApiError
+          message={`You do not have permission to edit ${watchOrganisation} document families`}
+          detail='Please go back to the "Families" page, if you think there has been a mistake please contact the administrator.'
+        />
+      )}
       {configError && <ApiError error={configError} />}
       {collectionsError && <ApiError error={collectionsError} />}
       {(configError || collectionsError) && (
@@ -373,7 +391,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       {canLoadForm && (
         <>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <VStack gap="4" mb={12} align={'stretch'}>
+            <VStack gap="4" mb={12} mt={4} align={'stretch'}>
               {formError && <ApiError error={formError} />}
               {loadedFamily && (
                 <FormControl isRequired isReadOnly isDisabled>
@@ -486,10 +504,18 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                       <FormLabel as="legend">Organisation</FormLabel>
                       <RadioGroup {...field}>
                         <HStack gap={4}>
-                          <Radio bg="white" value="CCLW">
+                          <Radio
+                            bg="white"
+                            value="CCLW"
+                            isDisabled={userAccess && !('CCLW' in userAccess)}
+                          >
                             CCLW
                           </Radio>
-                          <Radio bg="white" value="UNFCCC">
+                          <Radio
+                            bg="white"
+                            value="UNFCCC"
+                            isDisabled={userAccess && !('UNFCCC' in userAccess)}
+                          >
                             UNFCCC
                           </Radio>
                         </HStack>
@@ -748,7 +774,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               )}
             </VStack>
 
-            <ButtonGroup>
+            <ButtonGroup isDisabled={!canAccess(watchOrganisation)}>
               <Button
                 type="submit"
                 colorScheme="blue"
