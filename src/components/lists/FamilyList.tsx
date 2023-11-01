@@ -15,7 +15,6 @@ import {
   Badge,
   Box,
   HStack,
-  Text,
   Tooltip,
   useToast,
 } from '@chakra-ui/react'
@@ -25,6 +24,7 @@ import { DeleteButton } from '../buttons/Delete'
 import { sortBy } from '@/utils/sortBy'
 import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from '@chakra-ui/icons'
 import { getStatusColour } from '@/utils/getStatusColour'
+import { ApiError } from '../feedback/ApiError'
 
 interface ILoaderProps {
   request: {
@@ -114,16 +114,7 @@ export default function FamilyList() {
 
   return (
     <Box flex={1}>
-      <Box>
-        {formError && (
-          <Box>
-            <Text color={'red.500'}>{formError.message}</Text>
-            <Text fontSize="xs" color={'gray.500'}>
-              {formError.detail}
-            </Text>
-          </Box>
-        )}
-      </Box>
+      <Box>{formError && <ApiError error={formError} />}</Box>
       <TableContainer height={'100%'} whiteSpace={'normal'}>
         <Table size="sm" variant={'striped'}>
           <Thead>

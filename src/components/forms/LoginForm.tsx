@@ -13,8 +13,8 @@ import {
   Button,
   Heading,
   FormErrorMessage,
-  Text,
 } from '@chakra-ui/react'
+import { ApiError } from '../feedback/ApiError'
 
 export const LoginForm = () => {
   const { login } = useAuth()
@@ -87,14 +87,7 @@ export const LoginForm = () => {
           <Heading fontSize={'4xl'}>Log in</Heading>
         </Stack>
         <Box rounded={'lg'} bg={'white'} boxShadow={'lg'} p={8}>
-          {formError && (
-            <Box mb={4}>
-              <Text color={'red.500'}>{formError.message}</Text>
-              <Text fontSize="xs" color={'gray.500'} mb={4}>
-                {formError.detail}
-              </Text>
-            </Box>
-          )}
+          {formError && <ApiError error={formError} />}
           <Stack spacing={4}>
             <FormControl
               id="email"

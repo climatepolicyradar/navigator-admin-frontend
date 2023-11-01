@@ -13,7 +13,6 @@ import {
   IconButton,
   Box,
   HStack,
-  Text,
   Tooltip,
   useToast,
   SkeletonText,
@@ -25,6 +24,7 @@ import useCollections from '@/hooks/useCollections'
 import { Loader } from '../Loader'
 import { sortBy } from '@/utils/sortBy'
 import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from '@chakra-ui/icons'
+import { ApiError } from '../feedback/ApiError'
 
 export default function CollectionList() {
   const [sortControls, setSortControls] = useState<{
@@ -113,32 +113,24 @@ export default function CollectionList() {
       {!loading && (
         <Box flex={1}>
           <Box>
-            {error && (
-              <Box>
-                <Text color={'red.500'}>{error.message}</Text>
-                <Text fontSize="xs" color={'gray.500'}>
-                  {error.detail}
-                </Text>
-              </Box>
-            )}
-            {formError && (
-              <Box>
-                <Text color={'red.500'}>{formError.message}</Text>
-                <Text fontSize="xs" color={'gray.500'}>
-                  {formError.detail}
-                </Text>
-              </Box>
-            )}
+            {error && <ApiError error={error} />}
+            {formError && <ApiError error={formError} />}
           </Box>
           <TableContainer height={'100%'} whiteSpace={'normal'}>
             <Table size="sm" variant={'striped'}>
               <Thead>
                 <Tr>
                   {/* <Th onClick={() => handleHeaderClick('import_id')}>ID</Th> */}
-                  <Th onClick={() => handleHeaderClick('title')} cursor='pointer'>
+                  <Th
+                    onClick={() => handleHeaderClick('title')}
+                    cursor="pointer"
+                  >
                     Title {renderSortIcon('title')}
                   </Th>
-                  <Th onClick={() => handleHeaderClick('organisation')} cursor='pointer'>
+                  <Th
+                    onClick={() => handleHeaderClick('organisation')}
+                    cursor="pointer"
+                  >
                     Organisation {renderSortIcon('organisation')}
                   </Th>
                   <Th>Families</Th>

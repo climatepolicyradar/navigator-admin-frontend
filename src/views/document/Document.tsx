@@ -11,6 +11,7 @@ import useDocument from '@/hooks/useDocument'
 import { Loader } from '@/components/Loader'
 import { DocumentForm } from '@/components/forms/DocumentForm'
 import { ArrowBackIcon } from '@chakra-ui/icons'
+import { ApiError } from '@/components/feedback/ApiError'
 
 export default function Collection() {
   const { importId } = useParams()
@@ -45,10 +46,7 @@ export default function Collection() {
       <Box my={4} p={4} bg={'gray.50'} boxShadow="base">
         {error && (
           <>
-            <Text color={'red.500'}>{error.message}</Text>
-            <Text fontSize="xs" color={'gray.500'}>
-              {error.detail}
-            </Text>
+            <ApiError error={error} />
             <Button as={RouterLink} to={'/documents'} colorScheme="blue" mt={4}>
               Back to Documents
             </Button>

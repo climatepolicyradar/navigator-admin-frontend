@@ -11,7 +11,6 @@ import { collectionSchema } from '@/schemas/collectionSchema'
 import { createCollection, updateCollection } from '@/api/Collections'
 
 import {
-  Box,
   FormControl,
   FormLabel,
   HStack,
@@ -20,7 +19,6 @@ import {
   RadioGroup,
   Textarea,
   VStack,
-  Text,
   Button,
   ButtonGroup,
   FormErrorMessage,
@@ -28,6 +26,7 @@ import {
   FormHelperText,
 } from '@chakra-ui/react'
 import { useNavigate } from 'react-router-dom'
+import { ApiError } from '../feedback/ApiError'
 
 interface ICollectionForm {
   title: string
@@ -120,14 +119,7 @@ export const CollectionForm = ({ collection: loadedCollection }: TProps) => {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <VStack gap="4" mb={12} align={'stretch'}>
-        {formError && (
-          <Box>
-            <Text color={'red.500'}>{formError.message}</Text>
-            <Text fontSize="xs" color={'gray.500'}>
-              {formError.detail}
-            </Text>
-          </Box>
-        )}
+        {formError && <ApiError error={formError} />}
         {loadedCollection && (
           <FormControl isRequired isReadOnly isDisabled>
             <FormLabel>Import ID</FormLabel>
