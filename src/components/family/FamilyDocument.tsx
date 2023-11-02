@@ -8,10 +8,12 @@ import {
   Stack,
   HStack,
   Spinner,
+  Badge,
 } from '@chakra-ui/react'
 import { ApiError } from '../feedback/ApiError'
 import { IDocument } from '@/interfaces'
 import { DeleteButton } from '../buttons/Delete'
+import { getStatusColour } from '@/utils/getStatusColour'
 
 type TProps = {
   documentId: string
@@ -46,6 +48,10 @@ export const FamilyDocument = ({
     )
   }
 
+  if (document && document.status.toLowerCase() === 'deleted') {
+    return null
+  }
+
   return (
     <Card direction="row">
       <CardBody>
@@ -57,23 +63,28 @@ export const FamilyDocument = ({
             <Text>Variant: {document.variant_name}</Text>
           )}
         </HStack>
+        <Badge colorScheme={getStatusColour(document?.status)} size="sm">
+          {document?.status}
+        </Badge>
       </CardBody>
       {(!!onEditClick || !!onDeleteClick) && (
         <CardFooter>
-          <Stack direction="row" spacing={4}>
-            {!!onEditClick && (
-              <Button size="sm" onClick={handleEditClick}>
-                Edit
-              </Button>
-            )}
-            {!!onDeleteClick && (
-              <DeleteButton
-                entityName="document"
-                entityTitle={document?.title || ''}
-                callback={handleDeleteClick}
-              />
-            )}
-          </Stack>
+          {document?.status.toLowerCase() !== 'deleted' && (
+            <Stack direction="row" spacing={4}>
+              {!!onEditClick && (
+                <Button size="sm" onClick={handleEditClick}>
+                  Edit
+                </Button>
+              )}
+              {!!onDeleteClick && (
+                <DeleteButton
+                  entityName="document"
+                  entityTitle={document?.title || ''}
+                  callback={handleDeleteClick}
+                />
+              )}
+            </Stack>
+          )}
         </CardFooter>
       )}
     </Card>
