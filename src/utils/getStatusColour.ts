@@ -6,6 +6,6 @@ export const getStatusColour = (status?: string | null) => {
     case 'deleted':
       return 'red'
     default:
-      return 'grey'
+      return 'gray'
   }
 }
