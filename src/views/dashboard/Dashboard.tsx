@@ -12,6 +12,7 @@ import {
   CardBody,
 } from '@chakra-ui/react'
 import useSummary from '@/hooks/useSummary'
+import { ApiError } from '@/components/feedback/ApiError'
 
 type TCardLink = {
   to: string
@@ -32,6 +33,7 @@ const Dashboard = () => {
   return (
     <Stack spacing={4}>
       <Heading as={'h1'}>Dashboard</Heading>
+      {error && <ApiError error={error} />}
       {!loading && !error && (
         <SimpleGrid columns={2} gap="4">
           <CardLink to="/families">
