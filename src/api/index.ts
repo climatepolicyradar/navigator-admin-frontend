@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios'
 
 const API = axios.create({
-  baseURL: 'https://admin.dev.climatepolicyradar.org/api/',
+  baseURL: process.env.API_URL ?? 'https://admin.dev.climatepolicyradar.org/api/',
   headers: {
     'Content-Type': 'application/json',
   },
