@@ -34,7 +34,7 @@ yarn dev
 **Or** run the preview of the built project:
 
 ```bash
-yarn build # or
+yarn build # and then
 
 yarn preview
 ```
