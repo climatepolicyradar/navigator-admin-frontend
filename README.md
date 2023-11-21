@@ -9,28 +9,32 @@
 - [React hook form](https://react-hook-form.com/get-started)
   - [Yup](https://github.com/jquense/yup)
 
-## Running the project
+## Prerequisites
 
 Install Yarn if you do not have it already:
-```
+
+```bash
 npm install --global yarn
 ```
 
-CD into the directory and install dependancies:
-```
+CD into the root project folder if you are not already in there and install dependencies using the following:
+
+```bash
 yarn
 ```
 
-Run in developement mode:
-```
+## Running the project
+
+Run in development mode:
+
+```bash
 yarn dev
 ```
 
-#### Or
+**Or** run the preview of the built project:
 
-Run the preview of the built project:
-```
-yarn build
+```bash
+yarn build # and then
 
 yarn preview
 ```
@@ -38,7 +42,8 @@ yarn preview
 ## Linting
 
 Run linting with the following command:
-```
+
+```bash
 yarn lint
 ```
 
