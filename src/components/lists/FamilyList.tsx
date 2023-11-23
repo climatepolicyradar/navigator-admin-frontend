@@ -36,7 +36,17 @@ interface ILoaderProps {
 export async function loader({ request }: ILoaderProps) {
   const url = new URL(request.url)
   const q = url.searchParams.get('q')
-  const response = await getFamilies(q)
+  const geography = url.searchParams.get('geography')
+  const status = url.searchParams.get('status')
+  const title = url.searchParams.get('title')
+  const description = url.searchParams.get('description')
+  const response = await getFamilies({
+    query: q,
+    geography,
+    status,
+    title,
+    description,
+  })
   return response
 }
 
