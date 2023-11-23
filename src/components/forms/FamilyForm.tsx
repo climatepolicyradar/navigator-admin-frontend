@@ -46,7 +46,7 @@ import {
   DrawerBody,
   Flex,
 } from '@chakra-ui/react'
-import { Select as CRSelect, ChakraStylesConfig } from 'chakra-react-select'
+import { Select as CRSelect } from 'chakra-react-select'
 import useCollections from '@/hooks/useCollections'
 import { Loader } from '../Loader'
 import { getCountries } from '@/utils/extractNestedGeographyData'
@@ -61,6 +61,7 @@ import { EventForm } from './EventForm'
 import { formatDate } from '@/utils/formatDate'
 import { WYSIWYG } from '../form-components/WYSIWYG'
 import { decodeToken } from '@/utils/decodeToken'
+import { chakraStylesSelect } from '@/styles/chakra'
 
 type TMultiSelect = {
   value: string
@@ -85,13 +86,6 @@ interface IFamilyForm {
 }
 
 type TChildEntity = 'document' | 'event'
-
-const chakraStyles: ChakraStylesConfig = {
-  container: (provided) => ({
-    ...provided,
-    background: 'white',
-  }),
-}
 
 type TProps = {
   family?: TFamily
@@ -431,7 +425,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                     <FormControl>
                       <FormLabel>Collections</FormLabel>
                       <CRSelect
-                        chakraStyles={chakraStyles}
+                        chakraStyles={chakraStylesSelect}
                         isClearable={false}
                         isMulti={true}
                         isSearchable={true}
@@ -599,7 +593,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                         <FormControl>
                           <FormLabel>Topics</FormLabel>
                           <CRSelect
-                            chakraStyles={chakraStyles}
+                            chakraStyles={chakraStylesSelect}
                             isClearable={false}
                             isMulti={true}
                             isSearchable={true}
@@ -625,7 +619,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                         <FormControl>
                           <FormLabel>Hazards</FormLabel>
                           <CRSelect
-                            chakraStyles={chakraStyles}
+                            chakraStyles={chakraStylesSelect}
                             isClearable={false}
                             isMulti={true}
                             isSearchable={true}
@@ -646,7 +640,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                         <FormControl>
                           <FormLabel>Sectors</FormLabel>
                           <CRSelect
-                            chakraStyles={chakraStyles}
+                            chakraStyles={chakraStylesSelect}
                             isClearable={false}
                             isMulti={true}
                             isSearchable={true}
@@ -667,7 +661,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                         <FormControl>
                           <FormLabel>Keywords</FormLabel>
                           <CRSelect
-                            chakraStyles={chakraStyles}
+                            chakraStyles={chakraStylesSelect}
                             isClearable={false}
                             isMulti={true}
                             isSearchable={true}
@@ -688,7 +682,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                         <FormControl>
                           <FormLabel>Frameworks</FormLabel>
                           <CRSelect
-                            chakraStyles={chakraStyles}
+                            chakraStyles={chakraStylesSelect}
                             isClearable={false}
                             isMulti={true}
                             isSearchable={true}
@@ -709,7 +703,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                         <FormControl>
                           <FormLabel>Instruments</FormLabel>
                           <CRSelect
-                            chakraStyles={chakraStyles}
+                            chakraStyles={chakraStylesSelect}
                             isClearable={false}
                             isMulti={true}
                             isSearchable={true}
