@@ -1,5 +1,5 @@
 config:
-  admin_frontend:api_url:
+  admin_frontend:vite_api_url:
     secure: AAABAD6VuFXJBe8uDJEnuAnNjgpF5m00VR8RFHipkGLhjm7eq6tMi572yvMF0SIWwP97Kqo3Y22D/CUL7syGt4oX1iycUG07gKUxBQ==
   admin_frontend:api_version: v1
   admin_frontend:apprunner_frontend_max_concurrency: "50"
