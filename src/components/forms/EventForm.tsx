@@ -175,7 +175,7 @@ export const EventForm = ({
               onSubmit={handleSubmit(onSubmit)}
               disabled={isSubmitting}
             >
-              Create new Event
+              {(loadedEvent ? 'Update ' : 'Create new ') + ' Event'}
             </Button>
           </ButtonGroup>
         </VStack>

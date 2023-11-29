@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useLoaderData } from 'react-router-dom'
-import { deleteFamily, getFamilies } from '@/api/Families'
+import { deleteFamily, getFamilies, TFamilySearchQuery } from '@/api/Families'
 import { IError, TFamily } from '@/interfaces'
 import { formatDate } from '@/utils/formatDate'
 import {
@@ -36,7 +36,18 @@ interface ILoaderProps {
 export async function loader({ request }: ILoaderProps) {
   const url = new URL(request.url)
   const q = url.searchParams.get('q')
-  const response = await getFamilies(q)
+  const geography = url.searchParams.get('geography')
+  const status = url.searchParams.get('status')
+  const searchQuery: TFamilySearchQuery = {
+    query: q,
+  }
+  if (geography) {
+    searchQuery['geography'] = geography
+  }
+  if (status) {
+    searchQuery['status'] = status
+  }
+  const response = await getFamilies(searchQuery)
   return response
 }
 
