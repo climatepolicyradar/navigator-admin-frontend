@@ -4,7 +4,7 @@ import API from '@/api'
 import { setToken } from '@/api/Auth'
 import { TFamily, IError, TFamilyFormPost } from '@/interfaces'
 
-type TSearchProps = {
+export type TFamilySearchQuery = {
   query?: string | null
   geography?: string | null
   status?: string | null
@@ -12,24 +12,39 @@ type TSearchProps = {
   description?: string | null
 }
 
+type TSearchParams = {
+  q?: string
+  geography?: string
+  status?: string
+}
+
 export async function getFamilies({
   query,
   geography,
   status,
-  title,
-  description,
-}: TSearchProps) {
+}: TFamilySearchQuery) {
   setToken(API)
 
   // For API performance reasons (search will timeout if too many results are returned)
   // if there is no search, default to using 'redd'
-  const defaultQuery =
-    !query && !geography && !status && !title && !description
-      ? 'redd'
-      : undefined
+  const defaultQuery = query
+    ? query
+    : !geography && !status
+    ? 'redd'
+    : undefined
+
+  const searchParams: TSearchParams = {
+    q: defaultQuery,
+  }
+  if (geography) {
+    searchParams['geography'] = geography
+  }
+  if (status) {
+    searchParams['status'] = status
+  }
 
   const response = await API.get<TFamily[]>('/v1/families/', {
-    params: { q: defaultQuery, geography, status, title, description },
+    params: searchParams,
   })
     .then((response) => {
       return response
