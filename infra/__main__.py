@@ -11,7 +11,7 @@ validate_stack_and_branch()
 
 CONFIG = pulumi.Config()
 FRONTEND_ENV = {
-    "API_URL": CONFIG.require("api_url"),
+    "VITE_API_URL": CONFIG.require("vite_api_url"),
     "API_VERSION": CONFIG.require("api_version"),
     "ROBOTS": CONFIG.require("robots"),
     "HOSTNAME": CONFIG.require("hostname"),
