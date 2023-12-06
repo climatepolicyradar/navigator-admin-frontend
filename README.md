@@ -17,7 +17,8 @@ Install Yarn if you do not have it already:
 npm install --global yarn
 ```
 
-CD into the root project folder if you are not already in there and install dependencies using the following:
+CD into the root project folder if you are not already in there and install the
+dependencies using the following:
 
 ```bash
 yarn
