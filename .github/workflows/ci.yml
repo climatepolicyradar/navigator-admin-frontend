@@ -28,7 +28,7 @@ jobs:
         run: make build_prod
 
       - name: Run linter & formatter
-        run: npm run precommit
+        run: yarn precommit
 
       - name: Run Tests
         run: echo TODO-TODO-TODO-TODO-TODO-TODO-TODO-TODO-TODO-TODO-TODO-TODO
