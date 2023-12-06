@@ -8,3 +8,5 @@ fi
 if npm run markdownlint; then
     echo No issues in markdown files.
 fi
+
+npm run lint
