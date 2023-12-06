@@ -27,6 +27,9 @@ jobs:
       - name: Build
         run: make build
 
+      - name: Run linter & formatter
+        run: npm run precommit
+
       - name: Run Tests
         run: echo TODO-TODO-TODO-TODO-TODO-TODO-TODO-TODO-TODO-TODO-TODO-TODO
 
