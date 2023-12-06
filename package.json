@@ -6,9 +6,14 @@
   "scripts": {
     "dev": "vite --port 3000 --host",
     "build": "tsc && vite build",
+    "check-formatting": "prettier --check . ",
+    "format": "prettier --write . ",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "markdownlint": "markdownlint --ignore node_modules .",
+    "precommit": "npm run format && npm run markdownlint && npm run lint",
     "preview": "vite preview",
-    "prod": "tsc && vite build && vite preview --port 3000 --host"
+    "prod": "tsc && vite build && vite preview --port 3000 --host",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.19",
@@ -45,6 +50,9 @@
     "eslint": "^8.44.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.1",
+    "husky": "^8.0.0",
+    "markdownlint-cli": "^0.37.0",
+    "prettier": "^3.1.0",
     "react-icons": "^4.10.1",
     "typescript": "^5.0.2",
     "vite": "^4.4.0"

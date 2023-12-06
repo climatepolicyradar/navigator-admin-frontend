@@ -21,8 +21,8 @@ export default function Family() {
   const pageTitle = loading
     ? 'Loading...'
     : family
-    ? `Editing: ${family.title}`
-    : 'Create new family'
+      ? `Editing: ${family.title}`
+      : 'Create new family'
 
   return (
     <>

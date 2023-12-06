@@ -30,8 +30,8 @@ export async function getFamilies({
   const defaultQuery = query
     ? query
     : !geography && !status
-    ? 'redd'
-    : undefined
+      ? 'redd'
+      : undefined
 
   const searchParams: TSearchParams = {
     q: defaultQuery,
