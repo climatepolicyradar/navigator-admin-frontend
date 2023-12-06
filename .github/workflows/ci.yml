@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18.x, 20.x]
+        node-version: [20.x]
     steps:
       - uses: actions/checkout@v2
 
@@ -31,9 +31,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+          cache: 'npm'
 
       - name: Run linter & formatter
-        run: yarn precommit
+        run: npm install --only=dev && npm run precommit
 
       - name: Build
         run: make build_prod
