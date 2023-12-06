@@ -62,7 +62,6 @@ const Dashboard = () => {
               <Stat>
                 <StatLabel>Events</StatLabel>
                 <StatNumber>{summary?.n_events}</StatNumber>
-                <StatHelpText>Click here to view Events</StatHelpText>
               </Stat>
             </CardBody>
           </Card>
