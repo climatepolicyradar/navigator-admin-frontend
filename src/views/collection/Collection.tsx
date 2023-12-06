@@ -21,8 +21,8 @@ export default function Collection() {
   const pageTitle = loading
     ? 'Loading...'
     : collection
-    ? `Editing: ${collection.title}`
-    : 'Create new collection'
+      ? `Editing: ${collection.title}`
+      : 'Create new collection'
 
   return (
     <>
