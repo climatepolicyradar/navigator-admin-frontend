@@ -14,6 +14,10 @@ FROM node:20-alpine3.17
 WORKDIR /app
 
 COPY . /app
-RUN yarn install --production
+
+# TODO: This should really be yarn install --production, but in the interest of
+# speedy deployment I'll come and revisit this another time and revert to yarn
+# install for now. PDCT-662.
+RUN yarn install
 
 CMD yarn prod
