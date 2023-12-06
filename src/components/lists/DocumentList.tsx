@@ -33,7 +33,7 @@ export default function DocumentList() {
     key: keyof IDocument
     reverse: boolean
   }>({ key: 'import_id', reverse: false })
-  const [filteredItems, setFilteredItems] = useState<IDocument[]>([])
+  const [filteredItems, setFilteredItems] = useState<IDocument[]>()
   const [searchParams] = useSearchParams()
   const { documents, loading, error, reload } = useDocuments(
     searchParams.get('q') ?? '',
@@ -138,12 +138,12 @@ export default function DocumentList() {
                 </Tr>
               </Thead>
               <Tbody>
-                {filteredItems.length === 0 && (
+                {filteredItems?.length === 0 && (
                   <Tr>
                     <Td colSpan={3}>No results found, please amend your search</Td>
                   </Tr>
                 )}
-                {filteredItems.map((document) => (
+                {filteredItems?.map((document) => (
                   <Tr
                     key={document.import_id}
                     borderLeft={
