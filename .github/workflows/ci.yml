@@ -21,14 +21,22 @@ jobs:
 
   build-start-test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
     steps:
       - uses: actions/checkout@v2
 
-      - name: Build
-        run: make build_prod
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
 
       - name: Run linter & formatter
         run: yarn precommit
+
+      - name: Build
+        run: make build_prod
 
       - name: Run Tests
         run: echo TODO-TODO-TODO-TODO-TODO-TODO-TODO-TODO-TODO-TODO-TODO-TODO
