@@ -167,6 +167,11 @@ export default function FamilyList() {
             </Tr>
           </Thead>
           <Tbody>
+            {filteredItems.length === 0 && (
+              <Tr>
+                <Td colSpan={8}>No results found, please amend your search</Td>
+              </Tr>
+            )}
             {filteredItems.map((family) => (
               <Tr
                 key={family.import_id}

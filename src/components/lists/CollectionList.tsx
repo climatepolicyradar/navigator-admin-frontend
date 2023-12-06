@@ -138,6 +138,11 @@ export default function CollectionList() {
                 </Tr>
               </Thead>
               <Tbody>
+                {filteredItems.length === 0 && (
+                  <Tr>
+                    <Td colSpan={4}>No results found, please amend your search</Td>
+                  </Tr>
+                )}
                 {filteredItems.map((collection) => (
                   <Tr
                     key={collection.import_id}
