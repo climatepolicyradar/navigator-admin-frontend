@@ -56,7 +56,7 @@ export default function FamilyList() {
     key: keyof TFamily
     reverse: boolean
   }>({ key: 'slug', reverse: false })
-  const [filteredItems, setFilteredItems] = useState<TFamily[]>([])
+  const [filteredItems, setFilteredItems] = useState<TFamily[]>()
   const {
     response: { data: families },
   } = useLoaderData() as { response: { data: TFamily[] } }
@@ -167,7 +167,12 @@ export default function FamilyList() {
             </Tr>
           </Thead>
           <Tbody>
-            {filteredItems.map((family) => (
+            {filteredItems?.length === 0 && (
+              <Tr>
+                <Td colSpan={8}>No results found, please amend your search</Td>
+              </Tr>
+            )}
+            {filteredItems?.map((family) => (
               <Tr
                 key={family.import_id}
                 borderLeft={

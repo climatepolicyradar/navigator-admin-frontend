@@ -31,7 +31,7 @@ export default function CollectionList() {
     key: keyof ICollection
     reverse: boolean
   }>({ key: 'import_id', reverse: false })
-  const [filteredItems, setFilteredItems] = useState<ICollection[]>([])
+  const [filteredItems, setFilteredItems] = useState<ICollection[]>()
   const [searchParams] = useSearchParams()
   const { collections, loading, error, reload } = useCollections(
     searchParams.get('q') ?? '',
@@ -138,7 +138,12 @@ export default function CollectionList() {
                 </Tr>
               </Thead>
               <Tbody>
-                {filteredItems.map((collection) => (
+                {filteredItems?.length === 0 && (
+                  <Tr>
+                    <Td colSpan={4}>No results found, please amend your search</Td>
+                  </Tr>
+                )}
+                {filteredItems?.map((collection) => (
                   <Tr
                     key={collection.import_id}
                     borderLeft={

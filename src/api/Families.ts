@@ -25,16 +25,8 @@ export async function getFamilies({
 }: TFamilySearchQuery) {
   setToken(API)
 
-  // For API performance reasons (search will timeout if too many results are returned)
-  // if there is no search, default to using 'redd'
-  const defaultQuery = query
-    ? query
-    : !geography && !status
-      ? 'redd'
-      : undefined
-
   const searchParams: TSearchParams = {
-    q: defaultQuery,
+    q: query ?? '',
   }
   if (geography) {
     searchParams['geography'] = geography
