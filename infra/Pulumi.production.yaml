@@ -3,7 +3,7 @@ config:
   admin_frontend:apprunner_frontend_max_concurrency: "50"
   admin_frontend:apprunner_frontend_max_instance_count: "10"
   admin_frontend:apprunner_frontend_min_instance_count: "1"
-  admin_frontend:docker_tag: 0.0.11-beta
+  admin_frontend:docker_tag: 1.0.1-beta
   admin_frontend:ecr_uri:
     secure: AAABAAvqYlLOL845FcyMJkrLHKMXbZzFPLNiZbQn6V+1+Y+KegnF8umOjE02UJD5dyh+RZwvqGJZZ+268r8JvyQmJ9jVR+jxKUfeldBxgrN9E7He+VdUL9qWnbB+bic7QftPOCc=
   admin_frontend:hostname: https://admin.climatepolicyradar.org
