@@ -9,6 +9,7 @@
     "check-formatting": "prettier --check . ",
     "format": "prettier --write . ",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "markdownlint": "markdownlint --ignore node_modules .",
     "preview": "vite preview",
     "prod": "tsc && vite build && vite preview --port 3000 --host",
     "prepare": "husky install"
