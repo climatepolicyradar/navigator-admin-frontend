@@ -1,4 +1,11 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-npm run format && npm run markdownlint
+if ! npm run check-formatting; then
+    npm run format && git add -A .
+fi
+
+if npm run markdownlint; then
+    echo No issues in markdown files.
+fi
+
