@@ -8,7 +8,7 @@ export async function getDocuments(query: string | undefined | null) {
   setToken(API)
 
   const response = await API.get<IDocument[]>('/v1/documents/', {
-    params: { q: query || 'carbon' },
+    params: { q: query },
   })
     .then((response) => {
       return response.data
