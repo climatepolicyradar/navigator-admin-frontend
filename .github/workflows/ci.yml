@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Build
-        run: make build
+        run: make build_prod
 
       - name: Run linter & formatter
         run: npm run precommit
