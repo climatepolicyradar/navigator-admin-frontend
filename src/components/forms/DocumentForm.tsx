@@ -23,21 +23,6 @@ import useConfig from '@/hooks/useConfig'
 import { FormLoader } from '../feedback/FormLoader'
 import { ApiError } from '../feedback/ApiError'
 
-// TODO: update this if we use the react-chakra-select
-// import { generateLanguageOptions } from '@/utils/generateOptions'
-// import { Select as CRSelect, ChakraStylesConfig } from 'chakra-react-select'
-
-// const chakraStyles: ChakraStylesConfig = {
-//   container: (provided) => ({
-//     ...provided,
-//     background: 'white',
-//   }),
-// }
-
-// interface IDocumentForm extends Omit<IDocumentFormPost, 'user_language_name'> {
-//   user_language_name: { label: string; value: string }
-// }
-
 type TProps = {
   document?: IDocument
   familyId?: string
@@ -62,11 +47,6 @@ export const DocumentForm = ({
     resolver: yupResolver(documentSchema),
   })
 
-  // TODO: update this if we use the react-chakra-select
-  // const languages = useMemo(() => {
-  //   return generateLanguageOptions(config?.languages || {})
-  // }, [config])
-
   const handleFormSubmission = async (
     submittedDcumentData: IDocumentFormPost,
   ) => {
@@ -75,13 +55,8 @@ export const DocumentForm = ({
     const documentData = {
       ...submittedDcumentData,
       variant_name: submittedDcumentData.variant_name || null,
+      user_language_name: submittedDcumentData.user_language_name || null,
     }
-
-    // TODO: update this if we use the react-chakra-select
-    // const documentDataWithLanguage: IDocumentFormPost = {
-    //   ...documentData,
-    //   user_language_name: documentData.user_language_name.value,
-    // }
 
     if (loadedDocument) {
       return await updateDocument(documentData, loadedDocument.import_id)
@@ -244,7 +219,6 @@ export const DocumentForm = ({
             render={({ field }) => {
               return (
                 <FormControl
-                  isRequired
                   as="fieldset"
                   isInvalid={!!errors.user_language_name}
                 >
@@ -262,33 +236,6 @@ export const DocumentForm = ({
               )
             }}
           />
-
-          {/* 
-          // TODO: update this if we use the react-chakra-select
-          <Controller
-            control={control}
-            name="user_language_name"
-            render={({ field }) => {
-              return (
-                <FormControl
-                  isRequired
-                  as="fieldset"
-                  isInvalid={!!errors.user_language_name}
-                >
-                  <FormLabel as="legend">Language</FormLabel>
-                  <CRSelect
-                    chakraStyles={chakraStyles}
-                    isClearable={false}
-                    isMulti={false}
-                    isSearchable={true}
-                    options={languages}
-                    {...field}
-                  />
-                  <FormErrorMessage>Please select a language</FormErrorMessage>
-                </FormControl>
-              )
-            }}
-          /> */}
           <ButtonGroup>
             <Button
               type="submit"

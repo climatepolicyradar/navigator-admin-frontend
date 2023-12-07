@@ -22,5 +22,5 @@ export interface IDocumentFormPost {
   type: string
   title: string
   source_url: string
-  user_language_name: string
+  user_language_name?: string | null
 }
