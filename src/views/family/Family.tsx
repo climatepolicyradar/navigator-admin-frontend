@@ -12,6 +12,7 @@ import { FamilyForm } from '@/components/forms/FamilyForm'
 import useFamily from '@/hooks/useFamily'
 import { Loader } from '@/components/Loader'
 import { ApiError } from '@/components/feedback/ApiError'
+import { formatDateTime } from '@/utils/formatDate'
 
 export default function Family() {
   const { importId } = useParams()
@@ -59,6 +60,9 @@ export default function Family() {
               />
             </Box>
           </>
+        )}
+        {family && (
+          <Text>Last updated on: {formatDateTime(family.last_modified)}</Text>
         )}
         {canLoadForm && <FamilyForm family={family ?? undefined} />}
       </Box>
