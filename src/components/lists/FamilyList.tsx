@@ -156,25 +156,37 @@ export default function FamilyList() {
                 onClick={() => handleHeaderClick('published_date')}
                 cursor="pointer"
               >
-                <Flex gap={2} align="center">
-                  Published {renderSortIcon('published_date')}
-                </Flex>
+                <Tooltip
+                  placement="top"
+                  label="The earliest published date recorded for this family"
+                >
+                  <Flex gap={2} align="center">
+                    Published {renderSortIcon('published_date')}
+                  </Flex>
+                </Tooltip>
               </Th>
               <Th
                 onClick={() => handleHeaderClick('last_updated_date')}
                 cursor="pointer"
               >
-                <Flex gap={2} align="center">
-                  Changed {renderSortIcon('last_updated_date')}
-                </Flex>
+                <Tooltip
+                  placement="top"
+                  label="The latest event recorded for this family"
+                >
+                  <Flex gap={2} align="center">
+                    Changed {renderSortIcon('last_updated_date')}
+                  </Flex>
+                </Tooltip>
               </Th>
               <Th
                 onClick={() => handleHeaderClick('last_modified')}
                 cursor="pointer"
               >
-                <Flex gap={2} align="center">
-                  Edited {renderSortIcon('last_modified')}
-                </Flex>
+                <Tooltip placement="top" label="Edited within the system">
+                  <Flex gap={2} align="center">
+                    Edited {renderSortIcon('last_modified')}
+                  </Flex>
+                </Tooltip>
               </Th>
               <Th onClick={() => handleHeaderClick('status')} cursor="pointer">
                 Status {renderSortIcon('status')}
