@@ -17,6 +17,7 @@ import {
   HStack,
   Tooltip,
   useToast,
+  Flex,
 } from '@chakra-ui/react'
 import { GoPencil } from 'react-icons/go'
 
@@ -130,35 +131,50 @@ export default function FamilyList() {
         <Table size="sm" variant={'striped'}>
           <Thead>
             <Tr>
-              {/* <Th onClick={() => handleHeaderClick('import_id')}>
-                ID {renderSortIcon('import_id')}
-              </Th> */}
               <Th onClick={() => handleHeaderClick('title')} cursor="pointer">
-                Title {renderSortIcon('title')}
+                <Flex gap={2} align="center">
+                  Title {renderSortIcon('title')}
+                </Flex>
               </Th>
               <Th
                 onClick={() => handleHeaderClick('category')}
                 cursor="pointer"
               >
-                Category {renderSortIcon('category')}
+                <Flex gap={2} align="center">
+                  Category {renderSortIcon('category')}
+                </Flex>
               </Th>
               <Th
                 onClick={() => handleHeaderClick('geography')}
                 cursor="pointer"
               >
-                Geography {renderSortIcon('geography')}
+                <Flex gap={2} align="center">
+                  Geography {renderSortIcon('geography')}
+                </Flex>
               </Th>
               <Th
                 onClick={() => handleHeaderClick('published_date')}
                 cursor="pointer"
               >
-                Published date {renderSortIcon('published_date')}
+                <Flex gap={2} align="center">
+                  Published {renderSortIcon('published_date')}
+                </Flex>
               </Th>
               <Th
                 onClick={() => handleHeaderClick('last_updated_date')}
                 cursor="pointer"
               >
-                Updated date {renderSortIcon('last_updated_date')}
+                <Flex gap={2} align="center">
+                  Changed {renderSortIcon('last_updated_date')}
+                </Flex>
+              </Th>
+              <Th
+                onClick={() => handleHeaderClick('last_modified')}
+                cursor="pointer"
+              >
+                <Flex gap={2} align="center">
+                  Edited {renderSortIcon('last_modified')}
+                </Flex>
               </Th>
               <Th onClick={() => handleHeaderClick('status')} cursor="pointer">
                 Status {renderSortIcon('status')}
@@ -182,12 +198,12 @@ export default function FamilyList() {
                   family.import_id === familyError ? 'red.500' : 'inherit'
                 }
               >
-                {/* <Td>{family.import_id}</Td> */}
                 <Td>{family.title}</Td>
                 <Td>{family.category}</Td>
                 <Td>{family.geography}</Td>
                 <Td>{formatDate(family.published_date)}</Td>
                 <Td>{formatDate(family.last_updated_date)}</Td>
+                <Td>{formatDate(family.last_modified)}</Td>
                 <Td>
                   <Badge colorScheme={getStatusColour(family.status)} size="sm">
                     {family.status}

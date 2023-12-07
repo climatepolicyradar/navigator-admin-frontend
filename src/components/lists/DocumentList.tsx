@@ -140,7 +140,9 @@ export default function DocumentList() {
               <Tbody>
                 {filteredItems?.length === 0 && (
                   <Tr>
-                    <Td colSpan={3}>No results found, please amend your search</Td>
+                    <Td colSpan={3}>
+                      No results found, please amend your search
+                    </Td>
                   </Tr>
                 )}
                 {filteredItems?.map((document) => (

@@ -14,6 +14,8 @@ interface IFamilyBase {
   documents: string[]
   collections: string[]
   organisation: TOrganisation
+  created: string
+  last_modified: string
 }
 
 export interface IUNFCCCMetadata {

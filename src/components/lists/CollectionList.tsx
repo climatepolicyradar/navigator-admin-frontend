@@ -140,7 +140,9 @@ export default function CollectionList() {
               <Tbody>
                 {filteredItems?.length === 0 && (
                   <Tr>
-                    <Td colSpan={4}>No results found, please amend your search</Td>
+                    <Td colSpan={4}>
+                      No results found, please amend your search
+                    </Td>
                   </Tr>
                 )}
                 {filteredItems?.map((collection) => (
