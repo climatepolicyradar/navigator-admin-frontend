@@ -10,6 +10,6 @@ export interface ICollection {
 
 export interface ICollectionFormPost {
   title: string
-  description: string
+  description?: string
   organisation: TOrganisation
 }

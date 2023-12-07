@@ -30,7 +30,7 @@ import { ApiError } from '../feedback/ApiError'
 
 interface ICollectionForm {
   title: string
-  description: string
+  description?: string
   organisation: string
 }
 
@@ -131,7 +131,7 @@ export const CollectionForm = ({ collection: loadedCollection }: TProps) => {
           <FormLabel>Title</FormLabel>
           <Input bg="white" {...register('title')} />
         </FormControl>
-        <FormControl isRequired>
+        <FormControl>
           <FormLabel>Description</FormLabel>
           <Textarea height={'300px'} bg="white" {...register('description')} />
         </FormControl>
