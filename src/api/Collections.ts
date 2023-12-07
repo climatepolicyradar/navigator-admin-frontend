@@ -8,7 +8,7 @@ export async function getCollections(query?: string) {
   setToken(API)
 
   const response = await API.get<ICollection[]>('/v1/collections/', {
-    params: { q: query || '' },
+    params: { q: query || '', max_results: 999999 },
   })
     .then((response) => {
       return response.data
