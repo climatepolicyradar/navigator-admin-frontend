@@ -27,7 +27,8 @@ RUN yarn build
 ##############
 # Stage 2: Serve the built static assets using Nginx.
 ##############
-FROM nginx:alpine
+# Use the non-privileged Nginx image, which serves on port 8080 by default.
+FROM nginxinc/nginx-unprivileged:stable-alpine
 
 # Set working directory to Nginx asset directory.
 WORKDIR /usr/share/nginx/html
