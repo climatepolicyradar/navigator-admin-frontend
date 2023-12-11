@@ -18,7 +18,7 @@ run: build
 
 
 run_prod: build_prod
-	docker run -p ${VITE_PORT}:${VITE_PORT} --env-file "$(PWD)/.env" ${TAG}
+	docker run -p ${VITE_PORT}:80 -e VITE_API_URL=${VITE_API_URL} ${TAG}
 
 
 with_local: build
