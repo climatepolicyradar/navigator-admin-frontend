@@ -8,7 +8,7 @@
 # 1) A Node image that used to compile and build the frontend assets.
 # 2) A Nginx image which is used to serve the built frontend assets.
 ###############################################################################
-
+ARG VITE_PORT=${VITE_PORT}
 ##############
 # Stage 1: Compiling and building the frontend assets using Node.
 ##############
@@ -30,14 +30,26 @@ RUN yarn build
 # Use the non-privileged Nginx image, which serves on port 8080 by default.
 FROM nginxinc/nginx-unprivileged:stable-alpine
 
-# Set working directory to Nginx asset directory.
-WORKDIR /usr/share/nginx/html
+# Copy static assets from our builder image to Nginx asset directory.
+ARG ASSET_DIR=/usr/share/nginx/html
+WORKDIR ${ASSET_DIR}
+COPY --from=builder /app/dist ${ASSET_DIR}
 
-# Remove default Nginx static assets.
-RUN rm -rf ./*
+# Handle routing of static assets.
+ARG NGINX_CONF_FILE=/etc/nginx/conf.d/default.conf
+COPY nginx.conf ${NGINX_CONF_FILE}
 
-# Copy static assets from our builder image.
-COPY --from=builder /app/dist .
+# Override the default Nginx host port.
+ARG VITE_PORT
+RUN                                                                  \
+    DEFAULT_PORT=8080;                                              \
+    if  grep ${DEFAULT_PORT} ${NGINX_CONF_FILE};                 \
+    then                                                            \
+        sed -i "s/${DEFAULT_PORT}/${VITE_PORT}/g" ${NGINX_CONF_FILE};  \
+    else                                                            \
+        echo 'Unable to find default port to override. Exiting...'; \
+        false;                                                      \
+    fi
 
 # Run the container with global directives and daemon off.
 ENTRYPOINT ["nginx", "-g", "daemon off;"]
