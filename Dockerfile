@@ -41,14 +41,14 @@ COPY nginx.conf ${NGINX_CONF_FILE}
 
 # Override the default Nginx host port.
 ARG VITE_PORT
-RUN                                                                  \
-    DEFAULT_PORT=8080;                                              \
-    if  grep ${DEFAULT_PORT} ${NGINX_CONF_FILE};                 \
-    then                                                            \
-        sed -i "s/${DEFAULT_PORT}/${VITE_PORT}/g" ${NGINX_CONF_FILE};  \
-    else                                                            \
-        echo 'Unable to find default port to override. Exiting...'; \
-        false;                                                      \
+RUN                                                                     \
+    DEFAULT_PORT=8080;                                                  \
+    if  grep ${DEFAULT_PORT} ${NGINX_CONF_FILE};                        \
+    then                                                                \
+        sed -i "s/${DEFAULT_PORT}/${VITE_PORT}/g" ${NGINX_CONF_FILE};   \
+    else                                                                \
+        echo 'Unable to find default port to override. Exiting...';     \
+        false;                                                          \
     fi
 
 # Run the container with global directives and daemon off.
