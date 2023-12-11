@@ -18,7 +18,7 @@ run: build
 
 
 run_prod: build_prod
-	docker run --name ${TAG} -p ${VITE_PORT}:3000 -e VITE_API_URL=${VITE_API_URL} ${TAG}
+	docker run --name ${TAG} -p ${VITE_PORT}:${VITE_PORT} -e VITE_API_URL=${VITE_API_URL} ${TAG}
 
 
 with_local: build
