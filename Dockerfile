@@ -1,23 +1,55 @@
+###############################################################################
 # Production Dockerfile
+###############################################################################
+# This file comprises the Dockerfile image layers that are required to build the
+# production version of the 'navigator-admin-frontend' container.
 #
-# TODO: This will do for now - Vite's hot reloader does not run.
-#
-# It might not be best practice to use vite preview for production though.
-#
-# To fix it would probably be best to have a 2 stage docker file, this being
-# the first buld stage, then a second stage to build from an nginx container.
-# Something like:
-#     https://typeofnan.dev/how-to-serve-a-react-app-with-nginx-in-docker/
-#
-FROM node:20-alpine3.17
+# The image is built in two stages:
+# 1) A Node image that used to compile and build the frontend assets.
+# 2) A Nginx image which is used to serve the built frontend assets.
+###############################################################################
+ARG VITE_PORT=${VITE_PORT}
+##############
+# Stage 1: Compiling and building the frontend assets using Node.
+##############
+FROM node:20-alpine3.17 as builder
 
 WORKDIR /app
 
 COPY . /app
 
-# TODO: This should really be yarn install --production, but in the interest of
-# speedy deployment I'll come and revisit this another time and revert to yarn
-# install for now. PDCT-662.
+# Install all the project dependencies, including the development dependencies,
+# to ensure we can compile the project.
 RUN yarn install
 
-CMD yarn prod
+RUN yarn build
+
+##############
+# Stage 2: Serve the built static assets using Nginx.
+##############
+# Use the non-privileged Nginx image, which serves on port 8080 by default.
+FROM nginxinc/nginx-unprivileged:stable-alpine
+
+# Copy static assets from our builder image to Nginx asset directory.
+ARG ASSET_DIR=/usr/share/nginx/html
+WORKDIR ${ASSET_DIR}
+COPY --from=builder /app/dist ${ASSET_DIR}
+
+# Handle routing of static assets.
+ARG NGINX_CONF_FILE=/etc/nginx/conf.d/default.conf
+COPY nginx.conf ${NGINX_CONF_FILE}
+
+# Override the default Nginx host port.
+ARG VITE_PORT
+RUN                                                                     \
+    DEFAULT_PORT=8080;                                                  \
+    if  grep ${DEFAULT_PORT} ${NGINX_CONF_FILE};                        \
+    then                                                                \
+        sed -i "s/${DEFAULT_PORT}/${VITE_PORT}/g" ${NGINX_CONF_FILE};   \
+    else                                                                \
+        echo 'Unable to find default port to override. Exiting...';     \
+        false;                                                          \
+    fi
+
+# Run the container with global directives and daemon off.
+ENTRYPOINT ["nginx", "-g", "daemon off;"]
