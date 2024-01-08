@@ -14,7 +14,7 @@ build_prod:
 
 
 run: build
-	docker run --name ${TAG} -p ${VITE_PORT}:${VITE_PORT} --env-file "$(PWD)/.env" --mount type=bind,source="$(PWD)",target=/app ${TAG}
+	docker run --name ${TAG} -p ${VITE_PORT}:${VITE_PORT} --env-file "${PWD}/.env" --mount type=bind,source="${PWD}",target=/app ${TAG}
 
 
 run_prod: build_prod
@@ -25,6 +25,6 @@ with_local: build
 	docker run --rm -it \
 		-p ${VITE_PORT}:${VITE_PORT} \
 		--network=navigator-backend_default \
-		--env-file "$(PWD)/.env" \
-		--mount type=bind,source="$(PWD)",target=/app \
+		--env-file "${PWD}/.env" \
+		--mount type=bind,source="${PWD}",target=/app \
 		$(TAG)
