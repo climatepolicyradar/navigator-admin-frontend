@@ -25,6 +25,7 @@ import { DeleteButton } from '../buttons/Delete'
 import { sortBy } from '@/utils/sortBy'
 import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from '@chakra-ui/icons'
 import { getStatusColour } from '@/utils/getStatusColour'
+import { getStatusAlias } from '@/utils/getStatusAlias'
 import { ApiError } from '../feedback/ApiError'
 
 interface ILoaderProps {
@@ -218,7 +219,7 @@ export default function FamilyList() {
                 <Td>{formatDate(family.last_modified)}</Td>
                 <Td>
                   <Badge colorScheme={getStatusColour(family.status)} size="sm">
-                    {family.status}
+                    {getStatusAlias(family.status)}
                   </Badge>
                 </Td>
                 <Td>
