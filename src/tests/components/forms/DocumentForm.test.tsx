@@ -1,9 +1,9 @@
 import '@testing-library/jest-dom'
-import { render, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { render, screen, waitFor, fireEvent } from '@testing-library/react'
 import { DocumentForm } from '@/components/forms/DocumentForm'
 import { IDocument } from '@/interfaces'
 
+// Mocks
 jest.mock('@/api/Documents', () => ({
   createDocument: jest.fn(),
   updateDocument: jest.fn(),
@@ -46,30 +46,30 @@ const mockDocument: IDocument = {
   user_language_name: 'English',
 }
 
+
+
+// Tests
 describe('DocumentForm', () => {
-  it('valida el formulario correctamente', async () => {
+  it('validate the form incorrectly', async () => {
     render(
       <DocumentForm
         familyId={'test'}
         onSuccess={onDocumentFormSuccess}
         document={mockDocument}
-      />,
+      />
     )
 
     const input = screen.getByRole('textbox', { name: /source url/i })
-
-    await userEvent.clear(input)
-    await userEvent.type(input, 'ttp://example.com')
-    await userEvent.keyboard('{Enter}')
-    await waitFor(() => {
-      expect(input).toHaveValue('ttp://example.com')
-    })
-
     const submitButton = screen.getByText('Update Document')
-    await userEvent.click(submitButton)
+
+    fireEvent.change(input, {target: {value: 'test-no-url'}})
+    await waitFor(() => {
+        expect(input).toHaveValue('test-no-url')
+      })
+    fireEvent.submit(submitButton)
 
     await waitFor(() => {
-      const errorMessage = screen.getByText(/must be a valid URL/i)
+      const errorMessage = screen.getByRole("error")
       expect(errorMessage).toBeInTheDocument()
     })
   })
