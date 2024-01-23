@@ -40,7 +40,9 @@ jobs:
         run: make build_prod
 
       - name: Run Tests
-        run: npm run test
+        run: |
+          npx jest --version
+          npx jest
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
