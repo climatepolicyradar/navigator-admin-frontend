@@ -149,9 +149,12 @@ export const DocumentForm = ({
             <FormLabel>Title</FormLabel>
             <Input bg="white" {...register('title')} />
           </FormControl>
-          <FormControl isRequired>
+          <FormControl isRequired isInvalid={errors.source_url ? true : false}>
             <FormLabel>Source URL</FormLabel>
             <Input bg="white" {...register('source_url')} />
+            <FormErrorMessage>
+              {errors.source_url && errors.source_url.message}
+            </FormErrorMessage>
           </FormControl>
           <Controller
             control={control}
