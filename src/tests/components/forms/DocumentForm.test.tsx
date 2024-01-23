@@ -5,9 +5,14 @@ import { IDocument } from '@/interfaces'
 
 // Mocks
 jest.mock('@/api/Documents', () => ({
-  createDocument: jest.fn(),
-  updateDocument: jest.fn(),
+  createDocument: jest
+    .fn()
+    .mockResolvedValue({ response: { documentId: 'some-id' } }),
+  updateDocument: jest
+    .fn()
+    .mockResolvedValue({ response: { documentId: 'some-id' } }),
 }))
+
 jest.mock('@/hooks/useConfig', () => ({
   __esModule: true,
   default: jest.fn(() => ({
@@ -60,15 +65,40 @@ describe('DocumentForm', () => {
     const input = screen.getByRole('textbox', { name: /source url/i })
     const submitButton = screen.getByText('Update Document')
 
-    fireEvent.change(input, { target: { value: 'test-no-url' } })
+    const newUrl = 'test-no-url'
+    fireEvent.change(input, { target: { value: newUrl } })
     await waitFor(() => {
-      expect(input).toHaveValue('test-no-url')
+      expect(input).toHaveValue(newUrl)
     })
     fireEvent.submit(submitButton)
 
     await waitFor(() => {
       const errorMessage = screen.getByRole('error')
       expect(errorMessage).toBeInTheDocument()
+    })
+  })
+
+  it('validate the form correctly', async () => {
+    render(
+      <DocumentForm
+        familyId={'test'}
+        onSuccess={onDocumentFormSuccess}
+        document={mockDocument}
+      />,
+    )
+
+    const input = screen.getByRole('textbox', { name: /source url/i })
+    const submitButton = screen.getByText('Update Document')
+
+    const newUrl = 'http://source.com'
+    fireEvent.change(input, { target: { value: newUrl } })
+    await waitFor(() => {
+      expect(input).toHaveValue(newUrl)
+    })
+    fireEvent.submit(submitButton)
+
+    await waitFor(() => {
+      expect(onDocumentFormSuccess).toHaveBeenCalled()
     })
   })
 })
