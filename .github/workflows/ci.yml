@@ -41,6 +41,7 @@ jobs:
 
       - name: Run Tests
         run: |
+          npm install
           npx jest --version
           npx jest
 
