@@ -46,8 +46,6 @@ const mockDocument: IDocument = {
   user_language_name: 'English',
 }
 
-
-
 // Tests
 describe('DocumentForm', () => {
   it('validate the form incorrectly', async () => {
@@ -56,20 +54,20 @@ describe('DocumentForm', () => {
         familyId={'test'}
         onSuccess={onDocumentFormSuccess}
         document={mockDocument}
-      />
+      />,
     )
 
     const input = screen.getByRole('textbox', { name: /source url/i })
     const submitButton = screen.getByText('Update Document')
 
-    fireEvent.change(input, {target: {value: 'test-no-url'}})
+    fireEvent.change(input, { target: { value: 'test-no-url' } })
     await waitFor(() => {
-        expect(input).toHaveValue('test-no-url')
-      })
+      expect(input).toHaveValue('test-no-url')
+    })
     fireEvent.submit(submitButton)
 
     await waitFor(() => {
-      const errorMessage = screen.getByRole("error")
+      const errorMessage = screen.getByRole('error')
       expect(errorMessage).toBeInTheDocument()
     })
   })
