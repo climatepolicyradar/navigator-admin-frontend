@@ -53,3 +53,8 @@ Configuration is defined in the `eslintrc.cjs`
 ## Prettier
 
 Configuration for prettier is in `.prettierrc`
+
+## Test
+```
+yarn test
+```
