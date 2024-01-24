@@ -23,3 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 .env
+
+# NPM lock file (we are using yarn)
+package-lock.json

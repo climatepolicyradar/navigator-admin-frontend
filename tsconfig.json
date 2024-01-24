@@ -28,9 +28,9 @@
       "@components/*": ["components/*"],
       "@views/*": ["views/*"],
       "@hooks/*": ["hooks/*"],
-      "@utils/*": ["utils/*"]
-    }
+      "@utils/*": ["utils/*"],
+    },
   },
   "include": ["src"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "references": [{ "path": "./tsconfig.node.json" }],
 }

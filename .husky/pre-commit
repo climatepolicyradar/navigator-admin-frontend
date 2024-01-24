@@ -1,17 +1,12 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-NPM_COMMAND=npm
-if [[ "$OSTYPE" == "msys" ]]; then
-    NPM_COMMAND=npm.cmd
+if ! yarn run check-formatting; then
+    yarn run format
 fi
 
-if ! ${NPM_COMMAND} run check-formatting; then
-    ${NPM_COMMAND} run format
+if yarn run markdownlint; then
+    echo "No issues in markdown files."
 fi
 
-if ${NPM_COMMAND} run markdownlint; then
-    echo No issues in markdown files.
-fi
-
-${NPM_COMMAND} run lint
+yarn run lint

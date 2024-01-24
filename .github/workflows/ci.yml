@@ -31,16 +31,16 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
+          cache: 'yarn'
 
       - name: Run linter & formatter
-        run: npm install --only=dev && npm run precommit
+        run: yarn install --production=false && yarn precommit
 
       - name: Build
         run: make build_prod
 
       - name: Run Tests
-        run: echo TODO-TODO-TODO-TODO-TODO-TODO-TODO-TODO-TODO-TODO-TODO-TODO
+        run: yarn test
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
