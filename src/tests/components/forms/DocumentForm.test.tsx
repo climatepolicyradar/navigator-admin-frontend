@@ -53,7 +53,7 @@ const mockDocument: IDocument = {
 
 // Tests
 describe('DocumentForm', () => {
-  it('validate the form incorrectly', async () => {
+  it('validate incorrect document URL', async () => {
     render(
       <DocumentForm
         familyId={'test'}
@@ -78,7 +78,7 @@ describe('DocumentForm', () => {
     })
   })
 
-  it('validate the form correctly', async () => {
+  it('validate correct document URL', async () => {
     render(
       <DocumentForm
         familyId={'test'}
