@@ -55,6 +55,7 @@ Configuration is defined in the `eslintrc.cjs`
 Configuration for prettier is in `.prettierrc`
 
 ## Test
-```
+
+```bash
 yarn test
 ```
