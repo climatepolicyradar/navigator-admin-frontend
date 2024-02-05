@@ -8,27 +8,35 @@
 # 1) A Node image that used to compile and build the frontend assets.
 # 2) A Nginx image which is used to serve the built frontend assets.
 ###############################################################################
-ARG VITE_PORT=${VITE_PORT}
+ARG VITE_PORT
+ARG VITE_API_URL
 ##############
 # Stage 1: Compiling and building the frontend assets using Node.
 ##############
-FROM node:20-alpine3.17 as builder
+FROM node:20.11.0-bullseye as builder
+
+ARG VITE_API_URL
+ENV VITE_API_URL=${VITE_API_URL}
 
 WORKDIR /app
-
 COPY . /app
 
 # Install all the project dependencies, including the development dependencies,
 # to ensure we can compile the project.
 RUN yarn install
-
 RUN yarn build
+
+# Run container as non-priviledged user as per principle of least trust.
+USER node
 
 ##############
 # Stage 2: Serve the built static assets using Nginx.
 ##############
 # Use the non-privileged Nginx image, which serves on port 8080 by default.
-FROM nginxinc/nginx-unprivileged:stable-alpine
+FROM nginxinc/nginx-unprivileged:stable
+
+ARG VITE_API_URL
+ENV VITE_API_URL=${VITE_API_URL}
 
 # Copy static assets from our builder image to Nginx asset directory.
 ARG ASSET_DIR=/usr/share/nginx/html

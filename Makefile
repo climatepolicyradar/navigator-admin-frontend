@@ -10,7 +10,7 @@ build:
 
 
 build_prod:
-	docker build --build-arg VITE_PORT=${VITE_PORT} -t ${TAG} -f Dockerfile .
+	docker build --build-arg VITE_PORT=${VITE_PORT} --build-arg VITE_API_URL=${VITE_API_URL} -t ${TAG} -f Dockerfile .
 
 
 run: build
@@ -18,7 +18,7 @@ run: build
 
 
 run_prod: build_prod
-	docker run --name ${TAG} -p ${VITE_PORT}:${VITE_PORT} -e VITE_API_URL=${VITE_API_URL} ${TAG}
+	docker run --name ${TAG} -p ${VITE_PORT}:${VITE_PORT} ${TAG}
 
 
 with_local: build
