@@ -26,7 +26,7 @@ COPY . /app
 RUN yarn install
 RUN yarn build
 
-# Run container as non-priviledged user as per principle of least trust.
+# Run container as non-privileged user as per principle of least trust.
 USER node
 
 ##############
