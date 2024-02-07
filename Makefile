@@ -1,7 +1,7 @@
 .PHONEY: build build_prod run run_prod
 
 TAG = navigator-admin-frontend
-VITE_API_URL ?= https://admin.dev.climatepolicyradar.org/api/
+VITE_API_URL ?= https://admin.climatepolicyradar.org/api/
 VITE_PORT ?= 3000
 
 
