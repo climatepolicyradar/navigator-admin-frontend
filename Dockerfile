@@ -59,5 +59,8 @@ RUN                                                                     \
         false;                                                          \
     fi
 
+COPY env.sh /docker-entrypoint.d/env.sh
+RUN chmod +x /docker-entrypoint.d/env.sh
+
 # Run the container with global directives and daemon off.
 ENTRYPOINT ["nginx", "-g", "daemon off;"]
