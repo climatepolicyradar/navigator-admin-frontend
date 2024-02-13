@@ -2,16 +2,22 @@
 
 import pulumi
 import pulumi_aws as aws
-from util.naming import DEFAULT_TAGS, NAME_PREFIX
 from apprunner.main import create_apprunner_config, create_frontend_auto_scaling_config
+from util.naming import DEFAULT_TAGS, NAME_PREFIX
 from util.validate_aws_account import validate_aws_account, validate_stack_and_branch
 
 validate_aws_account()
 validate_stack_and_branch()
 
+# To inject the VITE_API_URL into the container at runtime instead of build time, we
+# need to do some find and replace magic in the container entrypoint script. Any key-
+# value pairs we wish to inject at runtime are defined in this file and must start with
+# the prefix MY_APP_ in the 'FRONTEND_ENV' dictionary below. In the admin-frontend
+# source repository, update the .env.production with the Pulumi key name as the key, and
+# the MY_APP_ prefixed key name as the value.
 CONFIG = pulumi.Config()
 FRONTEND_ENV = {
-    "VITE_API_URL": CONFIG.require("vite_api_url"),
+    "MY_APP_API_URL": CONFIG.require("vite_api_url"),
     "API_VERSION": CONFIG.require("api_version"),
     "ROBOTS": CONFIG.require("robots"),
     "HOSTNAME": CONFIG.require("hostname"),
