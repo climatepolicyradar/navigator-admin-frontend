@@ -3,6 +3,8 @@
 TAG = navigator-admin-frontend
 VITE_PORT ?= 3000
 
+stop:
+	docker stop ${TAG} && docker rm ${TAG}
 
 build:
 	docker build --build-arg VITE_PORT=${VITE_PORT} -t ${TAG} -f Dockerfile .
@@ -15,6 +17,11 @@ run_dev:
 
 run:
 	docker run --name ${TAG} -p ${VITE_PORT}:${VITE_PORT} ${TAG}
+
+run_ci:
+	docker run --name ${TAG} -p ${VITE_PORT}:${VITE_PORT} -e MY_APP_API_URL=https://admin.dev.climatepolicyradar.org/api/ ${TAG}
+
+rebuild: stop build run
 
 with_local: build_dev
 	docker run --rm -it \
