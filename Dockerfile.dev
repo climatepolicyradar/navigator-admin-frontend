@@ -1,3 +1,4 @@
+################################################################################
 # Development Dockerfile
 #
 # TODO: This will do for now - but it does run Vite's hot reloader.
@@ -6,12 +7,12 @@
 # the first buld stage, then a second stage to build from an nginx container.
 # Something like:
 #     https://typeofnan.dev/how-to-serve-a-react-app-with-nginx-in-docker/
-#
-FROM node:20-alpine3.17
+################################################################################
+FROM node:20.11.0-bullseye
 
 WORKDIR /app
-
 COPY . /app
-RUN yarn install
 
-CMD yarn dev
+RUN yarn install && yarn cache clean
+
+CMD ["yarn", "dev"]

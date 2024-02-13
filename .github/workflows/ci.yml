@@ -31,13 +31,13 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'yarn'
+          cache: yarn
 
       - name: Run linter & formatter
         run: yarn install --production=false && yarn precommit
 
       - name: Build
-        run: make build_prod
+        run: make build
 
       - name: Run Tests
         run: yarn test
