@@ -4,6 +4,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { IDocument, IDocumentFormPost, IError } from '@/interfaces'
 import { createDocument, updateDocument } from '@/api/Documents'
 import { documentSchema } from '@/schemas/documentSchema'
+import { Select as CRSelect } from 'chakra-react-select'
 
 import {
   Box,
@@ -22,6 +23,7 @@ import {
 import useConfig from '@/hooks/useConfig'
 import { FormLoader } from '../feedback/FormLoader'
 import { ApiError } from '../feedback/ApiError'
+import { chakraStylesSelect } from '@/styles/chakra'
 
 type TProps = {
   document?: IDocument
@@ -46,7 +48,6 @@ export const DocumentForm = ({
   } = useForm({
     resolver: yupResolver(documentSchema),
   })
-
   const handleFormSubmission = async (
     submittedDcumentData: IDocumentFormPost,
   ) => {
@@ -55,7 +56,6 @@ export const DocumentForm = ({
     const documentData = {
       ...submittedDcumentData,
       variant_name: submittedDcumentData.variant_name || null,
-      user_language_name: submittedDcumentData.user_language_name || null,
     }
 
     if (loadedDocument) {
@@ -226,15 +226,17 @@ export const DocumentForm = ({
                   isInvalid={!!errors.user_language_name}
                 >
                   <FormLabel as="legend">Language</FormLabel>
-                  <Select background="white" {...field}>
-                    <option value="">Please select</option>
-                    {Object.keys(config?.languages || {}).map((key) => (
-                      <option key={key} value={config?.languages[key]}>
-                        {config?.languages[key]}
-                      </option>
-                    ))}
-                  </Select>
-                  <FormErrorMessage>Please select a language</FormErrorMessage>
+                  <CRSelect
+                    chakraStyles={chakraStylesSelect}
+                    isClearable={false}
+                    isMulti={false}
+                    isSearchable={true}
+                    options={config?.languagesSorted}
+                    {...field}
+                  />
+                  <FormErrorMessage>
+                    {errors.user_language_name?.message}
+                  </FormErrorMessage>
                 </FormControl>
               )
             }}
