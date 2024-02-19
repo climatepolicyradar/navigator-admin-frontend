@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { IDocument, IDocumentFormPost, IError } from '@/interfaces'
+import { IDocument, IDocumentFormPost, IDocumentFormPostModified, IError } from '@/interfaces'
 import { createDocument, updateDocument } from '@/api/Documents'
 import { documentSchema } from '@/schemas/documentSchema'
 import { Select as CRSelect } from 'chakra-react-select'
@@ -53,13 +53,23 @@ export const DocumentForm = ({
   ) => {
     setFormError(null)
 
-    const documentData = {
-      ...submittedDcumentData,
-      variant_name: submittedDcumentData.variant_name || null,
-    }
+    const convertToModified = (data: IDocumentFormPost): IDocumentFormPostModified => {
+      return {
+        ...data,
+        variant_name: submittedDcumentData.variant_name || null,
+        user_language_name: data.user_language_name?.label || null,
+      };
+    };
+    
+    const modifiedDocumentData = convertToModified(submittedDcumentData);
+
+    // const documentData = {
+    //   ...submittedDcumentData,
+    //   variant_name: submittedDcumentData.variant_name || null,
+    // }
 
     if (loadedDocument) {
-      return await updateDocument(documentData, loadedDocument.import_id)
+      return await updateDocument(modifiedDocumentData, loadedDocument.import_id)
         .then((data) => {
           toast.closeAll()
           toast({
@@ -80,7 +90,7 @@ export const DocumentForm = ({
         })
     }
 
-    return await createDocument(documentData)
+    return await createDocument(modifiedDocumentData)
       .then((data) => {
         toast.closeAll()
         toast({
@@ -116,7 +126,7 @@ export const DocumentForm = ({
         type: loadedDocument.type ?? '',
         title: loadedDocument.title,
         source_url: loadedDocument.source_url ?? '',
-        user_language_name: loadedDocument.user_language_name ?? '',
+        user_language_name: { label: loadedDocument.user_language_name ?? '', value: loadedDocument.user_language_name ?? '' },
       })
     } else if (familyId) {
       reset({
