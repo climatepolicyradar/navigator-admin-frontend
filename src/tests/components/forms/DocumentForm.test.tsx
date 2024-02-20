@@ -2,8 +2,24 @@ import '@testing-library/jest-dom'
 import { render, screen, waitFor, fireEvent } from '@testing-library/react'
 import { DocumentForm } from '@/components/forms/DocumentForm'
 import { IDocument } from '@/interfaces'
+import { ChakraProvider } from '@chakra-ui/react'
 
-// Mocks
+import React from 'react'
+
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: jest.fn().mockImplementation((query: string) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(), // Deprecated
+    removeListener: jest.fn(), // Deprecated
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  })),
+})
+
 jest.mock('@/api/Documents', () => ({
   createDocument: jest
     .fn()
@@ -55,11 +71,15 @@ const mockDocument: IDocument = {
 describe('DocumentForm', () => {
   it('validate incorrect document URL', async () => {
     render(
-      <DocumentForm
-        familyId={'test'}
-        onSuccess={onDocumentFormSuccess}
-        document={mockDocument}
-      />,
+      <React.StrictMode>
+        <ChakraProvider>
+          <DocumentForm
+            familyId={'test'}
+            onSuccess={onDocumentFormSuccess}
+            document={mockDocument}
+          />
+        </ChakraProvider>
+      </React.StrictMode>,
     )
 
     const input = screen.getByRole('textbox', { name: /source url/i })
@@ -80,11 +100,15 @@ describe('DocumentForm', () => {
 
   it('validate correct document URL', async () => {
     render(
-      <DocumentForm
-        familyId={'test'}
-        onSuccess={onDocumentFormSuccess}
-        document={mockDocument}
-      />,
+      <React.StrictMode>
+        <ChakraProvider>
+          <DocumentForm
+            familyId={'test'}
+            onSuccess={onDocumentFormSuccess}
+            document={mockDocument}
+          />
+        </ChakraProvider>
+      </React.StrictMode>,
     )
 
     const input = screen.getByRole('textbox', { name: /source url/i })
