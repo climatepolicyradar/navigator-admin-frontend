@@ -23,9 +23,9 @@ export interface IDocumentFormPost {
   title: string
   source_url: string
   user_language_name?: {
-    label: string;
-    value: string;
-  } | null;
+    label: string
+    value: string
+  } | null
 }
 
 export interface IDocumentFormPostModified {
