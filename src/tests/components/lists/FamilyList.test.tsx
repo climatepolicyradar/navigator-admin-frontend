@@ -1,13 +1,13 @@
-import { customRender } from "@/tests/utilsTest/render";
+import { customRender } from '@/tests/utilsTest/render'
 import { screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 
-import FamilyList from "@/components/lists/FamilyList";
+import FamilyList from '@/components/lists/FamilyList'
 
 jest.mock('@/api/Families', () => ({
   getFamilies: jest.fn(),
   deleteFamily: jest.fn(),
-}));
+}))
 
 const mockFamiliesData = [
   {
@@ -21,23 +21,22 @@ const mockFamiliesData = [
     created: '2021-04-01',
     status: 'active',
   },
-];
+]
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useLoaderData: () => ({
     response: { data: mockFamiliesData },
   }),
-}));
-
+}))
 
 describe('FamilyList', () => {
   it('renders without crashing', () => {
-    customRender(<FamilyList />);
+    customRender(<FamilyList />)
 
     // Verify mock family is there
-    expect(screen.getByText('Family One')).toBeInTheDocument();
-    expect(screen.getByText('Category One')).toBeInTheDocument();
-    expect(screen.getByText('Geography One')).toBeInTheDocument();
-  });
-});
+    expect(screen.getByText('Family One')).toBeInTheDocument()
+    expect(screen.getByText('Category One')).toBeInTheDocument()
+    expect(screen.getByText('Geography One')).toBeInTheDocument()
+  })
+})

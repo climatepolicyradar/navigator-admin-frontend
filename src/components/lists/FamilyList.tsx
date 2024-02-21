@@ -189,10 +189,7 @@ export default function FamilyList() {
                   </Flex>
                 </Tooltip>
               </Th>
-              <Th
-                onClick={() => handleHeaderClick('created')}
-                cursor="pointer"
-              >
+              <Th onClick={() => handleHeaderClick('created')} cursor="pointer">
                 <Tooltip placement="top" label="Date added to system">
                   <Flex gap={2} align="center">
                     Created {renderSortIcon('created')}
