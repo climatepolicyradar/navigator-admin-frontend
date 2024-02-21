@@ -3,6 +3,9 @@ import { render as rtlRender, RenderOptions } from '@testing-library/react'
 import { ChakraProvider } from '@chakra-ui/react'
 import { useConfigMock } from './mocks'
 
+// Solution for avoid -> Error: Uncaught [TypeError: env.window.matchMedia is not a function]
+// Please check https://github.com/chakra-ui/chakra-ui/discussions/6664
+// Please check https://jestjs.io/docs/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
   value: jest.fn().mockImplementation((query: string) => ({
