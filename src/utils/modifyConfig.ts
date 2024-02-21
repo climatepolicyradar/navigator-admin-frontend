@@ -1,6 +1,6 @@
 import { IConfig } from '@/interfaces'
 
-export const configureConfig = (config: IConfig): IConfig => {
+export const modifyConfig = (config: IConfig): IConfig => {
   // Add languagesSorted to condifg object
   const languagesSorted = Object.keys(config?.languages || {})
     .map((key) => ({

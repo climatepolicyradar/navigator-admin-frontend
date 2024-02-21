@@ -249,14 +249,16 @@ export const DocumentForm = ({
                   isInvalid={!!errors.user_language_name}
                 >
                   <FormLabel as="legend">Language</FormLabel>
-                  <CRSelect
-                    chakraStyles={chakraStylesSelect}
-                    isClearable={false}
-                    isMulti={false}
-                    isSearchable={true}
-                    options={config?.languagesSorted}
-                    {...field}
-                  />
+                  <div data-testid="language-select">
+                    <CRSelect
+                      chakraStyles={chakraStylesSelect}
+                      isClearable={false}
+                      isMulti={false}
+                      isSearchable={true}
+                      options={config?.languagesSorted}
+                      {...field}
+                    />
+                  </div>
                   <FormErrorMessage>
                     {errors.user_language_name?.message}
                   </FormErrorMessage>
