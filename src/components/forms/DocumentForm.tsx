@@ -70,11 +70,6 @@ export const DocumentForm = ({
 
     const modifiedDocumentData = convertToModified(submittedDcumentData)
 
-    // const documentData = {
-    //   ...submittedDcumentData,
-    //   variant_name: submittedDcumentData.variant_name || null,
-    // }
-
     if (loadedDocument) {
       return await updateDocument(
         modifiedDocumentData,

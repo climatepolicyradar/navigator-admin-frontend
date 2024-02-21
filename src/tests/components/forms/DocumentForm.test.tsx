@@ -119,16 +119,6 @@ describe('DocumentForm', () => {
       throw new Error('Dropdown not found')
     }
 
-    // TODO: Check both options are visible and select one
-    // expect(screen.getByRole("form")).toHaveFormValues({ animals: "cat" });
-
-    // await waitFor(() => {
-    //   expect(screen.getByText('Spanish')).toBeInTheDocument();
-    //   expect(screen.getByText('English')).toBeInTheDocument();
-    //   const option = screen.getByText("Spanish");
-    //   fireEvent.click(option);
-    // });
-
     // Check no errors at submit
     fireEvent.submit(submitButton)
     await waitFor(() => {
