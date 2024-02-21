@@ -18,11 +18,17 @@ interface IConfigMeta {
   allowed_values: string[]
 }
 
+export interface IConfigLangaugeSorted {
+  value: string
+  label: string
+}
+
 export interface IConfig {
   geographies: IConfigGeography[]
   languages: {
     [key: string]: string
   }
+  languagesSorted: IConfigLangaugeSorted[]
   taxonomies: {
     CCLW: {
       topic: IConfigMeta

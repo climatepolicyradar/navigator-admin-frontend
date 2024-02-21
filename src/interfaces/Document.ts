@@ -22,5 +22,18 @@ export interface IDocumentFormPost {
   type: string
   title: string
   source_url: string
+  user_language_name?: {
+    label: string
+    value: string
+  } | null
+}
+
+export interface IDocumentFormPostModified {
+  family_import_id: string
+  variant_name?: string | null
+  role: string
+  type: string
+  title: string
+  source_url: string
   user_language_name?: string | null
 }

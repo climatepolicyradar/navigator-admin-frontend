@@ -29,5 +29,5 @@ module.exports = {
     ],
   },
   // ignore js files
-  ignorePatterns: ['.eslintrc.cjs', 'vite.config.ts', '**/*.js'],
+  ignorePatterns: ['.eslintrc.cjs', 'vite.config.ts', '**/*.js', 'src/tests'],
 }

@@ -2,7 +2,7 @@ import { AxiosError } from 'axios'
 
 import API from '@/api'
 import { setToken } from '@/api/Auth'
-import { IDocument, IDocumentFormPost, IError } from '@/interfaces'
+import { IDocument, IDocumentFormPostModified, IError } from '@/interfaces'
 
 export async function getDocuments(query: string | undefined | null) {
   setToken(API)
@@ -44,7 +44,7 @@ export async function getDocument(id: string) {
   return { response }
 }
 
-export async function createDocument(data: IDocumentFormPost) {
+export async function createDocument(data: IDocumentFormPostModified) {
   setToken(API)
 
   const response = await API.post<string>('/v1/documents', data)
@@ -63,7 +63,10 @@ export async function createDocument(data: IDocumentFormPost) {
   return { response }
 }
 
-export async function updateDocument(data: IDocumentFormPost, id: string) {
+export async function updateDocument(
+  data: IDocumentFormPostModified,
+  id: string,
+) {
   setToken(API)
 
   const response = await API.put<IDocument>('/v1/documents/' + id, data)
