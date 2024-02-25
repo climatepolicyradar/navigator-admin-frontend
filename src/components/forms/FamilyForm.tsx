@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useCallback } from 'react'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useNavigate } from 'react-router-dom'
@@ -114,6 +114,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     reset,
     setValue,
     formState: { errors, isSubmitting },
+    formState: { isDirty },
   } = useForm({
     resolver: yupResolver(familySchema),
   })
@@ -372,6 +373,22 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       })
     }
   }, [loadedFamily, collections, reset])
+
+  // This is only working for external navigation, no internal!
+  console.log(isDirty)
+  const handleBeforeUnload = useCallback((event: BeforeUnloadEvent) => {
+    if (isDirty) {
+      event.preventDefault();
+      event.returnValue = 'Are you sure you want leave? Changes that you made may not be saved.';
+    }
+  }, [isDirty]);
+
+  useEffect(() => {
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+    }
+  }, [handleBeforeUnload])
 
   return (
     <>
