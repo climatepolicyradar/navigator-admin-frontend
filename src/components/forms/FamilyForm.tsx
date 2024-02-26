@@ -376,12 +376,16 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
 
   // This is only working for external navigation, no internal!
   console.log(isDirty)
-  const handleBeforeUnload = useCallback((event: BeforeUnloadEvent) => {
-    if (isDirty) {
-      event.preventDefault();
-      event.returnValue = 'Are you sure you want leave? Changes that you made may not be saved.';
-    }
-  }, [isDirty]);
+  const handleBeforeUnload = useCallback(
+    (event: BeforeUnloadEvent) => {
+      if (isDirty) {
+        event.preventDefault()
+        event.returnValue =
+          'Are you sure you want leave? Changes that you made may not be saved.'
+      }
+    },
+    [isDirty],
+  )
 
   useEffect(() => {
     window.addEventListener('beforeunload', handleBeforeUnload)
