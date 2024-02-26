@@ -1,4 +1,5 @@
 import React from 'react'
+import { MemoryRouter } from 'react-router-dom'
 import { render as rtlRender, RenderOptions } from '@testing-library/react'
 import { ChakraProvider } from '@chakra-ui/react'
 import { useConfigMock } from './mocks'
@@ -30,7 +31,9 @@ const AllTheProviders: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   return (
     <React.StrictMode>
-      <ChakraProvider>{children}</ChakraProvider>
+      <ChakraProvider>
+        <MemoryRouter>{children}</MemoryRouter>
+      </ChakraProvider>
     </React.StrictMode>
   )
 }
