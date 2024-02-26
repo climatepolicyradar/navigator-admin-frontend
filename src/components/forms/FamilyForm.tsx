@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo, useCallback } from 'react'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useNavigate } from 'react-router-dom'
+import { useBlocker, useNavigate } from 'react-router-dom'
 
 import {
   IError,
@@ -45,6 +45,13 @@ import {
   DrawerHeader,
   DrawerBody,
   Flex,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
 } from '@chakra-ui/react'
 import { Select as CRSelect } from 'chakra-react-select'
 import useCollections from '@/hooks/useCollections'
@@ -96,6 +103,7 @@ const getCollection = (collectionId: string, collections: ICollection[]) => {
 }
 
 export const FamilyForm = ({ family: loadedFamily }: TProps) => {
+  const [isLeavingModalOpen, setIsLeavingModalOpen] = useState(false)
   const { isOpen, onOpen, onClose } = useDisclosure()
   const navigate = useNavigate()
   const { config, error: configError, loading: configLoading } = useConfig()
@@ -374,8 +382,14 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     }
   }, [loadedFamily, collections, reset])
 
-  // This is only working for external navigation, no internal!
+  // Internal and external navigation blocker for unsaved changes
   console.log(isDirty)
+
+  const blocker = useBlocker(
+    ({ currentLocation, nextLocation }) =>
+      isDirty !== false && currentLocation.pathname !== nextLocation.pathname,
+  )
+
   const handleBeforeUnload = useCallback(
     (event: BeforeUnloadEvent) => {
       if (isDirty) {
@@ -386,6 +400,12 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     },
     [isDirty],
   )
+
+  useEffect(() => {
+    if (blocker && blocker.state === 'blocked') {
+      setIsLeavingModalOpen(true)
+    }
+  }, [blocker])
 
   useEffect(() => {
     window.addEventListener('beforeunload', handleBeforeUnload)
@@ -419,6 +439,37 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       {canLoadForm && (
         <>
           <form onSubmit={handleSubmit(onSubmit)}>
+            {isLeavingModalOpen && (
+              <Modal
+                isOpen={isLeavingModalOpen}
+                onClose={() => setIsLeavingModalOpen(false)}
+              >
+                <ModalOverlay />
+                <ModalContent>
+                  <ModalHeader>Are you sure you want to leave?</ModalHeader>
+                  <ModalCloseButton />
+                  <ModalBody>Changes that you made may not be saved.</ModalBody>
+                  <ModalFooter>
+                    <Button
+                      colorScheme="gray"
+                      mr={3}
+                      onClick={() => setIsLeavingModalOpen(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      colorScheme="red"
+                      onClick={() => {
+                        blocker.proceed?.()
+                        setIsLeavingModalOpen(false)
+                      }}
+                    >
+                      Leave without saving
+                    </Button>
+                  </ModalFooter>
+                </ModalContent>
+              </Modal>
+            )}
             <VStack gap="4" mb={12} mt={4} align={'stretch'}>
               {formError && <ApiError error={formError} />}
               {loadedFamily && (

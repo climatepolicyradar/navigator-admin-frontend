@@ -43,11 +43,11 @@ jest.mock('react-router-dom', () => ({
 
 describe('FamilyList', () => {
   beforeEach(async () => {
-    customRender(<FamilyList />);
+    customRender(<FamilyList />)
     await waitFor(() => {
-      expect(screen.getByText('Family One')).toBeInTheDocument();
-    });
-  });
+      expect(screen.getByText('Family One')).toBeInTheDocument()
+    })
+  })
 
   it('renders without crashing', () => {
     // Verify mock family properties are rendered there
@@ -62,29 +62,36 @@ describe('FamilyList', () => {
 
   it('sorts families by title when title header is clicked', async () => {
     expect(screen.getByText('Family One')).toBeInTheDocument()
-    const titleHeader = screen.getByText('Title');
+    const titleHeader = screen.getByText('Title')
 
     // Sorted
-    fireEvent.click(titleHeader);
+    fireEvent.click(titleHeader)
     await waitFor(() => {
-      const allFamilies = screen.getAllByText(/Family/);
+      const allFamilies = screen.getAllByText(/Family/)
 
-      const indexFamilyOne = allFamilies.findIndex(element => element.textContent === 'Family One');
-      const indexFamilyTwo = allFamilies.findIndex(element => element.textContent === 'Family Two');
+      const indexFamilyOne = allFamilies.findIndex(
+        (element) => element.textContent === 'Family One',
+      )
+      const indexFamilyTwo = allFamilies.findIndex(
+        (element) => element.textContent === 'Family Two',
+      )
 
-      expect(indexFamilyOne).toBeLessThan(indexFamilyTwo);
-    });
+      expect(indexFamilyOne).toBeLessThan(indexFamilyTwo)
+    })
 
     // Reversed
-    fireEvent.click(titleHeader);
+    fireEvent.click(titleHeader)
     await waitFor(() => {
-      const allFamilies = screen.getAllByText(/Family/);
+      const allFamilies = screen.getAllByText(/Family/)
 
-      const indexFamilyOne = allFamilies.findIndex(element => element.textContent === 'Family One');
-      const indexFamilyTwo = allFamilies.findIndex(element => element.textContent === 'Family Two');
+      const indexFamilyOne = allFamilies.findIndex(
+        (element) => element.textContent === 'Family One',
+      )
+      const indexFamilyTwo = allFamilies.findIndex(
+        (element) => element.textContent === 'Family Two',
+      )
 
-      expect(indexFamilyOne).toBeGreaterThan(indexFamilyTwo);
-    });
-
-  });
+      expect(indexFamilyOne).toBeGreaterThan(indexFamilyTwo)
+    })
+  })
 })
