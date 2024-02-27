@@ -1,4 +1,4 @@
-import { ICCLWFamily, IUNFCCCFamily } from "@/interfaces/Family";
+import { ICCLWFamily, IUNFCCCFamily } from '@/interfaces/Family'
 
 const useConfigMock = jest.fn(() => ({
   config: {
@@ -44,9 +44,9 @@ const mockUNFCCCFamily: IUNFCCCFamily = {
   last_modified: '4/1/2021',
   metadata: {
     author: ['Author One'],
-    author_type: ['Type One']
-  }
-};
+    author_type: ['Type One'],
+  },
+}
 
 const mockCCLWFamily: ICCLWFamily = {
   import_id: '2',
@@ -70,10 +70,10 @@ const mockCCLWFamily: ICCLWFamily = {
     sector: ['Sector One', 'Sector Two'],
     keyword: ['Keyword One', 'Keyword Two'],
     framework: ['Framework One', 'Framework Two'],
-    instrument: ['Instrument One', 'Instrument Two']
-  }
-};
+    instrument: ['Instrument One', 'Instrument Two'],
+  },
+}
 
 // Exports
-export const mockFamiliesData = [mockUNFCCCFamily, mockCCLWFamily];
-export { useConfigMock };
+export const mockFamiliesData = [mockUNFCCCFamily, mockCCLWFamily]
+export { useConfigMock }
