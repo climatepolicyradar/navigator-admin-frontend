@@ -38,12 +38,12 @@ describe('FamilyList', () => {
   })
 
   it('sorts families by title when title header is clicked', async () => {
-    const titleHeader = screen.getByText('Title');
+    const titleHeader = screen.getByText('Title')
 
     // Sorted
     fireEvent.click(titleHeader)
     await waitFor(() => {
-      const allFamilies = screen.getAllByText(/Family/);
+      const allFamilies = screen.getAllByText(/Family/)
       const indexUNFCCCFamilyOne = allFamilies.findIndex(
         (element) => element.textContent === 'UNFCCC Family One',
       )
@@ -57,7 +57,7 @@ describe('FamilyList', () => {
     // Reversed
     fireEvent.click(titleHeader)
     await waitFor(() => {
-      const allFamilies = screen.getAllByText(/Family/);
+      const allFamilies = screen.getAllByText(/Family/)
       const indexUNFCCCFamilyOne = allFamilies.findIndex(
         (element) => element.textContent === 'UNFCCC Family One',
       )

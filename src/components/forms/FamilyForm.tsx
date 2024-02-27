@@ -383,8 +383,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   }, [loadedFamily, collections, reset])
 
   // Internal and external navigation blocker for unsaved changes
-  console.log(isDirty)
-
   const blocker = useBlocker(
     ({ currentLocation, nextLocation }) =>
       isDirty !== false && currentLocation.pathname !== nextLocation.pathname,

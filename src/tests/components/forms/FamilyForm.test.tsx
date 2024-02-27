@@ -1,13 +1,16 @@
-import { FamilyForm } from '@/components/forms/FamilyForm'
 import { screen } from '@testing-library/react'
-import { mockFamiliesData } from '@/tests/utilsTest/mocks'
-
 import '@testing-library/jest-dom'
-import { customRender } from '@/tests/utilsTest/render'
 
-jest.mock('@/api/Config', () => ({
-  getConfig: jest.fn(),
-}))
+import { mockFamiliesData } from '@/tests/utilsTest/mocks'
+import { customRender } from '@/tests/utilsTest/render'
+import { FamilyForm } from '@/components/forms/FamilyForm'
+
+// useBlocker only can ba used in a router context
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useBlocker: jest.fn(),
+}));
+
 jest.mock('@/api/Collections', () => ({
   getCollections: jest.fn(),
 }))
@@ -21,6 +24,43 @@ jest.mock('@/api/Families', () => ({
 jest.mock('@/api/Documents', () => ({
   deleteDocument: jest.fn(),
 }))
+jest.mock('@/hooks/useCollections', () => ({
+  __esModule: true,
+  default: jest.fn(() => ({
+    collections: [],
+    error: null,
+    loading: false,
+  })),
+}));
+
+jest.mock('@/api/Documents', () => ({
+  getDocument: jest.fn().mockResolvedValue({
+    response: {
+      data: {
+        id: 'mockDocumentId',
+        title: 'Mock Document Title',
+        content: 'Mock content of the document',
+      }
+    }
+  })
+}));
+
+// jest.mock('@/api/Events', () => ({
+//   getEvent: jest.fn().mockResolvedValue({
+//     response: {
+//       data: {
+//         import_id: '1',
+//         event_title: 'Mock Event Title',
+//         date: '2024-02-21',
+//         event_type_value: 'Mock Event Type',
+//         event_status: 'active',
+//         family_import_id: 'family1',
+//         family_document_import_id: 'document1', // Asume que es opcional y podría tener un valor
+//         // Asegúrate de incluir cualquier otro campo necesario de la interfaz IEvent
+//       }
+//     }
+//   })
+// }));
 
 let mockFamilyData = mockFamiliesData[0]
 
