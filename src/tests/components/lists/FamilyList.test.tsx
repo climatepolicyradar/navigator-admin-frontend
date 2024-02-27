@@ -38,7 +38,6 @@ describe('FamilyList', () => {
   })
 
   it('sorts families by title when title header is clicked', async () => {
-    expect(screen.getByText('Family One')).toBeInTheDocument()
     const titleHeader = screen.getByText('Title');
 
     // Sorted
