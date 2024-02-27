@@ -9,7 +9,7 @@ import { FamilyForm } from '@/components/forms/FamilyForm'
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useBlocker: jest.fn(),
-}));
+}))
 
 jest.mock('@/api/Collections', () => ({
   getCollections: jest.fn(),
@@ -31,7 +31,7 @@ jest.mock('@/hooks/useCollections', () => ({
     error: null,
     loading: false,
   })),
-}));
+}))
 
 jest.mock('@/api/Documents', () => ({
   getDocument: jest.fn().mockResolvedValue({
@@ -40,10 +40,10 @@ jest.mock('@/api/Documents', () => ({
         id: 'mockDocumentId',
         title: 'Mock Document Title',
         content: 'Mock content of the document',
-      }
-    }
-  })
-}));
+      },
+    },
+  }),
+}))
 
 // jest.mock('@/api/Events', () => ({
 //   getEvent: jest.fn().mockResolvedValue({
