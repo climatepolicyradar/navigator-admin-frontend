@@ -22,26 +22,24 @@ jest.mock('axios', () => {
         },
       },
     })),
-  };
-});
+  }
+})
 
 jest.mock('@/api', () => ({
   getApiUrl: jest.fn().mockReturnValue('http://mock-api-url'),
-}));
+}))
 
 let mockFamilyData = mockFamiliesData[0]
 
 describe('FamilyList', () => {
-it('renders family data', async () => {
-  customRender(<FamilyForm family={mockFamilyData} />)
+  it('renders family data', async () => {
+    customRender(<FamilyForm family={mockFamilyData} />)
 
-
-
-  await waitFor(() => {
-    console.log(screen.debug())
-    expect(screen.getByText(mockFamilyData.title)).toBeInTheDocument()
+    await waitFor(() => {
+      console.log(screen.debug())
+      expect(screen.getByText(mockFamilyData.title)).toBeInTheDocument()
+    })
   })
-})
 })
 
 // TEST: isDirty & external navigation & internal navigation
