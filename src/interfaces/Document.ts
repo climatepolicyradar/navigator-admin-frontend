@@ -21,6 +21,6 @@ export interface IDocumentFormPost {
   role: string
   type: string
   title: string
-  source_url: string
+  source_url: string | null
   user_language_name?: string | null
 }
