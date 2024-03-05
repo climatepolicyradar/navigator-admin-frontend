@@ -21,7 +21,7 @@ export interface IDocumentFormPost {
   role: string
   type: string
   title: string
-  source_url: string
+  source_url?: string | null
   user_language_name?: {
     label: string
     value: string
@@ -34,6 +34,6 @@ export interface IDocumentFormPostModified {
   role: string
   type: string
   title: string
-  source_url: string
+  source_url?: string | null
   user_language_name?: string | null
 }
