@@ -32,16 +32,9 @@ jobs:
               exit 1
           fi
 
-      - name: Run ESLint
+      - name: Run ESLinting and formatting
         shell: bash
         run: yarn lint
-
-      - name: Check formatting
-        shell: bash
-        run: |
-          yarn global add prettier
-          ls -a
-          yarn validate-formatting
 
   test:
     runs-on: ubuntu-latest
