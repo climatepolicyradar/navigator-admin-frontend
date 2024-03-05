@@ -23,7 +23,7 @@ jobs:
         run: yarn install --production=false && yarn precommit
 
       - name: Run linter & formatter
-        run: yarn precommit
+        run: .husky/pre-commit.sh true
 
   test:
     runs-on: ubuntu-latest
@@ -51,7 +51,7 @@ jobs:
       - code-quality
       - test
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Build
         run: make build
