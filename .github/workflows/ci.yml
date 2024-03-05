@@ -22,12 +22,6 @@ jobs:
       - name: Install dev dependencies
         run: yarn install --production=false
 
-      - name: Check formatting
-        uses: rutajdash/prettier-cli-action@v1.0.2
-        with:
-          file_pattern: '**/*'
-          config_path: ./.prettierrc
-
       - name: Run markdown linter
         shell: bash
         run: |
@@ -40,6 +34,11 @@ jobs:
       - name: Run ESLint
         shell: bash
         run: yarn lint
+
+      - name: Check formatting
+        uses: creyD/prettier_action@v4.3
+        with:
+          prettier_options: --check *
 
   test:
     runs-on: ubuntu-latest
