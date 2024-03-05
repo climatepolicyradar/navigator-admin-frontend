@@ -380,6 +380,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
             : '',
       })
     }
+    console.log(loadedFamily?.title)
   }, [loadedFamily, collections, reset])
 
   // Internal and external navigation blocker for unsaved changes

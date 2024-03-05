@@ -26,6 +26,26 @@ jest.mock('@/hooks/useConfig', () => ({
   default: useConfigMock,
 }))
 
+// const useCollectionsMock = jest.fn((query: string) => {
+//   console.log("QUERY")
+//   console.log(query)
+//   return { collections: [], error: null, loading: false, reload: jest.fn()}
+// })
+
+// jest.mock('@/hooks/useCollections', () => ({
+//   __esModule: true,
+//   default: useCollectionsMock,
+// }))
+
+// jest.mock('@/hooks/useCollections', () => ({
+//   __esModule: true,
+//   default: jest.fn().mockImplementation((query: string) => {
+//     console.log("QUERY")
+//     console.log(query)
+//     return { collections: [], error: null, loading: false, reload: jest.fn() }
+//   }),
+// }));
+
 const AllTheProviders: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {

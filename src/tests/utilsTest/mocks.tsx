@@ -130,6 +130,23 @@ const mockCCLWFamily: ICCLWFamily = {
   },
 }
 
+const mockCollections = [
+  {
+    import_id: '1',
+    title: 'Collection Title 1',
+    description: 'Description of Collection 1',
+    families: ['family1', 'family2'],
+    organisation: 'UNFCCC',
+  },
+  {
+    import_id: '2',
+    title: 'Collection Title 2',
+    description: 'Description of Collection 2',
+    families: ['family3', 'family4'],
+    organisation: 'CCLW',
+  },
+]
+
 // Exports
 export const mockFamiliesData = [mockUNFCCCFamily, mockCCLWFamily]
-export { useConfigMock }
+export { useConfigMock, mockCollections }
