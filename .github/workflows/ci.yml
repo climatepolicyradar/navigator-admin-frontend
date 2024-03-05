@@ -38,7 +38,7 @@ jobs:
       - name: Check formatting
         uses: creyD/prettier_action@v4.3
         with:
-          prettier_options: --check *
+          prettier_options: --check ./**/*
 
   test:
     runs-on: ubuntu-latest
