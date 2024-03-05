@@ -26,6 +26,7 @@ jest.mock('@/hooks/useConfig', () => ({
   default: useConfigMock,
 }))
 
+// eslint-disable-next-line react-refresh/only-export-components
 const AllTheProviders: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {

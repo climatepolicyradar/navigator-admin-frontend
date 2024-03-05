@@ -9,23 +9,40 @@ on:
       - main
 
 jobs:
-  test-bash:
+  code-quality:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-      - name: Run bash tests
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.11.0
+          cache: yarn
+
+      - name: Install dev dependencies
+        run: yarn install --production=false
+
+      - name: Run markdown linter
+        shell: bash
         run: |
-          docker build bats -t bats-with-helpers:latest
-          docker run --rm -v "${PWD}/.github:/code" bats-with-helpers:latest /code/tests/test_retag_and_push.bats
+          if yarn markdownlint; then
+            echo "No issues in markdown files."
+          else
+              exit 1
+          fi
 
-  build-start-test:
+      - name: Run ESLinting and formatting
+        shell: bash
+        run: yarn lint
+
+  test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [20.x]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
@@ -33,14 +50,22 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: yarn
 
-      - name: Run linter & formatter
-        run: yarn install --production=false && yarn precommit
-
-      - name: Build
-        run: make build
+      - name: Install dev dependencies
+        run: yarn install --production=false
 
       - name: Run Tests
         run: yarn test
+
+  build:
+    runs-on: ubuntu-latest
+    needs:
+      - code-quality
+      - test
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build
+        run: make build
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
