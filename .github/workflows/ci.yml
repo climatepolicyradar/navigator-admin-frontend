@@ -20,7 +20,7 @@ jobs:
           cache: yarn
 
       - name: Install dev dependencies
-        run: yarn install --production=false && yarn precommit
+        run: yarn install --production=false
 
       - name: Run linter & formatter
         run: .husky/pre-commit.sh true
