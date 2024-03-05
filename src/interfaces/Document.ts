@@ -10,7 +10,7 @@ export interface IDocument {
   title: string
   md5_sum: string | null
   cdn_object: string | null
-  source_url: string
+  source_url: string | null
   content_type: string | null
   user_language_name: string | null
 }
@@ -21,7 +21,7 @@ export interface IDocumentFormPost {
   role: string
   type: string
   title: string
-  source_url: string | null
+  source_url?: string | null
   user_language_name?: {
     label: string
     value: string
@@ -34,6 +34,6 @@ export interface IDocumentFormPostModified {
   role: string
   type: string
   title: string
-  source_url: string
+  source_url?: string | null
   user_language_name?: string | null
 }
