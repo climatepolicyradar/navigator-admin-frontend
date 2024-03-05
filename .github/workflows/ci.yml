@@ -17,6 +17,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
+          node-version: 20.11.0
           cache: yarn
 
       - name: Install dev dependencies
@@ -37,7 +38,9 @@ jobs:
 
       - name: Check formatting
         shell: bash
-        run: yarn validate-formatting
+        run: |
+          yarn find-prettier
+          yarn validate-formatting
 
   test:
     runs-on: ubuntu-latest
