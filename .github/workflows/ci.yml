@@ -22,7 +22,11 @@ jobs:
       - name: Install dev dependencies
         run: yarn install --production=false
 
-      - name: Run linter
+      - name: Check formatting
+        shell: bash
+        run: yarn run check-formatting
+
+      - name: Run markdown linter
         shell: bash
         run: |
           if yarn run markdownlint; then
@@ -31,14 +35,9 @@ jobs:
               exit 1
           fi
 
-          yarn run lint
-
-      - name: Check formatting
+      - name: Run ESLint
         shell: bash
-        run: |
-          if ! yarn run check-formatting; then
-              exit 1
-          fi
+        run: yarn run lint
 
   test:
     runs-on: ubuntu-latest
