@@ -4,6 +4,7 @@ import '@testing-library/jest-dom'
 
 import FamilyList from '@/components/lists/FamilyList'
 import { mockFamiliesData } from '@/tests/utilsTest/mocks'
+import { formatDate } from '@/utils/formatDate'
 
 jest.mock('@/api/Families', () => ({
   getFamilies: jest.fn(),
@@ -26,15 +27,15 @@ describe('FamilyList', () => {
     })
   })
 
-  it('renders without crashing', () => {
+  it('renders without crashing', async () => {
     // Verify mock family properties are rendered there
     expect(screen.getByText('UNFCCC Family One')).toBeInTheDocument()
     expect(screen.getByText('Category One')).toBeInTheDocument()
     expect(screen.getByText('Geography One')).toBeInTheDocument()
-    expect(screen.getByText('1/1/2021')).toBeInTheDocument()
-    expect(screen.getByText('2/1/2021')).toBeInTheDocument()
-    expect(screen.getByText('3/1/2021')).toBeInTheDocument()
-    expect(screen.getByText('4/1/2021')).toBeInTheDocument()
+    expect(screen.getByText(formatDate('1/1/2021'))).toBeInTheDocument()
+    expect(screen.getByText(formatDate('2/1/2021'))).toBeInTheDocument()
+    expect(screen.getByText(formatDate('3/1/2021'))).toBeInTheDocument()
+    expect(screen.getByText(formatDate('4/1/2021'))).toBeInTheDocument()
   })
 
   it('sorts families by title when title header is clicked', async () => {

@@ -1,7 +1,6 @@
 import { ICCLWFamily, IUNFCCCFamily } from '@/interfaces/Family'
 
-const useConfigMock = jest.fn(() => ({
-  config: {
+const mockConfig = {
     geographies: [
       {
         node: {
@@ -77,13 +76,10 @@ const useConfigMock = jest.fn(() => ({
     event: {
       types: ['Event Type One', 'Event Type Two'],
     },
-  },
-  loading: false,
-  error: null,
-}))
+};
 
 const mockUNFCCCFamily: IUNFCCCFamily = {
-  import_id: '1',
+  import_id: 'UNFCCC.family.1.0',
   title: 'UNFCCC Family One',
   summary: 'Summary for UNFCCC Family One',
   geography: 'Geography One',
@@ -105,7 +101,7 @@ const mockUNFCCCFamily: IUNFCCCFamily = {
 }
 
 const mockCCLWFamily: ICCLWFamily = {
-  import_id: '2',
+  import_id: 'CCLW.family.2.0',
   title: 'CCLW Family Two',
   summary: 'Summary for CCLW Family Two',
   geography: 'Geography Two',
@@ -130,23 +126,24 @@ const mockCCLWFamily: ICCLWFamily = {
   },
 }
 
-const mockCollections = [
-  {
-    import_id: '1',
-    title: 'Collection Title 1',
-    description: 'Description of Collection 1',
-    families: ['family1', 'family2'],
-    organisation: 'UNFCCC',
-  },
-  {
-    import_id: '2',
-    title: 'Collection Title 2',
-    description: 'Description of Collection 2',
-    families: ['family3', 'family4'],
-    organisation: 'CCLW',
-  },
-]
+const mockDocument = {
+  import_id: "CCLW.doc.1.1",
+  family_import_id: "CCLW.family.2.0",
+  variant_name: "var",
+  status: "status",
+  role: "role",
+  type: "type",
+  slug: "slug",
+  physical_id: "pid",
+  title: "title",
+  md5_sum: "md5",
+  cdn_object: "ob j",
+  source_url: "url",
+  content_type: "cont",
+  user_language_name: "lang",
+};
 
 // Exports
 export const mockFamiliesData = [mockUNFCCCFamily, mockCCLWFamily]
-export { useConfigMock, mockCollections }
+export { mockConfig as configMock }
+export { mockDocument }

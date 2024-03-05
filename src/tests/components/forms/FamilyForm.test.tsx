@@ -1,11 +1,14 @@
-import { screen, waitFor } from '@testing-library/react'
+import { configure, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
-
-import { mockCollections, mockFamiliesData } from '@/tests/utilsTest/mocks'
-import { customRender } from '@/tests/utilsTest/render'
-
+import { render, cleanup } from '@testing-library/react'
+import { configMock, mockDocument, mockFamiliesData } from '@/tests/utilsTest/mocks'
 import { FamilyForm } from '@/components/forms/FamilyForm'
-import { act } from 'react-dom/test-utils'
+import { TFamily } from '@/interfaces'
+import 'jest-localstorage-mock';
+import { TestWrapper } from '@/tests/utilsTest/render'
+
+
+const flushPromises = async () => (new Promise(process.nextTick));
 
 // useBlocker only can be used in a router context
 jest.mock('react-router-dom', () => ({
@@ -31,45 +34,92 @@ jest.mock('@/api', () => ({
   getApiUrl: jest.fn().mockReturnValue('http://mock-api-url'),
 }))
 
-// const useCollectionsMock = jest.fn((query: string) => {
-//   console.log("QUERY")
-//   console.log(query)
-//   return { collections: [], error: null, loading: false, reload: jest.fn()}
-// })
 
-// jest.mock('@/hooks/useCollections', () => ({
-//   __esModule: true,
-//   default: useCollectionsMock,
-// }))
+const localStorageMock = {
+  getItem: (_: string) => "token",
+  setItem: jest.fn(),
+  clear: jest.fn(),
+  length: 1,
+  key: jest.fn(),
+  removeItem: jest.fn(),
+};
 
-jest.mock('@/hooks/useCollections', () => ({
-  __esModule: true,
-  default: jest.fn().mockImplementation((query: string) => {
-    console.log('QUERY')
-    console.log(query)
-    return {
-      collections: mockCollections,
-      error: null,
-      loading: false,
-      reload: jest.fn(),
-    }
-  }),
+global.localStorage = localStorageMock;
+
+jest.mock('@/hooks/useConfig', () => jest.fn().mockReturnValue({
+  config: configMock,
+  error: null,
+  loading: false,
+}));
+
+jest.mock('@/hooks/useCollections', () => jest.fn().mockReturnValue({
+  collections: [], 
+  error: null, 
+  loading: false,  
+  reload: jest.fn() 
+}));
+
+jest.mock('@/hooks/useDocument', () => jest.fn().mockReturnValue({
+  document: mockDocument, 
+  error: null, 
+  loading: false,  
+}));
+
+jest.mock('@/hooks/useEvent', () => jest.fn().mockReturnValue({
+  event: {}, 
+  error: null, 
+  loading: false,  
+}));
+
+jest.mock('@/utils/decodeToken', () => ({
+
+    decodeToken: () => ({
+      sub: 'sub',
+      email: 'user@here.com',
+      is_superuser: false,
+      authorisation: { CCLW: { is_admin: true}},
+      exp: 234
+    })
 }))
 
-let mockFamilyData = mockFamiliesData[0]
+const renderComponent = (mockFamily: TFamily) => render( 
+  <TestWrapper>
+    <FamilyForm family={mockFamily} />
+  </TestWrapper>
+);
 
 describe('FamilyList', () => {
-  it('renders family data', async () => {
-    act(() => {
-      customRender(<FamilyForm family={mockFamilyData} />)
-    })
+  beforeAll(() => configure({ testIdAttribute: 'data-test-id' }))
 
-    await waitFor(() => {
-      console.log(screen.debug())
-      // expect(screen.getByText(mockFamilyData.title)).toBeInTheDocument()
-    })
+  beforeEach(() => {
+    localStorage.clear();
   })
-})
+
+  afterEach(cleanup);
+
+  it('warns when no access', async () => {
+    const testFamily = mockFamiliesData[1];
+    renderComponent(testFamily);
+    await flushPromises();
+
+    expect(screen.getByText("You do not have permission to edit CCLW document families")).toBeInTheDocument()
+  });
+  
+  it('renders family data', async () => {
+    const testFamily = mockFamiliesData[1];
+    localStorage.setItem("token", "token")
+    const { getByTestId } =  renderComponent(testFamily);
+    await flushPromises();
+
+    const input = getByTestId('input-id');
+    expect(input instanceof HTMLInputElement);
+    // The check above is to ensure we have the correct type,
+    // and the conditional below placates the linter.
+    if (input instanceof HTMLInputElement) {
+      expect(input.value).toBe(testFamily.import_id)
+    }
+  });
+});
 
 // TEST: isDirty & external navigation & internal navigation
 
