@@ -189,6 +189,13 @@ export default function FamilyList() {
                   </Flex>
                 </Tooltip>
               </Th>
+              <Th onClick={() => handleHeaderClick('created')} cursor="pointer">
+                <Tooltip placement="top" label="Date added to system">
+                  <Flex gap={2} align="center">
+                    Created {renderSortIcon('created')}
+                  </Flex>
+                </Tooltip>
+              </Th>
               <Th onClick={() => handleHeaderClick('status')} cursor="pointer">
                 Status {renderSortIcon('status')}
               </Th>
@@ -217,6 +224,7 @@ export default function FamilyList() {
                 <Td>{formatDate(family.published_date)}</Td>
                 <Td>{formatDate(family.last_updated_date)}</Td>
                 <Td>{formatDate(family.last_modified)}</Td>
+                <Td>{formatDate(family.created)}</Td>
                 <Td>
                   <Badge colorScheme={getStatusColour(family.status)} size="sm">
                     {getStatusAlias(family.status)}

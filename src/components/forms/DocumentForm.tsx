@@ -1,9 +1,15 @@
 import { useEffect, useState } from 'react'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { IDocument, IDocumentFormPost, IError } from '@/interfaces'
+import {
+  IDocument,
+  IDocumentFormPost,
+  IDocumentFormPostModified,
+  IError,
+} from '@/interfaces'
 import { createDocument, updateDocument } from '@/api/Documents'
 import { documentSchema } from '@/schemas/documentSchema'
+import { Select as CRSelect } from 'chakra-react-select'
 
 import {
   Box,
@@ -22,6 +28,7 @@ import {
 import useConfig from '@/hooks/useConfig'
 import { FormLoader } from '../feedback/FormLoader'
 import { ApiError } from '../feedback/ApiError'
+import { chakraStylesSelect } from '@/styles/chakra'
 
 type TProps = {
   document?: IDocument
@@ -46,20 +53,28 @@ export const DocumentForm = ({
   } = useForm({
     resolver: yupResolver(documentSchema),
   })
-
   const handleFormSubmission = async (
     submittedDcumentData: IDocumentFormPost,
   ) => {
     setFormError(null)
 
-    const documentData = {
-      ...submittedDcumentData,
-      variant_name: submittedDcumentData.variant_name || null,
-      user_language_name: submittedDcumentData.user_language_name || null,
+    const convertToModified = (
+      data: IDocumentFormPost,
+    ): IDocumentFormPostModified => {
+      return {
+        ...data,
+        variant_name: submittedDcumentData.variant_name || null,
+        user_language_name: data.user_language_name?.label || null,
+      }
     }
 
+    const modifiedDocumentData = convertToModified(submittedDcumentData)
+
     if (loadedDocument) {
-      return await updateDocument(documentData, loadedDocument.import_id)
+      return await updateDocument(
+        modifiedDocumentData,
+        loadedDocument.import_id,
+      )
         .then((data) => {
           toast.closeAll()
           toast({
@@ -80,7 +95,7 @@ export const DocumentForm = ({
         })
     }
 
-    return await createDocument(documentData)
+    return await createDocument(modifiedDocumentData)
       .then((data) => {
         toast.closeAll()
         toast({
@@ -116,7 +131,10 @@ export const DocumentForm = ({
         type: loadedDocument.type ?? '',
         title: loadedDocument.title,
         source_url: loadedDocument.source_url ?? '',
-        user_language_name: loadedDocument.user_language_name ?? '',
+        user_language_name: {
+          label: loadedDocument.user_language_name ?? '',
+          value: loadedDocument.user_language_name ?? '',
+        },
       })
     } else if (familyId) {
       reset({
@@ -226,15 +244,19 @@ export const DocumentForm = ({
                   isInvalid={!!errors.user_language_name}
                 >
                   <FormLabel as="legend">Language</FormLabel>
-                  <Select background="white" {...field}>
-                    <option value="">Please select</option>
-                    {Object.keys(config?.languages || {}).map((key) => (
-                      <option key={key} value={config?.languages[key]}>
-                        {config?.languages[key]}
-                      </option>
-                    ))}
-                  </Select>
-                  <FormErrorMessage>Please select a language</FormErrorMessage>
+                  <div data-testid="language-select">
+                    <CRSelect
+                      chakraStyles={chakraStylesSelect}
+                      isClearable={false}
+                      isMulti={false}
+                      isSearchable={true}
+                      options={config?.languagesSorted}
+                      {...field}
+                    />
+                  </div>
+                  <FormErrorMessage>
+                    {errors.user_language_name?.message}
+                  </FormErrorMessage>
                 </FormControl>
               )
             }}

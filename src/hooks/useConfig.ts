@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 
 import { IError, IConfig } from '@/interfaces'
 import { getConfig } from '@/api/Config'
+import { modifyConfig } from '@/utils/modifyConfig'
 
 let cache: IConfig | null = null
 
@@ -23,8 +24,8 @@ const useConfig = () => {
     getConfig()
       .then(({ response }) => {
         if (!ignore) {
-          cache = response
-          setConfig(response)
+          cache = modifyConfig(response)
+          setConfig(cache)
         }
       })
       .catch((error: IError) => {
