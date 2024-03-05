@@ -24,12 +24,12 @@ jobs:
 
       - name: Check formatting
         shell: bash
-        run: yarn run check-formatting
+        run: yarn check-formatting
 
       - name: Run markdown linter
         shell: bash
         run: |
-          if yarn run markdownlint; then
+          if yarn markdownlint; then
             echo "No issues in markdown files."
           else
               exit 1
@@ -37,7 +37,7 @@ jobs:
 
       - name: Run ESLint
         shell: bash
-        run: yarn run lint
+        run: yarn lint
 
   test:
     runs-on: ubuntu-latest
