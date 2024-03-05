@@ -23,10 +23,8 @@ jobs:
         run: yarn install --production=false
 
       - name: Check formatting
-        uses: creyD/prettier_action@v4.3
-        with:
-          dry: True
-          prettier_options: --tab-width 2 --use-tabs false --trailing-comma all
+        shell: bash
+        run: yarn run validate-formatting
 
       - name: Run markdown linter
         shell: bash
