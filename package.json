@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --port 3000 --host",
     "build": "tsc && vite build",
-    "check-formatting": "prettier --check . ",
+    "check-formatting": "prettier --find-config-path --check . ",
     "format": "prettier --write . ",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "markdownlint": "markdownlint --ignore node_modules .",
@@ -15,7 +15,7 @@
     "prod": "tsc && vite build && vite preview --port 3000 --host",
     "prepare": "husky install",
     "test": "jest",
-    "validate-formatting": "prettier . --check"
+    "validate-formatting": "prettier --find-config-path . --check"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.19",
