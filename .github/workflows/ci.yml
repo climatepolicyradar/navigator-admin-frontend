@@ -23,7 +23,7 @@ jobs:
         run: yarn install --production=false
 
       - name: Run linter & formatter
-        run: .husky/pre-commit.sh true
+        run: ./.husky/pre-commit.sh true
 
   test:
     runs-on: ubuntu-latest
