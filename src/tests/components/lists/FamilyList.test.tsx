@@ -24,6 +24,7 @@ describe('FamilyList', () => {
     await waitFor(() => {
       expect(screen.getByText('UNFCCC Family One')).toBeInTheDocument()
       expect(screen.getByText('CCLW Family Two')).toBeInTheDocument()
+      expect(screen.getByText('Family One')).toBeInTheDocument()
     })
   })
 
@@ -53,6 +54,15 @@ describe('FamilyList', () => {
       )
 
       expect(indexUNFCCCFamilyOne).toBeGreaterThan(indexCCLWFamilyTwo)
+
+      const indexFamilyOne = allFamilies.findIndex(
+        (element) => element.textContent === 'Family One',
+      )
+      const indexFamilyTwo = allFamilies.findIndex(
+        (element) => element.textContent === 'Family Two',
+      )
+
+      expect(indexFamilyOne).toBeLessThan(indexFamilyTwo)
     })
 
     // Reversed
@@ -67,6 +77,15 @@ describe('FamilyList', () => {
       )
 
       expect(indexUNFCCCFamilyOne).toBeLessThan(indexCCLWFamilyTwo)
+
+      const indexFamilyOne = allFamilies.findIndex(
+        (element) => element.textContent === 'Family One',
+      )
+      const indexFamilyTwo = allFamilies.findIndex(
+        (element) => element.textContent === 'Family Two',
+      )
+
+      expect(indexFamilyOne).toBeGreaterThan(indexFamilyTwo)
     })
   })
 })
