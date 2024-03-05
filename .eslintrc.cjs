@@ -31,7 +31,7 @@ module.exports = {
     // project: true,
     // tsconfigRootDir: __dirname,
   },
-  plugins: ['@typescript-eslint', 'react', 'react-refresh'],
+  plugins: ['@typescript-eslint', 'react-refresh'],
   root: true,
   rules: {
     indent: ['error', 2, { SwitchCase: 1 }],
