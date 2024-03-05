@@ -1,12 +1,23 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
+set -e
+
+ci=${1:-false}
 
 if ! yarn run check-formatting; then
-    yarn run format
+	if [ "${ci}" = true ]; then
+		exit 1
+	else
+		yarn run format
+	fi
 fi
 
 if yarn run markdownlint; then
-    echo "No issues in markdown files."
+	echo "No issues in markdown files."
+else
+	if [ "${ci}" = true ]; then
+		exit 1
+	fi
 fi
 
 yarn run lint
