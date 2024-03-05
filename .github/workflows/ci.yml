@@ -40,7 +40,6 @@ jobs:
         shell: bash
         run: |
           yarn global add prettier
-          prettier --version
           yarn validate-formatting
 
   test:

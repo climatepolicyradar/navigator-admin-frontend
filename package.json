@@ -16,7 +16,7 @@
     "prepare": "husky install",
     "test": "jest",
     "find-prettier": "prettier --find-config-path",
-    "validate-formatting": "prettier . --check --config ./prettierrc"
+    "validate-formatting": "prettier . --check --config ./.prettierrc"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.19",
