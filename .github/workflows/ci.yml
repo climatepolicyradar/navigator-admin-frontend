@@ -40,6 +40,8 @@ jobs:
         shell: bash
         run: |
           yarn global add prettier
+          ls -a
+          prettier --find-config-path
           yarn validate-formatting
 
   test:
