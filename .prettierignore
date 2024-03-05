@@ -2,5 +2,6 @@ Dockerfile
 Dockerfile.dev
 
 # Ignore all files of these types:
+**/*.md
 **/*.png
 **/*.svg

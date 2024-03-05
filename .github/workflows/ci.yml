@@ -26,7 +26,7 @@ jobs:
         uses: rutajdash/prettier-cli-action@v1.0.2
         with:
           file_pattern: '**/*'
-          config_path: ./.prettierrc.yml
+          config_path: ./.prettierrc
 
       - name: Run markdown linter
         shell: bash
