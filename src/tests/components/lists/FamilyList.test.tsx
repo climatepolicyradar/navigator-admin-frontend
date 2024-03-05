@@ -34,7 +34,7 @@ const mockFamiliesData = [
   },
 ]
 
-jest.mock('react-router-dom', () => ({
+jest.mock('react-router-dom', (): unknown => ({
   ...jest.requireActual('react-router-dom'),
   useLoaderData: () => ({
     response: { data: mockFamiliesData },
