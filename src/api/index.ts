@@ -24,6 +24,6 @@ API.interceptors.response.use(
 
 export const GET = (url: string) => {
   return API.get(url)
-};
+}
 
 export default API
