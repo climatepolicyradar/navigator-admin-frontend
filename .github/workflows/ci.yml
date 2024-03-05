@@ -38,7 +38,7 @@ jobs:
       - name: Check formatting
         uses: creyD/prettier_action@v4.3
         with:
-          prettier_options: --check ./**/*
+          prettier_options: --check ./**/*  --tabWidth 2 --useTabs false --trailing-comma all
 
   test:
     runs-on: ubuntu-latest
