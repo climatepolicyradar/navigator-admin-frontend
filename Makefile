@@ -21,7 +21,7 @@ run:
 run_ci:
 	docker run --name ${TAG} -p ${VITE_PORT}:${VITE_PORT} -e MY_APP_API_URL=https://admin.dev.climatepolicyradar.org/api/ ${TAG}
 
-rebuild: stop build run
+rebuild: stop build run_ci
 
 with_local: build_dev
 	docker run --rm -it \
