@@ -473,8 +473,11 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               {loadedFamily && (
                 <FormControl isRequired isReadOnly isDisabled>
                   <FormLabel>Import ID</FormLabel>
-                  <Input data-test-id="input-id"
-bg="white" value={loadedFamily?.import_id} />
+                  <Input
+                    data-test-id="input-id"
+                    bg="white"
+                    value={loadedFamily?.import_id}
+                  />
                 </FormControl>
               )}
               <FormControl isRequired>

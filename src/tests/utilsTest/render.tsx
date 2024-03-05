@@ -19,9 +19,7 @@ Object.defineProperty(window, 'matchMedia', {
     dispatchEvent: jest.fn(),
   })),
 })
-const TestWrapper: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <React.StrictMode>
       <ChakraProvider>

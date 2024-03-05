@@ -8,7 +8,6 @@ jest.mock('@/api', () => ({
   getApiUrl: jest.fn().mockReturnValue('http://mock-api-url'),
 }))
 
-
 jest.mock('@/api/Documents', () => ({
   createDocument: jest
     .fn()
