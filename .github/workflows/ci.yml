@@ -25,6 +25,7 @@ jobs:
       - name: Check formatting
         uses: rutajdash/prettier-cli-action@v1.0.2
         with:
+          file_pattern: '**/*'
           config_path: ./.prettierrc.yml
 
       - name: Run markdown linter
