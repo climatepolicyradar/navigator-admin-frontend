@@ -22,13 +22,9 @@ jobs:
       - name: Install dev dependencies
         run: yarn install --production=false
 
-      - name: Run linter & formatter
+      - name: Run linter
         shell: bash
         run: |
-          if ! yarn run check-formatting; then
-              exit 1
-          fi
-
           if yarn run markdownlint; then
             echo "No issues in markdown files."
           else
@@ -37,6 +33,12 @@ jobs:
 
           yarn run lint
 
+      - name: Check formatting
+        shell: bash
+        run: |
+          if ! yarn run check-formatting; then
+              exit 1
+          fi
 
   test:
     runs-on: ubuntu-latest
