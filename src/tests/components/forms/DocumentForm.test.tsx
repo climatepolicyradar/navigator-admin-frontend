@@ -4,6 +4,10 @@ import { customRender } from '@/tests/utilsTest/render'
 import { DocumentForm } from '@/components/forms/DocumentForm'
 import { IDocument } from '@/interfaces'
 
+jest.mock('@/api', () => ({
+  getApiUrl: jest.fn().mockReturnValue('http://mock-api-url'),
+}))
+
 jest.mock('@/api/Documents', () => ({
   createDocument: jest
     .fn()

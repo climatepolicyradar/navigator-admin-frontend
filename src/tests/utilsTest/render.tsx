@@ -2,7 +2,6 @@ import React from 'react'
 import { MemoryRouter } from 'react-router-dom'
 import { render as rtlRender, RenderOptions } from '@testing-library/react'
 import { ChakraProvider } from '@chakra-ui/react'
-import { useConfigMock } from './mocks'
 
 // Solution for avoid -> Error: Uncaught [TypeError: env.window.matchMedia is not a function]
 // Please check https://github.com/chakra-ui/chakra-ui/discussions/6664
@@ -20,16 +19,7 @@ Object.defineProperty(window, 'matchMedia', {
     dispatchEvent: jest.fn(),
   })),
 })
-
-jest.mock('@/hooks/useConfig', () => ({
-  __esModule: true,
-  default: useConfigMock,
-}))
-
-// eslint-disable-next-line react-refresh/only-export-components
-const AllTheProviders: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <React.StrictMode>
       <ChakraProvider>
@@ -42,6 +32,7 @@ const AllTheProviders: React.FC<{ children: React.ReactNode }> = ({
 const customRender = (
   ui: React.ReactElement,
   options?: Omit<RenderOptions, 'wrapper'>,
-) => rtlRender(ui, { wrapper: AllTheProviders, ...options })
+) => rtlRender(ui, { wrapper: TestWrapper, ...options })
 
-export { customRender }
+// eslint-disable-next-line react-refresh/only-export-components
+export { customRender, TestWrapper }

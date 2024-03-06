@@ -1,7 +1,7 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useCallback } from 'react'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useNavigate } from 'react-router-dom'
+import { useBlocker, useNavigate } from 'react-router-dom'
 
 import {
   IError,
@@ -45,6 +45,13 @@ import {
   DrawerHeader,
   DrawerBody,
   Flex,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
 } from '@chakra-ui/react'
 import { Select as CRSelect } from 'chakra-react-select'
 import useCollections from '@/hooks/useCollections'
@@ -96,6 +103,7 @@ const getCollection = (collectionId: string, collections: ICollection[]) => {
 }
 
 export const FamilyForm = ({ family: loadedFamily }: TProps) => {
+  const [isLeavingModalOpen, setIsLeavingModalOpen] = useState(false)
   const { isOpen, onOpen, onClose } = useDisclosure()
   const navigate = useNavigate()
   const { config, error: configError, loading: configLoading } = useConfig()
@@ -114,6 +122,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     reset,
     setValue,
     formState: { errors, isSubmitting },
+    formState: { isDirty },
   } = useForm({
     resolver: yupResolver(familySchema),
   })
@@ -373,6 +382,36 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     }
   }, [loadedFamily, collections, reset])
 
+  // Internal and external navigation blocker for unsaved changes
+  const blocker = useBlocker(
+    ({ currentLocation, nextLocation }) =>
+      isDirty !== false && currentLocation.pathname !== nextLocation.pathname,
+  )
+
+  const handleBeforeUnload = useCallback(
+    (event: BeforeUnloadEvent) => {
+      if (isDirty) {
+        event.preventDefault()
+        event.returnValue =
+          'Are you sure you want leave? Changes that you made may not be saved.'
+      }
+    },
+    [isDirty],
+  )
+
+  useEffect(() => {
+    if (blocker && blocker.state === 'blocked') {
+      setIsLeavingModalOpen(true)
+    }
+  }, [blocker])
+
+  useEffect(() => {
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+    }
+  }, [handleBeforeUnload])
+
   return (
     <>
       {(configLoading || collectionsLoading) && (
@@ -398,12 +437,47 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       {canLoadForm && (
         <>
           <form onSubmit={handleSubmit(onSubmit)}>
+            {isLeavingModalOpen && (
+              <Modal
+                isOpen={isLeavingModalOpen}
+                onClose={() => setIsLeavingModalOpen(false)}
+              >
+                <ModalOverlay />
+                <ModalContent>
+                  <ModalHeader>Are you sure you want to leave?</ModalHeader>
+                  <ModalCloseButton />
+                  <ModalBody>Changes that you made may not be saved.</ModalBody>
+                  <ModalFooter>
+                    <Button
+                      colorScheme="gray"
+                      mr={3}
+                      onClick={() => setIsLeavingModalOpen(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      colorScheme="red"
+                      onClick={() => {
+                        blocker.proceed?.()
+                        setIsLeavingModalOpen(false)
+                      }}
+                    >
+                      Leave without saving
+                    </Button>
+                  </ModalFooter>
+                </ModalContent>
+              </Modal>
+            )}
             <VStack gap="4" mb={12} mt={4} align={'stretch'}>
               {formError && <ApiError error={formError} />}
               {loadedFamily && (
                 <FormControl isRequired isReadOnly isDisabled>
                   <FormLabel>Import ID</FormLabel>
-                  <Input bg="white" value={loadedFamily?.import_id} />
+                  <Input
+                    data-test-id="input-id"
+                    bg="white"
+                    value={loadedFamily?.import_id}
+                  />
                 </FormControl>
               )}
               <FormControl isRequired>

@@ -9,6 +9,8 @@ export default {
     '^@views/(.*)$': '<rootDir>/src/views/$1',
     '^@hooks/(.*)$': '<rootDir>/src/hooks/$1',
     '^@utils/(.*)$': '<rootDir>/src/utils/$1',
+    '\\.(css|less|sass|scss)$': '<rootDir>/src/tests/utilsTest/styleMock.ts',
+    '\\.(gif|ttf|eot|svg|png)$': '<rootDir>/src/tests/utilsTest/styleMock.ts',
   },
   transform: {
     '^.+\\.tsx?$': [
