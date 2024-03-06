@@ -11,7 +11,8 @@ import { TFamily } from '@/interfaces'
 import 'jest-localstorage-mock'
 import { TestWrapper } from '@/tests/utilsTest/render'
 
-const flushPromises = async () => new Promise((resolve) => process.nextTick(resolve));
+const flushPromises = async () =>
+  new Promise((resolve) => process.nextTick(resolve))
 
 // useBlocker only can be used in a router context
 jest.mock('react-router-dom', (): unknown => ({
