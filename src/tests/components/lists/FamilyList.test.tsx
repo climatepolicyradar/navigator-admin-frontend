@@ -3,7 +3,6 @@ import { fireEvent, screen, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 
 import FamilyList from '@/components/lists/FamilyList'
-import { mockFamiliesData } from '@/tests/utilsTest/mocks'
 
 jest.mock('@/api/Families', () => ({
   getFamilies: jest.fn(),
@@ -52,7 +51,7 @@ describe('FamilyList', () => {
 
   it('renders without crashing', () => {
     // Verify mock family properties are rendered there
-    expect(screen.getByText('UNFCCC Family One')).toBeInTheDocument()
+    expect(screen.getByText('Family One')).toBeInTheDocument()
     expect(screen.getByText('Category One')).toBeInTheDocument()
     expect(screen.getByText('Geography One')).toBeInTheDocument()
     expect(screen.getByText('1/1/2021')).toBeInTheDocument()
@@ -62,6 +61,7 @@ describe('FamilyList', () => {
   })
 
   it('sorts families by title when title header is clicked', async () => {
+    expect(screen.getByText('Family One')).toBeInTheDocument()
     const titleHeader = screen.getByText('Title')
 
     // Sorted
@@ -83,6 +83,7 @@ describe('FamilyList', () => {
     fireEvent.click(titleHeader)
     await waitFor(() => {
       const allFamilies = screen.getAllByText(/Family/)
+
       const indexFamilyOne = allFamilies.findIndex(
         (element) => element.textContent === 'Family One',
       )

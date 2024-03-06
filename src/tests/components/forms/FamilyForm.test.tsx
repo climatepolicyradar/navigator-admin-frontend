@@ -11,10 +11,10 @@ import { TFamily } from '@/interfaces'
 import 'jest-localstorage-mock'
 import { TestWrapper } from '@/tests/utilsTest/render'
 
-const flushPromises = async () => new Promise(process.nextTick)
+const flushPromises = async () => new Promise((resolve) => process.nextTick(resolve));
 
 // useBlocker only can be used in a router context
-jest.mock('react-router-dom', () => ({
+jest.mock('react-router-dom', (): unknown => ({
   ...jest.requireActual('react-router-dom'),
   useBlocker: jest.fn(),
 }))
@@ -38,7 +38,7 @@ jest.mock('@/api', () => ({
 }))
 
 const localStorageMock = {
-  getItem: (_: string) => 'token',
+  getItem: () => 'token',
   setItem: jest.fn(),
   clear: jest.fn(),
   length: 1,
