@@ -1,0 +1,13 @@
+Dockerfile
+Dockerfile.dev
+Makefile
+
+tmp/*
+
+# Ignore all files of these types:
+**/*.conf
+**/*.lock
+**/*.md
+**/*.png
+**/*.sh
+**/*.svg

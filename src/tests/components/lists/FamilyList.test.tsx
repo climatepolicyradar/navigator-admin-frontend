@@ -10,7 +10,32 @@ jest.mock('@/api/Families', () => ({
   deleteFamily: jest.fn(),
 }))
 
-jest.mock('react-router-dom', () => ({
+const mockFamiliesData = [
+  {
+    import_id: '1',
+    title: 'Family One',
+    category: 'Category One',
+    geography: 'Geography One',
+    published_date: '1/1/2021',
+    last_updated_date: '2/1/2021',
+    last_modified: '3/1/2021',
+    created: '4/1/2021',
+    status: 'active',
+  },
+  {
+    import_id: '2',
+    title: 'Family Two',
+    category: 'Category Two',
+    geography: 'Geography Two',
+    published_date: '1/2/2021',
+    last_updated_date: '2/2/2021',
+    last_modified: '3/2/2021',
+    created: '4/2/2021',
+    status: 'active',
+  },
+]
+
+jest.mock('react-router-dom', (): unknown => ({
   ...jest.requireActual('react-router-dom'),
   useLoaderData: () => ({
     response: { data: mockFamiliesData },
@@ -21,8 +46,7 @@ describe('FamilyList', () => {
   beforeEach(async () => {
     customRender(<FamilyList />)
     await waitFor(() => {
-      expect(screen.getByText('UNFCCC Family One')).toBeInTheDocument()
-      expect(screen.getByText('CCLW Family Two')).toBeInTheDocument()
+      expect(screen.getByText('Family One')).toBeInTheDocument()
     })
   })
 
@@ -44,28 +68,29 @@ describe('FamilyList', () => {
     fireEvent.click(titleHeader)
     await waitFor(() => {
       const allFamilies = screen.getAllByText(/Family/)
-      const indexUNFCCCFamilyOne = allFamilies.findIndex(
-        (element) => element.textContent === 'UNFCCC Family One',
+
+      const indexFamilyOne = allFamilies.findIndex(
+        (element) => element.textContent === 'Family One',
       )
-      const indexCCLWFamilyTwo = allFamilies.findIndex(
-        (element) => element.textContent === 'CCLW Family Two',
+      const indexFamilyTwo = allFamilies.findIndex(
+        (element) => element.textContent === 'Family Two',
       )
 
-      expect(indexUNFCCCFamilyOne).toBeGreaterThan(indexCCLWFamilyTwo)
+      expect(indexFamilyOne).toBeLessThan(indexFamilyTwo)
     })
 
     // Reversed
     fireEvent.click(titleHeader)
     await waitFor(() => {
       const allFamilies = screen.getAllByText(/Family/)
-      const indexUNFCCCFamilyOne = allFamilies.findIndex(
-        (element) => element.textContent === 'UNFCCC Family One',
+      const indexFamilyOne = allFamilies.findIndex(
+        (element) => element.textContent === 'Family One',
       )
-      const indexCCLWFamilyTwo = allFamilies.findIndex(
-        (element) => element.textContent === 'CCLW Family Two',
+      const indexFamilyTwo = allFamilies.findIndex(
+        (element) => element.textContent === 'Family Two',
       )
 
-      expect(indexUNFCCCFamilyOne).toBeLessThan(indexCCLWFamilyTwo)
+      expect(indexFamilyOne).toBeGreaterThan(indexFamilyTwo)
     })
   })
 })

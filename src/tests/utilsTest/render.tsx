@@ -19,7 +19,15 @@ Object.defineProperty(window, 'matchMedia', {
     dispatchEvent: jest.fn(),
   })),
 })
-const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+jest.mock('@/hooks/useConfig', () => ({
+  __esModule: true,
+  default: useConfigMock,
+}))
+
+// eslint-disable-next-line react-refresh/only-export-components
+const AllTheProviders: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   return (
     <React.StrictMode>
       <ChakraProvider>

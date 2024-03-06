@@ -888,9 +888,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               <DrawerContent>
                 <DrawerHeader borderBottomWidth="1px">
                   {editingEvent
-                    ? `Edit: ${editingEvent.event_title}, on ${formatDate(
-                        editingEvent.date,
-                      )}`
+                    ? `Edit: ${editingEvent.event_title}, on ${formatDate(editingEvent.date)}`
                     : 'Add new Event'}
                 </DrawerHeader>
                 <DrawerBody>
