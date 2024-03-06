@@ -21,19 +21,6 @@ jest.mock('react-router-dom', (): unknown => ({
 }))
 
 // API calls
-jest.mock('axios', () => {
-  return {
-    create: jest.fn(() => ({
-      get: jest.fn(),
-      defaults: {
-        headers: {
-          common: {},
-        },
-      },
-    })),
-  }
-})
-
 jest.mock('@/api', () => ({
   getApiUrl: jest.fn().mockReturnValue('http://mock-api-url'),
 }))
