@@ -10,8 +10,8 @@ export const documentSchema = yup
     source_url: yup.string().url().optional(),
     user_language_name: yup
       .object({
-        label: yup.string().required(),
-        value: yup.string().required(),
+        label: yup.string().optional(),
+        value: yup.string().optional(),
       })
       .optional(),
   })

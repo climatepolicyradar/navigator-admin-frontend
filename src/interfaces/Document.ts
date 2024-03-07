@@ -23,8 +23,8 @@ export interface IDocumentFormPost {
   title: string
   source_url?: string | null
   user_language_name?: {
-    label: string
-    value: string
+    label?: string | null
+    value?: string | null
   } | null
 }
 
