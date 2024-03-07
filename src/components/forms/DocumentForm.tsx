@@ -63,8 +63,10 @@ export const DocumentForm = ({
     ): IDocumentFormPostModified => {
       return {
         ...data,
+        source_url: submittedDcumentData.source_url || null,
         variant_name: submittedDcumentData.variant_name || null,
-        user_language_name: data.user_language_name?.label || null,
+        user_language_name:
+          submittedDcumentData.user_language_name?.label || null,
       }
     }
 
@@ -167,7 +169,7 @@ export const DocumentForm = ({
             <FormLabel>Title</FormLabel>
             <Input bg="white" {...register('title')} />
           </FormControl>
-          <FormControl isRequired isInvalid={!!errors.source_url}>
+          <FormControl isInvalid={!!errors.source_url}>
             <FormLabel>Source URL</FormLabel>
             <Input bg="white" {...register('source_url')} />
             <FormErrorMessage role="error">
