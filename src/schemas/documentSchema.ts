@@ -7,7 +7,7 @@ export const documentSchema = yup
     role: yup.string().required(),
     type: yup.string().required(),
     title: yup.string().required(),
-    source_url: yup.string().url().defined().strict(true).optional(),
+    source_url: yup.string().url().optional(),
     user_language_name: yup
       .object({
         label: yup.string().required(),
