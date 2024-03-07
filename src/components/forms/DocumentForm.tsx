@@ -63,9 +63,10 @@ export const DocumentForm = ({
     ): IDocumentFormPostModified => {
       return {
         ...data,
-        source_url: data.source_url || null,
-        variant_name: data.variant_name || null,
-        user_language_name: data.user_language_name?.label || null,
+        source_url: submittedDcumentData.source_url || null,
+        variant_name: submittedDcumentData.variant_name || null,
+        user_language_name:
+          submittedDcumentData.user_language_name?.label || null,
       }
     }
 
