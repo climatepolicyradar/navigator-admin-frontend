@@ -50,7 +50,7 @@ describe('DocumentForm', () => {
     const input = screen.getByRole('textbox', { name: /source url/i })
     const submitButton = screen.getByText('Update Document')
 
-    const newUrl = 'test-no-url'
+    const newUrl = 'test-invalid-url'
     fireEvent.change(input, { target: { value: newUrl } })
     await waitFor(() => {
       expect(input).toHaveValue(newUrl)
@@ -60,6 +60,30 @@ describe('DocumentForm', () => {
     await waitFor(() => {
       const errorMessage = screen.getByRole('error')
       expect(errorMessage).toBeInTheDocument()
+    })
+  })
+
+  it('validate empty document URL', async () => {
+    customRender(
+      <DocumentForm
+        familyId={'test'}
+        onSuccess={onDocumentFormSuccess}
+        document={mockDocument}
+      />,
+    )
+
+    const input = screen.getByRole('textbox', { name: /source url/i })
+    const submitButton = screen.getByText('Update Document')
+
+    const newUrl = ''
+    fireEvent.change(input, { target: { value: newUrl } })
+    await waitFor(() => {
+      expect(input).toHaveValue(newUrl)
+    })
+    fireEvent.submit(submitButton)
+
+    await waitFor(() => {
+      expect(onDocumentFormSuccess).toHaveBeenCalled()
     })
   })
 
