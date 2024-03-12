@@ -111,7 +111,9 @@ describe('FamilyList', () => {
       )
 
       expect(familyRowWithout.queryByTestId('warning-icon')).toBeInTheDocument()
-      expect(familyRowWith.queryByTestId('warning-icon')).not.toBeInTheDocument()
-  })
+      expect(
+        familyRowWith.queryByTestId('warning-icon'),
+      ).not.toBeInTheDocument()
+    })
   })
 })
