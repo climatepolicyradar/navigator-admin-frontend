@@ -3,9 +3,7 @@ import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import '@testing-library/jest-dom'
 
 import FamilyList from '@/components/lists/FamilyList'
-import {
-  mockFamiliesData,
-} from '@/tests/utilsTest/mocks'
+import { mockFamiliesData } from '@/tests/utilsTest/mocks'
 
 jest.mock('@/api/Families', () => ({
   getFamilies: jest.fn(),
@@ -29,13 +27,25 @@ describe('FamilyList', () => {
 
   it('renders without crashing', () => {
     // Verify mock family properties are rendered there
-    expect(screen.queryAllByText(mockFamiliesData[0].title)).not.toHaveLength(0);
-    expect(screen.queryAllByText(mockFamiliesData[0].category)).not.toHaveLength(0);
-    expect(screen.queryAllByText(mockFamiliesData[0].geography)).not.toHaveLength(0);
-    expect(screen.queryAllByText(mockFamiliesData[0].published_date)).not.toHaveLength(0);
-    expect(screen.queryAllByText(mockFamiliesData[0].last_updated_date)).not.toHaveLength(0);
-    expect(screen.queryAllByText(mockFamiliesData[0].created)).not.toHaveLength(0);
-    expect(screen.queryAllByText(mockFamiliesData[0].last_modified)).not.toHaveLength(0);
+    expect(screen.queryAllByText(mockFamiliesData[0].title)).not.toHaveLength(0)
+    expect(
+      screen.queryAllByText(mockFamiliesData[0].category),
+    ).not.toHaveLength(0)
+    expect(
+      screen.queryAllByText(mockFamiliesData[0].geography),
+    ).not.toHaveLength(0)
+    expect(
+      screen.queryAllByText(mockFamiliesData[0].published_date),
+    ).not.toHaveLength(0)
+    expect(
+      screen.queryAllByText(mockFamiliesData[0].last_updated_date),
+    ).not.toHaveLength(0)
+    expect(screen.queryAllByText(mockFamiliesData[0].created)).not.toHaveLength(
+      0,
+    )
+    expect(
+      screen.queryAllByText(mockFamiliesData[0].last_modified),
+    ).not.toHaveLength(0)
   })
 
   it('sorts families by title when title header is clicked', async () => {
@@ -48,7 +58,7 @@ describe('FamilyList', () => {
       const allFamilies = screen.getAllByText(/Family/)
 
       const indexFamilyOne = allFamilies.findIndex(
-        (element) => element.textContent === mockFamiliesData[1].title
+        (element) => element.textContent === mockFamiliesData[1].title,
       )
       const indexFamilyTwo = allFamilies.findIndex(
         (element) => element.textContent === mockFamiliesData[0].title,
