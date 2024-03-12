@@ -216,6 +216,7 @@ export default function FamilyList() {
             {filteredItems?.map((family) => (
               <Tr
                 key={family.import_id}
+                data-testid={`family-row-${family.import_id}`}
                 borderLeft={
                   family.import_id === familyError ? '2px' : 'inherit'
                 }
@@ -226,7 +227,7 @@ export default function FamilyList() {
                 <Td>
                   <Flex gap="2" alignItems="center">
                     {!family.documents?.length && !family.events?.length && (
-                      <WarningIcon color="red.500" />
+                      <WarningIcon color="red.500" data-testid="warning-icon" />
                     )}
                     {family.title}
                   </Flex>

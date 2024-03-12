@@ -118,6 +118,40 @@ describe('FamilyList', () => {
   })
 })
 
+describe('FamilyForm Icons Visibility', () => {
+  it('displays warning icon next to "Add new document" button when there are no documents', async () => {
+    const familyWithoutDocuments = { ...mockFamiliesData[0], documents: [] }
+    localStorage.setItem('token', 'token')
+    const { getByTestId } = renderComponent(familyWithoutDocuments)
+    await flushPromises()
+
+    const warningIconDocument = getByTestId('warning-icon-document')
+    expect(warningIconDocument).toBeInTheDocument()
+  })
+
+  it('displays warning icon next to "Add new event" button when there are no events', async () => {
+    const familyWithoutEvents = { ...mockFamiliesData[0], events: [] }
+    localStorage.setItem('token', 'token')
+    const { getByTestId } = renderComponent(familyWithoutEvents)
+    await flushPromises()
+
+    const warningIconEvent = getByTestId('warning-icon-event')
+    expect(warningIconEvent).toBeInTheDocument()
+  })
+
+  it('does not display warning icon next to "Add new document/events" button when there are documents/events', async () => {
+    const family = mockFamiliesData[0]
+    localStorage.setItem('token', 'token')
+    renderComponent(family)
+    await flushPromises()
+
+    const warningIconEvent = screen.queryByTestId('warning-icon-event')
+    const warningIconDocument = screen.queryByTestId('warning-icon-document')
+    expect(warningIconEvent).not.toBeInTheDocument()
+    expect(warningIconDocument).not.toBeInTheDocument()
+  })
+})
+
 // TEST: isDirty & external navigation & internal navigation
 
 // TET: not isDirty & external navigation & internal navigation

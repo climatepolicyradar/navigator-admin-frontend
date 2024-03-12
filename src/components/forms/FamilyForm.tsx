@@ -823,7 +823,10 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                     onClick={() => onAddNewEntityClick('document')}
                     rightIcon={
                       familyDocuments.length === 0 ? (
-                        <WarningIcon color="red.500" />
+                        <WarningIcon
+                          color="red.500"
+                          data-test-id="warning-icon-document"
+                        />
                       ) : undefined
                     }
                   >
@@ -860,7 +863,10 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                     onClick={() => onAddNewEntityClick('event')}
                     rightIcon={
                       familyEvents.length === 0 ? (
-                        <WarningIcon color="red.500" />
+                        <WarningIcon
+                          color="red.500"
+                          data-test-id="warning-icon-event"
+                        />
                       ) : undefined
                     }
                   >

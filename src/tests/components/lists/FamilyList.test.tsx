@@ -1,5 +1,5 @@
 import { customRender } from '@/tests/utilsTest/render'
-import { fireEvent, screen, waitFor } from '@testing-library/react'
+import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import '@testing-library/jest-dom'
 
 import FamilyList from '@/components/lists/FamilyList'
@@ -20,6 +20,8 @@ const mockFamiliesData = [
     last_modified: '3/1/2021',
     created: '4/1/2021',
     status: 'active',
+    documents: [],
+    events: [],
   },
   {
     import_id: '2',
@@ -31,6 +33,8 @@ const mockFamiliesData = [
     last_modified: '3/2/2021',
     created: '4/2/2021',
     status: 'active',
+    documents: ['doc1'],
+    events: ['event1'],
   },
 ]
 
@@ -93,5 +97,21 @@ describe('FamilyList', () => {
 
       expect(indexFamilyOne).toBeGreaterThan(indexFamilyTwo)
     })
+  })
+
+  it('shows a warning icon only for families without documents or events', async () => {
+    const familyIdWithoutDocumentsOrEvents = '1'
+    const familyIdWithDocumentsOrEvents = '2'
+    await waitFor(() => {
+      const familyRowWithout = within(
+        screen.getByTestId(`family-row-${familyIdWithoutDocumentsOrEvents}`),
+      )
+      const familyRowWith = within(
+        screen.getByTestId(`family-row-${familyIdWithDocumentsOrEvents}`),
+      )
+
+      expect(familyRowWithout.queryByTestId('warning-icon')).toBeInTheDocument()
+      expect(familyRowWith.queryByTestId('warning-icon')).not.toBeInTheDocument()
+  })
   })
 })

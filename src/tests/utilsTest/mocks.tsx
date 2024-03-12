@@ -126,6 +126,39 @@ const mockCCLWFamily: ICCLWFamily = {
   },
 }
 
+const mockUNFCCCFamilyNoDocumentsNoEvents: IUNFCCCFamily = {
+  ...mockUNFCCCFamily,
+  import_id: 'UNFCCC.family.3.0',
+  title: 'UNFCCC Family Three',
+  summary: 'Summary for UNFCCC Family Three with no documents and no events',
+  documents: [], // Sin documentos
+  events: [], // Sin eventos
+  created: '5/1/2021',
+  last_modified: '6/1/2021',
+}
+
+const mockCCLWFamilyNoDocuments: ICCLWFamily = {
+  ...mockCCLWFamily,
+  import_id: 'CCLW.family.4.0',
+  title: 'CCLW Family Four',
+  summary: 'Summary for CCLW Family Four with no documents',
+  documents: [], // Sin documentos
+  created: '5/2/2021',
+  last_modified: '6/2/2021',
+}
+
+const mockCCLWFamilyNoEvents: ICCLWFamily = {
+  ...mockCCLWFamily,
+  import_id: 'CCLW.family.5.0',
+  title: 'CCLW Family Five',
+  summary: 'Summary for CCLW Family Five with no events',
+  events: [], // Sin eventos
+  created: '7/2/2021',
+  last_modified: '8/2/2021',
+}
+
+// Extiende mockFamiliesData para incluir los nuevos casos
+
 const mockDocument = {
   import_id: 'CCLW.doc.1.1',
   family_import_id: 'CCLW.family.2.0',
@@ -144,6 +177,12 @@ const mockDocument = {
 }
 
 // Exports
-export const mockFamiliesData = [mockUNFCCCFamily, mockCCLWFamily]
+export const mockFamiliesData = [
+  mockUNFCCCFamily,
+  mockCCLWFamily,
+  mockUNFCCCFamilyNoDocumentsNoEvents,
+  mockCCLWFamilyNoDocuments,
+  mockCCLWFamilyNoEvents,
+]
 export { mockConfig as configMock }
 export { mockDocument }
