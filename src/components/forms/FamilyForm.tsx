@@ -69,6 +69,7 @@ import { formatDate } from '@/utils/formatDate'
 import { WYSIWYG } from '../form-components/WYSIWYG'
 import { decodeToken } from '@/utils/decodeToken'
 import { chakraStylesSelect } from '@/styles/chakra'
+import { WarningIcon } from '@chakra-ui/icons'
 
 type TMultiSelect = {
   value: string
@@ -818,7 +819,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               )}
               {loadedFamily && (
                 <Box>
-                  <Button onClick={() => onAddNewEntityClick('document')}>
+                  <Button onClick={() => onAddNewEntityClick('document')} rightIcon={familyDocuments.length === 0 ? <WarningIcon color="red.500" /> : undefined}>
                     Add new Document
                   </Button>
                 </Box>
@@ -848,7 +849,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               )}
               {loadedFamily && (
                 <Box>
-                  <Button onClick={() => onAddNewEntityClick('event')}>
+                  <Button onClick={() => onAddNewEntityClick('event')} rightIcon={familyEvents.length === 0 ? <WarningIcon color="red.500" /> : undefined}>
                     Add new Event
                   </Button>
                 </Box>
