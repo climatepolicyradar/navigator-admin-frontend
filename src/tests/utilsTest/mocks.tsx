@@ -157,8 +157,6 @@ const mockCCLWFamilyNoEvents: ICCLWFamily = {
   last_modified: '8/2/2021',
 }
 
-// Extiende mockFamiliesData para incluir los nuevos casos
-
 const mockDocument = {
   import_id: 'CCLW.doc.1.1',
   family_import_id: 'CCLW.family.2.0',
