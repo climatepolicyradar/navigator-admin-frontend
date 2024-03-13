@@ -23,7 +23,12 @@ import { GoPencil } from 'react-icons/go'
 
 import { DeleteButton } from '../buttons/Delete'
 import { sortBy } from '@/utils/sortBy'
-import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from '@chakra-ui/icons'
+import {
+  ArrowDownIcon,
+  ArrowUpIcon,
+  ArrowUpDownIcon,
+  WarningIcon,
+} from '@chakra-ui/icons'
 import { getStatusColour } from '@/utils/getStatusColour'
 import { getStatusAlias } from '@/utils/getStatusAlias'
 import { ApiError } from '../feedback/ApiError'
@@ -211,6 +216,7 @@ export default function FamilyList() {
             {filteredItems?.map((family) => (
               <Tr
                 key={family.import_id}
+                data-testid={`family-row-${family.import_id}`}
                 borderLeft={
                   family.import_id === familyError ? '2px' : 'inherit'
                 }
@@ -218,7 +224,14 @@ export default function FamilyList() {
                   family.import_id === familyError ? 'red.500' : 'inherit'
                 }
               >
-                <Td>{family.title}</Td>
+                <Td>
+                  <Flex gap="2" alignItems="center">
+                    {(!family.documents?.length || !family.events?.length) && (
+                      <WarningIcon color="red.500" data-testid="warning-icon" />
+                    )}
+                    {family.title}
+                  </Flex>
+                </Td>
                 <Td>{family.category}</Td>
                 <Td>{family.geography}</Td>
                 <Td>{formatDate(family.published_date)}</Td>
