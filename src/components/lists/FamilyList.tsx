@@ -226,7 +226,7 @@ export default function FamilyList() {
               >
                 <Td>
                   <Flex gap="2" alignItems="center">
-                    {!family.documents?.length && !family.events?.length && (
+                    {(!family.documents?.length || !family.events?.length) && (
                       <WarningIcon color="red.500" data-testid="warning-icon" />
                     )}
                     {family.title}

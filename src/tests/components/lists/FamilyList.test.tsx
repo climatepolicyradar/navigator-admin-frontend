@@ -84,26 +84,31 @@ describe('FamilyList', () => {
   })
 
   it('shows a warning icon only for families without documents or events', async () => {
-    const familyIdWithDocumentsWithoutEvents = mockFamiliesData[4].import_id
-    const familyIdWithoutDocumentsOrEvents = mockFamiliesData[2].import_id
-    const familyIdWithDocumentsOrEvents = mockFamiliesData[0].import_id
+    const familyIdWithoutDocumentsAndEvents = mockFamiliesData[2].import_id
+    const familyIdWithoutDocuments = mockFamiliesData[3].import_id
+    const familyIdWithoutEvents = mockFamiliesData[4].import_id
+    const familyIdWithDocumentsAndEvents = mockFamiliesData[0].import_id
     await waitFor(() => {
-      const familyRowWithout = within(
-        screen.getByTestId(`family-row-${familyIdWithoutDocumentsOrEvents}`),
+      const familyRowWithoutDocumentsAndEvents = within(
+        screen.getByTestId(`family-row-${familyIdWithoutDocumentsAndEvents}`),
       )
-      const familyRowWithout2 = within(
-        screen.getByTestId(`family-row-${familyIdWithDocumentsWithoutEvents}`),
+      const familyRowWithoutDocuments = within(
+        screen.getByTestId(`family-row-${familyIdWithoutDocuments}`),
       )
-      const familyRowWith = within(
-        screen.getByTestId(`family-row-${familyIdWithDocumentsOrEvents}`),
+      const familyRowWithoutEvents = within(
+        screen.getByTestId(`family-row-${familyIdWithoutEvents}`),
+      )
+      const familyRowWithDocumentsAndEvents = within(
+        screen.getByTestId(`family-row-${familyIdWithDocumentsAndEvents}`),
       )
 
-      expect(familyRowWithout.queryByTestId('warning-icon')).toBeInTheDocument()
+      expect(familyRowWithoutDocumentsAndEvents.queryByTestId('warning-icon')).toBeInTheDocument()
+      expect(familyRowWithoutDocuments.queryByTestId('warning-icon')).toBeInTheDocument()
       expect(
-        familyRowWithout2.queryByTestId('warning-icon'),
+        familyRowWithoutEvents.queryByTestId('warning-icon'),
       ).toBeInTheDocument()
       expect(
-        familyRowWith.queryByTestId('warning-icon'),
+        familyRowWithDocumentsAndEvents.queryByTestId('warning-icon'),
       ).not.toBeInTheDocument()
     })
   })
