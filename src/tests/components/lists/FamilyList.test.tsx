@@ -31,24 +31,18 @@ describe('FamilyList', () => {
   it('renders without crashing', () => {
     // Verify mock family properties are rendered there
     expect(screen.queryAllByText(UNFCCCFamily.title)).not.toHaveLength(0)
-    expect(
-      screen.queryAllByText(UNFCCCFamily.category),
-    ).not.toHaveLength(0)
-    expect(
-      screen.queryAllByText(UNFCCCFamily.geography),
-    ).not.toHaveLength(0)
-    expect(
-      screen.queryAllByText(UNFCCCFamily.published_date),
-    ).not.toHaveLength(0)
-    expect(
-      screen.queryAllByText(UNFCCCFamily.last_updated_date),
-    ).not.toHaveLength(0)
-    expect(screen.queryAllByText(UNFCCCFamily.created)).not.toHaveLength(
+    expect(screen.queryAllByText(UNFCCCFamily.category)).not.toHaveLength(0)
+    expect(screen.queryAllByText(UNFCCCFamily.geography)).not.toHaveLength(0)
+    expect(screen.queryAllByText(UNFCCCFamily.published_date)).not.toHaveLength(
       0,
     )
     expect(
-      screen.queryAllByText(UNFCCCFamily.last_modified),
+      screen.queryAllByText(UNFCCCFamily.last_updated_date),
     ).not.toHaveLength(0)
+    expect(screen.queryAllByText(UNFCCCFamily.created)).not.toHaveLength(0)
+    expect(screen.queryAllByText(UNFCCCFamily.last_modified)).not.toHaveLength(
+      0,
+    )
   })
 
   it('sorts families by title when title header is clicked', async () => {
