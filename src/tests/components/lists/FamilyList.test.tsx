@@ -102,8 +102,12 @@ describe('FamilyList', () => {
         screen.getByTestId(`family-row-${familyIdWithDocumentsAndEvents}`),
       )
 
-      expect(familyRowWithoutDocumentsAndEvents.queryByTestId('warning-icon')).toBeInTheDocument()
-      expect(familyRowWithoutDocuments.queryByTestId('warning-icon')).toBeInTheDocument()
+      expect(
+        familyRowWithoutDocumentsAndEvents.queryByTestId('warning-icon'),
+      ).toBeInTheDocument()
+      expect(
+        familyRowWithoutDocuments.queryByTestId('warning-icon'),
+      ).toBeInTheDocument()
       expect(
         familyRowWithoutEvents.queryByTestId('warning-icon'),
       ).toBeInTheDocument()
