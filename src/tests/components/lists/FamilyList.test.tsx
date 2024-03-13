@@ -17,39 +17,42 @@ jest.mock('react-router-dom', (): unknown => ({
   }),
 }))
 
+const UNFCCCFamily = mockFamiliesData[0]
+const mockCCLWFamily = mockFamiliesData[1]
+
 describe('FamilyList', () => {
   beforeEach(async () => {
     customRender(<FamilyList />)
     await waitFor(() => {
-      expect(screen.getByText(mockFamiliesData[0].title)).toBeInTheDocument()
+      expect(screen.getByText(UNFCCCFamily.title)).toBeInTheDocument()
     })
   })
 
   it('renders without crashing', () => {
     // Verify mock family properties are rendered there
-    expect(screen.queryAllByText(mockFamiliesData[0].title)).not.toHaveLength(0)
+    expect(screen.queryAllByText(UNFCCCFamily.title)).not.toHaveLength(0)
     expect(
-      screen.queryAllByText(mockFamiliesData[0].category),
+      screen.queryAllByText(UNFCCCFamily.category),
     ).not.toHaveLength(0)
     expect(
-      screen.queryAllByText(mockFamiliesData[0].geography),
+      screen.queryAllByText(UNFCCCFamily.geography),
     ).not.toHaveLength(0)
     expect(
-      screen.queryAllByText(mockFamiliesData[0].published_date),
+      screen.queryAllByText(UNFCCCFamily.published_date),
     ).not.toHaveLength(0)
     expect(
-      screen.queryAllByText(mockFamiliesData[0].last_updated_date),
+      screen.queryAllByText(UNFCCCFamily.last_updated_date),
     ).not.toHaveLength(0)
-    expect(screen.queryAllByText(mockFamiliesData[0].created)).not.toHaveLength(
+    expect(screen.queryAllByText(UNFCCCFamily.created)).not.toHaveLength(
       0,
     )
     expect(
-      screen.queryAllByText(mockFamiliesData[0].last_modified),
+      screen.queryAllByText(UNFCCCFamily.last_modified),
     ).not.toHaveLength(0)
   })
 
   it('sorts families by title when title header is clicked', async () => {
-    expect(screen.getByText(mockFamiliesData[0].title)).toBeInTheDocument()
+    expect(screen.getByText(UNFCCCFamily.title)).toBeInTheDocument()
     const titleHeader = screen.getByText('Title')
 
     // Sorted
@@ -58,10 +61,10 @@ describe('FamilyList', () => {
       const allFamilies = screen.getAllByText(/Family/)
 
       const indexFamilyOne = allFamilies.findIndex(
-        (element) => element.textContent === mockFamiliesData[1].title,
+        (element) => element.textContent === mockCCLWFamily.title,
       )
       const indexFamilyTwo = allFamilies.findIndex(
-        (element) => element.textContent === mockFamiliesData[0].title,
+        (element) => element.textContent === UNFCCCFamily.title,
       )
 
       expect(indexFamilyOne).toBeLessThan(indexFamilyTwo)
@@ -73,10 +76,10 @@ describe('FamilyList', () => {
       const allFamilies = screen.getAllByText(/Family/)
 
       const indexFamilyOne = allFamilies.findIndex(
-        (element) => element.textContent === mockFamiliesData[1].title,
+        (element) => element.textContent === mockCCLWFamily.title,
       )
       const indexFamilyTwo = allFamilies.findIndex(
-        (element) => element.textContent === mockFamiliesData[0].title,
+        (element) => element.textContent === UNFCCCFamily.title,
       )
 
       expect(indexFamilyOne).toBeGreaterThan(indexFamilyTwo)
@@ -87,7 +90,7 @@ describe('FamilyList', () => {
     const familyIdWithoutDocumentsAndEvents = mockFamiliesData[2].import_id
     const familyIdWithoutDocuments = mockFamiliesData[3].import_id
     const familyIdWithoutEvents = mockFamiliesData[4].import_id
-    const familyIdWithDocumentsAndEvents = mockFamiliesData[0].import_id
+    const familyIdWithDocumentsAndEvents = UNFCCCFamily.import_id
     await waitFor(() => {
       const familyRowWithoutDocumentsAndEvents = within(
         screen.getByTestId(`family-row-${familyIdWithoutDocumentsAndEvents}`),
