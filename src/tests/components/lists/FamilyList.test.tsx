@@ -84,17 +84,24 @@ describe('FamilyList', () => {
   })
 
   it('shows a warning icon only for families without documents or events', async () => {
+    const familyIdWithDocumentsWithoutEvents = mockFamiliesData[4].import_id
     const familyIdWithoutDocumentsOrEvents = mockFamiliesData[2].import_id
     const familyIdWithDocumentsOrEvents = mockFamiliesData[0].import_id
     await waitFor(() => {
       const familyRowWithout = within(
         screen.getByTestId(`family-row-${familyIdWithoutDocumentsOrEvents}`),
       )
+      const familyRowWithout2 = within(
+        screen.getByTestId(`family-row-${familyIdWithDocumentsWithoutEvents}`),
+      )
       const familyRowWith = within(
         screen.getByTestId(`family-row-${familyIdWithDocumentsOrEvents}`),
       )
 
       expect(familyRowWithout.queryByTestId('warning-icon')).toBeInTheDocument()
+      expect(
+        familyRowWithout2.queryByTestId('warning-icon'),
+      ).toBeInTheDocument()
       expect(
         familyRowWith.queryByTestId('warning-icon'),
       ).not.toBeInTheDocument()
