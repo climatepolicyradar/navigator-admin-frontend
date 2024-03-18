@@ -1,3 +1,5 @@
+import { IConfigLanguageSorted } from '.'
+
 export interface IDocument {
   import_id: string
   family_import_id: string
@@ -22,10 +24,7 @@ export interface IDocumentFormPost {
   type: string
   title: string
   source_url?: string | null
-  user_language_name?: {
-    label?: string | null
-    value?: string | null
-  } | null
+  user_language_name?: IConfigLanguageSorted | null
 }
 
 export interface IDocumentFormPostModified {
