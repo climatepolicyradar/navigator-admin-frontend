@@ -38,11 +38,11 @@ const IconLink = ({
   current?: boolean
 }) => (
   <Link
-    display="flex"
-    alignItems="center"
-    py="1"
-    px="2"
-    borderRadius="md"
+    display='flex'
+    alignItems='center'
+    py='1'
+    px='2'
+    borderRadius='md'
     fontWeight={current ? 'bold' : 'normal'}
     _hover={{ background: 'gray.50' }}
     as={RouterLink}
@@ -63,56 +63,56 @@ export function SideMenu() {
   return (
     <>
       <IconButton
-        variant="outline"
-        colorScheme="gray"
-        aria-label="Open menu"
+        variant='outline'
+        colorScheme='gray'
+        aria-label='Open menu'
         icon={<HamburgerIcon />}
         onClick={onOpen}
       />
-      <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
+      <Drawer isOpen={isOpen} placement='left' onClose={onClose}>
         <DrawerOverlay />
-        <DrawerContent borderRightRadius="lg">
+        <DrawerContent borderRightRadius='lg'>
           <DrawerCloseButton />
           <DrawerHeader>Menu</DrawerHeader>
 
           <DrawerBody>
-            <Stack divider={<StackDivider />} spacing="4">
+            <Stack divider={<StackDivider />} spacing='4'>
               <nav onClick={onClose}>
                 <IconLink
-                  icon={<Icon as={GoHome} mr="2" />}
-                  to="/"
+                  icon={<Icon as={GoHome} mr='2' />}
+                  to='/'
                   current={isCurrentPage('')}
                 >
                   Dashboard
                 </IconLink>
                 <IconLink
-                  icon={<Icon as={GoRepo} mr="2" />}
-                  to="/families"
+                  icon={<Icon as={GoRepo} mr='2' />}
+                  to='/families'
                   current={isCurrentPage('families')}
                 >
                   Families
                 </IconLink>
                 <IconLink
-                  icon={<Icon as={GoProjectRoadmap} mr="2" />}
-                  to="/documents"
+                  icon={<Icon as={GoProjectRoadmap} mr='2' />}
+                  to='/documents'
                   current={isCurrentPage('documents')}
                 >
                   Documents
                 </IconLink>
                 <IconLink
-                  icon={<Icon as={GoVersions} mr="2" />}
-                  to="/collections"
+                  icon={<Icon as={GoVersions} mr='2' />}
+                  to='/collections'
                   current={isCurrentPage('collections')}
                 >
                   Collections
                 </IconLink>
-                <IconLink icon={<Icon as={GoClock} mr="2" />}>
+                <IconLink icon={<Icon as={GoClock} mr='2' />}>
                   View audit history
                 </IconLink>
-                <IconLink icon={<Icon as={GoComment} mr="2" />}>
+                <IconLink icon={<Icon as={GoComment} mr='2' />}>
                   Add comment
                 </IconLink>
-                <IconLink icon={<Icon as={GoSignOut} mr="2" />}>
+                <IconLink icon={<Icon as={GoSignOut} mr='2' />}>
                   <Logout />
                 </IconLink>
               </nav>

@@ -27,36 +27,36 @@ export default function Family() {
 
   return (
     <>
-      <Box display="flex">
-        <Link as={RouterLink} to="/families" display="flex" alignItems="center">
-          <ArrowBackIcon mr="2" /> Back to families
+      <Box display='flex'>
+        <Link as={RouterLink} to='/families' display='flex' alignItems='center'>
+          <ArrowBackIcon mr='2' /> Back to families
         </Link>
       </Box>
       <Heading as={'h1'}>{pageTitle}</Heading>
       <Text>
-        <Text as="span" color={'red.500'}>
+        <Text as='span' color={'red.500'}>
           *
         </Text>{' '}
         indicates required fields
       </Text>
-      <Box my={4} p={4} bg={'gray.50'} boxShadow="base">
+      <Box my={4} p={4} bg={'gray.50'} boxShadow='base'>
         {error && (
           <>
             <ApiError error={error} />
-            <Button as={RouterLink} to={'/families'} colorScheme="blue" mt={4}>
+            <Button as={RouterLink} to={'/families'} colorScheme='blue' mt={4}>
               Back to families
             </Button>
           </>
         )}
         {loading && (
           <>
-            <Box padding="4" bg="white">
+            <Box padding='4' bg='white'>
               <Loader />
               <SkeletonText
-                mt="4"
+                mt='4'
                 noOfLines={12}
-                spacing="4"
-                skeletonHeight="2"
+                spacing='4'
+                skeletonHeight='2'
               />
             </Box>
           </>

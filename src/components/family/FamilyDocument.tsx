@@ -42,7 +42,7 @@ export const FamilyDocument = ({
 
   if (error) {
     return (
-      <Card direction="row">
+      <Card direction='row'>
         <ApiError error={error} />
       </Card>
     )
@@ -53,9 +53,9 @@ export const FamilyDocument = ({
   }
 
   return (
-    <Card direction="row">
+    <Card direction='row'>
       <CardBody>
-        <Text mb="2">{document?.title}</Text>
+        <Text mb='2'>{document?.title}</Text>
         <HStack divider={<Text>·</Text>} gap={4}>
           {document?.role && <Text>Role: {document.role}</Text>}
           {document?.type && <Text>Type: {document.type}</Text>}
@@ -63,22 +63,22 @@ export const FamilyDocument = ({
             <Text>Variant: {document.variant_name}</Text>
           )}
         </HStack>
-        <Badge colorScheme={getStatusColour(document?.status)} size="sm">
+        <Badge colorScheme={getStatusColour(document?.status)} size='sm'>
           {document?.status}
         </Badge>
       </CardBody>
       {(!!onEditClick || !!onDeleteClick) && (
         <CardFooter>
           {document?.status.toLowerCase() !== 'deleted' && (
-            <Stack direction="row" spacing={4}>
+            <Stack direction='row' spacing={4}>
               {!!onEditClick && (
-                <Button size="sm" onClick={handleEditClick}>
+                <Button size='sm' onClick={handleEditClick}>
                   Edit
                 </Button>
               )}
               {!!onDeleteClick && (
                 <DeleteButton
-                  entityName="document"
+                  entityName='document'
                   entityTitle={document?.title || ''}
                   callback={handleDeleteClick}
                 />

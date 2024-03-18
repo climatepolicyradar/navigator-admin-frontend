@@ -3,9 +3,9 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from '@chakra-ui/react'
 
 export const BreadCrumbs = () => {
   return (
-    <Breadcrumb fontSize="sm">
+    <Breadcrumb fontSize='sm'>
       <BreadcrumbItem>
-        <BreadcrumbLink to="/" fontWeight="bold" as={Link}>
+        <BreadcrumbLink to='/' fontWeight='bold' as={Link}>
           Climate Policy Radar Admin
         </BreadcrumbLink>
       </BreadcrumbItem>

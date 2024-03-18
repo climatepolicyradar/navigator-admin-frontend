@@ -35,22 +35,22 @@ const Dashboard = () => {
       <Heading as={'h1'}>Dashboard</Heading>
       {error && <ApiError error={error} />}
       {!loading && !error && (
-        <SimpleGrid columns={2} gap="4">
-          <CardLink to="/families">
+        <SimpleGrid columns={2} gap='4'>
+          <CardLink to='/families'>
             <Stat>
               <StatLabel>Families</StatLabel>
               <StatNumber>{summary?.n_families}</StatNumber>
               <StatHelpText>Click here to view Families</StatHelpText>
             </Stat>
           </CardLink>
-          <CardLink to="/documents">
+          <CardLink to='/documents'>
             <Stat>
               <StatLabel>Documents</StatLabel>
               <StatNumber>{summary?.n_documents}</StatNumber>
               <StatHelpText>Click here to view Documents</StatHelpText>
             </Stat>
           </CardLink>
-          <CardLink to="/collections">
+          <CardLink to='/collections'>
             <Stat>
               <StatLabel>Collections</StatLabel>
               <StatNumber>{summary?.n_collections}</StatNumber>

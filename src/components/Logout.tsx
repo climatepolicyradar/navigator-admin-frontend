@@ -13,7 +13,7 @@ export default function Logout() {
   return (
     <>
       {token && (
-        <button type="button" onClick={handleLogout}>
+        <button type='button' onClick={handleLogout}>
           Sign Out
         </button>
       )}

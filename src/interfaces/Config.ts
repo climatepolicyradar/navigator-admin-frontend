@@ -1,3 +1,5 @@
+import { OptionBase } from 'chakra-react-select'
+
 export interface IConfigGeographyNode {
   id: number
   display_value: string
@@ -18,7 +20,7 @@ interface IConfigMeta {
   allowed_values: string[]
 }
 
-export interface IConfigLangaugeSorted {
+export interface IConfigLanguageSorted extends OptionBase {
   value: string
   label: string
 }
@@ -28,7 +30,7 @@ export interface IConfig {
   languages: {
     [key: string]: string
   }
-  languagesSorted: IConfigLangaugeSorted[]
+  languagesSorted: IConfigLanguageSorted[]
   taxonomies: {
     CCLW: {
       topic: IConfigMeta

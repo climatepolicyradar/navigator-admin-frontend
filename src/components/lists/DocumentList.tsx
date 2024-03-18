@@ -107,9 +107,9 @@ export default function DocumentList() {
   return (
     <>
       {loading && (
-        <Box padding="4" bg="white">
+        <Box padding='4' bg='white'>
           <Loader />
-          <SkeletonText mt="4" noOfLines={3} spacing="4" skeletonHeight="2" />
+          <SkeletonText mt='4' noOfLines={3} spacing='4' skeletonHeight='2' />
         </Box>
       )}
       {!loading && (
@@ -119,18 +119,18 @@ export default function DocumentList() {
             {formError && <ApiError error={formError} />}
           </Box>
           <TableContainer height={'100%'} whiteSpace={'normal'}>
-            <Table size="sm" variant={'striped'}>
+            <Table size='sm' variant={'striped'}>
               <Thead>
                 <Tr>
                   <Th
                     onClick={() => handleHeaderClick('title')}
-                    cursor="pointer"
+                    cursor='pointer'
                   >
                     Title {renderSortIcon('title')}
                   </Th>
                   <Th
                     onClick={() => handleHeaderClick('status')}
-                    cursor="pointer"
+                    cursor='pointer'
                   >
                     Status {renderSortIcon('status')}
                   </Th>
@@ -161,26 +161,26 @@ export default function DocumentList() {
                     <Td>
                       <Badge
                         colorScheme={getStatusColour(document.status)}
-                        size="sm"
+                        size='sm'
                       >
                         {document.status}
                       </Badge>
                     </Td>
                     <Td>
                       <HStack gap={2}>
-                        <Tooltip label="Edit">
+                        <Tooltip label='Edit'>
                           <Link to={`/document/${document.import_id}/edit`}>
                             <IconButton
-                              aria-label="Edit document"
+                              aria-label='Edit document'
                               icon={<GoPencil />}
-                              variant="outline"
-                              size="sm"
-                              colorScheme="blue"
+                              variant='outline'
+                              size='sm'
+                              colorScheme='blue'
                             />
                           </Link>
                         </Tooltip>
                         <DeleteButton
-                          entityName="document"
+                          entityName='document'
                           entityTitle={document.title}
                           callback={() => handleDeleteClick(document.import_id)}
                         />

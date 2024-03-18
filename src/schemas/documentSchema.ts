@@ -13,8 +13,8 @@ export const documentSchema = yup
         label: yup.string().required(),
         value: yup.string().required(),
       })
-      .defined()
-      .strict(true)
+      .default(null)
+      .nullable()
       .optional(),
   })
   .required()

@@ -416,9 +416,9 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   return (
     <>
       {(configLoading || collectionsLoading) && (
-        <Box padding="4" bg="white">
+        <Box padding='4' bg='white'>
           <Loader />
-          <SkeletonText mt="4" noOfLines={12} spacing="4" skeletonHeight="2" />
+          <SkeletonText mt='4' noOfLines={12} spacing='4' skeletonHeight='2' />
         </Box>
       )}
       {!canAccess(watchOrganisation) && (
@@ -431,8 +431,8 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       {collectionsError && <ApiError error={collectionsError} />}
       {(configError || collectionsError) && (
         <ApiError
-          message="Please create a collection first"
-          detail="You can do this by clicking the button below"
+          message='Please create a collection first'
+          detail='You can do this by clicking the button below'
         />
       )}
       {canLoadForm && (
@@ -450,14 +450,14 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                   <ModalBody>Changes that you made may not be saved.</ModalBody>
                   <ModalFooter>
                     <Button
-                      colorScheme="gray"
+                      colorScheme='gray'
                       mr={3}
                       onClick={() => setIsLeavingModalOpen(false)}
                     >
                       Cancel
                     </Button>
                     <Button
-                      colorScheme="red"
+                      colorScheme='red'
                       onClick={() => {
                         blocker.proceed?.()
                         setIsLeavingModalOpen(false)
@@ -469,21 +469,21 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 </ModalContent>
               </Modal>
             )}
-            <VStack gap="4" mb={12} mt={4} align={'stretch'}>
+            <VStack gap='4' mb={12} mt={4} align={'stretch'}>
               {formError && <ApiError error={formError} />}
               {loadedFamily && (
                 <FormControl isRequired isReadOnly isDisabled>
                   <FormLabel>Import ID</FormLabel>
                   <Input
-                    data-test-id="input-id"
-                    bg="white"
+                    data-test-id='input-id'
+                    bg='white'
                     value={loadedFamily?.import_id}
                   />
                 </FormControl>
               )}
               <FormControl isRequired>
                 <FormLabel>Title</FormLabel>
-                <Input bg="white" {...register('title')} />
+                <Input bg='white' {...register('title')} />
               </FormControl>
               <FormControl isRequired>
                 <FormLabel>Summary</FormLabel>
@@ -494,7 +494,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               </FormControl>
               <Controller
                 control={control}
-                name="collections"
+                name='collections'
                 render={({ field }) => {
                   return (
                     <FormControl>
@@ -518,17 +518,17 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               />
               <Controller
                 control={control}
-                name="geography"
+                name='geography'
                 render={({ field }) => {
                   return (
                     <FormControl
                       isRequired
-                      as="fieldset"
+                      as='fieldset'
                       isInvalid={!!errors.geography}
                     >
                       <FormLabel>Geography</FormLabel>
-                      <Select background="white" {...field}>
-                        <option value="">Please select</option>
+                      <Select background='white' {...field}>
+                        <option value=''>Please select</option>
                         {getCountries(config?.geographies).map((country) => (
                           <option key={country.id} value={country.value}>
                             {country.display_value}
@@ -541,27 +541,27 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               />
               <Controller
                 control={control}
-                name="category"
+                name='category'
                 render={({ field }) => {
                   return (
                     <FormControl
                       isRequired
-                      as="fieldset"
+                      as='fieldset'
                       isInvalid={!!errors.category}
                     >
-                      <FormLabel as="legend">Category</FormLabel>
+                      <FormLabel as='legend'>Category</FormLabel>
                       <RadioGroup {...field}>
                         <HStack gap={4}>
-                          <Radio bg="white" value="Executive">
+                          <Radio bg='white' value='Executive'>
                             Executive
                           </Radio>
-                          <Radio bg="white" value="Legislative">
+                          <Radio bg='white' value='Legislative'>
                             Legislative
                           </Radio>
-                          <Radio bg="white" value="Litigation">
+                          <Radio bg='white' value='Litigation'>
                             Litigation
                           </Radio>
-                          <Radio bg="white" value="UNFCCC">
+                          <Radio bg='white' value='UNFCCC'>
                             UNFCCC
                           </Radio>
                         </HStack>
@@ -575,27 +575,27 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               />
               <Controller
                 control={control}
-                name="organisation"
+                name='organisation'
                 render={({ field }) => {
                   return (
                     <FormControl
                       isRequired
-                      as="fieldset"
+                      as='fieldset'
                       isInvalid={!!errors.organisation}
                     >
-                      <FormLabel as="legend">Organisation</FormLabel>
+                      <FormLabel as='legend'>Organisation</FormLabel>
                       <RadioGroup {...field}>
                         <HStack gap={4}>
                           <Radio
-                            bg="white"
-                            value="CCLW"
+                            bg='white'
+                            value='CCLW'
                             isDisabled={userAccess && !('CCLW' in userAccess)}
                           >
                             CCLW
                           </Radio>
                           <Radio
-                            bg="white"
-                            value="UNFCCC"
+                            bg='white'
+                            value='UNFCCC'
                             isDisabled={userAccess && !('UNFCCC' in userAccess)}
                           >
                             UNFCCC
@@ -610,9 +610,9 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 }}
               />
               {!!watchOrganisation && (
-                <Box position="relative" padding="10">
+                <Box position='relative' padding='10'>
                   <Divider />
-                  <AbsoluteCenter bg="gray.50" px="4">
+                  <AbsoluteCenter bg='gray.50' px='4'>
                     Metadata
                   </AbsoluteCenter>
                 </Box>
@@ -621,25 +621,25 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 <>
                   <FormControl isRequired>
                     <FormLabel>Author</FormLabel>
-                    <Input bg="white" {...register('author')} />
+                    <Input bg='white' {...register('author')} />
                   </FormControl>
                   <Controller
                     control={control}
-                    name="author_type"
+                    name='author_type'
                     render={({ field }) => {
                       return (
                         <FormControl
                           isRequired
-                          as="fieldset"
+                          as='fieldset'
                           isInvalid={!!errors.author_type}
                         >
-                          <FormLabel as="legend">Author type</FormLabel>
+                          <FormLabel as='legend'>Author type</FormLabel>
                           <RadioGroup {...field}>
                             <HStack gap={4}>
                               {config?.taxonomies.UNFCCC.author_type.allowed_values.map(
                                 (authorType) => (
                                   <Radio
-                                    bg="white"
+                                    bg='white'
                                     value={authorType}
                                     key={authorType}
                                   >
@@ -662,7 +662,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 <>
                   <Controller
                     control={control}
-                    name="topic"
+                    name='topic'
                     render={({ field }) => {
                       return (
                         <FormControl>
@@ -688,7 +688,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                   />
                   <Controller
                     control={control}
-                    name="hazard"
+                    name='hazard'
                     render={({ field }) => {
                       return (
                         <FormControl>
@@ -709,7 +709,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                   />
                   <Controller
                     control={control}
-                    name="sector"
+                    name='sector'
                     render={({ field }) => {
                       return (
                         <FormControl>
@@ -730,7 +730,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                   />
                   <Controller
                     control={control}
-                    name="keyword"
+                    name='keyword'
                     render={({ field }) => {
                       return (
                         <FormControl>
@@ -751,7 +751,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                   />
                   <Controller
                     control={control}
-                    name="framework"
+                    name='framework'
                     render={({ field }) => {
                       return (
                         <FormControl>
@@ -772,7 +772,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                   />
                   <Controller
                     control={control}
-                    name="instrument"
+                    name='instrument'
                     render={({ field }) => {
                       return (
                         <FormControl>
@@ -793,9 +793,9 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                   />
                 </>
               )}
-              <Box position="relative" padding="10">
+              <Box position='relative' padding='10'>
                 <Divider />
-                <AbsoluteCenter bg="gray.50" px="4">
+                <AbsoluteCenter bg='gray.50' px='4'>
                   Documents
                 </AbsoluteCenter>
               </Box>
@@ -806,7 +806,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 </Text>
               )}
               {familyDocuments.length && (
-                <Flex direction="column" gap={4}>
+                <Flex direction='column' gap={4}>
                   {familyDocuments.map((familyDoc) => (
                     <FamilyDocument
                       documentId={familyDoc}
@@ -824,8 +824,8 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                     rightIcon={
                       familyDocuments.length === 0 ? (
                         <WarningIcon
-                          color="red.500"
-                          data-test-id="warning-icon-document"
+                          color='red.500'
+                          data-test-id='warning-icon-document'
                         />
                       ) : undefined
                     }
@@ -834,9 +834,9 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                   </Button>
                 </Box>
               )}
-              <Box position="relative" padding="10">
+              <Box position='relative' padding='10'>
                 <Divider />
-                <AbsoluteCenter bg="gray.50" px="4">
+                <AbsoluteCenter bg='gray.50' px='4'>
                   Events
                 </AbsoluteCenter>
               </Box>
@@ -846,7 +846,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 </Text>
               )}
               {familyEvents.length && (
-                <Flex direction="column" gap={4}>
+                <Flex direction='column' gap={4}>
                   {familyEvents.map((familyEvent) => (
                     <FamilyEvent
                       eventId={familyEvent}
@@ -864,8 +864,8 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                     rightIcon={
                       familyEvents.length === 0 ? (
                         <WarningIcon
-                          color="red.500"
-                          data-test-id="warning-icon-event"
+                          color='red.500'
+                          data-test-id='warning-icon-event'
                         />
                       ) : undefined
                     }
@@ -878,8 +878,8 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
 
             <ButtonGroup isDisabled={!canAccess(watchOrganisation)}>
               <Button
-                type="submit"
-                colorScheme="blue"
+                type='submit'
+                colorScheme='blue'
                 onSubmit={handleSubmit(onSubmit)}
                 disabled={isSubmitting}
               >
@@ -887,11 +887,11 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               </Button>
             </ButtonGroup>
           </form>
-          <Drawer placement="right" onClose={onClose} isOpen={isOpen} size="lg">
+          <Drawer placement='right' onClose={onClose} isOpen={isOpen} size='lg'>
             <DrawerOverlay />
             {editingEntity === 'document' && loadedFamily && (
               <DrawerContent>
-                <DrawerHeader borderBottomWidth="1px">
+                <DrawerHeader borderBottomWidth='1px'>
                   {editingDocument
                     ? `Edit: ${editingDocument.title}`
                     : 'Add new Document'}
@@ -907,7 +907,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
             )}
             {editingEntity === 'event' && loadedFamily && (
               <DrawerContent>
-                <DrawerHeader borderBottomWidth="1px">
+                <DrawerHeader borderBottomWidth='1px'>
                   {editingEvent
                     ? `Edit: ${editingEvent.event_title}, on ${formatDate(editingEvent.date)}`
                     : 'Add new Event'}

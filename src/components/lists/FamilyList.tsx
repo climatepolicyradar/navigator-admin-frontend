@@ -134,74 +134,74 @@ export default function FamilyList() {
     <Box flex={1}>
       <Box>{formError && <ApiError error={formError} />}</Box>
       <TableContainer height={'100%'} whiteSpace={'normal'}>
-        <Table size="sm" variant={'striped'}>
+        <Table size='sm' variant={'striped'}>
           <Thead>
             <Tr>
-              <Th onClick={() => handleHeaderClick('title')} cursor="pointer">
-                <Flex gap={2} align="center">
+              <Th onClick={() => handleHeaderClick('title')} cursor='pointer'>
+                <Flex gap={2} align='center'>
                   Title {renderSortIcon('title')}
                 </Flex>
               </Th>
               <Th
                 onClick={() => handleHeaderClick('category')}
-                cursor="pointer"
+                cursor='pointer'
               >
-                <Flex gap={2} align="center">
+                <Flex gap={2} align='center'>
                   Category {renderSortIcon('category')}
                 </Flex>
               </Th>
               <Th
                 onClick={() => handleHeaderClick('geography')}
-                cursor="pointer"
+                cursor='pointer'
               >
-                <Flex gap={2} align="center">
+                <Flex gap={2} align='center'>
                   Geography {renderSortIcon('geography')}
                 </Flex>
               </Th>
               <Th
                 onClick={() => handleHeaderClick('published_date')}
-                cursor="pointer"
+                cursor='pointer'
               >
                 <Tooltip
-                  placement="top"
-                  label="The earliest published date recorded for this family"
+                  placement='top'
+                  label='The earliest published date recorded for this family'
                 >
-                  <Flex gap={2} align="center">
+                  <Flex gap={2} align='center'>
                     Published {renderSortIcon('published_date')}
                   </Flex>
                 </Tooltip>
               </Th>
               <Th
                 onClick={() => handleHeaderClick('last_updated_date')}
-                cursor="pointer"
+                cursor='pointer'
               >
                 <Tooltip
-                  placement="top"
-                  label="The latest event recorded for this family"
+                  placement='top'
+                  label='The latest event recorded for this family'
                 >
-                  <Flex gap={2} align="center">
+                  <Flex gap={2} align='center'>
                     Changed {renderSortIcon('last_updated_date')}
                   </Flex>
                 </Tooltip>
               </Th>
               <Th
                 onClick={() => handleHeaderClick('last_modified')}
-                cursor="pointer"
+                cursor='pointer'
               >
-                <Tooltip placement="top" label="Edited within the system">
-                  <Flex gap={2} align="center">
+                <Tooltip placement='top' label='Edited within the system'>
+                  <Flex gap={2} align='center'>
                     Edited {renderSortIcon('last_modified')}
                   </Flex>
                 </Tooltip>
               </Th>
-              <Th onClick={() => handleHeaderClick('created')} cursor="pointer">
-                <Tooltip placement="top" label="Date added to system">
-                  <Flex gap={2} align="center">
+              <Th onClick={() => handleHeaderClick('created')} cursor='pointer'>
+                <Tooltip placement='top' label='Date added to system'>
+                  <Flex gap={2} align='center'>
                     Created {renderSortIcon('created')}
                   </Flex>
                 </Tooltip>
               </Th>
-              <Th onClick={() => handleHeaderClick('status')} cursor="pointer">
+              <Th onClick={() => handleHeaderClick('status')} cursor='pointer'>
                 Status {renderSortIcon('status')}
               </Th>
               <Th></Th>
@@ -225,9 +225,9 @@ export default function FamilyList() {
                 }
               >
                 <Td>
-                  <Flex gap="2" alignItems="center">
+                  <Flex gap='2' alignItems='center'>
                     {(!family.documents?.length || !family.events?.length) && (
-                      <WarningIcon color="red.500" data-testid="warning-icon" />
+                      <WarningIcon color='red.500' data-testid='warning-icon' />
                     )}
                     {family.title}
                   </Flex>
@@ -239,25 +239,25 @@ export default function FamilyList() {
                 <Td>{formatDate(family.last_modified)}</Td>
                 <Td>{formatDate(family.created)}</Td>
                 <Td>
-                  <Badge colorScheme={getStatusColour(family.status)} size="sm">
+                  <Badge colorScheme={getStatusColour(family.status)} size='sm'>
                     {getStatusAlias(family.status)}
                   </Badge>
                 </Td>
                 <Td>
                   <HStack gap={2}>
-                    <Tooltip label="Edit">
+                    <Tooltip label='Edit'>
                       <Link to={`/family/${family.import_id}/edit`}>
                         <IconButton
-                          aria-label="Edit document"
+                          aria-label='Edit document'
                           icon={<GoPencil />}
-                          variant="outline"
-                          size="sm"
-                          colorScheme="blue"
+                          variant='outline'
+                          size='sm'
+                          colorScheme='blue'
                         />
                       </Link>
                     </Tooltip>
                     <DeleteButton
-                      entityName="family"
+                      entityName='family'
                       entityTitle={family.title}
                       callback={() => handleDeleteClick(family.import_id)}
                     />
