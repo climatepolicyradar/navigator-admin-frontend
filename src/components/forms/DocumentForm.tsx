@@ -152,7 +152,7 @@ export const DocumentForm = ({
       {invalidDocumentCreation && (
         <Box>
           <Text color={'red.500'}>Invalid Document creation</Text>
-          <Text fontSize="xs" color={'gray.500'}>
+          <Text fontSize='xs' color={'gray.500'}>
             A document must be linked to a family, please select a family
           </Text>
         </Box>
@@ -160,33 +160,33 @@ export const DocumentForm = ({
       {configError && <ApiError error={configError} />}
       {configLoading && <FormLoader />}
       <form onSubmit={handleSubmit(onSubmit)}>
-        <VStack gap="4" mb={12} align={'stretch'}>
+        <VStack gap='4' mb={12} align={'stretch'}>
           {formError && <ApiError error={formError} />}
           <FormControl isRequired isReadOnly isDisabled>
             <FormLabel>Family ID</FormLabel>
-            <Input bg="white" {...register('family_import_id')} />
+            <Input bg='white' {...register('family_import_id')} />
             <FormHelperText>This field is not editable</FormHelperText>
           </FormControl>
           <FormControl isRequired>
             <FormLabel>Title</FormLabel>
-            <Input bg="white" {...register('title')} />
+            <Input bg='white' {...register('title')} />
           </FormControl>
           <FormControl isInvalid={!!errors.source_url}>
             <FormLabel>Source URL</FormLabel>
-            <Input bg="white" {...register('source_url')} />
-            <FormErrorMessage role="error">
+            <Input bg='white' {...register('source_url')} />
+            <FormErrorMessage role='error'>
               {errors.source_url && errors.source_url.message}
             </FormErrorMessage>
           </FormControl>
           <Controller
             control={control}
-            name="role"
+            name='role'
             render={({ field }) => {
               return (
-                <FormControl isRequired as="fieldset" isInvalid={!!errors.role}>
-                  <FormLabel as="legend">Role</FormLabel>
-                  <Select background="white" {...field}>
-                    <option value="">Please select</option>
+                <FormControl isRequired as='fieldset' isInvalid={!!errors.role}>
+                  <FormLabel as='legend'>Role</FormLabel>
+                  <Select background='white' {...field}>
+                    <option value=''>Please select</option>
                     {config?.document?.roles.map((option) => (
                       <option key={option} value={option}>
                         {option}
@@ -200,13 +200,13 @@ export const DocumentForm = ({
           />
           <Controller
             control={control}
-            name="type"
+            name='type'
             render={({ field }) => {
               return (
-                <FormControl isRequired as="fieldset" isInvalid={!!errors.type}>
-                  <FormLabel as="legend">Type</FormLabel>
-                  <Select background="white" {...field}>
-                    <option value="">Please select</option>
+                <FormControl isRequired as='fieldset' isInvalid={!!errors.type}>
+                  <FormLabel as='legend'>Type</FormLabel>
+                  <Select background='white' {...field}>
+                    <option value=''>Please select</option>
                     {config?.document?.types.map((option) => (
                       <option key={option} value={option}>
                         {option}
@@ -220,13 +220,13 @@ export const DocumentForm = ({
           />
           <Controller
             control={control}
-            name="variant_name"
+            name='variant_name'
             render={({ field }) => {
               return (
-                <FormControl as="fieldset" isInvalid={!!errors.variant_name}>
-                  <FormLabel as="legend">Variant</FormLabel>
-                  <Select background="white" {...field}>
-                    <option value="">Please select</option>
+                <FormControl as='fieldset' isInvalid={!!errors.variant_name}>
+                  <FormLabel as='legend'>Variant</FormLabel>
+                  <Select background='white' {...field}>
+                    <option value=''>Please select</option>
                     {config?.document?.variants.map((option) => (
                       <option key={option} value={option}>
                         {option}
@@ -240,15 +240,15 @@ export const DocumentForm = ({
           />
           <Controller
             control={control}
-            name="user_language_name"
+            name='user_language_name'
             render={({ field }) => {
               return (
                 <FormControl
-                  as="fieldset"
+                  as='fieldset'
                   isInvalid={!!errors.user_language_name}
                 >
-                  <FormLabel as="legend">Language</FormLabel>
-                  <div data-testid="language-select">
+                  <FormLabel as='legend'>Language</FormLabel>
+                  <div data-testid='language-select'>
                     <CRSelect
                       chakraStyles={chakraStylesSelect}
                       isClearable={true}
@@ -267,8 +267,8 @@ export const DocumentForm = ({
           />
           <ButtonGroup>
             <Button
-              type="submit"
-              colorScheme="blue"
+              type='submit'
+              colorScheme='blue'
               onSubmit={handleSubmit(onSubmit)}
               disabled={isSubmitting}
             >

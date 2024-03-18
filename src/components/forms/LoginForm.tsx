@@ -90,24 +90,24 @@ export const LoginForm = () => {
           {formError && <ApiError error={formError} />}
           <Stack spacing={4}>
             <FormControl
-              id="email"
+              id='email'
               isRequired
               isInvalid={emailError !== ''}
               isDisabled={isLoading}
             >
               <FormLabel>Email address</FormLabel>
-              <Input type="email" onChange={(e) => setEmail(e.target.value)} />
+              <Input type='email' onChange={(e) => setEmail(e.target.value)} />
               <FormErrorMessage>{emailError}</FormErrorMessage>
             </FormControl>
             <FormControl
-              id="password"
+              id='password'
               isRequired
               isInvalid={passwordError !== ''}
               isDisabled={isLoading}
             >
               <FormLabel>Password</FormLabel>
               <Input
-                type="password"
+                type='password'
                 onChange={(e) => setPassword(e.target.value)}
               />
               <FormErrorMessage>{passwordError}</FormErrorMessage>

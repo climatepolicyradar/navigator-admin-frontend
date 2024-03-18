@@ -105,9 +105,9 @@ export default function CollectionList() {
   return (
     <>
       {loading && (
-        <Box padding="4" bg="white">
+        <Box padding='4' bg='white'>
           <Loader />
-          <SkeletonText mt="4" noOfLines={3} spacing="4" skeletonHeight="2" />
+          <SkeletonText mt='4' noOfLines={3} spacing='4' skeletonHeight='2' />
         </Box>
       )}
       {!loading && (
@@ -117,19 +117,19 @@ export default function CollectionList() {
             {formError && <ApiError error={formError} />}
           </Box>
           <TableContainer height={'100%'} whiteSpace={'normal'}>
-            <Table size="sm" variant={'striped'}>
+            <Table size='sm' variant={'striped'}>
               <Thead>
                 <Tr>
                   {/* <Th onClick={() => handleHeaderClick('import_id')}>ID</Th> */}
                   <Th
                     onClick={() => handleHeaderClick('title')}
-                    cursor="pointer"
+                    cursor='pointer'
                   >
                     Title {renderSortIcon('title')}
                   </Th>
                   <Th
                     onClick={() => handleHeaderClick('organisation')}
-                    cursor="pointer"
+                    cursor='pointer'
                   >
                     Organisation {renderSortIcon('organisation')}
                   </Th>
@@ -165,19 +165,19 @@ export default function CollectionList() {
                     <Td>{collection.families.length}</Td>
                     <Td>
                       <HStack gap={2}>
-                        <Tooltip label="Edit">
+                        <Tooltip label='Edit'>
                           <Link to={`/collection/${collection.import_id}/edit`}>
                             <IconButton
-                              aria-label="Edit document"
+                              aria-label='Edit document'
                               icon={<GoPencil />}
-                              variant="outline"
-                              size="sm"
-                              colorScheme="blue"
+                              variant='outline'
+                              size='sm'
+                              colorScheme='blue'
                             />
                           </Link>
                         </Tooltip>
                         <DeleteButton
-                          entityName="Collection"
+                          entityName='Collection'
                           entityTitle={collection.title}
                           callback={() =>
                             handleDeleteClick(collection.import_id)

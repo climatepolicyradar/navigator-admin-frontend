@@ -44,8 +44,8 @@ export const WYSIWYG = ({ html = DEFAULT_HTML, onChange }: TProps) => {
         <CardBody>
           <Editor
             editorState={editorState}
-            wrapperClassName="demo-wrapper"
-            editorClassName="demo-editor"
+            wrapperClassName='demo-wrapper'
+            editorClassName='demo-editor'
             onEditorStateChange={setEditorState}
             toolbar={{
               options: ['inline', 'list'],

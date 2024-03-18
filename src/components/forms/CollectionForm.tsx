@@ -118,40 +118,40 @@ export const CollectionForm = ({ collection: loadedCollection }: TProps) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <VStack gap="4" mb={12} align={'stretch'}>
+      <VStack gap='4' mb={12} align={'stretch'}>
         {formError && <ApiError error={formError} />}
         {loadedCollection && (
           <FormControl isRequired isReadOnly isDisabled>
             <FormLabel>Import ID</FormLabel>
-            <Input bg="white" value={loadedCollection?.import_id} />
+            <Input bg='white' value={loadedCollection?.import_id} />
             <FormHelperText>You cannot edit this</FormHelperText>
           </FormControl>
         )}
         <FormControl isRequired>
           <FormLabel>Title</FormLabel>
-          <Input bg="white" {...register('title')} />
+          <Input bg='white' {...register('title')} />
         </FormControl>
         <FormControl>
           <FormLabel>Description</FormLabel>
-          <Textarea height={'300px'} bg="white" {...register('description')} />
+          <Textarea height={'300px'} bg='white' {...register('description')} />
         </FormControl>
         <Controller
           control={control}
-          name="organisation"
+          name='organisation'
           render={({ field }) => {
             return (
               <FormControl
                 isRequired
-                as="fieldset"
+                as='fieldset'
                 isInvalid={!!errors.organisation}
               >
-                <FormLabel as="legend">Organisation</FormLabel>
+                <FormLabel as='legend'>Organisation</FormLabel>
                 <RadioGroup {...field}>
                   <HStack gap={4}>
-                    <Radio bg="white" value="CCLW">
+                    <Radio bg='white' value='CCLW'>
                       CCLW
                     </Radio>
-                    <Radio bg="white" value="UNFCCC">
+                    <Radio bg='white' value='UNFCCC'>
                       UNFCCC
                     </Radio>
                   </HStack>
@@ -165,8 +165,8 @@ export const CollectionForm = ({ collection: loadedCollection }: TProps) => {
         />
         <ButtonGroup>
           <Button
-            type="submit"
-            colorScheme="blue"
+            type='submit'
+            colorScheme='blue'
             onSubmit={handleSubmit(onSubmit)}
             disabled={isSubmitting}
           >

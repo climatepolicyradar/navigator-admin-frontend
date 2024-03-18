@@ -7,12 +7,12 @@ export function Header() {
   return (
     <>
       <Stack
-        p="4"
-        bg="gray.50"
-        direction="column"
-        borderBottom="1px"
-        borderColor="gray.100"
-        boxShadow="inner"
+        p='4'
+        bg='gray.50'
+        direction='column'
+        borderBottom='1px'
+        borderColor='gray.100'
+        boxShadow='inner'
       >
         <Box>
           <HStack gap={6}>

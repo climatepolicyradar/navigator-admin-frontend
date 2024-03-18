@@ -132,29 +132,29 @@ export const EventForm = ({
       {configError && <ApiError error={configError} />}
       {configLoading && <FormLoader />}
       <form onSubmit={handleSubmit(onSubmit)}>
-        <VStack gap="4" mb={12} align={'stretch'}>
+        <VStack gap='4' mb={12} align={'stretch'}>
           {formError && <ApiError error={formError} />}
           <FormControl isRequired>
             <FormLabel>Title</FormLabel>
-            <Input bg="white" {...register('event_title')} />
+            <Input bg='white' {...register('event_title')} />
           </FormControl>
           <FormControl isRequired>
             <FormLabel>Description</FormLabel>
-            <Input type="date" bg="white" {...register('date')} />
+            <Input type='date' bg='white' {...register('date')} />
           </FormControl>
           <Controller
             control={control}
-            name="event_type_value"
+            name='event_type_value'
             render={({ field }) => {
               return (
                 <FormControl
                   isRequired
-                  as="fieldset"
+                  as='fieldset'
                   isInvalid={!!errors.event_type_value}
                 >
-                  <FormLabel as="legend">Type</FormLabel>
-                  <Select background="white" {...field}>
-                    <option value="">Please select</option>
+                  <FormLabel as='legend'>Type</FormLabel>
+                  <Select background='white' {...field}>
+                    <option value=''>Please select</option>
                     {config?.event?.types.map((option) => (
                       <option key={option} value={option}>
                         {option}
@@ -170,8 +170,8 @@ export const EventForm = ({
           />
           <ButtonGroup>
             <Button
-              type="submit"
-              colorScheme="blue"
+              type='submit'
+              colorScheme='blue'
               onSubmit={handleSubmit(onSubmit)}
               disabled={isSubmitting}
             >

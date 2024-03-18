@@ -31,18 +31,18 @@ export const DeleteButton = ({ entityName, entityTitle, callback }: IProps) => {
 
   return (
     <>
-      <Tooltip label="Delete">
+      <Tooltip label='Delete'>
         <IconButton
-          aria-label="Edit"
+          aria-label='Edit'
           icon={<GoX />}
-          variant="outline"
-          size="sm"
-          colorScheme="red"
+          variant='outline'
+          size='sm'
+          colorScheme='red'
           onClick={onOpen}
         />
       </Tooltip>
       <AlertDialog
-        motionPreset="slideInBottom"
+        motionPreset='slideInBottom'
         leastDestructiveRef={cancelRef}
         onClose={onClose}
         isOpen={isOpen}
@@ -62,7 +62,7 @@ export const DeleteButton = ({ entityName, entityTitle, callback }: IProps) => {
             <Button ref={cancelRef} onClick={onClose}>
               No
             </Button>
-            <Button colorScheme="red" ml={3} onClick={handleConfirmClick}>
+            <Button colorScheme='red' ml={3} onClick={handleConfirmClick}>
               Yes
             </Button>
           </AlertDialogFooter>

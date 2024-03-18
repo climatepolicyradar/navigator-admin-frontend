@@ -7,13 +7,13 @@ type TProps = {
 
 export const FormLoader = ({ skeletonHeight = 12 }: TProps) => {
   return (
-    <Box padding="4" bg="white">
+    <Box padding='4' bg='white'>
       <Loader />
       <SkeletonText
-        mt="4"
+        mt='4'
         noOfLines={skeletonHeight}
-        spacing="4"
-        skeletonHeight="2"
+        spacing='4'
+        skeletonHeight='2'
       />
     </Box>
   )

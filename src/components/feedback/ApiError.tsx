@@ -11,13 +11,13 @@ type TProps = {
 const renderErrorDetail = (errorDetail: string | IDetailedError[]) => {
   if (typeof errorDetail === 'string')
     return (
-      <Text fontSize="xs" color={'gray.500'}>
+      <Text fontSize='xs' color={'gray.500'}>
         {errorDetail}
       </Text>
     )
 
   return errorDetail.map((error, i) => (
-    <Text key={i} fontSize="xs" color={'gray.500'}>
+    <Text key={i} fontSize='xs' color={'gray.500'}>
       Error type: {error.type} <br /> On:{' '}
       {error.loc.map((loc) => loc).join(', ')} <br />
       Message: {error.msg}
@@ -27,7 +27,7 @@ const renderErrorDetail = (errorDetail: string | IDetailedError[]) => {
 
 export const ApiError = ({ error, message = '', detail = '' }: TProps) => {
   return (
-    <Box padding="4" bg="white">
+    <Box padding='4' bg='white'>
       <Text color={'red.500'}>{error?.message || message}</Text>
       {renderErrorDetail(error?.detail || detail)}
     </Box>

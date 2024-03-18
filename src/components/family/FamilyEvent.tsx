@@ -41,16 +41,16 @@ export const FamilyEvent = ({
 
   if (error) {
     return (
-      <Card direction="row">
+      <Card direction='row'>
         <ApiError error={error} />
       </Card>
     )
   }
 
   return (
-    <Card direction="row">
+    <Card direction='row'>
       <CardBody>
-        <Text mb="2">{event?.event_title}</Text>
+        <Text mb='2'>{event?.event_title}</Text>
         <HStack divider={<Text>·</Text>} gap={4}>
           {event?.date && <Text>Date: {formatDate(event.date)}</Text>}
           {event?.event_type_value && (
@@ -60,15 +60,15 @@ export const FamilyEvent = ({
       </CardBody>
       {(!!onEditClick || !!onDeleteClick) && (
         <CardFooter>
-          <Stack direction="row" spacing={4}>
+          <Stack direction='row' spacing={4}>
             {!!onEditClick && (
-              <Button size="sm" onClick={handleEditClick}>
+              <Button size='sm' onClick={handleEditClick}>
                 Edit
               </Button>
             )}
             {!!onDeleteClick && (
               <DeleteButton
-                entityName="event"
+                entityName='event'
                 entityTitle={event?.event_title || ''}
                 callback={handleDeleteClick}
               />
