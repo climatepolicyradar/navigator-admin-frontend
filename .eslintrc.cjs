@@ -32,7 +32,7 @@ module.exports = {
   plugins: ['@typescript-eslint', 'react-refresh'],
   root: true,
   rules: {
-    indent: ['error', 2, { SwitchCase: 1 }],
+    indent: 'off',
     'linebreak-style': ['error', 'unix'],
     quotes: ['error', 'single'],
     semi: ['error', 'never'],
