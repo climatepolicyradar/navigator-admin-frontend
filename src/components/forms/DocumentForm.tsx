@@ -133,10 +133,12 @@ export const DocumentForm = ({
         type: loadedDocument.type ?? '',
         title: loadedDocument.title,
         source_url: loadedDocument.source_url ?? '',
-        user_language_name: {
-          label: loadedDocument.user_language_name ?? '',
-          value: loadedDocument.user_language_name ?? '',
-        },
+        user_language_name: loadedDocument.user_language_name
+          ? {
+              label: loadedDocument.user_language_name,
+              value: loadedDocument.user_language_name,
+            }
+          : undefined,
       })
     } else if (familyId) {
       reset({
@@ -249,7 +251,7 @@ export const DocumentForm = ({
                   <div data-testid="language-select">
                     <CRSelect
                       chakraStyles={chakraStylesSelect}
-                      isClearable={false}
+                      isClearable={true}
                       isMulti={false}
                       isSearchable={true}
                       options={config?.languagesSorted}
