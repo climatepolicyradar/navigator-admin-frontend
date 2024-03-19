@@ -14,19 +14,22 @@ import { ApiError } from '../feedback/ApiError'
 import { IDocument } from '@/interfaces'
 import { DeleteButton } from '../buttons/Delete'
 import { getStatusColour } from '@/utils/getStatusColour'
+import { useEffect } from 'react'
 
 type TProps = {
   documentId: string
+  refreshChangeToken: boolean
   onEditClick?: (document: IDocument) => void
   onDeleteClick?: (documentId: string) => void
 }
 
 export const FamilyDocument = ({
   documentId,
+  refreshChangeToken,
   onEditClick,
   onDeleteClick,
 }: TProps) => {
-  const { document, loading, error } = useDocument(documentId)
+  const { document, refetch, loading, error } = useDocument(documentId)
 
   const handleEditClick = () => {
     onEditClick && document ? onEditClick(document) : null
@@ -35,6 +38,12 @@ export const FamilyDocument = ({
   const handleDeleteClick = () => {
     onDeleteClick && onDeleteClick(documentId)
   }
+
+  useEffect(() => {
+    if (refreshChangeToken) {
+      refetch()
+    }
+  }, [refetch, refreshChangeToken])
 
   if (loading) {
     return <Spinner />

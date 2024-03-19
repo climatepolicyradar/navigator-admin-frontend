@@ -8,6 +8,24 @@ const useDocument = (id?: string) => {
   const [error, setError] = useState<IError | null | undefined>()
   const [loading, setLoading] = useState<boolean>(false)
 
+  // Create function that refetches the given document
+  const refetch = () => {
+    if (id) {
+      setLoading(true)
+
+      getDocument(id)
+        .then(({ response }) => {
+          setDocument(response.data)
+        })
+        .catch((error: IError) => {
+          setError(error)
+        })
+        .finally(() => {
+          setLoading(false)
+        })
+    }
+  }
+
   useEffect(() => {
     let ignore = false
     if (id) {
@@ -30,7 +48,7 @@ const useDocument = (id?: string) => {
     }
   }, [id])
 
-  return { document, error, loading }
+  return { document, refetch, error, loading }
 }
 
 export default useDocument

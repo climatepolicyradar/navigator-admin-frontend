@@ -813,6 +813,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                       key={familyDoc}
                       onEditClick={(id) => onEditEntityClick('document', id)}
                       onDeleteClick={onDocumentDeleteClick}
+                      refreshChangeToken={id === recentlySavedDoc}
                     />
                   ))}
                 </Flex>
