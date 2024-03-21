@@ -105,7 +105,7 @@ const getCollection = (collectionId: string, collections: ICollection[]) => {
 
 export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   const [isLeavingModalOpen, setIsLeavingModalOpen] = useState(false)
-  const [isFormSubmitting, setIsFormSubmitting] = useState(false);
+  const [isFormSubmitting, setIsFormSubmitting] = useState(false)
   const { isOpen, onOpen, onClose } = useDisclosure()
   const navigate = useNavigate()
   const { config, error: configError, loading: configLoading } = useConfig()
@@ -220,8 +220,8 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
         })
       })
       .finally(() => {
-        setIsFormSubmitting(false);
-      });
+        setIsFormSubmitting(false)
+      })
   } // end handleFormSubmission
 
   const onSubmit: SubmitHandler<IFamilyForm> = (data) =>
@@ -391,7 +391,9 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   // Internal and external navigation blocker for unsaved changes
   const blocker = useBlocker(
     ({ currentLocation, nextLocation }) =>
-    !isFormSubmitting && Object.keys(dirtyFields).length > 0 && currentLocation.pathname !== nextLocation.pathname,
+      !isFormSubmitting &&
+      Object.keys(dirtyFields).length > 0 &&
+      currentLocation.pathname !== nextLocation.pathname,
   )
 
   const handleBeforeUnload = useCallback(
