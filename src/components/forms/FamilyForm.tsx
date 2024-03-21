@@ -105,6 +105,7 @@ const getCollection = (collectionId: string, collections: ICollection[]) => {
 
 export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   const [isLeavingModalOpen, setIsLeavingModalOpen] = useState(false)
+  const [isFormSubmitting, setIsFormSubmitting] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure()
   const navigate = useNavigate()
   const { config, error: configError, loading: configLoading } = useConfig()
@@ -123,7 +124,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     reset,
     setValue,
     formState: { errors, isSubmitting },
-    formState: { isDirty },
+    formState: { dirtyFields },
   } = useForm({
     resolver: yupResolver(familySchema),
   })
@@ -144,6 +145,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
 
   // Family handlers
   const handleFormSubmission = async (family: IFamilyForm) => {
+    setIsFormSubmitting(true)
     setFormError(null)
 
     let familyMetadata = {} as TFamilyFormPostMetadata
@@ -217,6 +219,9 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
           position: 'top',
         })
       })
+      .finally(() => {
+        setIsFormSubmitting(false);
+      });
   } // end handleFormSubmission
 
   const onSubmit: SubmitHandler<IFamilyForm> = (data) =>
@@ -386,18 +391,18 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   // Internal and external navigation blocker for unsaved changes
   const blocker = useBlocker(
     ({ currentLocation, nextLocation }) =>
-      isDirty !== false && currentLocation.pathname !== nextLocation.pathname,
+    !isFormSubmitting && Object.keys(dirtyFields).length > 0 && currentLocation.pathname !== nextLocation.pathname,
   )
 
   const handleBeforeUnload = useCallback(
     (event: BeforeUnloadEvent) => {
-      if (isDirty) {
+      if (Object.keys(dirtyFields).length > 0 && !isFormSubmitting) {
         event.preventDefault()
         event.returnValue =
           'Are you sure you want leave? Changes that you made may not be saved.'
       }
     },
-    [isDirty],
+    [dirtyFields, isFormSubmitting],
   )
 
   useEffect(() => {
