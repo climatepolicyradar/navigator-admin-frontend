@@ -110,7 +110,7 @@ jobs:
       - code-quality
       - test
     if: ${{ startsWith(github.ref, 'refs/tags') }}
-    uses: climatepolicyradar/reusable-workflows/.github/workflows/semver.yml@main
+    uses: climatepolicyradar/reusable-workflows/.github/workflows/semver.yml@v3
     secrets: inherit
     with:
       repo-name: navigator-admin-frontend
@@ -118,7 +118,7 @@ jobs:
 
   tag:
     needs: build
-    uses: climatepolicyradar/reusable-workflows/.github/workflows/tag.yml@main
+    uses: climatepolicyradar/reusable-workflows/.github/workflows/tag.yml@v3
     with:
       repo-name: navigator-admin-frontend
       semver-tag: main-${GITHUB_SHA::8}
@@ -129,6 +129,6 @@ jobs:
 
   release:
     needs: tag
-    uses: climatepolicyradar/reusable-workflows/.github/workflows/release.yml@main
+    uses: climatepolicyradar/reusable-workflows/.github/workflows/release.yml@v3
     with:
       new_tag: ${{ needs.tag.outputs.new_tag }}
