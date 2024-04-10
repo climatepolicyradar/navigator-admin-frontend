@@ -25,31 +25,15 @@ jobs:
       (needs.check-auto-tagging-will-work.result == 'skipped' || needs.check-auto-tagging-will-work.result == 'success')
     needs:
       - check-auto-tagging-will-work
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20.11.0
-          cache: yarn
-
-      - name: Install dev dependencies
-        run: yarn install --production=false
-
-      - name: Run markdown linter
-        shell: bash
-        run: |
-          if yarn markdownlint; then
-            echo "No issues in markdown files."
-          else
-              exit 1
-          fi
-
-      - name: Run ESLinting and formatting
-        shell: bash
-        run: yarn lint
+    permissions:
+      # For trunk to post annotations
+      checks: write
+      # For repo checkout
+      contents: read
+    uses: climatepolicyradar/reusable-workflows/.github/workflows/node-precommit-validator.yml@v5
+    with:
+      node-version: 20.11.0
+      package-manager: yarn
 
   test:
     if: |
