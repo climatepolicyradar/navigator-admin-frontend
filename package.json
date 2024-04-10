@@ -8,13 +8,11 @@
     "build": "tsc && vite build",
     "check-formatting": "prettier --check . ",
     "format": "prettier --write . ",
-    "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
-    "markdownlint": "markdownlint --ignore node_modules .",
-    "precommit": "yarn format && yarn markdownlint && yarn lint",
     "preview": "vite preview",
     "prod": "tsc && vite build && vite preview --port 3000 --host",
     "prepare": "husky install",
-    "test": "jest"
+    "test": "jest",
+    "type-check": "tsc"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.19",
