@@ -12,6 +12,8 @@ on:
     branches:
       - main
 
+permissions: read-all
+
 jobs:
   check-auto-tagging-will-work:
     if: |
