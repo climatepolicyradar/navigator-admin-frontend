@@ -42,16 +42,13 @@ jobs:
     needs:
       - check-auto-tagging-will-work
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [20.x]
     steps:
       - uses: actions/checkout@v4
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Setup Node.js 20.11.0
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 20.11.0
           cache: yarn
 
       - name: Install dev dependencies
