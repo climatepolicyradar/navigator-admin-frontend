@@ -9,7 +9,6 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:@typescript-eslint/recommended-requiring-type-checking',
     'plugin:react-hooks/recommended',
-    'plugin:prettier/recommended',
   ],
   ignorePatterns: ['.eslintrc.cjs', 'vite.config.ts', '**/*.js'],
   overrides: [
@@ -32,10 +31,6 @@ module.exports = {
   plugins: ['@typescript-eslint', 'react-refresh'],
   root: true,
   rules: {
-    indent: 'off',
-    'linebreak-style': ['error', 'unix'],
-    quotes: ['error', 'single'],
-    semi: ['error', 'never'],
     'react-refresh/only-export-components': [
       'warn',
       { allowConstantExport: true },
