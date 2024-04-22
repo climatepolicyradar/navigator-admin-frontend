@@ -121,6 +121,8 @@ jobs:
   tag:
     if: ${{ ! cancelled() && always() && (needs.build.result == 'success')}}
     needs: build
+    permissions:
+      contents: write
     uses: climatepolicyradar/reusable-workflows/.github/workflows/tag.yml@v3
     with:
       repo-name: navigator-admin-frontend
@@ -133,6 +135,8 @@ jobs:
   release:
     if: ${{ ! cancelled() && always() && (needs.tag.result == 'success' && needs.tag.outputs.new_tag != 'Skip')}}
     needs: tag
+    permissions:
+      contents: write
     uses: climatepolicyradar/reusable-workflows/.github/workflows/release.yml@v3
     with:
       new_tag: ${{ needs.tag.outputs.new_tag }}
