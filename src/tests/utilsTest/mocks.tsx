@@ -92,6 +92,8 @@ const mockUNFCCCFamily: IUNFCCCFamily = {
   documents: ['document1', 'document2'],
   collections: ['collection1', 'collection2'],
   organisation: 'UNFCCC',
+  corpus_id: 'UNFCCC.corpus.i00000001.n0000',
+  corpus_type: 'Intl. Agreements',
   created: '3/1/2021',
   last_modified: '4/1/2021',
   metadata: {
@@ -114,6 +116,8 @@ const mockCCLWFamily: ICCLWFamily = {
   documents: ['document3', 'document4'],
   collections: ['collection3', 'collection4'],
   organisation: 'CCLW',
+  corpus_id: 'CCLW.corpus.i00000001.n0000',
+  corpus_type: 'Laws and Policies',
   created: '3/2/2021',
   last_modified: '4/2/2021',
   metadata: {
