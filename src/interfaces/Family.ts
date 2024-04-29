@@ -16,6 +16,7 @@ interface IFamilyBase {
   collections: string[]
   organisation: TOrganisation
   corpus_id: string
+  corpus_title: string
   corpus_type: TCorpusType
   created: string
   last_modified: string
