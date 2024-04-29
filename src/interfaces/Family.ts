@@ -1,4 +1,5 @@
 import { TOrganisation } from './Organisation'
+import { TCorpusType } from './Corpus'
 
 interface IFamilyBase {
   import_id: string
@@ -14,6 +15,9 @@ interface IFamilyBase {
   documents: string[]
   collections: string[]
   organisation: TOrganisation
+  corpus_id: string
+  corpus_title: string
+  corpus_type: TCorpusType
   created: string
   last_modified: string
 }

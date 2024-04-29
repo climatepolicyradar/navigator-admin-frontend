@@ -1,6 +1,7 @@
 export * from './Auth'
 export * from './Config'
 export * from './Collection'
+export * from './Corpus'
 export * from './Document'
 export * from './Event'
 export * from './Family'

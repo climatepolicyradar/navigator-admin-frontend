@@ -488,6 +488,36 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                   />
                 </FormControl>
               )}
+              {loadedFamily && (
+                <FormControl isRequired isReadOnly isDisabled>
+                  <FormLabel>Corpus ID</FormLabel>
+                  <Input
+                    data-test-id='corpus-id'
+                    bg='white'
+                    value={loadedFamily?.corpus_id}
+                  />
+                </FormControl>
+              )}
+              {loadedFamily && (
+                <FormControl isRequired isReadOnly isDisabled>
+                  <FormLabel>Corpus Title</FormLabel>
+                  <Input
+                    data-test-id='corpus-type'
+                    bg='white'
+                    value={loadedFamily?.corpus_title}
+                  />
+                </FormControl>
+              )}
+              {loadedFamily && (
+                <FormControl isRequired isReadOnly isDisabled>
+                  <FormLabel>Corpus Type</FormLabel>
+                  <Input
+                    data-test-id='corpus-type'
+                    bg='white'
+                    value={loadedFamily?.corpus_type}
+                  />
+                </FormControl>
+              )}
               <FormControl isRequired>
                 <FormLabel>Title</FormLabel>
                 <Input bg='white' {...register('title')} />
