@@ -93,7 +93,7 @@ const mockUNFCCCFamily: IUNFCCCFamily = {
   collections: ['collection1', 'collection2'],
   organisation: 'UNFCCC',
   corpus_id: 'UNFCCC.corpus.i00000001.n0000',
-  corpus_type: 'Intl. Agreements',
+  corpus_type: 'Intl. agreements',
   created: '3/1/2021',
   last_modified: '4/1/2021',
   metadata: {
