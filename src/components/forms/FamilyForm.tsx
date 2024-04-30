@@ -479,44 +479,41 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
             <VStack gap='4' mb={12} mt={4} align={'stretch'}>
               {formError && <ApiError error={formError} />}
               {loadedFamily && (
-                <FormControl isRequired isReadOnly isDisabled>
-                  <FormLabel>Import ID</FormLabel>
-                  <Input
-                    data-test-id='input-id'
-                    bg='white'
-                    value={loadedFamily?.import_id}
-                  />
-                </FormControl>
-              )}
-              {loadedFamily && (
-                <FormControl isRequired isReadOnly isDisabled>
-                  <FormLabel>Corpus ID</FormLabel>
-                  <Input
-                    data-test-id='corpus-id'
-                    bg='white'
-                    value={loadedFamily?.corpus_id}
-                  />
-                </FormControl>
-              )}
-              {loadedFamily && (
-                <FormControl isRequired isReadOnly isDisabled>
-                  <FormLabel>Corpus Title</FormLabel>
-                  <Input
-                    data-test-id='corpus-type'
-                    bg='white'
-                    value={loadedFamily?.corpus_title}
-                  />
-                </FormControl>
-              )}
-              {loadedFamily && (
-                <FormControl isRequired isReadOnly isDisabled>
-                  <FormLabel>Corpus Type</FormLabel>
-                  <Input
-                    data-test-id='corpus-type'
-                    bg='white'
-                    value={loadedFamily?.corpus_type}
-                  />
-                </FormControl>
+                <>
+                  <FormControl isRequired isReadOnly isDisabled>
+                    <FormLabel>Import ID</FormLabel>
+                    <Input
+                      data-test-id='input-id'
+                      bg='white'
+                      value={loadedFamily?.import_id}
+                    />
+                  </FormControl>
+                  <FormControl isRequired isReadOnly isDisabled>
+                    <FormLabel>Corpus ID</FormLabel>
+                    <Input
+                      data-test-id='corpus-id'
+                      bg='white'
+                      value={loadedFamily?.corpus_id}
+                    />
+                  </FormControl>
+
+                  <FormControl isRequired isReadOnly isDisabled>
+                    <FormLabel>Corpus Title</FormLabel>
+                    <Input
+                      data-test-id='corpus-title'
+                      bg='white'
+                      value={loadedFamily?.corpus_title}
+                    />
+                  </FormControl>
+                  <FormControl isRequired isReadOnly isDisabled>
+                    <FormLabel>Corpus Type</FormLabel>
+                    <Input
+                      data-test-id='corpus-type'
+                      bg='white'
+                      value={loadedFamily?.corpus_type}
+                    />
+                  </FormControl>
+                </>
               )}
               <FormControl isRequired>
                 <FormLabel>Title</FormLabel>
