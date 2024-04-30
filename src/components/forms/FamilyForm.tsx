@@ -610,43 +610,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                   )
                 }}
               />
-              <Controller
-                control={control}
-                name='organisation'
-                render={({ field }) => {
-                  return (
-                    <FormControl
-                      isRequired
-                      as='fieldset'
-                      isInvalid={!!errors.organisation}
-                    >
-                      <FormLabel as='legend'>Organisation</FormLabel>
-                      <RadioGroup {...field}>
-                        <HStack gap={4}>
-                          <Radio
-                            bg='white'
-                            value='CCLW'
-                            isDisabled={userAccess && !('CCLW' in userAccess)}
-                          >
-                            CCLW
-                          </Radio>
-                          <Radio
-                            bg='white'
-                            value='UNFCCC'
-                            isDisabled={userAccess && !('UNFCCC' in userAccess)}
-                          >
-                            UNFCCC
-                          </Radio>
-                        </HStack>
-                      </RadioGroup>
-                      <FormErrorMessage>
-                        Please select an organisation
-                      </FormErrorMessage>
-                    </FormControl>
-                  )
-                }}
-              />
-              {!!watchOrganisation && (
+              {!!loadedFamily?.corpus_type && (
                 <Box position='relative' padding='10'>
                   <Divider />
                   <AbsoluteCenter bg='gray.50' px='4'>
@@ -654,7 +618,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                   </AbsoluteCenter>
                 </Box>
               )}
-              {watchOrganisation === 'UNFCCC' && (
+              {loadedFamily?.corpus_type === 'Intl. agreements' && (
                 <>
                   <FormControl isRequired>
                     <FormLabel>Author</FormLabel>
@@ -695,7 +659,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                   />
                 </>
               )}
-              {watchOrganisation === 'CCLW' && (
+              {loadedFamily?.corpus_type === 'Laws and Policies' && (
                 <>
                   <Controller
                     control={control}
