@@ -17,10 +17,16 @@ import { GoX } from 'react-icons/go'
 interface IProps {
   entityName: string
   entityTitle: string
+  isDisabled?: boolean
   callback?: () => void
 }
 
-export const DeleteButton = ({ entityName, entityTitle, callback }: IProps) => {
+export const DeleteButton = ({
+  entityName,
+  entityTitle,
+  isDisabled,
+  callback,
+}: IProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const cancelRef = useRef(null)
 
@@ -62,9 +68,28 @@ export const DeleteButton = ({ entityName, entityTitle, callback }: IProps) => {
             <Button ref={cancelRef} onClick={onClose}>
               No
             </Button>
-            <Button colorScheme='red' ml={3} onClick={handleConfirmClick}>
-              Yes
-            </Button>
+            {!isDisabled && (
+              <Button
+                isDisabled={isDisabled}
+                colorScheme='red'
+                ml={3}
+                onClick={handleConfirmClick}
+              >
+                Yes
+              </Button>
+            )}
+            {isDisabled && (
+              <Tooltip label="You don't have the required permissions">
+                <Button
+                  isDisabled={isDisabled}
+                  colorScheme='red'
+                  ml={3}
+                  onClick={handleConfirmClick}
+                >
+                  Yes
+                </Button>
+              </Tooltip>
+            )}
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

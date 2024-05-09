@@ -17,12 +17,14 @@ import { getStatusColour } from '@/utils/getStatusColour'
 
 type TProps = {
   documentId: string
+  canAccess: boolean
   onEditClick?: (document: IDocument) => void
   onDeleteClick?: (documentId: string) => void
 }
 
 export const FamilyDocument = ({
   documentId,
+  canAccess,
   onEditClick,
   onDeleteClick,
 }: TProps) => {
@@ -76,8 +78,9 @@ export const FamilyDocument = ({
                   Edit
                 </Button>
               )}
-              {!!onDeleteClick && (
+              {canAccess && !!onDeleteClick && (
                 <DeleteButton
+                  isDisabled={!canAccess}
                   entityName='document'
                   entityTitle={document?.title || ''}
                   callback={handleDeleteClick}
