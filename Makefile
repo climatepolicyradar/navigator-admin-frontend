@@ -26,7 +26,7 @@ rebuild: stop build run_ci
 with_local: build_dev
 	docker run --rm -it \
 		-p ${VITE_PORT}:${VITE_PORT} \
-		--network=navigator-backend_default \
+		--network=navigator-admin-backend_default \
 		--env-file "${PWD}/.env" \
 		--mount type=bind,source="${PWD}",target=/app \
 		$(TAG)

@@ -27,6 +27,7 @@ describe('modifyConfig', () => {
         },
       ],
       languagesSorted: [],
+      corpora: [], // TODO
       taxonomies: {
         CCLW: {
           topic: { allow_blanks: false, allowed_values: ['topic1', 'topic2'] },
@@ -50,6 +51,10 @@ describe('modifyConfig', () => {
             allow_blanks: false,
             allowed_values: ['instrument1', 'instrument2'],
           },
+          event_type: {
+            allow_blanks: false,
+            allowed_values: ['eventType1', 'eventType2'],
+          }, // TODO
         },
         UNFCCC: {
           author: {
@@ -60,6 +65,10 @@ describe('modifyConfig', () => {
             allow_blanks: false,
             allowed_values: ['authorType1', 'authorType2'],
           },
+          event_type: {
+            allow_blanks: false,
+            allowed_values: ['eventType1', 'eventType2'],
+          }, // TODO
         },
       },
       event: {
@@ -89,6 +98,7 @@ describe('modifyConfig', () => {
       languages: {},
       geographies: [],
       languagesSorted: [],
+      corpora: [],
       taxonomies: {
         CCLW: {
           topic: { allow_blanks: false, allowed_values: [] },
@@ -97,10 +107,12 @@ describe('modifyConfig', () => {
           keyword: { allow_blanks: false, allowed_values: [] },
           framework: { allow_blanks: false, allowed_values: [] },
           instrument: { allow_blanks: false, allowed_values: [] },
+          event_type: { allow_blanks: false, allowed_values: [] },
         },
         UNFCCC: {
           author: { allow_blanks: false, allowed_values: [] },
           author_type: { allow_blanks: false, allowed_values: [] },
+          event_type: { allow_blanks: false, allowed_values: [] },
         },
       },
       event: {
