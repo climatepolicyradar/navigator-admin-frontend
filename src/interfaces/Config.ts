@@ -13,6 +13,19 @@ export interface IConfigGeography {
   node: IConfigGeographyNode
   children: IConfigGeography[]
 }
+interface IChakraSelect extends OptionBase {
+  value: string
+  label: string
+}
+
+export interface IConfigLanguageSorted extends IChakraSelect {}
+
+export interface IConfigCorpus extends IChakraSelect {}
+
+export interface IConfigLanguageSorted extends OptionBase {
+  value: string
+  label: string
+}
 
 interface IConfigMeta {
   allow_any?: boolean
@@ -20,9 +33,29 @@ interface IConfigMeta {
   allowed_values: string[]
 }
 
-export interface IConfigLanguageSorted extends OptionBase {
-  value: string
-  label: string
+export interface IConfigTaxonomyCCLW {
+  topic: IConfigMeta
+  hazard: IConfigMeta
+  sector: IConfigMeta
+  keyword: IConfigMeta
+  framework: IConfigMeta
+  instrument: IConfigMeta
+  event_type: IConfigMeta
+}
+
+export interface IConfigTaxonomyUNFCCC {
+  author: IConfigMeta
+  author_type: IConfigMeta
+  event_type: IConfigMeta
+}
+
+export interface IConfigCorpora {
+  corpus_import_id: string
+  title: string
+  description: string
+  corpus_type: string
+  corpus_type_description: string
+  taxonomy: IConfigTaxonomyCCLW | IConfigTaxonomyUNFCCC
 }
 
 export interface IConfig {
@@ -32,19 +65,10 @@ export interface IConfig {
   }
   languagesSorted: IConfigLanguageSorted[]
   taxonomies: {
-    CCLW: {
-      topic: IConfigMeta
-      hazard: IConfigMeta
-      sector: IConfigMeta
-      keyword: IConfigMeta
-      framework: IConfigMeta
-      instrument: IConfigMeta
-    }
-    UNFCCC: {
-      author: IConfigMeta
-      author_type: IConfigMeta
-    }
+    CCLW: IConfigTaxonomyCCLW
+    UNFCCC: IConfigTaxonomyUNFCCC
   }
+  corpora: IConfigCorpora[]
   document: {
     roles: string[]
     types: string[]

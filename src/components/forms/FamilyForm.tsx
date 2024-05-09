@@ -14,6 +14,7 @@ import {
   IDocument,
   IEvent,
   ICollection,
+  IConfigCorpus,
 } from '@/interfaces'
 import { createFamily, updateFamily } from '@/api/Families'
 import { deleteDocument } from '@/api/Documents'
@@ -82,6 +83,7 @@ interface IFamilyForm {
   geography: string
   category: string
   organisation: string
+  corpus: IConfigCorpus
   collections?: TMultiSelect[]
   author?: string
   author_type?: string
@@ -174,6 +176,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       geography: family.geography,
       category: family.category,
       organisation: family.organisation as TOrganisation,
+      corpus_import_id: family.corpus?.value || '',
       collections:
         family.collections?.map((collection) => collection.value) || [],
       metadata: familyMetadata,
@@ -352,6 +355,12 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
         geography: loadedFamily.geography,
         category: loadedFamily.category,
         organisation: loadedFamily.organisation,
+        corpus: loadedFamily.corpus_import_id
+          ? {
+              label: loadedFamily.corpus_import_id,
+              value: loadedFamily.corpus_import_id,
+            }
+          : undefined,
         topic:
           'topic' in loadedFamily.metadata
             ? generateOptions(loadedFamily.metadata.topic)
@@ -493,7 +502,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                     <Input
                       data-test-id='corpus-id'
                       bg='white'
-                      value={loadedFamily?.corpus_id}
+                      value={loadedFamily?.corpus_import_id}
                     />
                   </FormControl>
 
@@ -573,6 +582,33 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                   )
                 }}
               />
+              {!loadedFamily && (
+                <Controller
+                  control={control}
+                  data-test-id='corpus'
+                  name='corpus'
+                  render={({ field }) => {
+                    return (
+                      <FormControl isRequired>
+                        <FormLabel>Corpus</FormLabel>
+                        <CRSelect
+                          chakraStyles={chakraStylesSelect}
+                          isClearable={false}
+                          isMulti={false}
+                          isSearchable={true}
+                          options={
+                            config?.corpora.map((corpus) => ({
+                              value: corpus.corpus_import_id,
+                              label: corpus.title,
+                            })) || []
+                          }
+                          {...field}
+                        />
+                      </FormControl>
+                    )
+                  }}
+                />
+              )}
               <Controller
                 control={control}
                 name='category'
