@@ -14,6 +14,7 @@ import {
   IDocument,
   IEvent,
   ICollection,
+  IConfigCorpus,
 } from '@/interfaces'
 import { createFamily, updateFamily } from '@/api/Families'
 import { deleteDocument } from '@/api/Documents'
@@ -82,6 +83,7 @@ interface IFamilyForm {
   geography: string
   category: string
   organisation: string
+  corpus: IConfigCorpus
   collections?: TMultiSelect[]
   author?: string
   author_type?: string
@@ -174,6 +176,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       geography: family.geography,
       category: family.category,
       organisation: family.organisation as TOrganisation,
+      corpus_import_id: family.corpus?.value || '',
       collections:
         family.collections?.map((collection) => collection.value) || [],
       metadata: familyMetadata,
@@ -352,6 +355,12 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
         geography: loadedFamily.geography,
         category: loadedFamily.category,
         organisation: loadedFamily.organisation,
+        corpus: loadedFamily.corpus_import_id
+          ? {
+              label: loadedFamily.corpus_import_id,
+              value: loadedFamily.corpus_import_id,
+            }
+          : undefined,
         topic:
           'topic' in loadedFamily.metadata
             ? generateOptions(loadedFamily.metadata.topic)
@@ -488,12 +497,13 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                       value={loadedFamily?.import_id}
                     />
                   </FormControl>
+
                   <FormControl isRequired isReadOnly isDisabled>
                     <FormLabel>Corpus ID</FormLabel>
                     <Input
                       data-test-id='corpus-id'
                       bg='white'
-                      value={loadedFamily?.corpus_id}
+                      value={loadedFamily?.corpus_import_id}
                     />
                   </FormControl>
 
@@ -505,6 +515,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                       value={loadedFamily?.corpus_title}
                     />
                   </FormControl>
+
                   <FormControl isRequired isReadOnly isDisabled>
                     <FormLabel>Corpus Type</FormLabel>
                     <Input
@@ -573,6 +584,33 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                   )
                 }}
               />
+              {!loadedFamily && (
+                <Controller
+                  control={control}
+                  data-test-id='corpus'
+                  name='corpus'
+                  render={({ field }) => {
+                    return (
+                      <FormControl isRequired>
+                        <FormLabel>Corpus</FormLabel>
+                        <CRSelect
+                          chakraStyles={chakraStylesSelect}
+                          isClearable={false}
+                          isMulti={false}
+                          isSearchable={true}
+                          options={
+                            config?.corpora.map((corpus) => ({
+                              value: corpus.corpus_import_id,
+                              label: corpus.title,
+                            })) || []
+                          }
+                          {...field}
+                        />
+                      </FormControl>
+                    )
+                  }}
+                />
+              )}
               <Controller
                 control={control}
                 name='category'
@@ -607,7 +645,43 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                   )
                 }}
               />
-              {!!loadedFamily?.corpus_type && (
+              <Controller
+                control={control}
+                name='organisation'
+                render={({ field }) => {
+                  return (
+                    <FormControl
+                      isRequired
+                      as='fieldset'
+                      isInvalid={!!errors.organisation}
+                    >
+                      <FormLabel as='legend'>Organisation</FormLabel>
+                      <RadioGroup {...field}>
+                        <HStack gap={4}>
+                          <Radio
+                            bg='white'
+                            value='CCLW'
+                            isDisabled={userAccess && !('CCLW' in userAccess)}
+                          >
+                            CCLW
+                          </Radio>
+                          <Radio
+                            bg='white'
+                            value='UNFCCC'
+                            isDisabled={userAccess && !('UNFCCC' in userAccess)}
+                          >
+                            UNFCCC
+                          </Radio>
+                        </HStack>
+                      </RadioGroup>
+                      <FormErrorMessage>
+                        Please select an organisation
+                      </FormErrorMessage>
+                    </FormControl>
+                  )
+                }}
+              />
+              {!!watchOrganisation && (
                 <Box position='relative' padding='10'>
                   <Divider />
                   <AbsoluteCenter bg='gray.50' px='4'>
@@ -615,7 +689,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                   </AbsoluteCenter>
                 </Box>
               )}
-              {loadedFamily?.corpus_type === 'Intl. agreements' && (
+              {watchOrganisation === 'UNFCCC' && (
                 <>
                   <FormControl isRequired>
                     <FormLabel>Author</FormLabel>
@@ -656,7 +730,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                   />
                 </>
               )}
-              {loadedFamily?.corpus_type === 'Laws and Policies' && (
+              {watchOrganisation === 'CCLW' && (
                 <>
                   <Controller
                     control={control}

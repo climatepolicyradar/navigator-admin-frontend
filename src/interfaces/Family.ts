@@ -15,7 +15,7 @@ interface IFamilyBase {
   documents: string[]
   collections: string[]
   organisation: TOrganisation
-  corpus_id: string
+  corpus_import_id: string
   corpus_title: string
   corpus_type: TCorpusType
   created: string
@@ -54,6 +54,7 @@ interface IFamilyFormPostBase {
   geography: string
   category: string
   organisation: string
+  corpus_import_id: string
   collections: string[]
 }
 

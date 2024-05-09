@@ -13,6 +13,14 @@ export interface IConfigGeography {
   node: IConfigGeographyNode
   children: IConfigGeography[]
 }
+interface IChakraSelect extends OptionBase {
+  value: string
+  label: string
+}
+
+export interface IConfigLanguageSorted extends IChakraSelect {}
+
+export interface IConfigCorpus extends IChakraSelect {}
 
 export interface IConfigLanguageSorted extends OptionBase {
   value: string
@@ -56,11 +64,11 @@ export interface IConfig {
     [key: string]: string
   }
   languagesSorted: IConfigLanguageSorted[]
-  corpora: IConfigCorpora[]
   taxonomies: {
     CCLW: IConfigTaxonomyCCLW
     UNFCCC: IConfigTaxonomyUNFCCC
   }
+  corpora: IConfigCorpora[]
   document: {
     roles: string[]
     types: string[]
