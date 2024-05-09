@@ -79,14 +79,14 @@ jest.mock('@/utils/decodeToken', () => ({
   }),
 }))
 
-const renderComponent = (mockFamily: TFamily) =>
+const renderComponent = (mockFamily: TFamily | undefined) =>
   render(
     <TestWrapper>
       <FamilyForm family={mockFamily} />
     </TestWrapper>,
   )
 
-describe('FamilyList', () => {
+describe('FamilyForm', () => {
   beforeAll(() => configure({ testIdAttribute: 'data-test-id' }))
 
   beforeEach(() => {
@@ -107,14 +107,18 @@ describe('FamilyList', () => {
     ).toBeInTheDocument()
   })
 
-  it('renders family data', async () => {
+  it('renders FamilyReadDTO data on edit', async () => {
     const testFamily = mockFamiliesData[1]
     localStorage.setItem('token', 'token')
     const { getByTestId } = renderComponent(testFamily)
     await flushPromises()
 
-    const input = getByTestId('input-id')
-    expect(input).toHaveValue(testFamily.import_id)
+    expect(getByTestId('input-id')).toHaveValue(testFamily.import_id)
+    expect(getByTestId('corpus-id')).toHaveValue(testFamily.corpus_import_id)
+    expect(getByTestId('corpus-title')).toHaveValue(testFamily.corpus_title)
+    expect(getByTestId('corpus-type')).toHaveValue(testFamily.corpus_type)
+
+    expect(screen.queryByText('corpus')).toBeNull() // it doesn't exist
   })
 })
 

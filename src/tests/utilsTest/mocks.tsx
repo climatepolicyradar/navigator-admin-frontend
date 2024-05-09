@@ -1,3 +1,4 @@
+import { IConfig } from '@/interfaces'
 import { ICCLWFamily, IUNFCCCFamily } from '@/interfaces/Family'
 
 const mockConfig = {
@@ -22,6 +23,7 @@ const mockConfig = {
     { value: 'en', label: 'English' },
     { value: 'es', label: 'Spanish' },
   ],
+  corpora: [],
   taxonomies: {
     CCLW: {
       topic: {
@@ -54,6 +56,11 @@ const mockConfig = {
         allow_blanks: false,
         allowed_values: ['Instrument One', 'Instrument Two'],
       },
+      event_type: {
+        allow_any: false,
+        allow_blanks: false,
+        allowed_values: ['Event One', 'Event Two'],
+      },
     },
     UNFCCC: {
       author: {
@@ -65,6 +72,11 @@ const mockConfig = {
         allow_any: false,
         allow_blanks: false,
         allowed_values: ['Type One', 'Type Two'],
+      },
+      event_type: {
+        allow_any: false,
+        allow_blanks: false,
+        allowed_values: ['Event One', 'Event Two'],
       },
     },
   },
@@ -92,7 +104,7 @@ const mockUNFCCCFamily: IUNFCCCFamily = {
   documents: ['document1', 'document2'],
   collections: ['collection1', 'collection2'],
   organisation: 'UNFCCC',
-  corpus_id: 'UNFCCC.corpus.i00000001.n0000',
+  corpus_import_id: 'UNFCCC.corpus.i00000001.n0000',
   corpus_title: 'UNFCCC Submissions',
   corpus_type: 'Intl. agreements',
   created: '3/1/2021',
@@ -117,7 +129,7 @@ const mockCCLWFamily: ICCLWFamily = {
   documents: ['document3', 'document4'],
   collections: ['collection3', 'collection4'],
   organisation: 'CCLW',
-  corpus_id: 'CCLW.corpus.i00000001.n0000',
+  corpus_import_id: 'CCLW.corpus.i00000001.n0000',
   corpus_title: 'CCLW national policies',
   corpus_type: 'Laws and Policies',
   created: '3/2/2021',
@@ -137,8 +149,8 @@ const mockUNFCCCFamilyNoDocumentsNoEvents: IUNFCCCFamily = {
   import_id: 'UNFCCC.family.3.0',
   title: 'UNFCCC Family Three',
   summary: 'Summary for UNFCCC Family Three with no documents and no events',
-  documents: [], // Sin documentos
-  events: [], // Sin eventos
+  documents: [], // Without documents
+  events: [], // Without events
   created: '5/1/2021',
   last_modified: '6/1/2021',
 }
@@ -148,7 +160,7 @@ const mockCCLWFamilyNoDocuments: ICCLWFamily = {
   import_id: 'CCLW.family.4.0',
   title: 'CCLW Family Four',
   summary: 'Summary for CCLW Family Four with no documents',
-  documents: [], // Sin documentos
+  documents: [], // Without documents
   created: '5/2/2021',
   last_modified: '6/2/2021',
 }
@@ -158,7 +170,7 @@ const mockCCLWFamilyNoEvents: ICCLWFamily = {
   import_id: 'CCLW.family.5.0',
   title: 'CCLW Family Five',
   summary: 'Summary for CCLW Family Five with no events',
-  events: [], // Sin eventos
+  events: [], // Without events
   created: '7/2/2021',
   last_modified: '8/2/2021',
 }
@@ -180,6 +192,86 @@ const mockDocument = {
   user_language_name: 'lang',
 }
 
+const mockCCLWConfig: IConfig = {
+  ...mockConfig,
+  corpora: [
+    {
+      corpus_import_id: 'CCLW.corpus.i00000001.n0000',
+      title: 'CCLW national policies',
+      description: 'UNFCCC Submissions',
+      corpus_type: 'CCLW national policies',
+      corpus_type_description: 'Laws and Policies',
+      taxonomy: {
+        topic: {
+          allow_any: false,
+          allow_blanks: false,
+          allowed_values: ['Topic One', 'Topic Two'],
+        },
+        hazard: {
+          allow_any: false,
+          allow_blanks: false,
+          allowed_values: ['Hazard One', 'Hazard Two'],
+        },
+        sector: {
+          allow_any: false,
+          allow_blanks: false,
+          allowed_values: ['Sector One', 'Sector Two'],
+        },
+        keyword: {
+          allow_any: false,
+          allow_blanks: false,
+          allowed_values: ['Keyword One', 'Keyword Two'],
+        },
+        framework: {
+          allow_any: false,
+          allow_blanks: false,
+          allowed_values: ['Framework One', 'Framework Two'],
+        },
+        instrument: {
+          allow_any: false,
+          allow_blanks: false,
+          allowed_values: ['Instrument One', 'Instrument Two'],
+        },
+        event_type: {
+          allow_any: false,
+          allow_blanks: false,
+          allowed_values: ['Event One', 'Event Two'],
+        },
+      },
+    },
+  ],
+}
+
+const mockUNFCCCConfig: IConfig = {
+  ...mockConfig,
+  corpora: [
+    {
+      corpus_import_id: 'UNFCCC.corpus.i00000001.n0000',
+      title: 'UNFCCC Submissions',
+      description: 'UNFCCC Submissions',
+      corpus_type: 'Intl. agreements',
+      corpus_type_description: 'Intl. agreements',
+      taxonomy: {
+        author: {
+          allow_any: false,
+          allow_blanks: false,
+          allowed_values: ['Author One', 'Author Two'],
+        },
+        author_type: {
+          allow_any: false,
+          allow_blanks: false,
+          allowed_values: ['Type One', 'Type Two'],
+        },
+        event_type: {
+          allow_any: false,
+          allow_blanks: false,
+          allowed_values: ['Event One', 'Event Two'],
+        },
+      },
+    },
+  ],
+}
+
 // Exports
 export const mockFamiliesData = [
   mockUNFCCCFamily,
@@ -189,4 +281,6 @@ export const mockFamiliesData = [
   mockCCLWFamilyNoEvents,
 ]
 export { mockConfig as configMock }
+export { mockCCLWConfig as cclwConfigMock }
+export { mockUNFCCCConfig as unfcccConfigMock }
 export { mockDocument }
