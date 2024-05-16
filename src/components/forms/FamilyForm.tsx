@@ -166,8 +166,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     else return corpus?.taxonomy
   }, [corpus])
 
-  console.log(corpus)
-
   const userAccess = useMemo(() => {
     const token = localStorage.getItem('token')
     if (!token) return []
