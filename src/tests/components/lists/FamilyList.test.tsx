@@ -4,6 +4,7 @@ import '@testing-library/jest-dom'
 
 import FamilyList from '@/components/lists/FamilyList'
 import { mockFamiliesData } from '@/tests/utilsTest/mocks'
+import { formatDate } from '@/utils/formatDate'
 
 jest.mock('@/api/Families', () => ({
   getFamilies: jest.fn(),
@@ -29,20 +30,25 @@ describe('FamilyList', () => {
   })
 
   it('renders without crashing', () => {
-    // Verify mock family properties are rendered there
+    // Verify expected family properties are rendered there
     expect(screen.queryAllByText(UNFCCCFamily.title)).not.toHaveLength(0)
     expect(screen.queryAllByText(UNFCCCFamily.category)).not.toHaveLength(0)
     expect(screen.queryAllByText(UNFCCCFamily.geography)).not.toHaveLength(0)
-    expect(screen.queryAllByText(UNFCCCFamily.published_date)).not.toHaveLength(
-      0,
-    )
+
+    // We put the formatDate here so that the formatting runs in the same locale
+    // as the component when it runs formatDate.
     expect(
-      screen.queryAllByText(UNFCCCFamily.last_updated_date),
+      screen.queryAllByText(formatDate(UNFCCCFamily.published_date)),
     ).not.toHaveLength(0)
-    expect(screen.queryAllByText(UNFCCCFamily.created)).not.toHaveLength(0)
-    expect(screen.queryAllByText(UNFCCCFamily.last_modified)).not.toHaveLength(
-      0,
-    )
+    expect(
+      screen.queryAllByText(formatDate(UNFCCCFamily.last_updated_date)),
+    ).not.toHaveLength(0)
+    expect(
+      screen.queryAllByText(formatDate(UNFCCCFamily.created)),
+    ).not.toHaveLength(0)
+    expect(
+      screen.queryAllByText(formatDate(UNFCCCFamily.last_modified)),
+    ).not.toHaveLength(0)
   })
 
   it('sorts families by title when title header is clicked', async () => {
