@@ -68,7 +68,10 @@ export const DeleteButton = ({
             <Button ref={cancelRef} onClick={onClose}>
               No
             </Button>
-            {!isDisabled && (
+            <Tooltip
+              label="You don't have the required permissions"
+              isDisabled={!isDisabled}
+            >
               <Button
                 isDisabled={isDisabled}
                 colorScheme='red'
@@ -77,19 +80,7 @@ export const DeleteButton = ({
               >
                 Yes
               </Button>
-            )}
-            {isDisabled && (
-              <Tooltip label="You don't have the required permissions">
-                <Button
-                  isDisabled={isDisabled}
-                  colorScheme='red'
-                  ml={3}
-                  onClick={handleConfirmClick}
-                >
-                  Yes
-                </Button>
-              </Tooltip>
-            )}
+            </Tooltip>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
