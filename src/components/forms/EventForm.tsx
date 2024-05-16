@@ -23,7 +23,7 @@ import { formatDateISO } from '@/utils/formatDate'
 
 type TProps = {
   familyId: string
-  canAccess: boolean
+  canModify: boolean
   event?: IEvent
   onSuccess?: (eventId: string) => void
 }
@@ -36,7 +36,7 @@ type TEventForm = {
 
 export const EventForm = ({
   familyId,
-  canAccess,
+  canModify,
   event: loadedEvent,
   onSuccess,
 }: TProps) => {
@@ -170,7 +170,7 @@ export const EventForm = ({
               )
             }}
           />
-          <ButtonGroup isDisabled={canAccess}>
+          <ButtonGroup isDisabled={!canModify}>
             <Button
               type='submit'
               colorScheme='blue'

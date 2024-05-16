@@ -19,6 +19,7 @@ import {
 import { createFamily, updateFamily } from '@/api/Families'
 import { deleteDocument } from '@/api/Documents'
 import useConfig from '@/hooks/useConfig'
+import { canModify } from '@/utils/canModify'
 
 import {
   Box,
@@ -330,12 +331,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   const canLoadForm =
     !configLoading && !collectionsLoading && !configError && !collectionsError
 
-  const canAccess = (organisation: string) => {
-    if (!organisation) return true
-    if (!userAccess) return false
-    return organisation in userAccess
-  }
-
   useEffect(() => {
     if (loadedFamily) {
       setFamilyDocuments(loadedFamily.documents)
@@ -437,7 +432,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
           <SkeletonText mt='4' noOfLines={12} spacing='4' skeletonHeight='2' />
         </Box>
       )}
-      {!canAccess(watchOrganisation) && (
+      {!canModify(watchOrganisation, userAccess) && (
         <ApiError
           message={`You do not have permission to edit ${watchOrganisation} document families`}
           detail='Please go back to the "Families" page, if you think there has been a mistake please contact the administrator.'
@@ -881,7 +876,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 <Flex direction='column' gap={4}>
                   {familyDocuments.map((familyDoc) => (
                     <FamilyDocument
-                      canAccess={canAccess(watchOrganisation)}
+                      canModify={canModify(watchOrganisation, userAccess)}
                       documentId={familyDoc}
                       key={familyDoc}
                       onEditClick={(id) => onEditEntityClick('document', id)}
@@ -893,7 +888,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               {loadedFamily && (
                 <Box>
                   <Button
-                    isDisabled={!canAccess(watchOrganisation)}
+                    isDisabled={canModify(watchOrganisation, userAccess)}
                     onClick={() => onAddNewEntityClick('document')}
                     rightIcon={
                       familyDocuments.length === 0 ? (
@@ -923,7 +918,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 <Flex direction='column' gap={4}>
                   {familyEvents.map((familyEvent) => (
                     <FamilyEvent
-                      canAccess={canAccess(watchOrganisation)}
+                      canModify={canModify(watchOrganisation, userAccess)}
                       eventId={familyEvent}
                       key={familyEvent}
                       onEditClick={(event) => onEditEntityClick('event', event)}
@@ -935,7 +930,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               {loadedFamily && (
                 <Box>
                   <Button
-                    isDisabled={!canAccess(watchOrganisation)}
+                    isDisabled={canModify(watchOrganisation, userAccess)}
                     onClick={() => onAddNewEntityClick('event')}
                     rightIcon={
                       familyEvents.length === 0 ? (
@@ -952,7 +947,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               )}
             </VStack>
 
-            <ButtonGroup isDisabled={!canAccess(watchOrganisation)}>
+            <ButtonGroup isDisabled={!canModify(watchOrganisation, userAccess)}>
               <Button
                 type='submit'
                 colorScheme='blue'
@@ -975,7 +970,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 <DrawerBody>
                   <DocumentForm
                     familyId={loadedFamily.import_id}
-                    canAccess={!canAccess(watchOrganisation)}
+                    canModify={canModify(watchOrganisation, userAccess)}
                     onSuccess={onDocumentFormSuccess}
                     document={editingDocument}
                   />
@@ -992,7 +987,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 <DrawerBody>
                   <EventForm
                     familyId={loadedFamily.import_id}
-                    canAccess={!canAccess(watchOrganisation)}
+                    canModify={canModify(watchOrganisation, userAccess)}
                     onSuccess={onEventFormSuccess}
                     event={editingEvent}
                   />

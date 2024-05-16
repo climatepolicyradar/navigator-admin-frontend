@@ -33,14 +33,14 @@ import { chakraStylesSelect } from '@/styles/chakra'
 type TProps = {
   document?: IDocument
   familyId?: string
-  canAccess?: boolean
+  canModify?: boolean
   onSuccess?: (documentId: string) => void
 }
 
 export const DocumentForm = ({
   document: loadedDocument,
   familyId,
-  canAccess,
+  canModify,
   onSuccess,
 }: TProps) => {
   const { config, loading: configLoading, error: configError } = useConfig()
@@ -267,7 +267,7 @@ export const DocumentForm = ({
               )
             }}
           />
-          <ButtonGroup isDisabled={canAccess}>
+          <ButtonGroup isDisabled={!canModify}>
             <Button
               type='submit'
               colorScheme='blue'

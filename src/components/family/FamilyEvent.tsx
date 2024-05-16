@@ -16,14 +16,14 @@ import { IEvent } from '@/interfaces'
 
 type TProps = {
   eventId: string
-  canAccess: boolean
+  canModify: boolean
   onEditClick?: (event: IEvent) => void
   onDeleteClick?: (eventId: string) => void
 }
 
 export const FamilyEvent = ({
   eventId,
-  canAccess,
+  canModify,
   onEditClick,
   onDeleteClick,
 }: TProps) => {
@@ -68,9 +68,9 @@ export const FamilyEvent = ({
                 Edit
               </Button>
             )}
-            {canAccess && !!onDeleteClick && (
+            {!!onDeleteClick && (
               <DeleteButton
-                isDisabled={!canAccess}
+                isDisabled={!canModify}
                 entityName='event'
                 entityTitle={event?.event_title || ''}
                 callback={handleDeleteClick}
