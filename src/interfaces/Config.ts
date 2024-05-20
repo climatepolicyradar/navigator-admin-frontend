@@ -70,11 +70,6 @@ export interface IConfig {
   }
   languagesSorted: IConfigLanguageSorted[]
   corpora: IConfigCorpora[]
-  taxonomies: {
-    CCLW: IConfigTaxonomyCCLW
-    UNFCCC: IConfigTaxonomyUNFCCC
-  }
-  corpora: IConfigCorpora[]
   document: {
     roles: string[]
     types: string[]
