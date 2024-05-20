@@ -43,7 +43,7 @@ const mockUNFCCCFamily: IUNFCCCFamily = {
   status: 'active',
   slug: 'unfccc-family-one',
   events: ['event1', 'event2'],
-  published_date: '1/1/2021',
+  published_date: '1/4/2021',
   last_updated_date: '2/1/2021',
   documents: ['document1', 'document2'],
   collections: ['collection1', 'collection2'],

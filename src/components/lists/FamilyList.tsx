@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { Link, useLoaderData } from 'react-router-dom'
 import { deleteFamily, getFamilies, TFamilySearchQuery } from '@/api/Families'
 import { IError, TFamily } from '@/interfaces'
@@ -32,6 +32,8 @@ import {
 import { getStatusColour } from '@/utils/getStatusColour'
 import { getStatusAlias } from '@/utils/getStatusAlias'
 import { ApiError } from '../feedback/ApiError'
+import { canModify } from '@/utils/canModify'
+import { decodeToken } from '@/utils/decodeToken'
 
 interface ILoaderProps {
   request: {
@@ -70,6 +72,13 @@ export default function FamilyList() {
   const toast = useToast()
   const [familyError, setFamilyError] = useState<string | null | undefined>()
   const [formError, setFormError] = useState<IError | null | undefined>()
+
+  const userAccess = useMemo(() => {
+    const token = localStorage.getItem('token')
+    if (!token) return []
+    const decodedToken = decodeToken(token)
+    return decodedToken?.authorisation
+  }, [])
 
   const renderSortIcon = (key: keyof TFamily) => {
     if (sortControls.key !== key) {
@@ -257,6 +266,7 @@ export default function FamilyList() {
                       </Link>
                     </Tooltip>
                     <DeleteButton
+                      isDisabled={!canModify(family.organisation, userAccess)}
                       entityName='family'
                       entityTitle={family.title}
                       callback={() => handleDeleteClick(family.import_id)}

@@ -15,10 +15,13 @@ import {
   IEvent,
   ICollection,
   IConfigCorpus,
+  IConfigTaxonomyUNFCCC,
+  IConfigTaxonomyCCLW,
 } from '@/interfaces'
 import { createFamily, updateFamily } from '@/api/Families'
 import { deleteDocument } from '@/api/Documents'
 import useConfig from '@/hooks/useConfig'
+import { canModify } from '@/utils/canModify'
 
 import {
   Box,
@@ -138,6 +141,31 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   const [familyDocuments, setFamilyDocuments] = useState<string[]>([])
   const [familyEvents, setFamilyEvents] = useState<string[]>([])
   const watchOrganisation = watch('organisation')
+  const watchCorpus = watch('corpus')
+
+  const corpus = useMemo(() => {
+    const getCorpusFromId = (corpusId: string) => {
+      const corp = config?.corpora.find(
+        (corpus) => corpus.corpus_import_id === corpusId,
+      )
+      return corp ? corp : null
+    }
+
+    if (loadedFamily) return getCorpusFromId(loadedFamily?.corpus_import_id)
+    else if (watchCorpus) {
+      return getCorpusFromId(watchCorpus?.value)
+    }
+    return null
+  }, [config?.corpora, loadedFamily, watchCorpus])
+
+  const taxonomy = useMemo(() => {
+    if (corpus?.corpus_type === 'Law and Policies')
+      return corpus?.taxonomy as IConfigTaxonomyCCLW
+    else if (corpus?.corpus_type === 'Intl. Agreements')
+      return corpus?.taxonomy as IConfigTaxonomyUNFCCC
+    else return corpus?.taxonomy
+  }, [corpus])
+
   const userAccess = useMemo(() => {
     const token = localStorage.getItem('token')
     if (!token) return []
@@ -330,12 +358,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   const canLoadForm =
     !configLoading && !collectionsLoading && !configError && !collectionsError
 
-  const canAccess = (organisation: string) => {
-    if (!organisation) return true
-    if (!userAccess) return false
-    return organisation in userAccess
-  }
-
   useEffect(() => {
     if (loadedFamily) {
       setFamilyDocuments(loadedFamily.documents)
@@ -437,7 +459,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
           <SkeletonText mt='4' noOfLines={12} spacing='4' skeletonHeight='2' />
         </Box>
       )}
-      {!canAccess(watchOrganisation) && (
+      {!canModify(watchOrganisation, userAccess) && (
         <ApiError
           message={`You do not have permission to edit ${watchOrganisation} document families`}
           detail='Please go back to the "Families" page, if you think there has been a mistake please contact the administrator.'
@@ -497,7 +519,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                       value={loadedFamily?.import_id}
                     />
                   </FormControl>
-
                   <FormControl isRequired isReadOnly isDisabled>
                     <FormLabel>Corpus ID</FormLabel>
                     <Input
@@ -515,7 +536,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                       value={loadedFamily?.corpus_title}
                     />
                   </FormControl>
-
                   <FormControl isRequired isReadOnly isDisabled>
                     <FormLabel>Corpus Type</FormLabel>
                     <Input
@@ -645,43 +665,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                   )
                 }}
               />
-              <Controller
-                control={control}
-                name='organisation'
-                render={({ field }) => {
-                  return (
-                    <FormControl
-                      isRequired
-                      as='fieldset'
-                      isInvalid={!!errors.organisation}
-                    >
-                      <FormLabel as='legend'>Organisation</FormLabel>
-                      <RadioGroup {...field}>
-                        <HStack gap={4}>
-                          <Radio
-                            bg='white'
-                            value='CCLW'
-                            isDisabled={userAccess && !('CCLW' in userAccess)}
-                          >
-                            CCLW
-                          </Radio>
-                          <Radio
-                            bg='white'
-                            value='UNFCCC'
-                            isDisabled={userAccess && !('UNFCCC' in userAccess)}
-                          >
-                            UNFCCC
-                          </Radio>
-                        </HStack>
-                      </RadioGroup>
-                      <FormErrorMessage>
-                        Please select an organisation
-                      </FormErrorMessage>
-                    </FormControl>
-                  )
-                }}
-              />
-              {!!watchOrganisation && (
+              {corpus !== null && (
                 <Box position='relative' padding='10'>
                   <Divider />
                   <AbsoluteCenter bg='gray.50' px='4'>
@@ -689,182 +673,191 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                   </AbsoluteCenter>
                 </Box>
               )}
-              {watchOrganisation === 'UNFCCC' && (
-                <>
-                  <FormControl isRequired>
-                    <FormLabel>Author</FormLabel>
-                    <Input bg='white' {...register('author')} />
-                  </FormControl>
-                  <Controller
-                    control={control}
-                    name='author_type'
-                    render={({ field }) => {
-                      return (
-                        <FormControl
-                          isRequired
-                          as='fieldset'
-                          isInvalid={!!errors.author_type}
-                        >
-                          <FormLabel as='legend'>Author type</FormLabel>
-                          <RadioGroup {...field}>
-                            <HStack gap={4}>
-                              {config?.taxonomies.UNFCCC.author_type.allowed_values.map(
-                                (authorType) => (
-                                  <Radio
-                                    bg='white'
-                                    value={authorType}
-                                    key={authorType}
-                                  >
-                                    {authorType}
-                                  </Radio>
-                                ),
+              {corpus !== null &&
+                corpus?.corpus_type === 'Intl. agreements' && (
+                  <>
+                    <FormControl isRequired>
+                      <FormLabel>Author</FormLabel>
+                      <Input bg='white' {...register('author')} />
+                    </FormControl>
+                    <Controller
+                      control={control}
+                      name='author_type'
+                      render={({ field }) => {
+                        const tax = taxonomy as IConfigTaxonomyUNFCCC
+                        return (
+                          <FormControl
+                            isRequired
+                            as='fieldset'
+                            isInvalid={!!errors.author_type}
+                          >
+                            <FormLabel as='legend'>Author type</FormLabel>
+                            <RadioGroup {...field}>
+                              <HStack gap={4}>
+                                {tax?.author_type.allowed_values.map(
+                                  (authorType) => (
+                                    <Radio
+                                      bg='white'
+                                      value={authorType}
+                                      key={authorType}
+                                    >
+                                      {authorType}
+                                    </Radio>
+                                  ),
+                                )}
+                              </HStack>
+                            </RadioGroup>
+                            <FormErrorMessage>
+                              Please select an author type
+                            </FormErrorMessage>
+                          </FormControl>
+                        )
+                      }}
+                    />
+                  </>
+                )}
+              {corpus !== null &&
+                corpus?.corpus_type === 'Laws and Policies' && (
+                  <>
+                    <Controller
+                      control={control}
+                      name='topic'
+                      render={({ field }) => {
+                        const tax = taxonomy as IConfigTaxonomyCCLW
+                        return (
+                          <FormControl>
+                            <FormLabel>Topics</FormLabel>
+                            <CRSelect
+                              chakraStyles={chakraStylesSelect}
+                              isClearable={false}
+                              isMulti={true}
+                              isSearchable={true}
+                              options={generateOptions(
+                                tax?.topic.allowed_values || [],
                               )}
-                            </HStack>
-                          </RadioGroup>
-                          <FormErrorMessage>
-                            Please select an author type
-                          </FormErrorMessage>
-                        </FormControl>
-                      )
-                    }}
-                  />
-                </>
-              )}
-              {watchOrganisation === 'CCLW' && (
-                <>
-                  <Controller
-                    control={control}
-                    name='topic'
-                    render={({ field }) => {
-                      return (
-                        <FormControl>
-                          <FormLabel>Topics</FormLabel>
-                          <CRSelect
-                            chakraStyles={chakraStylesSelect}
-                            isClearable={false}
-                            isMulti={true}
-                            isSearchable={true}
-                            options={generateOptions(
-                              config?.taxonomies.CCLW.topic.allowed_values,
-                            )}
-                            {...field}
-                          />
+                              {...field}
+                            />
 
-                          <FormHelperText>
-                            You are able to search and can select multiple
-                            options.
-                          </FormHelperText>
-                        </FormControl>
-                      )
-                    }}
-                  />
-                  <Controller
-                    control={control}
-                    name='hazard'
-                    render={({ field }) => {
-                      return (
-                        <FormControl>
-                          <FormLabel>Hazards</FormLabel>
-                          <CRSelect
-                            chakraStyles={chakraStylesSelect}
-                            isClearable={false}
-                            isMulti={true}
-                            isSearchable={true}
-                            options={generateOptions(
-                              config?.taxonomies.CCLW.hazard.allowed_values,
-                            )}
-                            {...field}
-                          />
-                        </FormControl>
-                      )
-                    }}
-                  />
-                  <Controller
-                    control={control}
-                    name='sector'
-                    render={({ field }) => {
-                      return (
-                        <FormControl>
-                          <FormLabel>Sectors</FormLabel>
-                          <CRSelect
-                            chakraStyles={chakraStylesSelect}
-                            isClearable={false}
-                            isMulti={true}
-                            isSearchable={true}
-                            options={generateOptions(
-                              config?.taxonomies.CCLW.sector.allowed_values,
-                            )}
-                            {...field}
-                          />
-                        </FormControl>
-                      )
-                    }}
-                  />
-                  <Controller
-                    control={control}
-                    name='keyword'
-                    render={({ field }) => {
-                      return (
-                        <FormControl>
-                          <FormLabel>Keywords</FormLabel>
-                          <CRSelect
-                            chakraStyles={chakraStylesSelect}
-                            isClearable={false}
-                            isMulti={true}
-                            isSearchable={true}
-                            options={generateOptions(
-                              config?.taxonomies.CCLW.keyword.allowed_values,
-                            )}
-                            {...field}
-                          />
-                        </FormControl>
-                      )
-                    }}
-                  />
-                  <Controller
-                    control={control}
-                    name='framework'
-                    render={({ field }) => {
-                      return (
-                        <FormControl>
-                          <FormLabel>Frameworks</FormLabel>
-                          <CRSelect
-                            chakraStyles={chakraStylesSelect}
-                            isClearable={false}
-                            isMulti={true}
-                            isSearchable={true}
-                            options={generateOptions(
-                              config?.taxonomies.CCLW.framework.allowed_values,
-                            )}
-                            {...field}
-                          />
-                        </FormControl>
-                      )
-                    }}
-                  />
-                  <Controller
-                    control={control}
-                    name='instrument'
-                    render={({ field }) => {
-                      return (
-                        <FormControl>
-                          <FormLabel>Instruments</FormLabel>
-                          <CRSelect
-                            chakraStyles={chakraStylesSelect}
-                            isClearable={false}
-                            isMulti={true}
-                            isSearchable={true}
-                            options={generateOptions(
-                              config?.taxonomies.CCLW.instrument.allowed_values,
-                            )}
-                            {...field}
-                          />
-                        </FormControl>
-                      )
-                    }}
-                  />
-                </>
-              )}
+                            <FormHelperText>
+                              You are able to search and can select multiple
+                              options.
+                            </FormHelperText>
+                          </FormControl>
+                        )
+                      }}
+                    />
+                    <Controller
+                      control={control}
+                      name='hazard'
+                      render={({ field }) => {
+                        const tax = taxonomy as IConfigTaxonomyCCLW
+                        return (
+                          <FormControl>
+                            <FormLabel>Hazards</FormLabel>
+                            <CRSelect
+                              chakraStyles={chakraStylesSelect}
+                              isClearable={false}
+                              isMulti={true}
+                              isSearchable={true}
+                              options={generateOptions(
+                                tax?.hazard.allowed_values || [],
+                              )}
+                              {...field}
+                            />
+                          </FormControl>
+                        )
+                      }}
+                    />
+                    <Controller
+                      control={control}
+                      name='sector'
+                      render={({ field }) => {
+                        const tax = taxonomy as IConfigTaxonomyCCLW
+                        return (
+                          <FormControl>
+                            <FormLabel>Sectors</FormLabel>
+                            <CRSelect
+                              chakraStyles={chakraStylesSelect}
+                              isClearable={false}
+                              isMulti={true}
+                              isSearchable={true}
+                              options={generateOptions(
+                                tax?.sector.allowed_values || [],
+                              )}
+                              {...field}
+                            />
+                          </FormControl>
+                        )
+                      }}
+                    />
+                    <Controller
+                      control={control}
+                      name='keyword'
+                      render={({ field }) => {
+                        const tax = taxonomy as IConfigTaxonomyCCLW
+                        return (
+                          <FormControl>
+                            <FormLabel>Keywords</FormLabel>
+                            <CRSelect
+                              chakraStyles={chakraStylesSelect}
+                              isClearable={false}
+                              isMulti={true}
+                              isSearchable={true}
+                              options={generateOptions(
+                                tax?.keyword.allowed_values || [],
+                              )}
+                              {...field}
+                            />
+                          </FormControl>
+                        )
+                      }}
+                    />
+                    <Controller
+                      control={control}
+                      name='framework'
+                      render={({ field }) => {
+                        const tax = taxonomy as IConfigTaxonomyCCLW
+                        return (
+                          <FormControl>
+                            <FormLabel>Frameworks</FormLabel>
+                            <CRSelect
+                              chakraStyles={chakraStylesSelect}
+                              isClearable={false}
+                              isMulti={true}
+                              isSearchable={true}
+                              options={generateOptions(
+                                tax?.framework.allowed_values || [],
+                              )}
+                              {...field}
+                            />
+                          </FormControl>
+                        )
+                      }}
+                    />
+                    <Controller
+                      control={control}
+                      name='instrument'
+                      render={({ field }) => {
+                        const tax = taxonomy as IConfigTaxonomyCCLW
+                        return (
+                          <FormControl>
+                            <FormLabel>Instruments</FormLabel>
+                            <CRSelect
+                              chakraStyles={chakraStylesSelect}
+                              isClearable={false}
+                              isMulti={true}
+                              isSearchable={true}
+                              options={generateOptions(
+                                tax?.instrument.allowed_values || [],
+                              )}
+                              {...field}
+                            />
+                          </FormControl>
+                        )
+                      }}
+                    />
+                  </>
+                )}
               <Box position='relative' padding='10'>
                 <Divider />
                 <AbsoluteCenter bg='gray.50' px='4'>
@@ -881,6 +874,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 <Flex direction='column' gap={4}>
                   {familyDocuments.map((familyDoc) => (
                     <FamilyDocument
+                      canModify={canModify(watchOrganisation, userAccess)}
                       documentId={familyDoc}
                       key={familyDoc}
                       onEditClick={(id) => onEditEntityClick('document', id)}
@@ -892,6 +886,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               {loadedFamily && (
                 <Box>
                   <Button
+                    isDisabled={canModify(watchOrganisation, userAccess)}
                     onClick={() => onAddNewEntityClick('document')}
                     rightIcon={
                       familyDocuments.length === 0 ? (
@@ -921,6 +916,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 <Flex direction='column' gap={4}>
                   {familyEvents.map((familyEvent) => (
                     <FamilyEvent
+                      canModify={canModify(watchOrganisation, userAccess)}
                       eventId={familyEvent}
                       key={familyEvent}
                       onEditClick={(event) => onEditEntityClick('event', event)}
@@ -932,6 +928,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               {loadedFamily && (
                 <Box>
                   <Button
+                    isDisabled={canModify(watchOrganisation, userAccess)}
                     onClick={() => onAddNewEntityClick('event')}
                     rightIcon={
                       familyEvents.length === 0 ? (
@@ -948,7 +945,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               )}
             </VStack>
 
-            <ButtonGroup isDisabled={!canAccess(watchOrganisation)}>
+            <ButtonGroup isDisabled={!canModify(watchOrganisation, userAccess)}>
               <Button
                 type='submit'
                 colorScheme='blue'
@@ -971,6 +968,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 <DrawerBody>
                   <DocumentForm
                     familyId={loadedFamily.import_id}
+                    canModify={canModify(watchOrganisation, userAccess)}
                     onSuccess={onDocumentFormSuccess}
                     document={editingDocument}
                   />
@@ -987,6 +985,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 <DrawerBody>
                   <EventForm
                     familyId={loadedFamily.import_id}
+                    canModify={canModify(watchOrganisation, userAccess)}
                     onSuccess={onEventFormSuccess}
                     event={editingEvent}
                   />
