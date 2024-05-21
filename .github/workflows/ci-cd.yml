@@ -118,7 +118,7 @@ jobs:
       manual-semver: false
     secrets: inherit
 
-  tag-and-release:
+  git:
     if: ${{ ! cancelled() && always() && (needs.semver.result == 'success')}}
     needs: semver
     permissions:
