@@ -72,6 +72,8 @@ export const DocumentForm = ({
       }
     }
 
+    console.log(`User can modify docs ${canModify}`)
+
     const modifiedDocumentData = convertToModified(submittedDcumentData)
 
     if (loadedDocument) {
