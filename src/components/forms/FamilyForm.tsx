@@ -451,6 +451,10 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     }
   }, [handleBeforeUnload])
 
+  console.log(
+    `User can modify org ${watchOrganisation} ${canModify(watchOrganisation, userAccess)}`,
+  )
+
   return (
     <>
       {(configLoading || collectionsLoading) && (
@@ -885,9 +889,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               )}
               {loadedFamily && (
                 <Box>
-                  {console.log(
-                    `User can modify: ${canModify(watchOrganisation, userAccess)}`,
-                  )}
                   <Button
                     isDisabled={!canModify(watchOrganisation, userAccess)}
                     onClick={() => onAddNewEntityClick('document')}
@@ -930,9 +931,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               )}
               {loadedFamily && (
                 <Box>
-                  {console.log(
-                    `User can modify org ${watchOrganisation} ${canModify(watchOrganisation, userAccess)}`,
-                  )}
                   <Button
                     isDisabled={!canModify(watchOrganisation, userAccess)}
                     onClick={() => onAddNewEntityClick('event')}
