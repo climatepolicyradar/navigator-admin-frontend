@@ -129,8 +129,6 @@ export const EventForm = ({
     }
   }, [loadedEvent, reset])
 
-  console.log(`User can modify events ${canModify}`)
-
   return (
     <>
       {configError && <ApiError error={configError} />}
