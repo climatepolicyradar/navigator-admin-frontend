@@ -890,7 +890,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               {loadedFamily && (
                 <Box>
                   <Button
-                    isDisabled={!canModify(watchOrganisation, userAccess)}
+                    isDisabled={canModify(watchOrganisation, userAccess)}
                     onClick={() => onAddNewEntityClick('document')}
                     rightIcon={
                       familyDocuments.length === 0 ? (
@@ -932,7 +932,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               {loadedFamily && (
                 <Box>
                   <Button
-                    isDisabled={!canModify(watchOrganisation, userAccess)}
+                    isDisabled={canModify(watchOrganisation, userAccess)}
                     onClick={() => onAddNewEntityClick('event')}
                     rightIcon={
                       familyEvents.length === 0 ? (
