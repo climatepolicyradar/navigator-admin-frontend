@@ -451,10 +451,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     }
   }, [handleBeforeUnload])
 
-  console.log(
-    `User can modify org ${watchOrganisation} ${canModify(watchOrganisation, userAccess)}`,
-  )
-
   return (
     <>
       {(configLoading || collectionsLoading) && (
