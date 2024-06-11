@@ -974,13 +974,11 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
 
             <ButtonGroup
               isDisabled={
-                loadedFamily
-                  ? !canModify(
-                      loadedFamily?.organisation,
-                      isSuperUser,
-                      userAccess,
-                    )
-                  : !canModify(orgName, isSuperUser, userAccess)
+                !canModify(
+                  loadedFamily?.organisation || orgName,
+                  isSuperUser,
+                  userAccess,
+                )
               }
             >
               <Button
