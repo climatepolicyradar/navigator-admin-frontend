@@ -6,7 +6,6 @@ export const familySchema = yup
     summary: yup.string().required(),
     geography: yup.string().required(),
     category: yup.string().required(),
-    organisation: yup.string().required(),
     corpus: yup.object({
       label: yup.string().required(),
       value: yup.string().required(),
