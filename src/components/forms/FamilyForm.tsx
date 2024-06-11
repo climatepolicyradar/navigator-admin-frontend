@@ -177,7 +177,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   }, [])
 
   const userAccess = !userToken ? null : userToken.authorisation
-  const isSuperuser = !userToken ? false : userToken.is_superuser
+  const isSuperUser = !userToken ? false : userToken.is_superuser
 
   // TODO: Get org_id from corpus PDCT-1171.
   const orgName = loadedFamily ? String(loadedFamily?.organisation) : null
@@ -474,7 +474,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
           <SkeletonText mt='4' noOfLines={12} spacing='4' skeletonHeight='2' />
         </Box>
       )}
-      {!canModify(orgName, isSuperuser, userAccess) && (
+      {!canModify(orgName, isSuperUser, userAccess) && (
         <ApiError
           message={`You do not have permission to edit document families in ${corpusTitle} `}
           detail='Please go back to the "Families" page, if you think there has been a mistake please contact the administrator.'
@@ -889,7 +889,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 <Flex direction='column' gap={4}>
                   {familyDocuments.map((familyDoc) => (
                     <FamilyDocument
-                      canModify={canModify(orgName, isSuperuser, userAccess)}
+                      canModify={canModify(orgName, isSuperUser, userAccess)}
                       documentId={familyDoc}
                       key={familyDoc}
                       onEditClick={(id) => onEditEntityClick('document', id)}
@@ -904,7 +904,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                     isDisabled={
                       !canModify(
                         loadedFamily?.organisation,
-                        isSuperuser,
+                        isSuperUser,
                         userAccess,
                       )
                     }
@@ -937,7 +937,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 <Flex direction='column' gap={4}>
                   {familyEvents.map((familyEvent) => (
                     <FamilyEvent
-                      canModify={canModify(orgName, isSuperuser, userAccess)}
+                      canModify={canModify(orgName, isSuperUser, userAccess)}
                       eventId={familyEvent}
                       key={familyEvent}
                       onEditClick={(event) => onEditEntityClick('event', event)}
@@ -952,7 +952,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                     isDisabled={
                       !canModify(
                         loadedFamily?.organisation,
-                        isSuperuser,
+                        isSuperUser,
                         userAccess,
                       )
                     }
@@ -977,10 +977,10 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 loadedFamily
                   ? !canModify(
                       loadedFamily?.organisation,
-                      isSuperuser,
+                      isSuperUser,
                       userAccess,
                     )
-                  : !canModify(orgName, isSuperuser, userAccess)
+                  : !canModify(orgName, isSuperUser, userAccess)
               }
             >
               <Button
@@ -1007,7 +1007,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                     familyId={loadedFamily.import_id}
                     canModify={canModify(
                       loadedFamily?.organisation,
-                      isSuperuser,
+                      isSuperUser,
                       userAccess,
                     )}
                     onSuccess={onDocumentFormSuccess}
@@ -1028,7 +1028,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                     familyId={loadedFamily.import_id}
                     canModify={canModify(
                       loadedFamily?.organisation,
-                      isSuperuser,
+                      isSuperUser,
                       userAccess,
                     )}
                     onSuccess={onEventFormSuccess}

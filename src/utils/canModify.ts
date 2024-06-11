@@ -1,6 +1,6 @@
 export const canModify = (
   organisation: string | null,
-  isSuperuser: boolean,
+  isSuperUser: boolean,
   userAccess?:
     | never[]
     | null
@@ -10,7 +10,7 @@ export const canModify = (
         }
       },
 ) => {
-  if (isSuperuser === true) return true
+  if (isSuperUser === true) return true
   if (organisation === null) return true
   if (!userAccess || userAccess === null) return false
   return organisation in userAccess
