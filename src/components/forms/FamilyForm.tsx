@@ -1,11 +1,5 @@
 import { useEffect, useState, useMemo, useCallback } from 'react'
-import {
-  useForm,
-  SubmitHandler,
-  Controller,
-  SubmitErrorHandler,
-  FieldErrors,
-} from 'react-hook-form'
+import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useBlocker, useNavigate } from 'react-router-dom'
 
@@ -170,7 +164,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   const taxonomy = useMemo(() => {
     if (corpusInfo?.corpus_type === 'Law and Policies')
       return corpusInfo?.taxonomy as IConfigTaxonomyCCLW
-    else if (corpusInfo?.corpus_type === 'Intl. Agreements')
+    else if (corpusInfo?.corpus_type === 'Intl. agreements')
       return corpusInfo?.taxonomy as IConfigTaxonomyUNFCCC
     else return corpusInfo?.taxonomy
   }, [corpusInfo])
@@ -183,7 +177,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   }, [])
 
   const userAccess = !userToken ? null : userToken.authorisation
-  const isSuperuser = !userToken ? null : userToken.is_superuser
+  const isSuperuser = !userToken ? false : userToken.is_superuser
 
   // TODO: Get org_id from corpus PDCT-1171.
   const orgName = loadedFamily ? String(loadedFamily?.organisation) : null
@@ -194,7 +188,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     setFormError(null)
 
     let familyMetadata = {} as TFamilyFormPostMetadata
-    if (corpusInfo?.corpus_type == 'Intl. Agreements') {
+    if (corpusInfo?.corpus_type == 'Intl. agreements') {
       const metadata = familyMetadata as IUNFCCCMetadata
       if (family.author) metadata.author = [family.author]
       if (family.author_type) metadata.author_type = [family.author_type]
@@ -275,8 +269,8 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     })
   }
 
-  //  SubmitErrorHandler<FieldErrors<IFamilyForm>>
-  const onSubmitErrorHandler: SubmitErrorHandler<FieldErrors> = (error) => {
+  // object type is workaround for SubmitErrorHandler<FieldErrors> throwing a tsc error.
+  const onSubmitErrorHandler = (error: object) => {
     console.log('onSubmitErrorHandler', error)
   }
 

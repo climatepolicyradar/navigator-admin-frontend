@@ -1,3 +1,4 @@
+import { IConfigCorpus } from '@/interfaces'
 import * as yup from 'yup'
 
 export const familySchema = yup
@@ -11,12 +12,12 @@ export const familySchema = yup
       value: yup.string().required(),
     }),
     collections: yup.array().optional(),
-    author: yup.string().when('organisation', {
-      is: 'UNFCCC',
+    author: yup.string().when('corpus', {
+      is: (val: IConfigCorpus) => val.label == 'UNFCCC Submissions',
       then: (schema) => schema.required(),
     }),
-    author_type: yup.string().when('organisation', {
-      is: 'UNFCCC',
+    author_type: yup.string().when('corpus', {
+      is: (val: IConfigCorpus) => val.label == 'UNFCCC Submissions',
       then: (schema) => schema.required(),
     }),
     topic: yup.array().optional(),
