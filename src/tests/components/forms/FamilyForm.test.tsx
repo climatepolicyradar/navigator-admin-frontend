@@ -102,7 +102,7 @@ describe('FamilyForm', () => {
 
     expect(
       screen.getByText(
-        'You do not have permission to edit CCLW document families',
+        'You do not have permission to edit document families in CCLW national policies',
       ),
     ).toBeInTheDocument()
   })
