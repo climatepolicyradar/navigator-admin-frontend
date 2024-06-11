@@ -6,7 +6,6 @@ import { useBlocker, useNavigate } from 'react-router-dom'
 import {
   IError,
   TFamilyFormPost,
-  TOrganisation,
   TFamilyFormPostMetadata,
   IUNFCCCMetadata,
   ICCLWMetadata,
@@ -17,6 +16,7 @@ import {
   IConfigCorpus,
   IConfigTaxonomyUNFCCC,
   IConfigTaxonomyCCLW,
+  IDecodedToken,
 } from '@/interfaces'
 import { createFamily, updateFamily } from '@/api/Families'
 import { deleteDocument } from '@/api/Documents'
@@ -85,7 +85,6 @@ interface IFamilyForm {
   summary: string
   geography: string
   category: string
-  organisation: string
   corpus: IConfigCorpus
   collections?: TMultiSelect[]
   author?: string
@@ -140,10 +139,9 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   >()
   const [familyDocuments, setFamilyDocuments] = useState<string[]>([])
   const [familyEvents, setFamilyEvents] = useState<string[]>([])
-  const watchOrganisation = watch('organisation')
-  const watchCorpus = watch('corpus')
 
-  const corpus = useMemo(() => {
+  const watchCorpus = watch('corpus')
+  const corpusInfo = useMemo(() => {
     const getCorpusFromId = (corpusId: string) => {
       const corp = config?.corpora.find(
         (corpus) => corpus.corpus_import_id === corpusId,
@@ -151,27 +149,38 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       return corp ? corp : null
     }
 
-    if (loadedFamily) return getCorpusFromId(loadedFamily?.corpus_import_id)
-    else if (watchCorpus) {
+    if (loadedFamily) {
+      return getCorpusFromId(loadedFamily?.corpus_import_id)
+    } else if (watchCorpus) {
       return getCorpusFromId(watchCorpus?.value)
     }
     return null
   }, [config?.corpora, loadedFamily, watchCorpus])
 
-  const taxonomy = useMemo(() => {
-    if (corpus?.corpus_type === 'Law and Policies')
-      return corpus?.taxonomy as IConfigTaxonomyCCLW
-    else if (corpus?.corpus_type === 'Intl. Agreements')
-      return corpus?.taxonomy as IConfigTaxonomyUNFCCC
-    else return corpus?.taxonomy
-  }, [corpus])
+  const corpusTitle = loadedFamily
+    ? loadedFamily?.corpus_title
+    : corpusInfo?.title
 
-  const userAccess = useMemo(() => {
+  const taxonomy = useMemo(() => {
+    if (corpusInfo?.corpus_type === 'Law and Policies')
+      return corpusInfo?.taxonomy as IConfigTaxonomyCCLW
+    else if (corpusInfo?.corpus_type === 'Intl. agreements')
+      return corpusInfo?.taxonomy as IConfigTaxonomyUNFCCC
+    else return corpusInfo?.taxonomy
+  }, [corpusInfo])
+
+  const userToken = useMemo(() => {
     const token = localStorage.getItem('token')
-    if (!token) return []
-    const decodedToken = decodeToken(token)
-    return decodedToken?.authorisation
+    if (!token) return null
+    const decodedToken: IDecodedToken | null = decodeToken(token)
+    return decodedToken
   }, [])
+
+  const userAccess = !userToken ? null : userToken.authorisation
+  const isSuperUser = !userToken ? false : userToken.is_superuser
+
+  // TODO: Get org_id from corpus PDCT-1171.
+  const orgName = loadedFamily ? String(loadedFamily?.organisation) : null
 
   // Family handlers
   const handleFormSubmission = async (family: IFamilyForm) => {
@@ -179,21 +188,21 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     setFormError(null)
 
     let familyMetadata = {} as TFamilyFormPostMetadata
-    if (family.organisation === 'UNFCCC') {
+    if (corpusInfo?.corpus_type == 'Intl. agreements') {
       const metadata = familyMetadata as IUNFCCCMetadata
       if (family.author) metadata.author = [family.author]
       if (family.author_type) metadata.author_type = [family.author_type]
       familyMetadata = metadata
-    } else if (family.organisation === 'CCLW') {
-      const metadata = familyMetadata as ICCLWMetadata
-      metadata.topic = family.topic?.map((topic) => topic.value) || []
-      metadata.hazard = family.hazard?.map((hazard) => hazard.value) || []
-      metadata.sector = family.sector?.map((sector) => sector.value) || []
-      metadata.keyword = family.keyword?.map((keyword) => keyword.value) || []
-      metadata.framework =
-        family.framework?.map((framework) => framework.value) || []
-      metadata.instrument =
-        family.instrument?.map((instrument) => instrument.value) || []
+    } else if (corpusInfo?.corpus_type == 'Laws and Policies') {
+      const metadata: ICCLWMetadata = {
+        topic: family.topic?.map((topic) => topic.value) || [],
+        hazard: family.hazard?.map((hazard) => hazard.value) || [],
+        sector: family.sector?.map((sector) => sector.value) || [],
+        keyword: family.keyword?.map((keyword) => keyword.value) || [],
+        framework: family.framework?.map((framework) => framework.value) || [],
+        instrument:
+          family.instrument?.map((instrument) => instrument.value) || [],
+      }
       familyMetadata = metadata
     }
 
@@ -203,7 +212,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       summary: family.summary,
       geography: family.geography,
       category: family.category,
-      organisation: family.organisation as TOrganisation,
       corpus_import_id: family.corpus?.value || '',
       collections:
         family.collections?.map((collection) => collection.value) || [],
@@ -255,8 +263,16 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       })
   } // end handleFormSubmission
 
-  const onSubmit: SubmitHandler<IFamilyForm> = (data) =>
-    handleFormSubmission(data)
+  const onSubmit: SubmitHandler<IFamilyForm> = (data) => {
+    handleFormSubmission(data).catch((error: IError) => {
+      console.error(error)
+    })
+  }
+
+  // object type is workaround for SubmitErrorHandler<FieldErrors> throwing a tsc error.
+  const onSubmitErrorHandler = (error: object) => {
+    console.log('onSubmitErrorHandler', error)
+  }
 
   // Child entity handlers
   const onAddNewEntityClick = (entityType: TChildEntity) => {
@@ -376,7 +392,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
         }),
         geography: loadedFamily.geography,
         category: loadedFamily.category,
-        organisation: loadedFamily.organisation,
         corpus: loadedFamily.corpus_import_id
           ? {
               label: loadedFamily.corpus_import_id,
@@ -459,9 +474,9 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
           <SkeletonText mt='4' noOfLines={12} spacing='4' skeletonHeight='2' />
         </Box>
       )}
-      {!canModify(watchOrganisation, userAccess) && (
+      {!canModify(orgName, isSuperUser, userAccess) && (
         <ApiError
-          message={`You do not have permission to edit ${watchOrganisation} document families`}
+          message={`You do not have permission to edit document families in ${corpusTitle} `}
           detail='Please go back to the "Families" page, if you think there has been a mistake please contact the administrator.'
         />
       )}
@@ -475,7 +490,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       )}
       {canLoadForm && (
         <>
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form onSubmit={handleSubmit(onSubmit, onSubmitErrorHandler)}>
             {isLeavingModalOpen && (
               <Modal
                 isOpen={isLeavingModalOpen}
@@ -665,7 +680,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                   )
                 }}
               />
-              {corpus !== null && (
+              {corpusInfo !== null && (
                 <Box position='relative' padding='10'>
                   <Divider />
                   <AbsoluteCenter bg='gray.50' px='4'>
@@ -673,8 +688,8 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                   </AbsoluteCenter>
                 </Box>
               )}
-              {corpus !== null &&
-                corpus?.corpus_type === 'Intl. agreements' && (
+              {corpusInfo !== null &&
+                corpusInfo?.corpus_type === 'Intl. agreements' && (
                   <>
                     <FormControl isRequired>
                       <FormLabel>Author</FormLabel>
@@ -716,8 +731,8 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                     />
                   </>
                 )}
-              {corpus !== null &&
-                corpus?.corpus_type === 'Laws and Policies' && (
+              {corpusInfo !== null &&
+                corpusInfo?.corpus_type === 'Laws and Policies' && (
                   <>
                     <Controller
                       control={control}
@@ -874,7 +889,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 <Flex direction='column' gap={4}>
                   {familyDocuments.map((familyDoc) => (
                     <FamilyDocument
-                      canModify={canModify(watchOrganisation, userAccess)}
+                      canModify={canModify(orgName, isSuperUser, userAccess)}
                       documentId={familyDoc}
                       key={familyDoc}
                       onEditClick={(id) => onEditEntityClick('document', id)}
@@ -886,7 +901,13 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               {loadedFamily && (
                 <Box>
                   <Button
-                    isDisabled={!canModify(watchOrganisation, userAccess)}
+                    isDisabled={
+                      !canModify(
+                        loadedFamily?.organisation,
+                        isSuperUser,
+                        userAccess,
+                      )
+                    }
                     onClick={() => onAddNewEntityClick('document')}
                     rightIcon={
                       familyDocuments.length === 0 ? (
@@ -916,7 +937,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 <Flex direction='column' gap={4}>
                   {familyEvents.map((familyEvent) => (
                     <FamilyEvent
-                      canModify={canModify(watchOrganisation, userAccess)}
+                      canModify={canModify(orgName, isSuperUser, userAccess)}
                       eventId={familyEvent}
                       key={familyEvent}
                       onEditClick={(event) => onEditEntityClick('event', event)}
@@ -928,7 +949,13 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               {loadedFamily && (
                 <Box>
                   <Button
-                    isDisabled={!canModify(watchOrganisation, userAccess)}
+                    isDisabled={
+                      !canModify(
+                        loadedFamily?.organisation,
+                        isSuperUser,
+                        userAccess,
+                      )
+                    }
                     onClick={() => onAddNewEntityClick('event')}
                     rightIcon={
                       familyEvents.length === 0 ? (
@@ -945,11 +972,19 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               )}
             </VStack>
 
-            <ButtonGroup isDisabled={!canModify(watchOrganisation, userAccess)}>
+            <ButtonGroup
+              isDisabled={
+                !canModify(
+                  loadedFamily?.organisation || orgName,
+                  isSuperUser,
+                  userAccess,
+                )
+              }
+            >
               <Button
                 type='submit'
                 colorScheme='blue'
-                onSubmit={handleSubmit(onSubmit)}
+                onSubmit={handleSubmit(onSubmit, onSubmitErrorHandler)}
                 disabled={isSubmitting}
               >
                 {(loadedFamily ? 'Update ' : 'Create new ') + ' Family'}
@@ -968,7 +1003,11 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 <DrawerBody>
                   <DocumentForm
                     familyId={loadedFamily.import_id}
-                    canModify={canModify(watchOrganisation, userAccess)}
+                    canModify={canModify(
+                      loadedFamily?.organisation,
+                      isSuperUser,
+                      userAccess,
+                    )}
                     onSuccess={onDocumentFormSuccess}
                     document={editingDocument}
                   />
@@ -985,7 +1024,11 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 <DrawerBody>
                   <EventForm
                     familyId={loadedFamily.import_id}
-                    canModify={canModify(watchOrganisation, userAccess)}
+                    canModify={canModify(
+                      loadedFamily?.organisation,
+                      isSuperUser,
+                      userAccess,
+                    )}
                     onSuccess={onEventFormSuccess}
                     event={editingEvent}
                   />

@@ -73,12 +73,15 @@ export default function FamilyList() {
   const [familyError, setFamilyError] = useState<string | null | undefined>()
   const [formError, setFormError] = useState<IError | null | undefined>()
 
-  const userAccess = useMemo(() => {
+  const userToken = useMemo(() => {
     const token = localStorage.getItem('token')
-    if (!token) return []
+    if (!token) return null
     const decodedToken = decodeToken(token)
-    return decodedToken?.authorisation
+    return decodedToken
   }, [])
+
+  const userAccess = !userToken ? null : userToken.authorisation
+  const isSuperuser = !userToken ? false : userToken.is_superuser
 
   const renderSortIcon = (key: keyof TFamily) => {
     if (sortControls.key !== key) {
@@ -266,7 +269,9 @@ export default function FamilyList() {
                       </Link>
                     </Tooltip>
                     <DeleteButton
-                      isDisabled={!canModify(family.organisation, userAccess)}
+                      isDisabled={
+                        !canModify(family.organisation, isSuperuser, userAccess)
+                      }
                       entityName='family'
                       entityTitle={family.title}
                       callback={() => handleDeleteClick(family.import_id)}
