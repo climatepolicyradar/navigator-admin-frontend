@@ -15,6 +15,7 @@ export interface IError {
 export interface IDecodedToken {
   sub: string
   email: string
+  org_id: number
   is_superuser: boolean
   authorisation: {
     [key: string]: {
