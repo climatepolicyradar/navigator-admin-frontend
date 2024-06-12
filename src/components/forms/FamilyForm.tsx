@@ -331,7 +331,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   }
 
   const summaryOnChange = (html: string) => {
-    setValue('summary', html)
+    setValue('summary', html, { shouldDirty: true })
   }
 
   // Event handlers
@@ -490,38 +490,38 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       )}
       {canLoadForm && (
         <>
+          {isLeavingModalOpen && (
+            <Modal
+              isOpen={isLeavingModalOpen}
+              onClose={() => setIsLeavingModalOpen(false)}
+            >
+              <ModalOverlay />
+              <ModalContent>
+                <ModalHeader>Are you sure you want to leave?</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>Changes that you made may not be saved.</ModalBody>
+                <ModalFooter>
+                  <Button
+                    colorScheme='gray'
+                    mr={3}
+                    onClick={() => setIsLeavingModalOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    colorScheme='red'
+                    onClick={() => {
+                      blocker.proceed?.()
+                      setIsLeavingModalOpen(false)
+                    }}
+                  >
+                    Leave without saving
+                  </Button>
+                </ModalFooter>
+              </ModalContent>
+            </Modal>
+          )}
           <form onSubmit={handleSubmit(onSubmit, onSubmitErrorHandler)}>
-            {isLeavingModalOpen && (
-              <Modal
-                isOpen={isLeavingModalOpen}
-                onClose={() => setIsLeavingModalOpen(false)}
-              >
-                <ModalOverlay />
-                <ModalContent>
-                  <ModalHeader>Are you sure you want to leave?</ModalHeader>
-                  <ModalCloseButton />
-                  <ModalBody>Changes that you made may not be saved.</ModalBody>
-                  <ModalFooter>
-                    <Button
-                      colorScheme='gray'
-                      mr={3}
-                      onClick={() => setIsLeavingModalOpen(false)}
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      colorScheme='red'
-                      onClick={() => {
-                        blocker.proceed?.()
-                        setIsLeavingModalOpen(false)
-                      }}
-                    >
-                      Leave without saving
-                    </Button>
-                  </ModalFooter>
-                </ModalContent>
-              </Modal>
-            )}
             <VStack gap='4' mb={12} mt={4} align={'stretch'}>
               {formError && <ApiError error={formError} />}
               {loadedFamily && (
