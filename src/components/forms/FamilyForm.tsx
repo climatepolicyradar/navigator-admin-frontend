@@ -331,7 +331,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   }
 
   const summaryOnChange = (html: string) => {
-    setValue('summary', html)
+    setValue('summary', html, { shouldDirty: true })
   }
 
   // Event handlers
