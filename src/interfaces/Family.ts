@@ -25,6 +25,7 @@ interface IFamilyBase {
 export interface IUNFCCCMetadata {
   author: string[]
   author_type: string[]
+  event_type: string[]
 }
 
 export interface ICCLWMetadata {
@@ -34,6 +35,7 @@ export interface ICCLWMetadata {
   keyword: string[]
   framework: string[]
   instrument: string[]
+  event_type: string[]
 }
 
 export interface IUNFCCCFamily extends IFamilyBase {
