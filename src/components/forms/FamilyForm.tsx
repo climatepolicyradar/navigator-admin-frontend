@@ -192,6 +192,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       const metadata = familyMetadata as IUNFCCCMetadata
       if (family.author) metadata.author = [family.author]
       if (family.author_type) metadata.author_type = [family.author_type]
+      metadata.event_type = []
       familyMetadata = metadata
     } else if (corpusInfo?.corpus_type == 'Laws and Policies') {
       const metadata: ICCLWMetadata = {
@@ -202,6 +203,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
         framework: family.framework?.map((framework) => framework.value) || [],
         instrument:
           family.instrument?.map((instrument) => instrument.value) || [],
+        event_type: [],
       }
       familyMetadata = metadata
     }
@@ -1029,6 +1031,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                       isSuperUser,
                       userAccess,
                     )}
+                    taxonomy={taxonomy}
                     onSuccess={onEventFormSuccess}
                     event={editingEvent}
                   />
