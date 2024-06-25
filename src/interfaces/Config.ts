@@ -74,7 +74,4 @@ export interface IConfig {
     types: string[]
     variants: string[]
   }
-  event: {
-    types: string[]
-  }
 }

@@ -85,9 +85,6 @@ const mockConfig = {
     types: ['Type One', 'Type Two'],
     variants: ['Variant One', 'Variant Two'],
   },
-  event: {
-    types: ['Event Type One', 'Event Type Two'],
-  },
 }
 
 const mockUNFCCCFamily: IUNFCCCFamily = {
@@ -112,6 +109,7 @@ const mockUNFCCCFamily: IUNFCCCFamily = {
   metadata: {
     author: ['Author One'],
     author_type: ['Type One'],
+    event_type: [],
   },
 }
 
@@ -141,6 +139,7 @@ const mockCCLWFamily: ICCLWFamily = {
     keyword: ['Keyword One', 'Keyword Two'],
     framework: ['Framework One', 'Framework Two'],
     instrument: ['Instrument One', 'Instrument Two'],
+    event_type: [],
   },
 }
 

@@ -1,7 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { IEvent, IEventFormPost, IError, IEventFormPut } from '@/interfaces'
+import {
+  IEvent,
+  IEventFormPost,
+  IError,
+  IEventFormPut,
+  IConfigTaxonomyCCLW,
+  IConfigTaxonomyUNFCCC,
+} from '@/interfaces'
 import { eventSchema } from '@/schemas/eventSchema'
 import { createEvent, updateEvent } from '@/api/Events'
 
@@ -16,15 +23,14 @@ import {
   useToast,
   Select,
 } from '@chakra-ui/react'
-import useConfig from '@/hooks/useConfig'
 import { ApiError } from '../feedback/ApiError'
-import { FormLoader } from '../feedback/FormLoader'
 import { formatDateISO } from '@/utils/formatDate'
 
 type TProps = {
   familyId: string
   canModify: boolean
   event?: IEvent
+  taxonomy?: IConfigTaxonomyCCLW | IConfigTaxonomyUNFCCC
   onSuccess?: (eventId: string) => void
 }
 
@@ -38,10 +44,10 @@ export const EventForm = ({
   familyId,
   canModify,
   event: loadedEvent,
+  taxonomy,
   onSuccess,
 }: TProps) => {
   const toast = useToast()
-  const { config, loading: configLoading, error: configError } = useConfig()
   const [formError, setFormError] = useState<IError | null | undefined>()
   const {
     register,
@@ -131,8 +137,14 @@ export const EventForm = ({
 
   return (
     <>
-      {configError && <ApiError error={configError} />}
-      {configLoading && <FormLoader />}
+      {!taxonomy && (
+        <ApiError
+          message={'No taxonomy associated with the current family'}
+          detail={
+            'Please go back to the "Families" page, if you think there has been a mistake please contact the administrator.'
+          }
+        />
+      )}
       <form onSubmit={handleSubmit(onSubmit)}>
         <VStack gap='4' mb={12} align={'stretch'}>
           {formError && <ApiError error={formError} />}
@@ -157,7 +169,7 @@ export const EventForm = ({
                   <FormLabel as='legend'>Type</FormLabel>
                   <Select background='white' {...field}>
                     <option value=''>Please select</option>
-                    {config?.event?.types.map((option) => (
+                    {taxonomy?.event_type?.allowed_values.map((option) => (
                       <option key={option} value={option}>
                         {option}
                       </option>
