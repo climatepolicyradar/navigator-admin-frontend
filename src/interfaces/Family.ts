@@ -22,16 +22,16 @@ interface IFamilyBase {
   last_modified: string
 }
 
-export interface IMetadata {
+export interface IMetadataBase {
   event_type: string[]
 }
 
-export interface IUNFCCCMetadata extends IMetadata {
+export interface IUNFCCCMetadata extends IMetadataBase {
   author: string[]
   author_type: string[]
 }
 
-export interface ICCLWMetadata extends IMetadata {
+export interface ICCLWMetadata extends IMetadataBase {
   topic: string[]
   hazard: string[]
   sector: string[]

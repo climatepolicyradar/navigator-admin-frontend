@@ -71,9 +71,6 @@ describe('modifyConfig', () => {
           }, // TODO
         },
       },
-      event: {
-        types: ['type1', 'type2'],
-      },
     }
 
     const expectedLanguagesSorted = [
@@ -114,9 +111,6 @@ describe('modifyConfig', () => {
           author_type: { allow_blanks: false, allowed_values: [] },
           event_type: { allow_blanks: false, allowed_values: [] },
         },
-      },
-      event: {
-        types: [],
       },
     }
 
