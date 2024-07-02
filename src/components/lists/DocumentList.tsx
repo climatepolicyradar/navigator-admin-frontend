@@ -17,6 +17,7 @@ import {
   useToast,
   SkeletonText,
   Badge,
+  Flex,
 } from '@chakra-ui/react'
 import { GoPencil } from 'react-icons/go'
 
@@ -27,6 +28,7 @@ import { sortBy } from '@/utils/sortBy'
 import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from '@chakra-ui/icons'
 import { getStatusColour } from '@/utils/getStatusColour'
 import { ApiError } from '../feedback/ApiError'
+import { formatDate, formatDateTime } from '@/utils/formatDate'
 
 export default function DocumentList() {
   const [sortControls, setSortControls] = useState<{
@@ -129,6 +131,26 @@ export default function DocumentList() {
                     Title {renderSortIcon('title')}
                   </Th>
                   <Th
+                    onClick={() => handleHeaderClick('last_modified')}
+                    cursor='pointer'
+                  >
+                    <Tooltip placement='top' label='Edited within the system'>
+                      <Flex gap={2} align='center'>
+                        Edited {renderSortIcon('last_modified')}
+                      </Flex>
+                    </Tooltip>
+                  </Th>
+                  <Th
+                    onClick={() => handleHeaderClick('created')}
+                    cursor='pointer'
+                  >
+                    <Tooltip placement='top' label='Date added to system'>
+                      <Flex gap={2} align='center'>
+                        Created {renderSortIcon('created')}
+                      </Flex>
+                    </Tooltip>
+                  </Th>
+                  <Th
                     onClick={() => handleHeaderClick('status')}
                     cursor='pointer'
                   >
@@ -158,6 +180,26 @@ export default function DocumentList() {
                     }
                   >
                     <Td>{document.title}</Td>
+                    <Td>
+                      <Tooltip
+                        placement='top'
+                        label={formatDateTime(document.last_modified)}
+                      >
+                        <Flex gap={2} align='center'>
+                          {formatDate(document.last_modified)}
+                        </Flex>
+                      </Tooltip>
+                    </Td>
+                    <Td>
+                      <Tooltip
+                        placement='top'
+                        label={formatDateTime(document.created)}
+                      >
+                        <Flex gap={2} align='center'>
+                          {formatDate(document.created)}
+                        </Flex>
+                      </Tooltip>
+                    </Td>
                     <Td>
                       <Badge
                         colorScheme={getStatusColour(document.status)}
