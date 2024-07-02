@@ -32,6 +32,8 @@ const mockDocument: IDocument = {
   source_url: 'http://example.com/document',
   content_type: 'application/pdf',
   user_language_name: 'Default language',
+  created: '3/1/2021',
+  last_modified: '4/1/2021',
 }
 
 // Tests

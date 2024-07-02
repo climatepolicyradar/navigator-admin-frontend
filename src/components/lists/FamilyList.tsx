@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from 'react'
 import { Link, useLoaderData } from 'react-router-dom'
 import { deleteFamily, getFamilies, TFamilySearchQuery } from '@/api/Families'
 import { IError, TFamily } from '@/interfaces'
-import { formatDate } from '@/utils/formatDate'
+import { formatDate, formatDateTime } from '@/utils/formatDate'
 import {
   Table,
   Thead,
@@ -248,8 +248,27 @@ export default function FamilyList() {
                 <Td>{family.geography}</Td>
                 <Td>{formatDate(family.published_date)}</Td>
                 <Td>{formatDate(family.last_updated_date)}</Td>
-                <Td>{formatDate(family.last_modified)}</Td>
-                <Td>{formatDate(family.created)}</Td>
+                <Td>
+                  <Tooltip
+                    placement='top'
+                    label={formatDateTime(family.last_modified)}
+                  >
+                    <Flex gap={2} align='center'>
+                      {formatDate(family.last_modified)}
+                    </Flex>
+                  </Tooltip>
+                </Td>
+                <Td>
+                  <Tooltip
+                    placement='top'
+                    label={formatDateTime(family.created)}
+                  >
+                    <Flex gap={2} align='center'>
+                      {formatDate(family.created)}
+                    </Flex>
+                  </Tooltip>
+                </Td>
+
                 <Td>
                   <Badge colorScheme={getStatusColour(family.status)} size='sm'>
                     {getStatusAlias(family.status)}

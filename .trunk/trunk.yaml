@@ -20,6 +20,7 @@ lint:
   disabled:
     - hadolint
   enabled:
+    - sort-package-json@2.10.0
     - actionlint@1.6.27
     - checkov@3.2.55
     - eslint@8.57.0
