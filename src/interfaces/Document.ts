@@ -15,8 +15,6 @@ export interface IDocument {
   source_url: string | null
   content_type: string | null
   user_language_name: string | null
-  created: string
-  last_modified: string
 }
 
 export interface IDocumentFormPost {
