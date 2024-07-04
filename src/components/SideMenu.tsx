@@ -23,8 +23,13 @@ import {
   GoSignOut,
   GoComment,
   GoClock,
+  GoLog,
+  GoPeople,
 } from 'react-icons/go'
 import Logout from './Logout'
+import { useMemo } from 'react'
+import { IDecodedToken } from '@/interfaces'
+import { decodeToken } from '@/utils/decodeToken'
 
 const IconLink = ({
   icon,
@@ -59,6 +64,15 @@ export function SideMenu() {
 
   const isCurrentPage = (page: string) =>
     pathname.split('/').reverse()[0] === page
+
+  const userToken = useMemo(() => {
+    const token = localStorage.getItem('token')
+    if (!token) return null
+    const decodedToken: IDecodedToken | null = decodeToken(token)
+    return decodedToken
+  }, [])
+
+  const isSuperUser = !userToken ? false : userToken.is_superuser
 
   return (
     <>
@@ -106,6 +120,24 @@ export function SideMenu() {
                 >
                   Collections
                 </IconLink>
+                {isSuperUser && (
+                  <>
+                    <IconLink
+                      icon={<Icon as={GoLog} mr='2' />}
+                      to='/corpora'
+                      current={isCurrentPage('corpora')}
+                    >
+                      Corpora
+                    </IconLink>
+                    <IconLink
+                      icon={<Icon as={GoPeople} mr='2' />}
+                      to='/users'
+                      current={isCurrentPage('users')}
+                    >
+                      Organisations & Users
+                    </IconLink>
+                  </>
+                )}
                 <IconLink icon={<Icon as={GoClock} mr='2' />}>
                   View audit history
                 </IconLink>
