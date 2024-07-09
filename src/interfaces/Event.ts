@@ -21,3 +21,7 @@ export interface IEventFormPut {
   date: Date
   event_type_value: string
 }
+
+export interface IEventMetadata {
+  event_type: string[]
+}
