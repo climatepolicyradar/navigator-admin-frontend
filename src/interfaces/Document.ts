@@ -34,7 +34,12 @@ export interface IDocumentFormPostModified {
   variant_name?: string | null
   role: string
   type: string
+  metadata: IDocumentMetadata
   title: string
   source_url?: string | null
   user_language_name?: string | null
+}
+
+export interface IDocumentMetadata {
+  role: string[]
 }

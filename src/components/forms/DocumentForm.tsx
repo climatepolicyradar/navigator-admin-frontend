@@ -5,6 +5,7 @@ import {
   IDocument,
   IDocumentFormPost,
   IDocumentFormPostModified,
+  IDocumentMetadata,
   IError,
 } from '@/interfaces'
 import { createDocument, updateDocument } from '@/api/Documents'
@@ -63,8 +64,14 @@ export const DocumentForm = ({
     const convertToModified = (
       data: IDocumentFormPost,
     ): IDocumentFormPostModified => {
+      const metadata: IDocumentMetadata = { role: [] }
+      if (submittedDcumentData.role) {
+        metadata.role = [submittedDcumentData.role]
+      } else metadata.role = []
+
       return {
         ...data,
+        metadata: metadata,
         source_url: submittedDcumentData.source_url || null,
         variant_name: submittedDcumentData.variant_name || null,
         user_language_name:

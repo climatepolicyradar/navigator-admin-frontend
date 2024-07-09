@@ -109,7 +109,6 @@ const mockUNFCCCFamily: IUNFCCCFamily = {
   metadata: {
     author: ['Author One'],
     author_type: ['Type One'],
-    event_type: [],
   },
 }
 
@@ -139,7 +138,6 @@ const mockCCLWFamily: ICCLWFamily = {
     keyword: ['Keyword One', 'Keyword Two'],
     framework: ['Framework One', 'Framework Two'],
     instrument: ['Instrument One', 'Instrument Two'],
-    event_type: [],
   },
 }
 
