@@ -8,6 +8,7 @@ export default function Logout() {
   const handleLogout = () => {
     logout()
     navigate('/', { replace: true })
+    navigate(0)
   }
 
   return (
