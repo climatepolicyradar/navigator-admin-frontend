@@ -76,7 +76,9 @@ export const DocumentForm = ({
       } else metadata.role = []
 
       return {
-        ...data,
+        family_import_id: data.family_import_id,
+        type: data.type,
+        title: data.title,
         metadata: metadata,
         source_url: data.source_url || null,
         variant_name: data.variant_name || null,
@@ -143,7 +145,10 @@ export const DocumentForm = ({
       reset({
         family_import_id: loadedDocument.family_import_id,
         variant_name: loadedDocument.variant_name ?? '',
-        role: loadedDocument.role ?? '',
+        role:
+          'role' in loadedDocument.metadata
+            ? loadedDocument.metadata.role[0]
+            : '',
         type: loadedDocument.type ?? '',
         title: loadedDocument.title,
         source_url: loadedDocument.source_url ?? '',
