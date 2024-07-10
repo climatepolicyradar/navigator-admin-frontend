@@ -11,6 +11,8 @@ import {
   IDocumentFormPostModified,
   IDocumentMetadata,
   IError,
+  IConfigTaxonomyCCLW,
+  IConfigTaxonomyUNFCCC,
 } from '@/interfaces'
 import { createDocument, updateDocument } from '@/api/Documents'
 import { documentSchema } from '@/schemas/documentSchema'
@@ -39,6 +41,7 @@ type TProps = {
   document?: IDocument
   familyId?: string
   canModify?: boolean
+  taxonomy?: IConfigTaxonomyCCLW | IConfigTaxonomyUNFCCC
   onSuccess?: (documentId: string) => void
 }
 
@@ -46,6 +49,7 @@ export const DocumentForm = ({
   document: loadedDocument,
   familyId,
   canModify,
+  taxonomy,
   onSuccess,
 }: TProps) => {
   const { config, loading: configLoading, error: configError } = useConfig()
@@ -60,30 +64,27 @@ export const DocumentForm = ({
   } = useForm({
     resolver: yupResolver(documentSchema),
   })
-  const handleFormSubmission = async (
-    submittedDcumentData: IDocumentFormPost,
-  ) => {
+  const handleFormSubmission = async (formData: IDocumentFormPost) => {
     setFormError(null)
 
     const convertToModified = (
       data: IDocumentFormPost,
     ): IDocumentFormPostModified => {
       const metadata: IDocumentMetadata = { role: [] }
-      if (submittedDcumentData.role) {
-        metadata.role = [submittedDcumentData.role]
+      if (data.role) {
+        metadata.role = [data.role]
       } else metadata.role = []
 
       return {
         ...data,
         metadata: metadata,
-        source_url: submittedDcumentData.source_url || null,
-        variant_name: submittedDcumentData.variant_name || null,
-        user_language_name:
-          submittedDcumentData.user_language_name?.label || null,
+        source_url: data.source_url || null,
+        variant_name: data.variant_name || null,
+        user_language_name: data.user_language_name?.label || null,
       }
     }
 
-    const modifiedDocumentData = convertToModified(submittedDcumentData)
+    const modifiedDocumentData = convertToModified(formData)
 
     if (loadedDocument) {
       return await updateDocument(
@@ -206,7 +207,7 @@ export const DocumentForm = ({
                   <FormLabel as='legend'>Role</FormLabel>
                   <Select background='white' {...field}>
                     <option value=''>Please select</option>
-                    {config?.document?.roles.map((option) => (
+                    {taxonomy?._document?.role?.allowed_values.map((option) => (
                       <option key={option} value={option}>
                         {option}
                       </option>
