@@ -59,7 +59,9 @@ export const FamilyDocument = ({
       <CardBody>
         <Text mb='2'>{document?.title}</Text>
         <HStack divider={<Text>·</Text>} gap={4}>
-          {document?.role && <Text>Role: {document.role}</Text>}
+          {document?.metadata?.role && (
+            <Text>Role: {document.metadata.role}</Text>
+          )}
           {document?.type && <Text>Type: {document.type}</Text>}
           {document?.variant_name && (
             <Text>Variant: {document.variant_name}</Text>
