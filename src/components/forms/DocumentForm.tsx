@@ -2,6 +2,10 @@ import { useEffect, useState } from 'react'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import {
+  BACK_TO_FAMILIES_ERROR_DETAIL,
+  NO_TAXONOMY_ERROR,
+} from '@/constants/errors'
+import {
   IDocument,
   IDocumentFormPost,
   IDocumentFormPostModified,
@@ -72,7 +76,9 @@ export const DocumentForm = ({
       } else metadata.role = []
 
       return {
-        ...data,
+        family_import_id: data.family_import_id,
+        type: data.type,
+        title: data.title,
         metadata: metadata,
         source_url: data.source_url || null,
         variant_name: data.variant_name || null,
@@ -139,7 +145,10 @@ export const DocumentForm = ({
       reset({
         family_import_id: loadedDocument.family_import_id,
         variant_name: loadedDocument.variant_name ?? '',
-        role: loadedDocument.role ?? '',
+        role:
+          'role' in loadedDocument.metadata
+            ? loadedDocument.metadata.role[0]
+            : '',
         type: loadedDocument.type ?? '',
         title: loadedDocument.title,
         source_url: loadedDocument.source_url ?? '',
@@ -171,10 +180,8 @@ export const DocumentForm = ({
       {configLoading && <FormLoader />}
       {!taxonomy && (
         <ApiError
-          message={'No taxonomy associated with the current family'}
-          detail={
-            'Please go back to the "Families" page, if you think there has been a mistake please contact the administrator.'
-          }
+          message={NO_TAXONOMY_ERROR}
+          detail={BACK_TO_FAMILIES_ERROR_DETAIL}
         />
       )}
       <form onSubmit={handleSubmit(onSubmit)}>
