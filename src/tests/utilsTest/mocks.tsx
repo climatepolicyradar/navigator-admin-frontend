@@ -24,62 +24,6 @@ const mockConfig = {
     { value: 'es', label: 'Spanish' },
   ],
   corpora: [],
-  taxonomies: {
-    CCLW: {
-      topic: {
-        allow_any: false,
-        allow_blanks: false,
-        allowed_values: ['Topic One', 'Topic Two'],
-      },
-      hazard: {
-        allow_any: false,
-        allow_blanks: false,
-        allowed_values: ['Hazard One', 'Hazard Two'],
-      },
-      sector: {
-        allow_any: false,
-        allow_blanks: false,
-        allowed_values: ['Sector One', 'Sector Two'],
-      },
-      keyword: {
-        allow_any: false,
-        allow_blanks: false,
-        allowed_values: ['Keyword One', 'Keyword Two'],
-      },
-      framework: {
-        allow_any: false,
-        allow_blanks: false,
-        allowed_values: ['Framework One', 'Framework Two'],
-      },
-      instrument: {
-        allow_any: false,
-        allow_blanks: false,
-        allowed_values: ['Instrument One', 'Instrument Two'],
-      },
-      event_type: {
-        allow_any: false,
-        allow_blanks: false,
-        allowed_values: ['Event One', 'Event Two'],
-      },
-    },
-    UNFCCC: {
-      author: {
-        allow_any: false,
-        allow_blanks: false,
-        allowed_values: ['Author One', 'Author Two'],
-      },
-      author_type: {
-        allow_any: false,
-        allow_blanks: false,
-        allowed_values: ['Type One', 'Type Two'],
-      },
-      event_type: {
-        allow_any: false,
-        allow_blanks: false,
-        allowed_values: ['Event One', 'Event Two'],
-      },
-    },
-  },
   document: {
     roles: ['Role One', 'Role Two'],
     types: ['Type One', 'Type Two'],
@@ -198,6 +142,10 @@ const mockCCLWConfig: IConfig = {
       description: 'UNFCCC Submissions',
       corpus_type: 'CCLW national policies',
       corpus_type_description: 'Laws and Policies',
+      organisation: {
+        name: 'CCLW',
+        id: 1,
+      },
       taxonomy: {
         topic: {
           allow_any: false,
@@ -234,6 +182,13 @@ const mockCCLWConfig: IConfig = {
           allow_blanks: false,
           allowed_values: ['Event One', 'Event Two'],
         },
+        _document: {
+          role: {
+            allow_any: false,
+            allow_blanks: false,
+            allowed_values: ['Role One', 'Role Two'],
+          },
+        },
       },
     },
   ],
@@ -248,6 +203,10 @@ const mockUNFCCCConfig: IConfig = {
       description: 'UNFCCC Submissions',
       corpus_type: 'Intl. agreements',
       corpus_type_description: 'Intl. agreements',
+      organisation: {
+        name: 'UNFCCC',
+        id: 3,
+      },
       taxonomy: {
         author: {
           allow_any: false,
@@ -263,6 +222,13 @@ const mockUNFCCCConfig: IConfig = {
           allow_any: false,
           allow_blanks: false,
           allowed_values: ['Event One', 'Event Two'],
+        },
+        _document: {
+          role: {
+            allow_any: false,
+            allow_blanks: false,
+            allowed_values: ['Role One', 'Role Two'],
+          },
         },
       },
     },
