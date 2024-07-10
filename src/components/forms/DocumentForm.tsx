@@ -2,6 +2,10 @@ import { useEffect, useState } from 'react'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import {
+  BACK_TO_FAMILIES_ERROR_DETAIL,
+  NO_TAXONOMY_ERROR,
+} from '@/constants/errors'
+import {
   IDocument,
   IDocumentFormPost,
   IDocumentFormPostModified,
@@ -168,6 +172,12 @@ export const DocumentForm = ({
       )}
       {configError && <ApiError error={configError} />}
       {configLoading && <FormLoader />}
+      {!taxonomy && (
+        <ApiError
+          message={NO_TAXONOMY_ERROR}
+          detail={BACK_TO_FAMILIES_ERROR_DETAIL}
+        />
+      )}
       <form onSubmit={handleSubmit(onSubmit)}>
         <VStack gap='4' mb={12} align={'stretch'}>
           {formError && <ApiError error={formError} />}
