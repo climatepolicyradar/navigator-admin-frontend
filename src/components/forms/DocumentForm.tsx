@@ -60,30 +60,27 @@ export const DocumentForm = ({
   } = useForm({
     resolver: yupResolver(documentSchema),
   })
-  const handleFormSubmission = async (
-    submittedDcumentData: IDocumentFormPost,
-  ) => {
+  const handleFormSubmission = async (formData: IDocumentFormPost) => {
     setFormError(null)
 
     const convertToModified = (
       data: IDocumentFormPost,
     ): IDocumentFormPostModified => {
       const metadata: IDocumentMetadata = { role: [] }
-      if (submittedDcumentData.role) {
-        metadata.role = [submittedDcumentData.role]
+      if (data.role) {
+        metadata.role = [data.role]
       } else metadata.role = []
 
       return {
         ...data,
         metadata: metadata,
-        source_url: submittedDcumentData.source_url || null,
-        variant_name: submittedDcumentData.variant_name || null,
-        user_language_name:
-          submittedDcumentData.user_language_name?.label || null,
+        source_url: data.source_url || null,
+        variant_name: data.variant_name || null,
+        user_language_name: data.user_language_name?.label || null,
       }
     }
 
-    const modifiedDocumentData = convertToModified(submittedDcumentData)
+    const modifiedDocumentData = convertToModified(formData)
 
     if (loadedDocument) {
       return await updateDocument(
