@@ -1008,6 +1008,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                       isSuperUser,
                       userAccess,
                     )}
+                    taxonomy={taxonomy}
                     onSuccess={onDocumentFormSuccess}
                     document={editingDocument}
                   />

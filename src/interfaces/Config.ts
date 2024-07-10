@@ -41,12 +41,18 @@ export interface IConfigTaxonomyCCLW {
   framework: IConfigMeta
   instrument: IConfigMeta
   event_type: IConfigMeta
+  _document: IConfigDocumentMetadata
 }
 
 export interface IConfigTaxonomyUNFCCC {
   author: IConfigMeta
   author_type: IConfigMeta
   event_type: IConfigMeta
+  _document: IConfigDocumentMetadata
+}
+
+export interface IConfigDocumentMetadata {
+  role: IConfigMeta
 }
 
 export interface IConfigCorpora {

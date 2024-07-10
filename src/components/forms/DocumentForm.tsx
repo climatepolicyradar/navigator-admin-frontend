@@ -7,6 +7,8 @@ import {
   IDocumentFormPostModified,
   IDocumentMetadata,
   IError,
+  IConfigTaxonomyCCLW,
+  IConfigTaxonomyUNFCCC,
 } from '@/interfaces'
 import { createDocument, updateDocument } from '@/api/Documents'
 import { documentSchema } from '@/schemas/documentSchema'
@@ -35,6 +37,7 @@ type TProps = {
   document?: IDocument
   familyId?: string
   canModify?: boolean
+  taxonomy?: IConfigTaxonomyCCLW | IConfigTaxonomyUNFCCC
   onSuccess?: (documentId: string) => void
 }
 
@@ -42,6 +45,7 @@ export const DocumentForm = ({
   document: loadedDocument,
   familyId,
   canModify,
+  taxonomy,
   onSuccess,
 }: TProps) => {
   const { config, loading: configLoading, error: configError } = useConfig()
@@ -168,6 +172,14 @@ export const DocumentForm = ({
       )}
       {configError && <ApiError error={configError} />}
       {configLoading && <FormLoader />}
+      {!taxonomy && (
+        <ApiError
+          message={'No taxonomy associated with the current family'}
+          detail={
+            'Please go back to the "Families" page, if you think there has been a mistake please contact the administrator.'
+          }
+        />
+      )}
       <form onSubmit={handleSubmit(onSubmit)}>
         <VStack gap='4' mb={12} align={'stretch'}>
           {formError && <ApiError error={formError} />}
@@ -196,7 +208,7 @@ export const DocumentForm = ({
                   <FormLabel as='legend'>Role</FormLabel>
                   <Select background='white' {...field}>
                     <option value=''>Please select</option>
-                    {config?.document?.roles.map((option) => (
+                    {taxonomy?._document?.role?.allowed_values.map((option) => (
                       <option key={option} value={option}>
                         {option}
                       </option>
