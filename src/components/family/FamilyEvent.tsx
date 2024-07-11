@@ -64,7 +64,11 @@ export const FamilyEvent = ({
         <CardFooter>
           <Stack direction='row' spacing={4}>
             {!!onEditClick && (
-              <Button size='sm' onClick={handleEditClick}>
+              <Button
+                size='sm'
+                onClick={handleEditClick}
+                data-test-id={`edit-event-${eventId}`}
+              >
                 Edit
               </Button>
             )}
