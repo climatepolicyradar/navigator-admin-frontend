@@ -40,7 +40,7 @@ type TProps = {
   onEditEntityClick: (entityType: TChildEntity, entityId: IEvent) => void
   onAddNewEntityClick: (entityType: TChildEntity) => void
   setFamilyEvents: (events: string[]) => void
-  loadedFamily: TFamily | undefined
+  loadedFamily?: TFamily
 }
 
 export const FamilyEventList = ({

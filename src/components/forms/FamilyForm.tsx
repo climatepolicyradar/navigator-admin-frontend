@@ -66,13 +66,12 @@ import { familySchema } from '@/schemas/familySchema'
 import { DocumentForm } from './DocumentForm'
 import { FamilyDocument } from '../family/FamilyDocument'
 import { ApiError } from '../feedback/ApiError'
-import { EventForm } from './EventForm'
-import { formatDate } from '@/utils/formatDate'
 import { WYSIWYG } from '../form-components/WYSIWYG'
 import { decodeToken } from '@/utils/decodeToken'
 import { chakraStylesSelect } from '@/styles/chakra'
 import { WarningIcon } from '@chakra-ui/icons'
 import { FamilyEventList } from '../lists/FamilyEventList'
+import { EventEditDrawer } from '../EventEditDrawer'
 
 type TMultiSelect = {
   value: string
@@ -331,13 +330,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
 
   const summaryOnChange = (html: string) => {
     setValue('summary', html, { shouldDirty: true })
-  }
-
-  // Event handlers
-  const onEventFormSuccess = (eventId: string) => {
-    onClose()
-    if (familyEvents.includes(eventId)) setFamilyEvents([...familyEvents])
-    else setFamilyEvents([...familyEvents, eventId])
   }
 
   const canLoadForm =
@@ -948,26 +940,15 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               </DrawerContent>
             )}
             {editingEntity === 'event' && loadedFamily && (
-              <DrawerContent>
-                <DrawerHeader borderBottomWidth='1px'>
-                  {editingEvent
-                    ? `Edit: ${editingEvent.event_title}, on ${formatDate(editingEvent.date)}`
-                    : 'Add new Event'}
-                </DrawerHeader>
-                <DrawerBody>
-                  <EventForm
-                    familyId={loadedFamily.import_id}
-                    canModify={canModify(
-                      loadedFamily?.organisation,
-                      isSuperUser,
-                      userAccess,
-                    )}
-                    taxonomy={taxonomy}
-                    onSuccess={onEventFormSuccess}
-                    event={editingEvent}
-                  />
-                </DrawerBody>
-              </DrawerContent>
+              <EventEditDrawer
+                editingEvent={editingEvent}
+                loadedFamilyId={loadedFamily.import_id}
+                organisation={loadedFamily.organisation}
+                canModify={canModify}
+                isSuperUser={isSuperUser}
+                userAccess={userAccess}
+                taxonomy={taxonomy}
+              />
             )}
           </Drawer>
         </>
