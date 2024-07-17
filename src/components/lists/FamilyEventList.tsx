@@ -99,7 +99,7 @@ export const FamilyEventList = ({
           Please create the family first before attempting to add events
         </Text>
       )}
-      {familyEvents.length && (
+      {familyEvents.length > 0 && (
         <Flex direction='column' gap={4}>
           {familyEvents.map((familyEvent) => (
             <FamilyEvent
