@@ -332,6 +332,13 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     setValue('summary', html, { shouldDirty: true })
   }
 
+  // Event handlers
+  const onEventFormSuccess = (eventId: string) => {
+    onClose()
+    if (familyEvents.includes(eventId)) setFamilyEvents([...familyEvents])
+    else setFamilyEvents([...familyEvents, eventId])
+  }
+
   const canLoadForm =
     !configLoading && !collectionsLoading && !configError && !collectionsError
 
@@ -895,7 +902,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 loadedFamily={loadedFamily}
               />
             </VStack>
-
             <ButtonGroup
               isDisabled={
                 !canModify(
@@ -948,6 +954,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 isSuperUser={isSuperUser}
                 userAccess={userAccess}
                 taxonomy={taxonomy}
+                onSuccess={onEventFormSuccess}
               />
             )}
           </Drawer>

@@ -33,6 +33,7 @@ type TProps = {
         }
       }
   taxonomy?: IConfigTaxonomyCCLW | IConfigTaxonomyUNFCCC
+  onSuccess?: (eventId: string) => void
 }
 
 export const EventEditDrawer = ({
@@ -43,6 +44,7 @@ export const EventEditDrawer = ({
   isSuperUser,
   userAccess,
   taxonomy,
+  onSuccess,
 }: TProps) => {
   return (
     <>
@@ -58,6 +60,7 @@ export const EventEditDrawer = ({
             canModify={canModify(organisation, isSuperUser, userAccess)}
             taxonomy={taxonomy}
             event={editingEvent}
+            onSuccess={onSuccess}
           />
         </DrawerBody>
       </DrawerContent>

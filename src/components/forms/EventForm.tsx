@@ -35,6 +35,7 @@ type TProps = {
   canModify: boolean
   event?: IEvent
   taxonomy?: IConfigTaxonomyCCLW | IConfigTaxonomyUNFCCC
+  onSuccess?: (eventId: string) => void
 }
 
 type TEventForm = {
@@ -48,6 +49,7 @@ export const EventForm = ({
   canModify,
   event: loadedEvent,
   taxonomy,
+  onSuccess,
 }: TProps) => {
   const toast = useToast()
   const [formError, setFormError] = useState<IError | null | undefined>()
@@ -74,13 +76,14 @@ export const EventForm = ({
       }
 
       return await updateEvent(eventPayload, loadedEvent.import_id)
-        .then(() => {
+        .then((data) => {
           toast.closeAll()
           toast({
             title: 'Event has been successfully updated',
             status: 'success',
             position: 'top',
           })
+          onSuccess && onSuccess(data.response.import_id)
         })
         .catch((error: IError) => {
           setFormError(error)
@@ -101,13 +104,14 @@ export const EventForm = ({
     }
 
     return await createEvent(eventPayload)
-      .then(() => {
+      .then((data) => {
         toast.closeAll()
         toast({
           title: 'Event has been successfully created',
           status: 'success',
           position: 'top',
         })
+        onSuccess && onSuccess(data.response)
       })
       .catch((error: IError) => {
         setFormError(error)
