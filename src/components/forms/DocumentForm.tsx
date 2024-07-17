@@ -70,10 +70,13 @@ export const DocumentForm = ({
     const convertToModified = (
       data: IDocumentFormPost,
     ): IDocumentFormPostModified => {
-      const metadata: IDocumentMetadata = { role: [] }
+      const metadata: IDocumentMetadata = { role: [], type: [] }
       if (data.role) {
         metadata.role = [data.role]
-      } else metadata.role = []
+      }
+      if (data.type) {
+        metadata.type = [data.type]
+      }
 
       return {
         family_import_id: data.family_import_id,
@@ -145,10 +148,7 @@ export const DocumentForm = ({
       reset({
         family_import_id: loadedDocument.family_import_id,
         variant_name: loadedDocument.variant_name ?? '',
-        role:
-          'role' in loadedDocument.metadata
-            ? loadedDocument.metadata.role[0]
-            : '',
+        role: loadedDocument?.metadata?.role[0] ?? '',
         type: loadedDocument.type ?? '',
         title: loadedDocument.title,
         source_url: loadedDocument.source_url ?? '',

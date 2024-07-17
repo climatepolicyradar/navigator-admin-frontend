@@ -41,4 +41,5 @@ export interface IDocumentFormPostModified {
 
 export interface IDocumentMetadata {
   role: string[]
+  type: string[]
 }
