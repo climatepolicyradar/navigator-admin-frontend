@@ -78,8 +78,6 @@ export const DocumentForm = ({
         metadata.type = [data.type]
       }
 
-      console.log(metadata)
-
       return {
         family_import_id: data.family_import_id,
         type: data.type,
