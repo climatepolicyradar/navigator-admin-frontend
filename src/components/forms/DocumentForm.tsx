@@ -148,10 +148,7 @@ export const DocumentForm = ({
       reset({
         family_import_id: loadedDocument.family_import_id,
         variant_name: loadedDocument.variant_name ?? '',
-        role:
-          'role' in loadedDocument.metadata
-            ? loadedDocument.metadata.role[0]
-            : '',
+        role: loadedDocument?.metadata?.role[0] ?? '',
         type: loadedDocument.type ?? '',
         title: loadedDocument.title,
         source_url: loadedDocument.source_url ?? '',
