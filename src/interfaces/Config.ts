@@ -53,6 +53,7 @@ export interface IConfigTaxonomyUNFCCC {
 
 export interface IConfigDocumentMetadata {
   role: IConfigMeta
+  type: IConfigMeta
 }
 export interface IConfigOrganisationMetadata {
   name: string

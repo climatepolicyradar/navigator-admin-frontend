@@ -188,6 +188,11 @@ const mockCCLWConfig: IConfig = {
             allow_blanks: false,
             allowed_values: ['Role One', 'Role Two'],
           },
+          type: {
+            allow_any: false,
+            allow_blanks: false,
+            allowed_values: ['Type One', 'Type Two'],
+          },
         },
       },
     },
@@ -228,6 +233,11 @@ const mockUNFCCCConfig: IConfig = {
             allow_any: false,
             allow_blanks: false,
             allowed_values: ['Role One', 'Role Two'],
+          },
+          type: {
+            allow_any: false,
+            allow_blanks: false,
+            allowed_values: ['Type One', 'Type Two'],
           },
         },
       },

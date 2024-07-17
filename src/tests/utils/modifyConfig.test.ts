@@ -72,6 +72,10 @@ describe('modifyConfig', () => {
                 allow_blanks: false,
                 allowed_values: ['role1', 'role2'],
               },
+              type: {
+                allow_blanks: false,
+                allowed_values: ['type1', 'type2'],
+              },
             },
           },
         },
@@ -102,6 +106,10 @@ describe('modifyConfig', () => {
               role: {
                 allow_blanks: false,
                 allowed_values: ['role1', 'role2'],
+              },
+              type: {
+                allow_blanks: false,
+                allowed_values: ['type1', 'type2'],
               },
             },
           },

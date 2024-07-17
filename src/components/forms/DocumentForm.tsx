@@ -149,7 +149,7 @@ export const DocumentForm = ({
         family_import_id: loadedDocument.family_import_id,
         variant_name: loadedDocument.variant_name ?? '',
         role: loadedDocument?.metadata?.role[0] ?? '',
-        type: loadedDocument.type ?? '',
+        type: loadedDocument?.metadata?.type[0] ?? '',
         title: loadedDocument.title,
         source_url: loadedDocument.source_url ?? '',
         user_language_name: loadedDocument.user_language_name
@@ -232,7 +232,7 @@ export const DocumentForm = ({
                   <FormLabel as='legend'>Type</FormLabel>
                   <Select background='white' {...field}>
                     <option value=''>Please select</option>
-                    {config?.document?.types.map((option) => (
+                    {taxonomy?._document?.type?.allowed_values.map((option) => (
                       <option key={option} value={option}>
                         {option}
                       </option>
