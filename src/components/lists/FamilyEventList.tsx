@@ -1,7 +1,8 @@
-import { Flex } from '@chakra-ui/react'
+import { Flex, useToast } from '@chakra-ui/react'
 import { FamilyEvent } from '../family/FamilyEvent'
-import { IEvent } from '@/interfaces'
+import { IError, IEvent } from '@/interfaces'
 import { TChildEntity } from '../forms/FamilyForm'
+import { deleteEvent } from '@/api/Events'
 
 type TProps = {
   familyEvents: string[]
@@ -28,7 +29,7 @@ type TProps = {
         }
       }
   onEditEntityClick: (entityType: TChildEntity, entityId: IEvent) => void
-  onEventDeleteClick: (eventId: string) => void
+  setFamilyEvents: (events: string[]) => void
 }
 
 export const FamilyEventList = ({
@@ -38,8 +39,40 @@ export const FamilyEventList = ({
   isSuperUser,
   userAccess,
   onEditEntityClick,
-  onEventDeleteClick,
+  setFamilyEvents,
 }: TProps) => {
+  const toast = useToast()
+
+  const onEventDeleteClick = async (eventId: string) => {
+    toast({
+      title: 'Event deletion in progress',
+      status: 'info',
+      position: 'top',
+    })
+    await deleteEvent(eventId)
+      .then(() => {
+        toast({
+          title: 'Document has been successful deleted',
+          status: 'success',
+          position: 'top',
+        })
+        const index = familyEvents.indexOf(eventId)
+        if (index > -1) {
+          const newEvents = [...familyEvents]
+          newEvents.splice(index, 1)
+          setFamilyEvents(newEvents)
+        }
+      })
+      .catch((error: IError) => {
+        toast({
+          title: 'Event has not been deleted',
+          description: error.message,
+          status: 'error',
+          position: 'top',
+        })
+      })
+  }
+
   return (
     <>
       {familyEvents.length && (

@@ -66,7 +66,6 @@ import { familySchema } from '@/schemas/familySchema'
 import { DocumentForm } from './DocumentForm'
 import { FamilyDocument } from '../family/FamilyDocument'
 import { ApiError } from '../feedback/ApiError'
-import { deleteEvent } from '@/api/Events'
 import { EventForm } from './EventForm'
 import { formatDate } from '@/utils/formatDate'
 import { WYSIWYG } from '../form-components/WYSIWYG'
@@ -339,36 +338,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     onClose()
     if (familyEvents.includes(eventId)) setFamilyEvents([...familyEvents])
     else setFamilyEvents([...familyEvents, eventId])
-  }
-
-  const onEventDeleteClick = async (eventId: string) => {
-    toast({
-      title: 'Event deletion in progress',
-      status: 'info',
-      position: 'top',
-    })
-    await deleteEvent(eventId)
-      .then(() => {
-        toast({
-          title: 'Document has been successful deleted',
-          status: 'success',
-          position: 'top',
-        })
-        const index = familyEvents.indexOf(eventId)
-        if (index > -1) {
-          const newEvents = [...familyEvents]
-          newEvents.splice(index, 1)
-          setFamilyEvents(newEvents)
-        }
-      })
-      .catch((error: IError) => {
-        toast({
-          title: 'Event has not been deleted',
-          description: error.message,
-          status: 'error',
-          position: 'top',
-        })
-      })
   }
 
   const canLoadForm =
@@ -940,7 +909,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 isSuperUser={isSuperUser}
                 userAccess={userAccess}
                 onEditEntityClick={onEditEntityClick}
-                onEventDeleteClick={onEventDeleteClick}
+                setFamilyEvents={setFamilyEvents}
               />
               {loadedFamily && (
                 <Box>
