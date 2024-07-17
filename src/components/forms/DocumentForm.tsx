@@ -70,10 +70,15 @@ export const DocumentForm = ({
     const convertToModified = (
       data: IDocumentFormPost,
     ): IDocumentFormPostModified => {
-      const metadata: IDocumentMetadata = { role: [] }
+      const metadata: IDocumentMetadata = { role: [], type: [] }
       if (data.role) {
         metadata.role = [data.role]
-      } else metadata.role = []
+      }
+      if (data.type) {
+        metadata.type = [data.type]
+      }
+
+      console.log(metadata)
 
       return {
         family_import_id: data.family_import_id,

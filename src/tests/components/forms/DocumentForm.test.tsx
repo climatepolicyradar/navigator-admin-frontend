@@ -23,7 +23,7 @@ const mockDocument: IDocument = {
   variant_name: 'Variant Name',
   status: 'Active',
   type: 'PDF',
-  metadata: { role: ['Editor'] },
+  metadata: { role: ['Editor'], type: ['PDF'] },
   slug: 'document-slug',
   physical_id: 101,
   title: 'Sample Document Title',
