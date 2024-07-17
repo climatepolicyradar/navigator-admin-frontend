@@ -891,17 +891,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                   </Button>
                 </Box>
               )}
-              <Box position='relative' padding='10'>
-                <Divider />
-                <AbsoluteCenter bg='gray.50' px='4'>
-                  Events
-                </AbsoluteCenter>
-              </Box>
-              {!loadedFamily && (
-                <Text>
-                  Please create the family first before attempting to add events
-                </Text>
-              )}
               <FamilyEventList
                 familyEvents={familyEvents}
                 canModify={canModify}
@@ -909,32 +898,10 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 isSuperUser={isSuperUser}
                 userAccess={userAccess}
                 onEditEntityClick={onEditEntityClick}
+                onAddNewEntityClick={onAddNewEntityClick}
                 setFamilyEvents={setFamilyEvents}
+                loadedFamily={loadedFamily}
               />
-              {loadedFamily && (
-                <Box>
-                  <Button
-                    isDisabled={
-                      !canModify(
-                        loadedFamily?.organisation,
-                        isSuperUser,
-                        userAccess,
-                      )
-                    }
-                    onClick={() => onAddNewEntityClick('event')}
-                    rightIcon={
-                      familyEvents.length === 0 ? (
-                        <WarningIcon
-                          color='red.500'
-                          data-test-id='warning-icon-event'
-                        />
-                      ) : undefined
-                    }
-                  >
-                    Add new Event
-                  </Button>
-                </Box>
-              )}
             </VStack>
 
             <ButtonGroup

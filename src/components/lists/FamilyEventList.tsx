@@ -1,8 +1,17 @@
-import { Flex, useToast } from '@chakra-ui/react'
+import {
+  AbsoluteCenter,
+  Box,
+  Divider,
+  Flex,
+  useToast,
+  Text,
+  Button,
+} from '@chakra-ui/react'
 import { FamilyEvent } from '../family/FamilyEvent'
-import { IError, IEvent } from '@/interfaces'
+import { IError, IEvent, TFamily } from '@/interfaces'
 import { TChildEntity } from '../forms/FamilyForm'
 import { deleteEvent } from '@/api/Events'
+import { WarningIcon } from '@chakra-ui/icons'
 
 type TProps = {
   familyEvents: string[]
@@ -29,7 +38,9 @@ type TProps = {
         }
       }
   onEditEntityClick: (entityType: TChildEntity, entityId: IEvent) => void
+  onAddNewEntityClick: (entityType: TChildEntity) => void
   setFamilyEvents: (events: string[]) => void
+  loadedFamily: TFamily | undefined
 }
 
 export const FamilyEventList = ({
@@ -39,7 +50,9 @@ export const FamilyEventList = ({
   isSuperUser,
   userAccess,
   onEditEntityClick,
+  onAddNewEntityClick,
   setFamilyEvents,
+  loadedFamily,
 }: TProps) => {
   const toast = useToast()
 
@@ -75,6 +88,17 @@ export const FamilyEventList = ({
 
   return (
     <>
+      <Box position='relative' padding='10'>
+        <Divider />
+        <AbsoluteCenter bg='gray.50' px='4'>
+          Events
+        </AbsoluteCenter>
+      </Box>
+      {!loadedFamily && (
+        <Text>
+          Please create the family first before attempting to add events
+        </Text>
+      )}
       {familyEvents.length && (
         <Flex direction='column' gap={4}>
           {familyEvents.map((familyEvent) => (
@@ -87,6 +111,26 @@ export const FamilyEventList = ({
             />
           ))}
         </Flex>
+      )}
+      {loadedFamily && (
+        <Box>
+          <Button
+            isDisabled={
+              !canModify(loadedFamily?.organisation, isSuperUser, userAccess)
+            }
+            onClick={() => onAddNewEntityClick('event')}
+            rightIcon={
+              familyEvents.length === 0 ? (
+                <WarningIcon
+                  color='red.500'
+                  data-test-id='warning-icon-event'
+                />
+              ) : undefined
+            }
+          >
+            Add new Event
+          </Button>
+        </Box>
       )}
     </>
   )

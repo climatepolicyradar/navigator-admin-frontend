@@ -1,6 +1,5 @@
-import { configure, screen } from '@testing-library/react'
+import { configure, screen, render, cleanup } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import { render, cleanup } from '@testing-library/react'
 import {
   configMock,
   mockDocument,
