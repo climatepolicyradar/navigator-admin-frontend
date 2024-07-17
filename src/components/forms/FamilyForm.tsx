@@ -66,7 +66,6 @@ import { familySchema } from '@/schemas/familySchema'
 import { DocumentForm } from './DocumentForm'
 import { FamilyDocument } from '../family/FamilyDocument'
 import { ApiError } from '../feedback/ApiError'
-import { FamilyEvent } from '../family/FamilyEvent'
 import { deleteEvent } from '@/api/Events'
 import { EventForm } from './EventForm'
 import { formatDate } from '@/utils/formatDate'
@@ -74,6 +73,7 @@ import { WYSIWYG } from '../form-components/WYSIWYG'
 import { decodeToken } from '@/utils/decodeToken'
 import { chakraStylesSelect } from '@/styles/chakra'
 import { WarningIcon } from '@chakra-ui/icons'
+import { FamilyEventList } from '../lists/FamilyEventList'
 
 type TMultiSelect = {
   value: string
@@ -97,7 +97,7 @@ interface IFamilyForm {
   instrument?: TMultiSelect[]
 }
 
-type TChildEntity = 'document' | 'event'
+export type TChildEntity = 'document' | 'event'
 
 type TProps = {
   family?: TFamily
@@ -933,19 +933,15 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                   Please create the family first before attempting to add events
                 </Text>
               )}
-              {familyEvents.length && (
-                <Flex direction='column' gap={4}>
-                  {familyEvents.map((familyEvent) => (
-                    <FamilyEvent
-                      canModify={canModify(orgName, isSuperUser, userAccess)}
-                      eventId={familyEvent}
-                      key={familyEvent}
-                      onEditClick={(event) => onEditEntityClick('event', event)}
-                      onDeleteClick={onEventDeleteClick}
-                    />
-                  ))}
-                </Flex>
-              )}
+              <FamilyEventList
+                familyEvents={familyEvents}
+                canModify={canModify}
+                orgName={orgName}
+                isSuperUser={isSuperUser}
+                userAccess={userAccess}
+                onEditEntityClick={onEditEntityClick}
+                onEventDeleteClick={onEventDeleteClick}
+              />
               {loadedFamily && (
                 <Box>
                   <Button

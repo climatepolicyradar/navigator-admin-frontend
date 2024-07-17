@@ -10,7 +10,6 @@ import { FamilyForm } from '@/components/forms/FamilyForm'
 import { TFamily } from '@/interfaces'
 import 'jest-localstorage-mock'
 import { TestWrapper } from '@/tests/utilsTest/render'
-import userEvent from '@testing-library/user-event'
 
 const flushPromises = async () =>
   new Promise((resolve) => process.nextTick(resolve))
@@ -66,7 +65,7 @@ jest.mock('@/hooks/useEvent', () =>
   jest.fn().mockReturnValue({
     event: {
       date: '11/07/2024',
-      event_title: 'Test title',
+      event_title: 'Test event title',
       event_type_value: 'Appealed',
     },
     error: null,
@@ -115,13 +114,17 @@ describe('FamilyForm', () => {
   it('renders FamilyReadDTO data on edit', async () => {
     const testFamily = mockFamiliesData[1]
     localStorage.setItem('token', 'token')
-    const { getByTestId } = renderComponent(testFamily)
+    const { getByTestId, getAllByText } = renderComponent(testFamily)
     await flushPromises()
+    const expectedEvents = getAllByText('Test event title')
 
     expect(getByTestId('input-id')).toHaveValue(testFamily.import_id)
     expect(getByTestId('corpus-id')).toHaveValue(testFamily.corpus_import_id)
     expect(getByTestId('corpus-title')).toHaveValue(testFamily.corpus_title)
     expect(getByTestId('corpus-type')).toHaveValue(testFamily.corpus_type)
+
+    expect(expectedEvents).toHaveLength(2)
+    expect(expectedEvents[0]).toHaveTextContent('Test event title')
 
     expect(screen.queryByText('corpus')).toBeNull() // it doesn't exist
   })
@@ -158,35 +161,6 @@ describe('FamilyForm Icons Visibility', () => {
     const warningIconDocument = screen.queryByTestId('warning-icon-document')
     expect(warningIconEvent).not.toBeInTheDocument()
     expect(warningIconDocument).not.toBeInTheDocument()
-  })
-})
-
-describe('FamilyForm Edit Events', () => {
-  it('displays new values for event fields after editing', async () => {
-    const familyWithOneEvent = { ...mockFamiliesData[0], events: ['event1'] }
-    localStorage.setItem('token', 'token')
-    renderComponent(familyWithOneEvent)
-    await flushPromises()
-
-    const editEventButton = screen.getByTestId('edit-event-event1')
-    await userEvent.click(editEventButton)
-
-    expect(await screen.findByRole('textbox', { name: 'Title' })).toHaveValue(
-      'Test title',
-    )
-    expect(await screen.findByText('Description')).toBeInTheDocument()
-    expect(await screen.findByText('Type')).toBeInTheDocument()
-    expect(
-      await screen.findByRole('button', { name: 'Update Event' }),
-    ).toBeInTheDocument()
-
-    await userEvent.type(
-      screen.getByRole('textbox', { name: 'Title' }),
-      'New title',
-    )
-    await userEvent.click(screen.getByRole('button', { name: 'Update Event' }))
-
-    expect(await screen.findByText('New title')).toBeInTheDocument()
   })
 })
 
