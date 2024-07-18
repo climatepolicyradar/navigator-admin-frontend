@@ -1,6 +1,5 @@
-import { configure, screen } from '@testing-library/react'
+import { configure, screen, render, cleanup } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import { render, cleanup } from '@testing-library/react'
 import {
   configMock,
   mockDocument,
@@ -63,7 +62,11 @@ jest.mock('@/hooks/useDocument', () =>
 
 jest.mock('@/hooks/useEvent', () =>
   jest.fn().mockReturnValue({
-    event: {},
+    event: {
+      date: '11/07/2024',
+      event_title: 'Test event title',
+      event_type_value: 'Appealed',
+    },
     error: null,
     loading: false,
   }),
@@ -110,13 +113,17 @@ describe('FamilyForm', () => {
   it('renders FamilyReadDTO data on edit', async () => {
     const testFamily = mockFamiliesData[1]
     localStorage.setItem('token', 'token')
-    const { getByTestId } = renderComponent(testFamily)
+    const { getByTestId, getAllByText } = renderComponent(testFamily)
     await flushPromises()
+    const expectedEvents = getAllByText('Test event title')
 
     expect(getByTestId('input-id')).toHaveValue(testFamily.import_id)
     expect(getByTestId('corpus-id')).toHaveValue(testFamily.corpus_import_id)
     expect(getByTestId('corpus-title')).toHaveValue(testFamily.corpus_title)
     expect(getByTestId('corpus-type')).toHaveValue(testFamily.corpus_type)
+
+    expect(expectedEvents).toHaveLength(2)
+    expect(expectedEvents[0]).toHaveTextContent('Test event title')
 
     expect(screen.queryByText('corpus')).toBeNull() // it doesn't exist
   })

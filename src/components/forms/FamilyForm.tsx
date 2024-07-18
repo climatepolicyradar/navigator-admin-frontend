@@ -66,14 +66,12 @@ import { familySchema } from '@/schemas/familySchema'
 import { DocumentForm } from './DocumentForm'
 import { FamilyDocument } from '../family/FamilyDocument'
 import { ApiError } from '../feedback/ApiError'
-import { FamilyEvent } from '../family/FamilyEvent'
-import { deleteEvent } from '@/api/Events'
-import { EventForm } from './EventForm'
-import { formatDate } from '@/utils/formatDate'
 import { WYSIWYG } from '../form-components/WYSIWYG'
 import { decodeToken } from '@/utils/decodeToken'
 import { chakraStylesSelect } from '@/styles/chakra'
 import { WarningIcon } from '@chakra-ui/icons'
+import { FamilyEventList } from '../lists/FamilyEventList'
+import { EventEditDrawer } from '../drawers/EventEditDrawer'
 
 type TMultiSelect = {
   value: string
@@ -97,7 +95,7 @@ interface IFamilyForm {
   instrument?: TMultiSelect[]
 }
 
-type TChildEntity = 'document' | 'event'
+export type TChildEntity = 'document' | 'event'
 
 type TProps = {
   family?: TFamily
@@ -339,36 +337,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     onClose()
     if (familyEvents.includes(eventId)) setFamilyEvents([...familyEvents])
     else setFamilyEvents([...familyEvents, eventId])
-  }
-
-  const onEventDeleteClick = async (eventId: string) => {
-    toast({
-      title: 'Event deletion in progress',
-      status: 'info',
-      position: 'top',
-    })
-    await deleteEvent(eventId)
-      .then(() => {
-        toast({
-          title: 'Document has been successful deleted',
-          status: 'success',
-          position: 'top',
-        })
-        const index = familyEvents.indexOf(eventId)
-        if (index > -1) {
-          const newEvents = [...familyEvents]
-          newEvents.splice(index, 1)
-          setFamilyEvents(newEvents)
-        }
-      })
-      .catch((error: IError) => {
-        toast({
-          title: 'Event has not been deleted',
-          description: error.message,
-          status: 'error',
-          position: 'top',
-        })
-      })
   }
 
   const canLoadForm =
@@ -922,56 +890,15 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                   </Button>
                 </Box>
               )}
-              <Box position='relative' padding='10'>
-                <Divider />
-                <AbsoluteCenter bg='gray.50' px='4'>
-                  Events
-                </AbsoluteCenter>
-              </Box>
-              {!loadedFamily && (
-                <Text>
-                  Please create the family first before attempting to add events
-                </Text>
-              )}
-              {familyEvents.length && (
-                <Flex direction='column' gap={4}>
-                  {familyEvents.map((familyEvent) => (
-                    <FamilyEvent
-                      canModify={canModify(orgName, isSuperUser, userAccess)}
-                      eventId={familyEvent}
-                      key={familyEvent}
-                      onEditClick={(event) => onEditEntityClick('event', event)}
-                      onDeleteClick={onEventDeleteClick}
-                    />
-                  ))}
-                </Flex>
-              )}
-              {loadedFamily && (
-                <Box>
-                  <Button
-                    isDisabled={
-                      !canModify(
-                        loadedFamily?.organisation,
-                        isSuperUser,
-                        userAccess,
-                      )
-                    }
-                    onClick={() => onAddNewEntityClick('event')}
-                    rightIcon={
-                      familyEvents.length === 0 ? (
-                        <WarningIcon
-                          color='red.500'
-                          data-test-id='warning-icon-event'
-                        />
-                      ) : undefined
-                    }
-                  >
-                    Add new Event
-                  </Button>
-                </Box>
-              )}
+              <FamilyEventList
+                familyEvents={familyEvents}
+                canModify={canModify(orgName, isSuperUser, userAccess)}
+                onEditEntityClick={onEditEntityClick}
+                onAddNewEntityClick={onAddNewEntityClick}
+                setFamilyEvents={setFamilyEvents}
+                loadedFamily={loadedFamily}
+              />
             </VStack>
-
             <ButtonGroup
               isDisabled={
                 !canModify(
@@ -991,9 +918,14 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               </Button>
             </ButtonGroup>
           </form>
-          <Drawer placement='right' onClose={onClose} isOpen={isOpen} size='lg'>
-            <DrawerOverlay />
-            {editingEntity === 'document' && loadedFamily && (
+          {editingEntity === 'document' && loadedFamily && (
+            <Drawer
+              placement='right'
+              onClose={onClose}
+              isOpen={isOpen}
+              size='lg'
+            >
+              <DrawerOverlay />
               <DrawerContent>
                 <DrawerHeader borderBottomWidth='1px'>
                   {editingDocument
@@ -1014,30 +946,23 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                   />
                 </DrawerBody>
               </DrawerContent>
-            )}
-            {editingEntity === 'event' && loadedFamily && (
-              <DrawerContent>
-                <DrawerHeader borderBottomWidth='1px'>
-                  {editingEvent
-                    ? `Edit: ${editingEvent.event_title}, on ${formatDate(editingEvent.date)}`
-                    : 'Add new Event'}
-                </DrawerHeader>
-                <DrawerBody>
-                  <EventForm
-                    familyId={loadedFamily.import_id}
-                    canModify={canModify(
-                      loadedFamily?.organisation,
-                      isSuperUser,
-                      userAccess,
-                    )}
-                    taxonomy={taxonomy}
-                    onSuccess={onEventFormSuccess}
-                    event={editingEvent}
-                  />
-                </DrawerBody>
-              </DrawerContent>
-            )}
-          </Drawer>
+            </Drawer>
+          )}
+          {editingEntity === 'event' && loadedFamily && (
+            <EventEditDrawer
+              editingEvent={editingEvent}
+              loadedFamilyId={loadedFamily.import_id}
+              canModify={canModify(
+                loadedFamily.organisation,
+                isSuperUser,
+                userAccess,
+              )}
+              taxonomy={taxonomy}
+              onSuccess={onEventFormSuccess}
+              onClose={onClose}
+              isOpen={isOpen}
+            />
+          )}
         </>
       )}
     </>
