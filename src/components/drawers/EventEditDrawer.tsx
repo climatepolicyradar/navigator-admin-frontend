@@ -16,28 +16,7 @@ import {
 type TProps = {
   editingEvent?: IEvent
   loadedFamilyId: string
-  organisation: string
-  canModify: (
-    orgName: string | null,
-    isSuperUser: boolean,
-    userAccess:
-      | never[]
-      | null
-      | {
-          [key: string]: {
-            is_admin: boolean
-          }
-        },
-  ) => boolean
-  isSuperUser: boolean
-  userAccess:
-    | never[]
-    | null
-    | {
-        [key: string]: {
-          is_admin: boolean
-        }
-      }
+  canModify: boolean
   taxonomy?: IConfigTaxonomyCCLW | IConfigTaxonomyUNFCCC
   onSuccess?: (eventId: string) => void
   onClose: () => void
@@ -47,10 +26,7 @@ type TProps = {
 export const EventEditDrawer = ({
   editingEvent,
   loadedFamilyId,
-  organisation,
   canModify,
-  isSuperUser,
-  userAccess,
   taxonomy,
   onSuccess,
   onClose,
@@ -69,7 +45,7 @@ export const EventEditDrawer = ({
           <DrawerBody>
             <EventForm
               familyId={loadedFamilyId}
-              canModify={canModify(organisation, isSuperUser, userAccess)}
+              canModify={canModify}
               taxonomy={taxonomy}
               event={editingEvent}
               onSuccess={onSuccess}

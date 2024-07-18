@@ -24,10 +24,7 @@ describe('FamilyEventList', () => {
     render(
       <FamilyEventList
         familyEvents={['test-event']}
-        canModify={() => true}
-        orgName='Test org'
-        isSuperUser={false}
-        userAccess={{}}
+        canModify={true}
         onEditEntityClick={() => {}}
         onAddNewEntityClick={() => {}}
         setFamilyEvents={() => {}}

@@ -21,10 +21,7 @@ describe('EventEditDrawer', () => {
       <EventEditDrawer
         editingEvent={editingEvent}
         loadedFamilyId='1'
-        organisation='1'
-        canModify={() => true}
-        isSuperUser={false}
-        userAccess={{ CCLW: { is_admin: true } }}
+        canModify={true}
         onClose={() => {}}
         isOpen={true}
       />,
@@ -43,10 +40,7 @@ describe('EventEditDrawer', () => {
     render(
       <EventEditDrawer
         loadedFamilyId='1'
-        organisation='1'
-        canModify={() => true}
-        isSuperUser={false}
-        userAccess={{ CCLW: { is_admin: true } }}
+        canModify={true}
         onClose={() => {}}
         isOpen={true}
       />,

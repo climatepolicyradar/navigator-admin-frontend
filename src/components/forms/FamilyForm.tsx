@@ -892,10 +892,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               )}
               <FamilyEventList
                 familyEvents={familyEvents}
-                canModify={canModify}
-                orgName={orgName}
-                isSuperUser={isSuperUser}
-                userAccess={userAccess}
+                canModify={canModify(orgName, isSuperUser, userAccess)}
                 onEditEntityClick={onEditEntityClick}
                 onAddNewEntityClick={onAddNewEntityClick}
                 setFamilyEvents={setFamilyEvents}
@@ -955,10 +952,11 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
             <EventEditDrawer
               editingEvent={editingEvent}
               loadedFamilyId={loadedFamily.import_id}
-              organisation={loadedFamily.organisation}
-              canModify={canModify}
-              isSuperUser={isSuperUser}
-              userAccess={userAccess}
+              canModify={canModify(
+                loadedFamily.organisation,
+                isSuperUser,
+                userAccess,
+              )}
               taxonomy={taxonomy}
               onSuccess={onEventFormSuccess}
               onClose={onClose}

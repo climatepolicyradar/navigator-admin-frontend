@@ -15,28 +15,7 @@ import { WarningIcon } from '@chakra-ui/icons'
 
 type TProps = {
   familyEvents: string[]
-  canModify: (
-    orgName: string | null,
-    isSuperUser: boolean,
-    userAccess?:
-      | never[]
-      | null
-      | {
-          [key: string]: {
-            is_admin: boolean
-          }
-        },
-  ) => boolean
-  orgName: string | null
-  isSuperUser: boolean
-  userAccess:
-    | never[]
-    | null
-    | {
-        [key: string]: {
-          is_admin: boolean
-        }
-      }
+  canModify: boolean
   onEditEntityClick: (entityType: TChildEntity, entityId: IEvent) => void
   onAddNewEntityClick: (entityType: TChildEntity) => void
   setFamilyEvents: (events: string[]) => void
@@ -46,9 +25,6 @@ type TProps = {
 export const FamilyEventList = ({
   familyEvents,
   canModify,
-  orgName,
-  isSuperUser,
-  userAccess,
   onEditEntityClick,
   onAddNewEntityClick,
   setFamilyEvents,
@@ -103,7 +79,7 @@ export const FamilyEventList = ({
         <Flex direction='column' gap={4}>
           {familyEvents.map((familyEvent) => (
             <FamilyEvent
-              canModify={canModify(orgName, isSuperUser, userAccess)}
+              canModify={canModify}
               eventId={familyEvent}
               key={familyEvent}
               onEditClick={(event) => onEditEntityClick('event', event)}
@@ -115,9 +91,7 @@ export const FamilyEventList = ({
       {loadedFamily && (
         <Box>
           <Button
-            isDisabled={
-              !canModify(loadedFamily?.organisation, isSuperUser, userAccess)
-            }
+            isDisabled={!canModify}
             onClick={() => onAddNewEntityClick('event')}
             rightIcon={
               familyEvents.length === 0 ? (
