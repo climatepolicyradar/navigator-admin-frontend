@@ -5,7 +5,6 @@ export interface IDocument {
   family_import_id: string
   variant_name: string | null
   status: string
-  type: string | null
   slug: string
   metadata: IDocumentMetadata
   physical_id: number
@@ -32,7 +31,6 @@ export interface IDocumentFormPost {
 export interface IDocumentFormPostModified {
   family_import_id: string
   variant_name?: string | null
-  type: string
   metadata: IDocumentMetadata
   title: string
   source_url?: string | null

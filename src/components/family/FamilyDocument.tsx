@@ -62,7 +62,9 @@ export const FamilyDocument = ({
           {document?.metadata?.role && (
             <Text>Role: {document.metadata.role}</Text>
           )}
-          {document?.type && <Text>Type: {document.type}</Text>}
+          {document?.metadata?.type && (
+            <Text>Type: {document.metadata.type}</Text>
+          )}
           {document?.variant_name && (
             <Text>Variant: {document.variant_name}</Text>
           )}

@@ -80,7 +80,6 @@ export const DocumentForm = ({
 
       return {
         family_import_id: data.family_import_id,
-        type: data.type,
         title: data.title,
         metadata: metadata,
         source_url: data.source_url || null,
