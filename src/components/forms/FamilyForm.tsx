@@ -71,7 +71,7 @@ import { decodeToken } from '@/utils/decodeToken'
 import { chakraStylesSelect } from '@/styles/chakra'
 import { WarningIcon } from '@chakra-ui/icons'
 import { FamilyEventList } from '../lists/FamilyEventList'
-import { EventEditDrawer } from '../EventEditDrawer'
+import { EventEditDrawer } from '../drawers/EventEditDrawer'
 
 type TMultiSelect = {
   value: string
@@ -921,9 +921,14 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               </Button>
             </ButtonGroup>
           </form>
-          <Drawer placement='right' onClose={onClose} isOpen={isOpen} size='lg'>
-            <DrawerOverlay />
-            {editingEntity === 'document' && loadedFamily && (
+          {editingEntity === 'document' && loadedFamily && (
+            <Drawer
+              placement='right'
+              onClose={onClose}
+              isOpen={isOpen}
+              size='lg'
+            >
+              <DrawerOverlay />
               <DrawerContent>
                 <DrawerHeader borderBottomWidth='1px'>
                   {editingDocument
@@ -944,20 +949,22 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                   />
                 </DrawerBody>
               </DrawerContent>
-            )}
-            {editingEntity === 'event' && loadedFamily && (
-              <EventEditDrawer
-                editingEvent={editingEvent}
-                loadedFamilyId={loadedFamily.import_id}
-                organisation={loadedFamily.organisation}
-                canModify={canModify}
-                isSuperUser={isSuperUser}
-                userAccess={userAccess}
-                taxonomy={taxonomy}
-                onSuccess={onEventFormSuccess}
-              />
-            )}
-          </Drawer>
+            </Drawer>
+          )}
+          {editingEntity === 'event' && loadedFamily && (
+            <EventEditDrawer
+              editingEvent={editingEvent}
+              loadedFamilyId={loadedFamily.import_id}
+              organisation={loadedFamily.organisation}
+              canModify={canModify}
+              isSuperUser={isSuperUser}
+              userAccess={userAccess}
+              taxonomy={taxonomy}
+              onSuccess={onEventFormSuccess}
+              onClose={onClose}
+              isOpen={isOpen}
+            />
+          )}
         </>
       )}
     </>
