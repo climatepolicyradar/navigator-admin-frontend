@@ -22,7 +22,6 @@ const mockDocument: IDocument = {
   family_import_id: '67890',
   variant_name: 'Variant Name',
   status: 'Active',
-  type: 'PDF',
   metadata: { role: ['Editor'], type: ['PDF'] },
   slug: 'document-slug',
   physical_id: 101,
