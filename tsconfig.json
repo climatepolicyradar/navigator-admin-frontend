@@ -29,9 +29,9 @@
       "@components/*": ["components/*"],
       "@views/*": ["views/*"],
       "@hooks/*": ["hooks/*"],
-      "@utils/*": ["utils/*"],
-    },
+      "@utils/*": ["utils/*"]
+    }
   },
-  "include": ["src", "jest.config.ts"],
-  "references": [{ "path": "./tsconfig.node.json" }],
+  "include": ["src"],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }

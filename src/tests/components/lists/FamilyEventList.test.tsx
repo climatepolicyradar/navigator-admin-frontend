@@ -1,14 +1,10 @@
 import { FamilyEventList } from '@/components/lists/FamilyEventList'
 import { render, screen } from '@testing-library/react'
-import '@testing-library/jest-dom'
+import { describe, it, vi } from 'vitest'
 import { mockFamiliesData } from '@/tests/utilsTest/mocks'
 
-jest.mock('@/api', () => ({
-  getApiUrl: jest.fn().mockReturnValue('http://mock-api-url'),
-}))
-
-jest.mock('@/hooks/useEvent', () =>
-  jest.fn().mockReturnValue({
+vi.mock('@/hooks/useEvent', () => ({
+  default: vi.fn().mockReturnValue({
     event: {
       date: '11/07/2024',
       event_title: 'Test event title',
@@ -17,7 +13,7 @@ jest.mock('@/hooks/useEvent', () =>
     error: null,
     loading: false,
   }),
-)
+}))
 
 describe('FamilyEventList', () => {
   it('renders existing family events', () => {

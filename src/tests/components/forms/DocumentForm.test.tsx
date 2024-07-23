@@ -1,18 +1,14 @@
-import '@testing-library/jest-dom'
+import { describe, it, vi } from 'vitest'
 import { screen, waitFor, fireEvent } from '@testing-library/react'
 import { customRender } from '@/tests/utilsTest/render'
 import { DocumentForm } from '@/components/forms/DocumentForm'
 import { IDocument } from '@/interfaces'
 
-jest.mock('@/api', () => ({
-  getApiUrl: jest.fn().mockReturnValue('http://mock-api-url'),
-}))
-
-jest.mock('@/api/Documents', () => ({
-  createDocument: jest
+vi.mock('@/api/Documents', () => ({
+  createDocument: vi
     .fn()
     .mockResolvedValue({ response: { documentId: 'some-id' } }),
-  updateDocument: jest
+  updateDocument: vi
     .fn()
     .mockResolvedValue({ response: { documentId: 'some-id' } }),
 }))
@@ -35,9 +31,8 @@ const mockDocument: IDocument = {
   last_modified: '4/1/2021',
 }
 
-// Tests
 describe('DocumentForm', () => {
-  const onDocumentFormSuccess = jest.fn()
+  const onDocumentFormSuccess = vi.fn()
 
   beforeEach(() => {
     onDocumentFormSuccess.mockReset()
