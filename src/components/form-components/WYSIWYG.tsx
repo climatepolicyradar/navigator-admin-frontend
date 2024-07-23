@@ -50,6 +50,7 @@ export const WYSIWYG = ({ html = DEFAULT_HTML, onChange }: TProps) => {
             toolbar={{
               options: ['inline', 'list'],
             }}
+            stripPastedStyles
           />
         </CardBody>
       </Card>
