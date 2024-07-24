@@ -24,9 +24,6 @@ export default function Document() {
   const { family } = useFamily(document?.family_import_id)
   const corpusInfo = useCorpus(config?.corpora, family?.corpus_import_id)
   const taxonomy = useTaxonomy(corpusInfo?.corpus_type, corpusInfo?.taxonomy)
-  console.log('family: ', family)
-  console.log('corpusInfo: ', corpusInfo)
-  console.log('taxonomy: ', taxonomy)
 
   const canLoadForm = !loading && !error
   const pageTitle = loading
