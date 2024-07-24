@@ -12,10 +12,21 @@ import { Loader } from '@/components/Loader'
 import { DocumentForm } from '@/components/forms/DocumentForm'
 import { ArrowBackIcon } from '@chakra-ui/icons'
 import { ApiError } from '@/components/feedback/ApiError'
+import useFamily from '@/hooks/useFamily'
+import useCorpus from '@/hooks/useCorpus'
+import useConfig from '@/hooks/useConfig'
+import useTaxonomy from '@/hooks/useTaxonomy'
 
-export default function Collection() {
+export default function Document() {
   const { importId } = useParams()
   const { document, loading, error } = useDocument(importId)
+  const { config } = useConfig()
+  const { family } = useFamily(document?.family_import_id)
+  const corpusInfo = useCorpus(config?.corpora, family?.corpus_import_id)
+  const taxonomy = useTaxonomy(corpusInfo?.corpus_type, corpusInfo?.taxonomy)
+  console.log('family: ', family)
+  console.log('corpusInfo: ', corpusInfo)
+  console.log('taxonomy: ', taxonomy)
 
   const canLoadForm = !loading && !error
   const pageTitle = loading
@@ -65,7 +76,9 @@ export default function Collection() {
             </Box>
           </>
         )}
-        {canLoadForm && <DocumentForm document={document ?? undefined} />}
+        {canLoadForm && (
+          <DocumentForm document={document ?? undefined} taxonomy={taxonomy} />
+        )}
       </Box>
     </>
   )
