@@ -17,7 +17,6 @@ import {
   IConfigTaxonomyUNFCCC,
   IConfigTaxonomyCCLW,
   IDecodedToken,
-  IConfigCorpora,
 } from '@/interfaces'
 import { createFamily, updateFamily } from '@/api/Families'
 import { deleteDocument } from '@/api/Documents'
@@ -74,6 +73,7 @@ import { WarningIcon } from '@chakra-ui/icons'
 import { FamilyEventList } from '../lists/FamilyEventList'
 import { EventEditDrawer } from '../drawers/EventEditDrawer'
 import useCorpus from '@/hooks/useCorpus'
+import useTaxonomy from '@/hooks/useTaxonomy'
 
 type TMultiSelect = {
   value: string
@@ -145,19 +145,13 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     config?.corpora,
     loadedFamily?.corpus_import_id,
     watchCorpus?.value,
-  ) as IConfigCorpora
+  )
 
   const corpusTitle = loadedFamily
     ? loadedFamily?.corpus_title
     : corpusInfo?.title
 
-  const taxonomy = useMemo(() => {
-    if (corpusInfo?.corpus_type === 'Law and Policies')
-      return corpusInfo?.taxonomy as IConfigTaxonomyCCLW
-    else if (corpusInfo?.corpus_type === 'Intl. agreements')
-      return corpusInfo?.taxonomy as IConfigTaxonomyUNFCCC
-    else return corpusInfo?.taxonomy
-  }, [corpusInfo])
+  const taxonomy = useTaxonomy(corpusInfo?.corpus_type, corpusInfo?.taxonomy)
 
   const userToken = useMemo(() => {
     const token = localStorage.getItem('token')

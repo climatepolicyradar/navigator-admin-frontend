@@ -6,7 +6,7 @@ const useCorpus = (
   corpus_id?: string,
   watchCorpusValue?: string,
 ) => {
-  return useMemo<IConfigCorpora | null>(() => {
+  return useMemo(() => {
     const getCorpusFromId = (corpusId?: string) => {
       const corp = corpora?.find(
         (corpus) => corpus.corpus_import_id === corpusId,
