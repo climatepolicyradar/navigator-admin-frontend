@@ -17,6 +17,7 @@ import {
   IConfigTaxonomyUNFCCC,
   IConfigTaxonomyCCLW,
   IDecodedToken,
+  IConfigCorpora,
 } from '@/interfaces'
 import { createFamily, updateFamily } from '@/api/Families'
 import { deleteDocument } from '@/api/Documents'
@@ -72,6 +73,7 @@ import { chakraStylesSelect } from '@/styles/chakra'
 import { WarningIcon } from '@chakra-ui/icons'
 import { FamilyEventList } from '../lists/FamilyEventList'
 import { EventEditDrawer } from '../drawers/EventEditDrawer'
+import useCorpus from '@/hooks/useCorpus'
 
 type TMultiSelect = {
   value: string
@@ -139,21 +141,11 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   const [familyEvents, setFamilyEvents] = useState<string[]>([])
 
   const watchCorpus = watch('corpus')
-  const corpusInfo = useMemo(() => {
-    const getCorpusFromId = (corpusId: string) => {
-      const corp = config?.corpora.find(
-        (corpus) => corpus.corpus_import_id === corpusId,
-      )
-      return corp ? corp : null
-    }
-
-    if (loadedFamily) {
-      return getCorpusFromId(loadedFamily?.corpus_import_id)
-    } else if (watchCorpus) {
-      return getCorpusFromId(watchCorpus?.value)
-    }
-    return null
-  }, [config?.corpora, loadedFamily, watchCorpus])
+  const corpusInfo = useCorpus(
+    config?.corpora,
+    loadedFamily?.corpus_import_id,
+    watchCorpus?.value,
+  ) as IConfigCorpora
 
   const corpusTitle = loadedFamily
     ? loadedFamily?.corpus_title
