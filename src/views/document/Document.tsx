@@ -20,17 +20,28 @@ import useTaxonomy from '@/hooks/useTaxonomy'
 export default function Document() {
   const { importId } = useParams()
   const { document, loading, error } = useDocument(importId)
-  const { config } = useConfig()
-  const { family } = useFamily(document?.family_import_id)
+  const { config, loading: configLoading, error: configError } = useConfig()
+  const {
+    family,
+    loading: familyLoading,
+    error: familyError,
+  } = useFamily(document?.family_import_id)
   const corpusInfo = useCorpus(config?.corpora, family?.corpus_import_id)
   const taxonomy = useTaxonomy(corpusInfo?.corpus_type, corpusInfo?.taxonomy)
 
-  const canLoadForm = !loading && !error
-  const pageTitle = loading
-    ? 'Loading...'
-    : document
-      ? `Editing: ${document.title}`
-      : 'Create new document'
+  const canLoadForm =
+    !loading &&
+    !configLoading &&
+    !familyLoading &&
+    !error &&
+    !configError &&
+    !familyError
+  const pageTitle =
+    loading || familyLoading || configLoading
+      ? 'Loading...'
+      : document
+        ? `Editing: ${document.title}`
+        : 'Create new document'
 
   return (
     <>
