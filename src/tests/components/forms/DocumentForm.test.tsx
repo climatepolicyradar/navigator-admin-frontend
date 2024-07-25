@@ -1,8 +1,11 @@
 import { describe, it, vi } from 'vitest'
 import { screen, waitFor, fireEvent } from '@testing-library/react'
+import '@testing-library/jest-dom'
+import { unfcccConfigMock } from '../../utilsTest/mocks'
 import { customRender } from '@/tests/utilsTest/render'
 import { DocumentForm } from '@/components/forms/DocumentForm'
 import { IDocument } from '@/interfaces'
+import userEvent from '@testing-library/user-event'
 
 vi.mock('@/api/Documents', () => ({
   createDocument: vi
@@ -18,7 +21,7 @@ const mockDocument: IDocument = {
   family_import_id: '67890',
   variant_name: 'Variant Name',
   status: 'Active',
-  metadata: { role: ['Editor'], type: ['PDF'] },
+  metadata: { role: ['Role One'], type: ['PDF'] },
   slug: 'document-slug',
   physical_id: 101,
   title: 'Sample Document Title',
@@ -31,11 +34,58 @@ const mockDocument: IDocument = {
   last_modified: '4/1/2021',
 }
 
+const mockTaxonomy = unfcccConfigMock.corpora[0].taxonomy
+
 describe('DocumentForm', () => {
   const onDocumentFormSuccess = vi.fn()
 
   beforeEach(() => {
     onDocumentFormSuccess.mockReset()
+  })
+
+  it('displays original values for all fields', () => {
+    customRender(
+      <DocumentForm
+        familyId={'test'}
+        onSuccess={onDocumentFormSuccess}
+        document={mockDocument}
+        taxonomy={mockTaxonomy}
+      />,
+    )
+
+    expect(screen.getByRole('textbox', { name: 'Family ID' })).toHaveValue(
+      mockDocument.family_import_id,
+    )
+    expect(screen.getByRole('textbox', { name: 'Title' })).toHaveValue(
+      mockDocument.title,
+    )
+    expect(screen.getByRole('textbox', { name: 'Source URL' })).toHaveValue(
+      mockDocument.source_url,
+    )
+
+    const roleDropdown = within(screen.getByRole('group', { name: 'Role' }))
+
+    expect(roleDropdown.getByText('Role One')).toBeInTheDocument()
+  })
+
+  it('shows allowed values when clicking on role dropdown', async () => {
+    customRender(
+      <DocumentForm
+        familyId={'test'}
+        onSuccess={onDocumentFormSuccess}
+        document={mockDocument}
+        taxonomy={mockTaxonomy}
+      />,
+    )
+
+    const roleDropdown = within(
+      screen.getByRole('group', { name: 'Role' }),
+    ).getByText('Please select')
+    expect(roleDropdown).toBeInTheDocument()
+
+    await userEvent.click(roleDropdown)
+
+    expect(screen.getByText('Role One')).toBeInTheDocument()
   })
 
   it('validate incorrect document URL', async () => {

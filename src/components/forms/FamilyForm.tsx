@@ -72,6 +72,8 @@ import { chakraStylesSelect } from '@/styles/chakra'
 import { WarningIcon } from '@chakra-ui/icons'
 import { FamilyEventList } from '../lists/FamilyEventList'
 import { EventEditDrawer } from '../drawers/EventEditDrawer'
+import useCorpus from '@/hooks/useCorpus'
+import useTaxonomy from '@/hooks/useTaxonomy'
 
 type TMultiSelect = {
   value: string
@@ -139,33 +141,17 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   const [familyEvents, setFamilyEvents] = useState<string[]>([])
 
   const watchCorpus = watch('corpus')
-  const corpusInfo = useMemo(() => {
-    const getCorpusFromId = (corpusId: string) => {
-      const corp = config?.corpora.find(
-        (corpus) => corpus.corpus_import_id === corpusId,
-      )
-      return corp ? corp : null
-    }
-
-    if (loadedFamily) {
-      return getCorpusFromId(loadedFamily?.corpus_import_id)
-    } else if (watchCorpus) {
-      return getCorpusFromId(watchCorpus?.value)
-    }
-    return null
-  }, [config?.corpora, loadedFamily, watchCorpus])
+  const corpusInfo = useCorpus(
+    config?.corpora,
+    loadedFamily?.corpus_import_id,
+    watchCorpus?.value,
+  )
 
   const corpusTitle = loadedFamily
     ? loadedFamily?.corpus_title
     : corpusInfo?.title
 
-  const taxonomy = useMemo(() => {
-    if (corpusInfo?.corpus_type === 'Law and Policies')
-      return corpusInfo?.taxonomy as IConfigTaxonomyCCLW
-    else if (corpusInfo?.corpus_type === 'Intl. agreements')
-      return corpusInfo?.taxonomy as IConfigTaxonomyUNFCCC
-    else return corpusInfo?.taxonomy
-  }, [corpusInfo])
+  const taxonomy = useTaxonomy(corpusInfo?.corpus_type, corpusInfo?.taxonomy)
 
   const userToken = useMemo(() => {
     const token = localStorage.getItem('token')

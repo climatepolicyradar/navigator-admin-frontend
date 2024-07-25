@@ -12,17 +12,36 @@ import { Loader } from '@/components/Loader'
 import { DocumentForm } from '@/components/forms/DocumentForm'
 import { ArrowBackIcon } from '@chakra-ui/icons'
 import { ApiError } from '@/components/feedback/ApiError'
+import useFamily from '@/hooks/useFamily'
+import useCorpus from '@/hooks/useCorpus'
+import useConfig from '@/hooks/useConfig'
+import useTaxonomy from '@/hooks/useTaxonomy'
 
-export default function Collection() {
+export default function Document() {
   const { importId } = useParams()
   const { document, loading, error } = useDocument(importId)
+  const { config, loading: configLoading, error: configError } = useConfig()
+  const {
+    family,
+    loading: familyLoading,
+    error: familyError,
+  } = useFamily(document?.family_import_id)
+  const corpusInfo = useCorpus(config?.corpora, family?.corpus_import_id)
+  const taxonomy = useTaxonomy(corpusInfo?.corpus_type, corpusInfo?.taxonomy)
 
-  const canLoadForm = !loading && !error
-  const pageTitle = loading
-    ? 'Loading...'
-    : document
-      ? `Editing: ${document.title}`
-      : 'Create new document'
+  const canLoadForm =
+    !loading &&
+    !configLoading &&
+    !familyLoading &&
+    !error &&
+    !configError &&
+    !familyError
+  const pageTitle =
+    loading || familyLoading || configLoading
+      ? 'Loading...'
+      : document
+        ? `Editing: ${document.title}`
+        : 'Create new document'
 
   return (
     <>
@@ -65,7 +84,9 @@ export default function Collection() {
             </Box>
           </>
         )}
-        {canLoadForm && <DocumentForm document={document ?? undefined} />}
+        {canLoadForm && (
+          <DocumentForm document={document ?? undefined} taxonomy={taxonomy} />
+        )}
       </Box>
     </>
   )
