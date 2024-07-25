@@ -1,6 +1,5 @@
 import { FamilyEventList } from '@/components/lists/FamilyEventList'
 import { render, screen } from '@testing-library/react'
-import { describe, it, vi } from 'vitest'
 import { mockFamiliesData } from '@/tests/utilsTest/mocks'
 
 vi.mock('@/hooks/useEvent', () => ({

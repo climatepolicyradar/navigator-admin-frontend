@@ -1,6 +1,5 @@
 import { IConfig } from '@/interfaces'
 import { modifyConfig } from '@utils/modifyConfig'
-import { describe, it } from 'vitest'
 
 describe('modifyConfig', () => {
   it(' adds a languagesSorted property to the config object with languages sorted alphabetically by label', () => {

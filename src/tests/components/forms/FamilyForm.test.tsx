@@ -1,5 +1,4 @@
 import { configure, screen, render, cleanup } from '@testing-library/react'
-import { describe, it, vi } from 'vitest'
 import {
   configMock,
   mockDocument,

@@ -1,4 +1,3 @@
-import { describe, it } from 'vitest'
 import { EventEditDrawer } from '@/components/drawers/EventEditDrawer'
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
