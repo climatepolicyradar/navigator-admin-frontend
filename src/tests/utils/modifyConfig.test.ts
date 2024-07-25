@@ -2,7 +2,7 @@ import { IConfig } from '@/interfaces'
 import { modifyConfig } from '@utils/modifyConfig'
 
 describe('modifyConfig', () => {
-  it('should add a languagesSorted property to the config object with languages sorted alphabetically by label', () => {
+  it(' adds a languagesSorted property to the config object with languages sorted alphabetically by label', () => {
     const mockConfig: IConfig = {
       document: {
         roles: ['role1', 'role2'],
@@ -129,7 +129,7 @@ describe('modifyConfig', () => {
     )
   })
 
-  it('should handle empty languages object', () => {
+  it(' handles empty languages object', () => {
     const mockConfig: IConfig = {
       document: {
         roles: ['role1', 'role2'],

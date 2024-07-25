@@ -2,11 +2,6 @@ import { EventEditDrawer } from '@/components/drawers/EventEditDrawer'
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 
-// API calls
-jest.mock('@/api', () => ({
-  getApiUrl: jest.fn().mockReturnValue('http://mock-api-url'),
-}))
-
 describe('EventEditDrawer', () => {
   it('renders edit form for existing event if an editingEvent is passed in', () => {
     const editingEvent = {

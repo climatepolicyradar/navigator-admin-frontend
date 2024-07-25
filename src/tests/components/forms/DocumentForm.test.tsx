@@ -1,20 +1,16 @@
+import { screen, waitFor, fireEvent, within } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { unfcccConfigMock } from '../../utilsTest/mocks'
-import { screen, waitFor, fireEvent, within } from '@testing-library/react'
 import { customRender } from '@/tests/utilsTest/render'
 import { DocumentForm } from '@/components/forms/DocumentForm'
 import { IDocument } from '@/interfaces'
 import userEvent from '@testing-library/user-event'
 
-jest.mock('@/api', () => ({
-  getApiUrl: jest.fn().mockReturnValue('http://mock-api-url'),
-}))
-
-jest.mock('@/api/Documents', () => ({
-  createDocument: jest
+vi.mock('@/api/Documents', () => ({
+  createDocument: vi
     .fn()
     .mockResolvedValue({ response: { documentId: 'some-id' } }),
-  updateDocument: jest
+  updateDocument: vi
     .fn()
     .mockResolvedValue({ response: { documentId: 'some-id' } }),
 }))
@@ -40,7 +36,7 @@ const mockDocument: IDocument = {
 const mockTaxonomy = unfcccConfigMock.corpora[0].taxonomy
 
 describe('DocumentForm', () => {
-  const onDocumentFormSuccess = jest.fn()
+  const onDocumentFormSuccess = vi.fn()
 
   beforeEach(() => {
     onDocumentFormSuccess.mockReset()
