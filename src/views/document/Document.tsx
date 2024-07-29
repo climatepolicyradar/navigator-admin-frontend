@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useParams, Link as RouterLink } from 'react-router-dom'
 import {
   Box,
@@ -7,15 +8,18 @@ import {
   SkeletonText,
   Link,
 } from '@chakra-ui/react'
-import useDocument from '@/hooks/useDocument'
+import { ArrowBackIcon } from '@chakra-ui/icons'
 import { Loader } from '@/components/Loader'
 import { DocumentForm } from '@/components/forms/DocumentForm'
-import { ArrowBackIcon } from '@chakra-ui/icons'
 import { ApiError } from '@/components/feedback/ApiError'
+import useDocument from '@/hooks/useDocument'
 import useFamily from '@/hooks/useFamily'
 import useCorpus from '@/hooks/useCorpus'
 import useConfig from '@/hooks/useConfig'
 import useTaxonomy from '@/hooks/useTaxonomy'
+import { decodeToken } from '@/utils/decodeToken'
+import { IDecodedToken } from '@/interfaces'
+import { canModify } from '@/utils/canModify'
 
 export default function Document() {
   const { importId } = useParams()
@@ -28,6 +32,17 @@ export default function Document() {
   } = useFamily(document?.family_import_id)
   const corpusInfo = useCorpus(config?.corpora, family?.corpus_import_id)
   const taxonomy = useTaxonomy(corpusInfo?.corpus_type, corpusInfo?.taxonomy)
+  const userToken = useMemo(() => {
+    const token = localStorage.getItem('token')
+    if (!token) return null
+    const decodedToken: IDecodedToken | null = decodeToken(token)
+    return decodedToken
+  }, [])
+
+  const userAccess = !userToken ? null : userToken.authorisation
+  const isSuperUser = !userToken ? false : userToken.is_superuser
+  // TODO: Get org_id from corpus PDCT-1171.
+  const orgName = family ? String(family?.organisation) : null
 
   const canLoadForm =
     !loading &&
@@ -85,7 +100,11 @@ export default function Document() {
           </>
         )}
         {canLoadForm && (
-          <DocumentForm document={document ?? undefined} taxonomy={taxonomy} />
+          <DocumentForm
+            document={document ?? undefined}
+            taxonomy={taxonomy}
+            canModify={canModify(orgName, isSuperUser, userAccess)}
+          />
         )}
       </Box>
     </>
