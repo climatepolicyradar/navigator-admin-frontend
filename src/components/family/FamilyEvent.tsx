@@ -67,7 +67,7 @@ export const FamilyEvent = ({
               <Button
                 size='sm'
                 onClick={handleEditClick}
-                data-test-id={`edit-event-${eventId}`}
+                data-testid={`edit-${eventId}`}
               >
                 Edit
               </Button>

@@ -6,11 +6,6 @@ import { formatDate } from '@/utils/formatDate'
 import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom'
 
-vi.mock('@/api/Families', () => ({
-  getFamilies: vi.fn(),
-  deleteFamily: vi.fn(),
-}))
-
 vi.mock('react-router-dom', async (importOriginal) => {
   const actual: unknown = await importOriginal()
   return {

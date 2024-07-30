@@ -7,17 +7,13 @@ import Root from '@/Root'
 import Login from '@/views/auth/Login'
 import Dashboard from '@/views/dashboard/Dashboard'
 import ErrorPage from '@views/Error'
-import Family from '@/views/family/Family'
-import Families from '@/views/family/Families'
-import FamilyList, {
-  loader as familiesLoader,
-} from '@/components/lists/FamilyList'
 import Collections from '@/views/collection/Collections'
 import CollectionList from '@/components/lists/CollectionList'
 import Collection from '@/views/collection/Collection'
 import Documents from '@/views/document/Documents'
 import DocumentList from '@/components/lists/DocumentList'
 import Document from '@/views/document/Document'
+import { familyRoutes } from './familyRoutes'
 
 const authenticatedRoutes = [
   {
@@ -37,29 +33,7 @@ const authenticatedRoutes = [
                 element: <Dashboard />,
                 errorElement: <ErrorPage />,
               },
-              {
-                path: '/family/new',
-                element: <Family />,
-                errorElement: <ErrorPage />,
-              },
-              {
-                path: 'family/:importId/edit',
-                element: <Family />,
-                errorElement: <ErrorPage />,
-              },
-              {
-                path: 'families',
-                element: <Families />,
-                errorElement: <ErrorPage />,
-                children: [
-                  {
-                    path: '',
-                    element: <FamilyList />,
-                    loader: familiesLoader,
-                    errorElement: <ErrorPage />,
-                  },
-                ],
-              },
+              ...familyRoutes,
               {
                 path: '/collection/new',
                 element: <Collection />,

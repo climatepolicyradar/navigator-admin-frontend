@@ -1,4 +1,4 @@
-import { IConfig } from '@/interfaces'
+import { IConfig, IEvent } from '@/interfaces'
 import { ICCLWFamily, IUNFCCCFamily } from '@/interfaces/Family'
 
 const mockConfig = {
@@ -23,7 +23,12 @@ const mockConfig = {
     { value: 'en', label: 'English' },
     { value: 'es', label: 'Spanish' },
   ],
-  corpora: [],
+  corpora: [
+    {
+      corpus_import_id: 'CCLW.corpus.i00000001.n0000',
+      corpus_type: 'Law and Policies',
+    },
+  ],
   document: {
     roles: ['Role One', 'Role Two'],
     types: ['Type One', 'Type Two'],
@@ -114,6 +119,25 @@ const mockCCLWFamilyNoEvents: ICCLWFamily = {
   events: [], // Without events
   created: '7/2/2021',
   last_modified: '8/2/2021',
+}
+
+const mockCCLWFamilyWithOneEvent: ICCLWFamily = {
+  ...mockCCLWFamilyNoDocuments,
+  import_id: 'CCLW.family.6.0',
+  title: 'CCLW Family Six',
+  summary: 'Summary for CCLW Family Six with one event',
+  events: ['event5'],
+  created: '7/2/2021',
+  last_modified: '8/2/2021',
+}
+
+const mockEvent: IEvent = {
+  import_id: 'event5',
+  event_title: 'Test event title',
+  date: '11/07/2024',
+  event_type_value: 'Event One',
+  event_status: 'Submitted',
+  family_import_id: 'CCLW.family.6.0',
 }
 
 const mockDocument = {
@@ -257,3 +281,5 @@ export { mockConfig as configMock }
 export { mockCCLWConfig as cclwConfigMock }
 export { mockUNFCCCConfig as unfcccConfigMock }
 export { mockDocument }
+export { mockEvent }
+export { mockCCLWFamilyWithOneEvent }
