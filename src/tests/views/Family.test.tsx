@@ -1,13 +1,5 @@
-import userEvent from '@testing-library/user-event'
-import {
-  render,
-  screen,
-  waitForElementToBeRemoved,
-} from '@testing-library/react'
-import { RouterProvider, createBrowserRouter } from 'react-router-dom'
-import { familyRoutes } from '@/routes/familyRoutes'
-import { ChakraProvider } from '@chakra-ui/react'
-import AuthProvider from '@/providers/AuthProvider'
+import { screen, waitForElementToBeRemoved } from '@testing-library/react'
+import { renderRoute } from '../utilsTest/renderRoute'
 
 vi.mock('react-router-dom', async (importOriginal) => {
   const actual: unknown = await importOriginal()
@@ -16,35 +8,6 @@ vi.mock('react-router-dom', async (importOriginal) => {
     useBlocker: vi.fn(),
   }
 })
-
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: vi.fn().mockImplementation((query: string) => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: vi.fn(),
-    removeListener: vi.fn(),
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-    dispatchEvent: vi.fn(),
-  })),
-})
-
-const renderRoute = (route = '/') => {
-  window.history.pushState({}, 'Test page', route)
-
-  return {
-    user: userEvent.setup(),
-    ...render(
-      <ChakraProvider>
-        <AuthProvider>
-          <RouterProvider router={createBrowserRouter(familyRoutes)} />
-        </AuthProvider>
-      </ChakraProvider>,
-    ),
-  }
-}
 
 describe('FamilyForm edit', () => {
   it('displays new event data after edit', async () => {
