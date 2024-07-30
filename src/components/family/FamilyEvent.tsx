@@ -13,12 +13,15 @@ import { ApiError } from '../feedback/ApiError'
 import { DeleteButton } from '../buttons/Delete'
 import { formatDate } from '@/utils/formatDate'
 import { IEvent } from '@/interfaces'
+import { useEffect } from 'react'
 
 type TProps = {
   eventId: string
   canModify: boolean
   onEditClick?: (event: IEvent) => void
   onDeleteClick?: (eventId: string) => void
+  updateEvent: boolean
+  setUpdateEvent: (updateEvent: boolean) => void
 }
 
 export const FamilyEvent = ({
@@ -26,8 +29,17 @@ export const FamilyEvent = ({
   canModify,
   onEditClick,
   onDeleteClick,
+  updateEvent,
+  setUpdateEvent,
 }: TProps) => {
-  const { event, loading, error } = useEvent(eventId)
+  const { event, loading, error, reload } = useEvent(eventId)
+
+  useEffect(() => {
+    if (updateEvent) {
+      reload()
+      setUpdateEvent(false)
+    }
+  }, [updateEvent, setUpdateEvent, reload])
 
   const handleEditClick = () => {
     onEditClick && event ? onEditClick(event) : null

@@ -68,6 +68,8 @@ describe('FamilyForm edit', () => {
 
     expect(eventTitle).toHaveValue('Test event title')
 
+    await user.clear(eventTitle)
+
     await user.type(eventTitle, 'New event title')
 
     await user.click(screen.getByRole('button', { name: 'Update Event' }))
@@ -81,7 +83,7 @@ describe('FamilyForm edit', () => {
     expect(
       await screen.findByText('Event has been successfully updated'),
     ).toBeInTheDocument()
-    // expect(await screen.findByText('New event title')).toBeInTheDocument()
-    // expect(await screen.queryByText('Test event title')).not.toBeInTheDocument()
+    expect(await screen.findByText('New event title')).toBeInTheDocument()
+    expect(screen.queryByText('Test event title')).not.toBeInTheDocument()
   })
 })

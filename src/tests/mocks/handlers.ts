@@ -2,10 +2,9 @@ import { http, HttpResponse } from 'msw'
 import {
   cclwConfigMock,
   mockCCLWFamilyWithOneEvent,
-  mockEvent,
   mockFamiliesData,
 } from '../utilsTest/mocks'
-import { updateEvent } from './repository'
+import { getEvent, updateEvent } from './repository'
 import { IEvent } from '@/interfaces/Event'
 
 export const handlers = [
@@ -35,13 +34,16 @@ export const handlers = [
     return HttpResponse.json([])
   }),
 
-  http.get('*/v1/events/:id', () => {
-    return HttpResponse.json({ ...mockEvent })
+  http.get('*/v1/events/:id', ({ params }) => {
+    const { id } = params
+    const event = getEvent(id as string)
+    return HttpResponse.json(event)
   }),
   http.put('*/v1/events/:id', async ({ request, params }) => {
     const { id } = params
     const updateData = await request.json()
     updateEvent(updateData as IEvent, id as string)
-    return HttpResponse.json({ ...mockEvent })
+    const updatedEvent = getEvent(id as string)
+    return HttpResponse.json(updatedEvent)
   }),
 ]

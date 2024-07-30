@@ -20,6 +20,8 @@ type TProps = {
   onAddNewEntityClick: (entityType: TChildEntity) => void
   setFamilyEvents: (events: string[]) => void
   loadedFamily?: TFamily
+  updateEvent: boolean
+  setUpdateEvent: (updateEvent: boolean) => void
 }
 
 export const FamilyEventList = ({
@@ -29,6 +31,8 @@ export const FamilyEventList = ({
   onAddNewEntityClick,
   setFamilyEvents,
   loadedFamily,
+  updateEvent,
+  setUpdateEvent,
 }: TProps) => {
   const toast = useToast()
 
@@ -84,6 +88,8 @@ export const FamilyEventList = ({
               key={familyEvent}
               onEditClick={(event) => onEditEntityClick('event', event)}
               onDeleteClick={onEventDeleteClick}
+              updateEvent={updateEvent}
+              setUpdateEvent={setUpdateEvent}
             />
           ))}
         </Flex>
