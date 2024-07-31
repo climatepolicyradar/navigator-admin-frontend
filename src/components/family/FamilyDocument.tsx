@@ -78,7 +78,11 @@ export const FamilyDocument = ({
           {document?.status.toLowerCase() !== 'deleted' && (
             <Stack direction='row' spacing={4}>
               {!!onEditClick && (
-                <Button size='sm' onClick={handleEditClick}>
+                <Button
+                  size='sm'
+                  onClick={handleEditClick}
+                  data-testid={`edit-${documentId}`}
+                >
                   Edit
                 </Button>
               )}
