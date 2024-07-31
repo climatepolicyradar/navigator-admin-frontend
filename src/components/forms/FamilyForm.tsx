@@ -43,11 +43,6 @@ import {
   Divider,
   AbsoluteCenter,
   useDisclosure,
-  Drawer,
-  DrawerOverlay,
-  DrawerContent,
-  DrawerHeader,
-  DrawerBody,
   Flex,
   Modal,
   ModalOverlay,
@@ -63,7 +58,6 @@ import { Loader } from '../Loader'
 import { getCountries } from '@/utils/extractNestedGeographyData'
 import { generateOptions } from '@/utils/generateOptions'
 import { familySchema } from '@/schemas/familySchema'
-import { DocumentForm } from './DocumentForm'
 import { FamilyDocument } from '../family/FamilyDocument'
 import { ApiError } from '../feedback/ApiError'
 import { WYSIWYG } from '../form-components/WYSIWYG'
@@ -74,6 +68,7 @@ import { FamilyEventList } from '../lists/FamilyEventList'
 import { EventEditDrawer } from '../drawers/EventEditDrawer'
 import useCorpus from '@/hooks/useCorpus'
 import useTaxonomy from '@/hooks/useTaxonomy'
+import { DocumentEditDrawer } from '../drawers/DocumentEditDrawer'
 
 type TMultiSelect = {
   value: string
@@ -166,6 +161,11 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
 
   // TODO: Get org_id from corpus PDCT-1171.
   const orgName = loadedFamily ? String(loadedFamily?.organisation) : null
+
+  const userCanModify = useMemo<boolean>(
+    () => canModify(orgName, isSuperUser, userAccess),
+    [orgName, isSuperUser, userAccess],
+  )
 
   // Family handlers
   const handleFormSubmission = async (family: IFamilyForm) => {
@@ -430,7 +430,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
           <SkeletonText mt='4' noOfLines={12} spacing='4' skeletonHeight='2' />
         </Box>
       )}
-      {!canModify(orgName, isSuperUser, userAccess) && (
+      {!userCanModify && (
         <ApiError
           message={`You do not have permission to edit document families in ${corpusTitle} `}
           detail='Please go back to the "Families" page, if you think there has been a mistake please contact the administrator.'
@@ -845,7 +845,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 <Flex direction='column' gap={4}>
                   {familyDocuments.map((familyDoc) => (
                     <FamilyDocument
-                      canModify={canModify(orgName, isSuperUser, userAccess)}
+                      canModify={userCanModify}
                       documentId={familyDoc}
                       key={familyDoc}
                       onEditClick={(id) => onEditEntityClick('document', id)}
@@ -857,13 +857,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               {loadedFamily && (
                 <Box>
                   <Button
-                    isDisabled={
-                      !canModify(
-                        loadedFamily?.organisation,
-                        isSuperUser,
-                        userAccess,
-                      )
-                    }
+                    isDisabled={!userCanModify}
                     onClick={() => onAddNewEntityClick('document')}
                     rightIcon={
                       familyDocuments.length === 0 ? (
@@ -880,7 +874,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               )}
               <FamilyEventList
                 familyEvents={familyEvents}
-                canModify={canModify(orgName, isSuperUser, userAccess)}
+                canModify={userCanModify}
                 onEditEntityClick={onEditEntityClick}
                 onAddNewEntityClick={onAddNewEntityClick}
                 setFamilyEvents={setFamilyEvents}
@@ -889,15 +883,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 setUpdatedEvent={setUpdatedEvent}
               />
             </VStack>
-            <ButtonGroup
-              isDisabled={
-                !canModify(
-                  loadedFamily?.organisation || orgName,
-                  isSuperUser,
-                  userAccess,
-                )
-              }
-            >
+            <ButtonGroup isDisabled={!userCanModify}>
               <Button
                 type='submit'
                 colorScheme='blue'
@@ -909,44 +895,21 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
             </ButtonGroup>
           </form>
           {editingEntity === 'document' && loadedFamily && (
-            <Drawer
-              placement='right'
+            <DocumentEditDrawer
+              editingDocument={editingDocument}
+              loadedFamilyId={loadedFamily.import_id}
+              canModify={userCanModify}
+              taxonomy={taxonomy}
+              onSuccess={onDocumentFormSuccess}
               onClose={onClose}
               isOpen={isOpen}
-              size='lg'
-            >
-              <DrawerOverlay />
-              <DrawerContent>
-                <DrawerHeader borderBottomWidth='1px'>
-                  {editingDocument
-                    ? `Edit: ${editingDocument.title}`
-                    : 'Add new Document'}
-                </DrawerHeader>
-                <DrawerBody>
-                  <DocumentForm
-                    familyId={loadedFamily.import_id}
-                    canModify={canModify(
-                      loadedFamily?.organisation,
-                      isSuperUser,
-                      userAccess,
-                    )}
-                    taxonomy={taxonomy}
-                    onSuccess={onDocumentFormSuccess}
-                    document={editingDocument}
-                  />
-                </DrawerBody>
-              </DrawerContent>
-            </Drawer>
+            />
           )}
           {editingEntity === 'event' && loadedFamily && (
             <EventEditDrawer
               editingEvent={editingEvent}
               loadedFamilyId={loadedFamily.import_id}
-              canModify={canModify(
-                loadedFamily.organisation,
-                isSuperUser,
-                userAccess,
-              )}
+              canModify={userCanModify}
               taxonomy={taxonomy}
               onSuccess={onEventFormSuccess}
               onClose={onClose}
