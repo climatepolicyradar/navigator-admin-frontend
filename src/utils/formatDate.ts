@@ -1,4 +1,7 @@
-export const formatDate = (date: string) => {
+export const formatDate = (date: string | null) => {
+  if (date === null) {
+    return 'N/A'
+  }
   const d = new Date(date)
   return d.toLocaleDateString()
 }
