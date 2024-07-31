@@ -50,7 +50,7 @@ describe('FamilyForm edit', () => {
     expect(screen.queryByText('Test event title')).not.toBeInTheDocument()
   })
 
-  it.skip('displays new document data after edit', async () => {
+  it('displays new document data after edit', async () => {
     const { user } = renderRoute('/family/mockCCLWFamilyOneDocument/edit')
 
     expect(

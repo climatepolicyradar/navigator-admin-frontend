@@ -137,6 +137,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   const [familyDocuments, setFamilyDocuments] = useState<string[]>([])
   const [familyEvents, setFamilyEvents] = useState<string[]>([])
   const [updatedEvent, setUpdatedEvent] = useState<string>('')
+  const [updatedDocument, setUpdatedDocument] = useState<string>('')
 
   const watchCorpus = watch('corpus')
   const corpusInfo = useCorpus(
@@ -285,6 +286,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     if (familyDocuments.includes(documentId))
       setFamilyDocuments([...familyDocuments])
     else setFamilyDocuments([...familyDocuments, documentId])
+    setUpdatedDocument(documentId)
   }
 
   const onDocumentDeleteClick = async (documentId: string) => {
@@ -852,6 +854,8 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                       key={familyDoc}
                       onEditClick={(id) => onEditEntityClick('document', id)}
                       onDeleteClick={onDocumentDeleteClick}
+                      updatedDocument={updatedDocument}
+                      setUpdatedDocument={setUpdatedDocument}
                     />
                   ))}
                 </Flex>
