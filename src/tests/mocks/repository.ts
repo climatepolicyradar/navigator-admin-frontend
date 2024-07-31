@@ -1,7 +1,9 @@
 import { IEvent } from '@/interfaces/Event'
-import { mockEvent } from '../utilsTest/mocks'
+import { mockDocument2, mockEvent } from '../utilsTest/mocks'
+import { IDocument } from '@/interfaces'
 
 let eventRepository = [mockEvent]
+let documentRepository = [mockDocument2]
 
 const getEvent = (id: string) => {
   return eventRepository.find((event) => event.import_id === id)
@@ -16,8 +18,29 @@ const updateEvent = (data: IEvent, id: string) => {
   })
 }
 
-const reset = () => {
-  eventRepository = [mockEvent]
+const getDocument = (id: string) => {
+  return documentRepository.find((doc) => doc.import_id === id)
 }
 
-export { eventRepository, getEvent, updateEvent, reset }
+const updateDocument = (data: IDocument, id: string) => {
+  documentRepository = documentRepository.map((doc) => {
+    if (id === doc.import_id) {
+      return { ...doc, ...data }
+    }
+    return doc
+  })
+}
+
+const reset = () => {
+  eventRepository = [mockEvent]
+  documentRepository = [mockDocument2]
+}
+
+export {
+  eventRepository,
+  getEvent,
+  updateEvent,
+  getDocument,
+  updateDocument,
+  reset,
+}

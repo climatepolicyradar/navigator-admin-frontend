@@ -1,11 +1,18 @@
 import { http, HttpResponse } from 'msw'
 import {
   cclwConfigMock,
+  mockCCLWFamilyOneDocument,
   mockCCLWFamilyWithOneEvent,
   mockFamiliesData,
 } from '../utilsTest/mocks'
-import { getEvent, updateEvent } from './repository'
+import {
+  getDocument,
+  getEvent,
+  updateEvent,
+  updateDocument,
+} from './repository'
 import { IEvent } from '@/interfaces/Event'
+import { IDocument } from '@/interfaces'
 
 export const handlers = [
   http.get('*/v1/config', () => {
@@ -17,6 +24,9 @@ export const handlers = [
     if (id === 'mockCCLWFamilyWithOneEvent') {
       return HttpResponse.json({ ...mockCCLWFamilyWithOneEvent })
     }
+    if (id === 'mockCCLWFamilyOneDocument') {
+      return HttpResponse.json({ ...mockCCLWFamilyOneDocument })
+    }
     return HttpResponse.json({ ...mockFamiliesData[0] })
   }),
   http.get('*/v1/families/', () => {
@@ -26,6 +36,9 @@ export const handlers = [
     const { id } = params
     if (id === 'mockCCLWFamilyWithOneEvent') {
       return HttpResponse.json({ ...mockCCLWFamilyWithOneEvent })
+    }
+    if (id === 'mockCCLWFamilyOneDocument') {
+      return HttpResponse.json({ ...mockCCLWFamilyOneDocument })
     }
     return HttpResponse.json({ ...mockFamiliesData[0] })
   }),
@@ -45,5 +58,18 @@ export const handlers = [
     updateEvent(updateData as IEvent, id as string)
     const updatedEvent = getEvent(id as string)
     return HttpResponse.json(updatedEvent)
+  }),
+
+  http.get('*/v1/documents/:id', ({ params }) => {
+    const { id } = params
+    const document = getDocument(id as string)
+    return HttpResponse.json(document)
+  }),
+  http.put('*/v1/documents/:id', async ({ request, params }) => {
+    const { id } = params
+    const updateData = await request.json()
+    updateDocument(updateData as IDocument, id as string)
+    const updatedDocument = getDocument(id as string)
+    return HttpResponse.json(updatedDocument)
   }),
 ]
