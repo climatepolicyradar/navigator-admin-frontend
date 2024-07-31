@@ -80,6 +80,7 @@ describe('FamilyForm', () => {
   afterEach(cleanup)
 
   it('warns when no access', async () => {
+    localStorage.clear()
     const testFamily = mockFamiliesData[1]
     renderComponent(testFamily)
     await flushPromises()
