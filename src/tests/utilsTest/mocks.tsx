@@ -94,6 +94,8 @@ const mockUNFCCCFamilyNoDocumentsNoEvents: IUNFCCCFamily = {
   events: [], // Without events
   created: '5/1/2021',
   last_modified: '6/1/2021',
+  published_date: null,
+  last_updated_date: null,
 }
 
 const mockCCLWFamilyNoDocuments: ICCLWFamily = {
@@ -114,6 +116,8 @@ const mockCCLWFamilyNoEvents: ICCLWFamily = {
   events: [], // Without events
   created: '7/2/2021',
   last_modified: '8/2/2021',
+  published_date: null,
+  last_updated_date: null,
 }
 
 const mockDocument = {
