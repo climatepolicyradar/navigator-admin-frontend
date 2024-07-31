@@ -1,3 +1,4 @@
+import { IDocument } from '@/interfaces'
 import {
   Drawer,
   DrawerBody,
@@ -5,32 +6,20 @@ import {
   DrawerHeader,
   DrawerOverlay,
 } from '@chakra-ui/react'
-import { DocumentForm } from '../forms/DocumentForm'
-import {
-  IConfigTaxonomyCCLW,
-  IConfigTaxonomyUNFCCC,
-  IDocument,
-} from '@/interfaces'
+import { PropsWithChildren } from 'react'
 
 type TProps = {
   editingDocument?: IDocument
-  loadedFamilyId: string
-  canModify: boolean
-  taxonomy?: IConfigTaxonomyCCLW | IConfigTaxonomyUNFCCC
-  onSuccess?: (eventId: string) => void
   onClose: () => void
   isOpen: boolean
 }
 
 export const DocumentEditDrawer = ({
   editingDocument,
-  loadedFamilyId,
-  canModify,
-  taxonomy,
-  onSuccess,
   onClose,
   isOpen,
-}: TProps) => {
+  children,
+}: PropsWithChildren<TProps>) => {
   return (
     <Drawer placement='right' onClose={onClose} isOpen={isOpen} size='lg'>
       <DrawerOverlay />
@@ -40,15 +29,7 @@ export const DocumentEditDrawer = ({
             ? `Edit: ${editingDocument.title}`
             : 'Add new Document'}
         </DrawerHeader>
-        <DrawerBody>
-          <DocumentForm
-            familyId={loadedFamilyId}
-            canModify={canModify}
-            taxonomy={taxonomy}
-            onSuccess={onSuccess}
-            document={editingDocument}
-          />
-        </DrawerBody>
+        <DrawerBody>{children}</DrawerBody>
       </DrawerContent>
     </Drawer>
   )

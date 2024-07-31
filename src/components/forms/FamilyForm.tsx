@@ -69,6 +69,8 @@ import { EventEditDrawer } from '../drawers/EventEditDrawer'
 import useCorpus from '@/hooks/useCorpus'
 import useTaxonomy from '@/hooks/useTaxonomy'
 import { DocumentEditDrawer } from '../drawers/DocumentEditDrawer'
+import { DocumentForm } from './DocumentForm'
+import { EventForm } from './EventForm'
 
 type TMultiSelect = {
   value: string
@@ -897,24 +899,32 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
           {editingEntity === 'document' && loadedFamily && (
             <DocumentEditDrawer
               editingDocument={editingDocument}
-              loadedFamilyId={loadedFamily.import_id}
-              canModify={userCanModify}
-              taxonomy={taxonomy}
-              onSuccess={onDocumentFormSuccess}
               onClose={onClose}
               isOpen={isOpen}
-            />
+            >
+              <DocumentForm
+                document={editingDocument}
+                familyId={loadedFamily.import_id}
+                canModify={userCanModify}
+                taxonomy={taxonomy}
+                onSuccess={onDocumentFormSuccess}
+              />
+            </DocumentEditDrawer>
           )}
           {editingEntity === 'event' && loadedFamily && (
             <EventEditDrawer
               editingEvent={editingEvent}
-              loadedFamilyId={loadedFamily.import_id}
-              canModify={userCanModify}
-              taxonomy={taxonomy}
-              onSuccess={onEventFormSuccess}
               onClose={onClose}
               isOpen={isOpen}
-            />
+            >
+              <EventForm
+                familyId={loadedFamily.import_id}
+                canModify={userCanModify}
+                taxonomy={taxonomy}
+                event={editingEvent}
+                onSuccess={onEventFormSuccess}
+              />
+            </EventEditDrawer>
           )}
         </>
       )}
