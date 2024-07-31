@@ -20,8 +20,8 @@ type TProps = {
   canModify: boolean
   onEditClick?: (event: IEvent) => void
   onDeleteClick?: (eventId: string) => void
-  updateEvent: boolean
-  setUpdateEvent: (updateEvent: boolean) => void
+  updatedEvent: string
+  setUpdatedEvent: (updateEvent: string) => void
 }
 
 export const FamilyEvent = ({
@@ -29,17 +29,17 @@ export const FamilyEvent = ({
   canModify,
   onEditClick,
   onDeleteClick,
-  updateEvent,
-  setUpdateEvent,
+  updatedEvent,
+  setUpdatedEvent,
 }: TProps) => {
   const { event, loading, error, reload } = useEvent(eventId)
 
   useEffect(() => {
-    if (updateEvent) {
+    if (updatedEvent === eventId) {
       reload()
-      setUpdateEvent(false)
+      setUpdatedEvent('')
     }
-  }, [updateEvent, setUpdateEvent, reload])
+  }, [updatedEvent, setUpdatedEvent, reload, eventId])
 
   const handleEditClick = () => {
     onEditClick && event ? onEditClick(event) : null

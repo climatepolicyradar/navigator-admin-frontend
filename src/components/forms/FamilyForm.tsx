@@ -139,7 +139,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   >()
   const [familyDocuments, setFamilyDocuments] = useState<string[]>([])
   const [familyEvents, setFamilyEvents] = useState<string[]>([])
-  const [updateEvent, setUpdateEvent] = useState<boolean>(false)
+  const [updatedEvent, setUpdatedEvent] = useState<string>('')
 
   const watchCorpus = watch('corpus')
   const corpusInfo = useCorpus(
@@ -324,7 +324,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     onClose()
     if (familyEvents.includes(eventId)) setFamilyEvents([...familyEvents])
     else setFamilyEvents([...familyEvents, eventId])
-    setUpdateEvent(true)
+    setUpdatedEvent(eventId)
   }
 
   const canLoadForm =
@@ -885,8 +885,8 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 onAddNewEntityClick={onAddNewEntityClick}
                 setFamilyEvents={setFamilyEvents}
                 loadedFamily={loadedFamily}
-                updateEvent={updateEvent}
-                setUpdateEvent={setUpdateEvent}
+                updatedEvent={updatedEvent}
+                setUpdatedEvent={setUpdatedEvent}
               />
             </VStack>
             <ButtonGroup
