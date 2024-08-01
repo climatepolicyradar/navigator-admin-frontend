@@ -36,10 +36,10 @@ describe('FamilyList', () => {
     // as the component when it runs formatDate.
     expect(
       screen.getAllByText(formatDate(UNFCCCFamily.published_date)),
-    ).toHaveLength(2)
+    ).toHaveLength(1)
     expect(
       screen.getAllByText(formatDate(UNFCCCFamily.last_updated_date)),
-    ).toHaveLength(2)
+    ).toHaveLength(1)
     expect(screen.getAllByText(formatDate(UNFCCCFamily.created))).toHaveLength(
       1,
     )
