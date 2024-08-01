@@ -5,7 +5,7 @@ import { mockFamiliesData } from '@/tests/utilsTest/mocks'
 vi.mock('@/hooks/useEvent', () => ({
   default: vi.fn().mockReturnValue({
     event: {
-      date: '2024-07-11',
+      date: new Date(2024, 6, 11).toISOString(), // month is 0 indexed,
       event_title: 'Test event title',
       event_type_value: 'Appealed',
     },

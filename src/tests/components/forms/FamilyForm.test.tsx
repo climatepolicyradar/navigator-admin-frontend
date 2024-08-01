@@ -48,7 +48,7 @@ vi.mock('@/hooks/useDocument', () => ({
 vi.mock('@/hooks/useEvent', () => ({
   default: vi.fn().mockReturnValue({
     event: {
-      date: '11/07/2024',
+      date: new Date(2021, 6, 11).toISOString(),
       event_title: 'Test event title',
       event_type_value: 'Appealed',
     },

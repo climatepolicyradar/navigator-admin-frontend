@@ -8,7 +8,7 @@ describe('EventEditDrawer', () => {
     const editingEvent = {
       import_id: '1',
       event_title: 'Test event title',
-      date: '2024-07-11',
+      date: new Date(2024, 6, 11).toISOString(), // month is 0 indexed
       event_type_value: 'Appealed',
       event_status: 'Submitted',
       family_import_id: '1',
