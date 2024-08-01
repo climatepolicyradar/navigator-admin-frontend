@@ -1,5 +1,7 @@
 import { screen, waitForElementToBeRemoved } from '@testing-library/react'
 import { renderRoute } from '../utilsTest/renderRoute'
+import { mockEvent } from '@/tests/utilsTest/mocks'
+import { formatDate } from '@/utils/formatDate'
 
 vi.mock('react-router-dom', async (importOriginal) => {
   const actual: unknown = await importOriginal()
@@ -11,6 +13,10 @@ vi.mock('react-router-dom', async (importOriginal) => {
 
 describe('FamilyForm edit', () => {
   it('displays new event data after edit', async () => {
+    // We put the formattedDate here so that the formatting runs in the same locale
+    // as the test suite component when it runs formatDate.
+    const formattedEventDate = formatDate(mockEvent.date)
+
     const { user } = renderRoute('/family/mockCCLWFamilyWithOneEvent/edit')
 
     expect(
@@ -23,7 +29,7 @@ describe('FamilyForm edit', () => {
 
     expect(
       screen.getByRole('dialog', {
-        name: 'Edit: Test event title, on 11/7/2024',
+        name: `Edit: Test event title, on ${formattedEventDate}`,
       }),
     ).toBeInTheDocument()
 
@@ -39,7 +45,7 @@ describe('FamilyForm edit', () => {
 
     await waitForElementToBeRemoved(() =>
       screen.queryByRole('dialog', {
-        name: 'Edit: Test event title, on 11/7/2024',
+        name: `Edit: Test event title, on ${formattedEventDate}`,
       }),
     )
 

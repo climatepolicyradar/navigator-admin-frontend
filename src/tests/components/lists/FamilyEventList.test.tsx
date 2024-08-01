@@ -1,11 +1,13 @@
-import { FamilyEventList } from '@/components/lists/FamilyEventList'
 import { render, screen } from '@testing-library/react'
-import { mockFamiliesData } from '@/tests/utilsTest/mocks'
+import { mockEvent, mockFamiliesData } from '@/tests/utilsTest/mocks'
+
+import { FamilyEventList } from '@/components/lists/FamilyEventList'
+import { formatDate } from '@/utils/formatDate'
 
 vi.mock('@/hooks/useEvent', () => ({
   default: vi.fn().mockReturnValue({
     event: {
-      date: new Date(2024, 6, 11).toISOString(), // month is 0 indexed,
+      date: mockEvent.date,
       event_title: 'Test event title',
       event_type_value: 'Appealed',
     },
@@ -29,10 +31,14 @@ describe('FamilyEventList', () => {
       />,
     )
 
+    // We put the formattedDate here so that the formatting runs in the same locale
+    // as the test suite component when it runs formatDate.
+    const formattedDate = formatDate(mockEvent.date)
+
     expect(screen.getByText('Events')).toBeInTheDocument()
     expect(screen.getByText('Test event title')).toBeInTheDocument()
     expect(screen.getByText('Type: Appealed')).toBeInTheDocument()
-    expect(screen.getByText('Date: 11/07/2024')).toBeInTheDocument()
+    expect(screen.getByText(`Date: ${formattedDate}`)).toBeInTheDocument()
     expect(screen.getAllByRole('button', { name: 'Edit' })).toHaveLength(2)
   })
 })
