@@ -5,7 +5,7 @@ import { EventForm } from '@/components/forms/EventForm'
 import { formatDate } from '@/utils/formatDate'
 
 describe('EventEditDrawer', () => {
-  it.only('renders edit form for existing event if an editingEvent is passed in', () => {
+  it('renders edit form for existing event if an editingEvent is passed in', () => {
     const eventDate = new Date(2024, 6, 11).toISOString()
     // We put the formattedDate here so that the formatting runs in the same locale
     // as the test suite component when it runs formatDate.
