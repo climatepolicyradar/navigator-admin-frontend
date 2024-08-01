@@ -49,4 +49,44 @@ describe('FamilyForm edit', () => {
     expect(await screen.findByText('New event title')).toBeInTheDocument()
     expect(screen.queryByText('Test event title')).not.toBeInTheDocument()
   })
+
+  it('displays new document data after edit', async () => {
+    const { user } = renderRoute('/family/mockCCLWFamilyOneDocument/edit')
+
+    expect(
+      await screen.findByText('Editing: CCLW Family Seven'),
+    ).toBeInTheDocument()
+    expect(await screen.findByText('Documents')).toBeInTheDocument()
+    expect(await screen.findByText('Test document title')).toBeInTheDocument()
+
+    await user.click(screen.getByTestId('edit-document5'))
+
+    expect(
+      screen.getByRole('dialog', {
+        name: 'Edit: Test document title',
+      }),
+    ).toBeInTheDocument()
+
+    const documentTitle = screen.getByRole('textbox', { name: 'Title' })
+
+    expect(documentTitle).toHaveValue('Test document title')
+
+    await user.clear(documentTitle)
+
+    await user.type(documentTitle, 'New document title')
+
+    await user.click(screen.getByRole('button', { name: 'Update Document' }))
+
+    await waitForElementToBeRemoved(() =>
+      screen.queryByRole('dialog', {
+        name: 'Edit: Test document title',
+      }),
+    )
+
+    expect(
+      await screen.findByText('Document has been successfully updated'),
+    ).toBeInTheDocument()
+    expect(await screen.findByText('New document title')).toBeInTheDocument()
+    expect(screen.queryByText('Test document title')).not.toBeInTheDocument()
+  })
 })

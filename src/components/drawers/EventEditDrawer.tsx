@@ -6,32 +6,21 @@ import {
   DrawerHeader,
   DrawerOverlay,
 } from '@chakra-ui/react'
-import { EventForm } from '../forms/EventForm'
-import {
-  IConfigTaxonomyCCLW,
-  IConfigTaxonomyUNFCCC,
-  IEvent,
-} from '@/interfaces'
+import { IEvent } from '@/interfaces'
+import { PropsWithChildren } from 'react'
 
 type TProps = {
   editingEvent?: IEvent
-  loadedFamilyId: string
-  canModify: boolean
-  taxonomy?: IConfigTaxonomyCCLW | IConfigTaxonomyUNFCCC
-  onSuccess?: (eventId: string) => void
   onClose: () => void
   isOpen: boolean
 }
 
 export const EventEditDrawer = ({
   editingEvent,
-  loadedFamilyId,
-  canModify,
-  taxonomy,
-  onSuccess,
   onClose,
   isOpen,
-}: TProps) => {
+  children,
+}: PropsWithChildren<TProps>) => {
   return (
     <>
       <Drawer placement='right' onClose={onClose} isOpen={isOpen} size='lg'>
@@ -42,15 +31,7 @@ export const EventEditDrawer = ({
               ? `Edit: ${editingEvent.event_title}, on ${formatDate(editingEvent.date)}`
               : 'Add new Event'}
           </DrawerHeader>
-          <DrawerBody>
-            <EventForm
-              familyId={loadedFamilyId}
-              canModify={canModify}
-              taxonomy={taxonomy}
-              event={editingEvent}
-              onSuccess={onSuccess}
-            />
-          </DrawerBody>
+          <DrawerBody>{children}</DrawerBody>
         </DrawerContent>
       </Drawer>
     </>

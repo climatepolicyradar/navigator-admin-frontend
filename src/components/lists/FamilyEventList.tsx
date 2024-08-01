@@ -45,7 +45,7 @@ export const FamilyEventList = ({
     await deleteEvent(eventId)
       .then(() => {
         toast({
-          title: 'Document has been successful deleted',
+          title: 'Event has been successfully deleted',
           status: 'success',
           position: 'top',
         })
