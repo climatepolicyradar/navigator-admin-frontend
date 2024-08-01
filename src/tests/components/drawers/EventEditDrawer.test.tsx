@@ -7,7 +7,7 @@ describe('EventEditDrawer', () => {
     const editingEvent = {
       import_id: '1',
       event_title: 'Test event title',
-      date: '11/7/2024',
+      date: '2024-07-11',
       event_type_value: 'Appealed',
       event_status: 'Submitted',
       family_import_id: '1',
@@ -22,9 +22,7 @@ describe('EventEditDrawer', () => {
       />,
     )
     expect(
-      screen.getByText(
-        `Edit: ${editingEvent.event_title}, on ${editingEvent.date}`,
-      ),
+      screen.getByText(`Edit: ${editingEvent.event_title}, on 11/07/2024`),
     ).toBeInTheDocument()
     expect(
       screen.getByRole('button', { name: 'Update Event' }),

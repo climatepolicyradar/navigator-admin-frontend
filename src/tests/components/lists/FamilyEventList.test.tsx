@@ -5,7 +5,7 @@ import { mockFamiliesData } from '@/tests/utilsTest/mocks'
 vi.mock('@/hooks/useEvent', () => ({
   default: vi.fn().mockReturnValue({
     event: {
-      date: '11/07/2024',
+      date: '2024-07-11',
       event_title: 'Test event title',
       event_type_value: 'Appealed',
     },
@@ -30,7 +30,7 @@ describe('FamilyEventList', () => {
     expect(screen.getByText('Events')).toBeInTheDocument()
     expect(screen.getByText('Test event title')).toBeInTheDocument()
     expect(screen.getByText('Type: Appealed')).toBeInTheDocument()
-    expect(screen.getByText('Date: 11/7/2024')).toBeInTheDocument()
+    expect(screen.getByText('Date: 11/07/2024')).toBeInTheDocument()
     expect(screen.getAllByRole('button', { name: 'Edit' })).toHaveLength(2)
   })
 })
