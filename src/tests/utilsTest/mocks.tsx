@@ -1,4 +1,4 @@
-import { IConfig } from '@/interfaces'
+import { IConfig, IDocument, IEvent } from '@/interfaces'
 import { ICCLWFamily, IUNFCCCFamily } from '@/interfaces/Family'
 
 const mockConfig = {
@@ -23,7 +23,12 @@ const mockConfig = {
     { value: 'en', label: 'English' },
     { value: 'es', label: 'Spanish' },
   ],
-  corpora: [],
+  corpora: [
+    {
+      corpus_import_id: 'CCLW.corpus.i00000001.n0000',
+      corpus_type: 'Law and Policies',
+    },
+  ],
   document: {
     roles: ['Role One', 'Role Two'],
     types: ['Type One', 'Type Two'],
@@ -118,6 +123,53 @@ const mockCCLWFamilyNoEvents: ICCLWFamily = {
   last_modified: '8/2/2021',
   published_date: null,
   last_updated_date: null,
+}
+
+const mockCCLWFamilyWithOneEvent: ICCLWFamily = {
+  ...mockCCLWFamilyNoDocuments,
+  import_id: 'CCLW.family.6.0',
+  title: 'CCLW Family Six',
+  summary: 'Summary for CCLW Family Six with one event',
+  events: ['event5'],
+  created: '7/2/2021',
+  last_modified: '8/2/2021',
+}
+
+const mockCCLWFamilyOneDocument: ICCLWFamily = {
+  ...mockCCLWFamilyNoDocuments,
+  import_id: 'CCLW.family.7.0',
+  title: 'CCLW Family Seven',
+  summary: 'Summary for CCLW Family Seven with one document',
+  documents: ['document5'],
+  created: '5/2/2021',
+  last_modified: '6/2/2021',
+}
+
+const mockEvent: IEvent = {
+  import_id: 'event5',
+  event_title: 'Test event title',
+  date: '11/07/2024',
+  event_type_value: 'Event One',
+  event_status: 'Submitted',
+  family_import_id: 'CCLW.family.6.0',
+}
+
+const mockDocument2: IDocument = {
+  import_id: 'document5',
+  family_import_id: 'CCLW.family.7.0',
+  variant_name: null,
+  status: 'test',
+  slug: 'slug',
+  metadata: { role: ['Role One'], type: ['Type One'] },
+  physical_id: 1,
+  title: 'Test document title',
+  md5_sum: null,
+  cdn_object: null,
+  source_url: null,
+  content_type: null,
+  user_language_name: null,
+  created: '1/1/2024',
+  last_modified: '1/1/2024',
 }
 
 const mockDocument = {
@@ -261,3 +313,7 @@ export { mockConfig as configMock }
 export { mockCCLWConfig as cclwConfigMock }
 export { mockUNFCCCConfig as unfcccConfigMock }
 export { mockDocument }
+export { mockDocument2 }
+export { mockEvent }
+export { mockCCLWFamilyWithOneEvent }
+export { mockCCLWFamilyOneDocument }

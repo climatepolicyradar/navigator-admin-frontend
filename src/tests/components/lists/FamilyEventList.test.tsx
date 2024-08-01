@@ -24,6 +24,8 @@ describe('FamilyEventList', () => {
         onAddNewEntityClick={() => {}}
         setFamilyEvents={() => {}}
         loadedFamily={mockFamiliesData[0]}
+        updatedEvent={''}
+        setUpdatedEvent={() => {}}
       />,
     )
 

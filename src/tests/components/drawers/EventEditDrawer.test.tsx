@@ -1,6 +1,7 @@
 import { EventEditDrawer } from '@/components/drawers/EventEditDrawer'
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
+import { EventForm } from '@/components/forms/EventForm'
 
 describe('EventEditDrawer', () => {
   it('renders edit form for existing event if an editingEvent is passed in', () => {
@@ -15,11 +16,16 @@ describe('EventEditDrawer', () => {
     render(
       <EventEditDrawer
         editingEvent={editingEvent}
-        loadedFamilyId='1'
-        canModify={true}
         onClose={() => {}}
         isOpen={true}
-      />,
+      >
+        <EventForm
+          familyId={'1'}
+          canModify={true}
+          event={editingEvent}
+          onSuccess={() => {}}
+        />
+      </EventEditDrawer>,
     )
     expect(
       screen.getByText(`Edit: ${editingEvent.event_title}, on 11/07/2024`),
@@ -31,12 +37,9 @@ describe('EventEditDrawer', () => {
 
   it('renders create new event form if an editingEvent is not passed in', () => {
     render(
-      <EventEditDrawer
-        loadedFamilyId='1'
-        canModify={true}
-        onClose={() => {}}
-        isOpen={true}
-      />,
+      <EventEditDrawer onClose={() => {}} isOpen={true}>
+        <EventForm familyId={'1'} canModify={true} onSuccess={() => {}} />
+      </EventEditDrawer>,
     )
     expect(screen.getByText('Add new Event')).toBeInTheDocument()
     expect(
