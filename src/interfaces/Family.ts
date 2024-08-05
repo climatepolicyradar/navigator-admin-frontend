@@ -10,8 +10,8 @@ interface IFamilyBase {
   status: string
   slug: string
   events: string[]
-  published_date: string
-  last_updated_date: string
+  published_date: string | null
+  last_updated_date: string | null
   documents: string[]
   collections: string[]
   organisation: TOrganisation

@@ -45,16 +45,16 @@ const mockUNFCCCFamily: IUNFCCCFamily = {
   status: 'active',
   slug: 'unfccc-family-one',
   events: ['event1', 'event2'],
-  published_date: '1/4/2021',
-  last_updated_date: '2/1/2021',
+  published_date: new Date(2021, 3, 1).toISOString(),
+  last_updated_date: new Date(2021, 0, 2).toISOString(),
   documents: ['document1', 'document2'],
   collections: ['collection1', 'collection2'],
   organisation: 'UNFCCC',
   corpus_import_id: 'UNFCCC.corpus.i00000001.n0000',
   corpus_title: 'UNFCCC Submissions',
   corpus_type: 'Intl. agreements',
-  created: '3/1/2021',
-  last_modified: '4/1/2021',
+  created: new Date(2021, 0, 3).toISOString(),
+  last_modified: new Date(2021, 0, 4).toISOString(),
   metadata: {
     author: ['Author One'],
     author_type: ['Type One'],
@@ -70,16 +70,16 @@ const mockCCLWFamily: ICCLWFamily = {
   status: 'active',
   slug: 'cclw-family-two',
   events: ['event3', 'event4'],
-  published_date: '1/2/2021',
-  last_updated_date: '2/2/2021',
+  published_date: new Date(2021, 1, 1).toISOString(),
+  last_updated_date: new Date(2021, 1, 2).toISOString(),
   documents: ['document3', 'document4'],
   collections: ['collection3', 'collection4'],
   organisation: 'CCLW',
   corpus_import_id: 'CCLW.corpus.i00000001.n0000',
   corpus_title: 'CCLW national policies',
   corpus_type: 'Laws and Policies',
-  created: '3/2/2021',
-  last_modified: '4/2/2021',
+  created: new Date(2021, 1, 3).toISOString(),
+  last_modified: new Date(2021, 1, 4).toISOString(),
   metadata: {
     topic: ['Topic One', 'Topic Two'],
     hazard: ['Hazard One', 'Hazard Two'],
@@ -97,8 +97,10 @@ const mockUNFCCCFamilyNoDocumentsNoEvents: IUNFCCCFamily = {
   summary: 'Summary for UNFCCC Family Three with no documents and no events',
   documents: [], // Without documents
   events: [], // Without events
-  created: '5/1/2021',
-  last_modified: '6/1/2021',
+  created: new Date(2021, 0, 5).toISOString(),
+  last_modified: new Date(2021, 0, 6).toISOString(),
+  published_date: null,
+  last_updated_date: null,
 }
 
 const mockCCLWFamilyNoDocuments: ICCLWFamily = {
@@ -107,8 +109,8 @@ const mockCCLWFamilyNoDocuments: ICCLWFamily = {
   title: 'CCLW Family Four',
   summary: 'Summary for CCLW Family Four with no documents',
   documents: [], // Without documents
-  created: '5/2/2021',
-  last_modified: '6/2/2021',
+  created: new Date(2021, 1, 5).toISOString(),
+  last_modified: new Date(2021, 1, 5).toISOString(),
 }
 
 const mockCCLWFamilyNoEvents: ICCLWFamily = {
@@ -117,8 +119,10 @@ const mockCCLWFamilyNoEvents: ICCLWFamily = {
   title: 'CCLW Family Five',
   summary: 'Summary for CCLW Family Five with no events',
   events: [], // Without events
-  created: '7/2/2021',
-  last_modified: '8/2/2021',
+  created: new Date(2021, 1, 7).toISOString(),
+  last_modified: new Date(2021, 1, 8).toISOString(),
+  published_date: null,
+  last_updated_date: null,
 }
 
 const mockCCLWFamilyWithOneEvent: ICCLWFamily = {
@@ -127,8 +131,8 @@ const mockCCLWFamilyWithOneEvent: ICCLWFamily = {
   title: 'CCLW Family Six',
   summary: 'Summary for CCLW Family Six with one event',
   events: ['event5'],
-  created: '7/2/2021',
-  last_modified: '8/2/2021',
+  created: new Date(2021, 1, 7).toISOString(),
+  last_modified: new Date(2021, 1, 8).toISOString(),
 }
 
 const mockCCLWFamilyOneDocument: ICCLWFamily = {
@@ -137,14 +141,14 @@ const mockCCLWFamilyOneDocument: ICCLWFamily = {
   title: 'CCLW Family Seven',
   summary: 'Summary for CCLW Family Seven with one document',
   documents: ['document5'],
-  created: '5/2/2021',
-  last_modified: '6/2/2021',
+  created: new Date(2021, 1, 5).toISOString(),
+  last_modified: new Date(2021, 1, 6).toISOString(),
 }
 
 const mockEvent: IEvent = {
   import_id: 'event5',
   event_title: 'Test event title',
-  date: '11/07/2024',
+  date: new Date(2024, 6, 11).toISOString(),
   event_type_value: 'Event One',
   event_status: 'Submitted',
   family_import_id: 'CCLW.family.6.0',
@@ -164,8 +168,8 @@ const mockDocument2: IDocument = {
   source_url: null,
   content_type: null,
   user_language_name: null,
-  created: '1/1/2024',
-  last_modified: '1/1/2024',
+  created: new Date(2021, 0, 1).toISOString(),
+  last_modified: new Date(2021, 0, 1).toISOString(),
 }
 
 const mockDocument = {

@@ -31,10 +31,10 @@ describe('FamilyList', () => {
     // as the component when it runs formatDate.
     expect(
       screen.getAllByText(formatDate(UNFCCCFamily.published_date)),
-    ).toHaveLength(2)
+    ).toHaveLength(1)
     expect(
       screen.getAllByText(formatDate(UNFCCCFamily.last_updated_date)),
-    ).toHaveLength(2)
+    ).toHaveLength(1)
     expect(screen.getAllByText(formatDate(UNFCCCFamily.created))).toHaveLength(
       1,
     )
@@ -110,5 +110,28 @@ describe('FamilyList', () => {
     expect(
       familyRowWithDocumentsAndEvents.queryByTestId('warning-icon'),
     ).not.toBeInTheDocument()
+  })
+
+  it('shows N/A when there is no value for a published date and last updated date in a family document', () => {
+    customRender(<FamilyList />)
+
+    const familyIdWithoutEvents = mockFamiliesData[4].import_id
+    const rowWithoutEventElement = screen.getByTestId(
+      `family-row-${familyIdWithoutEvents}`,
+    )
+    const nonApplicableDatesNoEvents = within(
+      rowWithoutEventElement,
+    ).getAllByText('N/A')
+    expect(nonApplicableDatesNoEvents).toHaveLength(2)
+
+    const familyIdWithoutDocumentsAndEvents = mockFamiliesData[2].import_id
+    const rowWithoutEventAndDocumentElement = screen.getByTestId(
+      `family-row-${familyIdWithoutDocumentsAndEvents}`,
+    )
+
+    const nonApplicableDatesNoEventsAndDocuments = within(
+      rowWithoutEventAndDocumentElement,
+    ).getAllByText('N/A')
+    expect(nonApplicableDatesNoEventsAndDocuments).toHaveLength(2)
   })
 })
