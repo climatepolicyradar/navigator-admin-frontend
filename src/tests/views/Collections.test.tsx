@@ -7,13 +7,14 @@ describe('Collection form', () => {
     const { user } = renderRoute('/collection/new')
 
     expect(
-      screen.getByRole('heading', { level: 1, name: 'Create new collection' }),
+      screen.getByRole('heading', {
+        level: 1,
+        name: 'Create new collection',
+      }),
     ).toBeInTheDocument()
 
-    await user.type(
-      screen.getByRole('textbox', { name: 'Title' }),
-      'Test collection',
-    )
+    const newTitle = 'Test collection'
+    await user.type(screen.getByRole('textbox', { name: 'Title' }), newTitle)
     await user.type(
       screen.getByRole('textbox', { name: 'Description' }),
       'Test description',
@@ -24,6 +25,12 @@ describe('Collection form', () => {
 
     expect(
       await screen.findByText('Collection has been successfully created'),
+    ).toBeInTheDocument()
+    expect(
+      await screen.findByRole('heading', {
+        level: 1,
+        name: `Editing: ${newTitle}`,
+      }),
     ).toBeInTheDocument()
   })
 })

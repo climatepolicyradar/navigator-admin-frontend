@@ -23,11 +23,11 @@ import {
 } from '@chakra-ui/react'
 import { useNavigate } from 'react-router-dom'
 import { ApiError } from '../feedback/ApiError'
+import useConfig from '@/hooks/useConfig'
 
 interface ICollectionForm {
   title: string
   description?: string
-  organisation: string
 }
 
 type TProps = {
@@ -38,6 +38,8 @@ export const CollectionForm = ({ collection: loadedCollection }: TProps) => {
   const navigate = useNavigate()
   const toast = useToast()
   const [formError, setFormError] = useState<IError | null | undefined>()
+  const { config } = useConfig()
+  const organisation = config?.corpora[0].organisation
   const {
     register,
     handleSubmit,
@@ -53,7 +55,9 @@ export const CollectionForm = ({ collection: loadedCollection }: TProps) => {
     const collectionData: ICollectionFormPost = {
       title: collection.title,
       description: collection.description,
-      organisation: collection.organisation as TOrganisation,
+      organisation: loadedCollection
+        ? loadedCollection.organisation
+        : (organisation?.name as TOrganisation),
     }
 
     if (loadedCollection) {
@@ -106,7 +110,6 @@ export const CollectionForm = ({ collection: loadedCollection }: TProps) => {
       reset({
         title: loadedCollection.title,
         description: loadedCollection.description,
-        organisation: loadedCollection.organisation,
       })
     }
   }, [loadedCollection, reset])

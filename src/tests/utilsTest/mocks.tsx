@@ -185,6 +185,8 @@ const mockDocument = {
   user_language_name: 'lang',
 }
 
+const mockCollection = { id: 'collection1', title: 'Test collection' }
+
 const mockCCLWConfig: IConfig = {
   ...mockConfig,
   corpora: [
@@ -313,3 +315,4 @@ export { mockDocument2 }
 export { mockEvent }
 export { mockCCLWFamilyWithOneEvent }
 export { mockCCLWFamilyOneDocument }
+export { mockCollection }
