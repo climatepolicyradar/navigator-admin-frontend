@@ -11,5 +11,5 @@ export interface ICollection {
 export interface ICollectionFormPost {
   title: string
   description?: string
-  organisation: TOrganisation
+  organisation?: TOrganisation
 }

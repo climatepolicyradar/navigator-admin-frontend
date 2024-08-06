@@ -1,4 +1,4 @@
-import { IConfig, IDocument, IEvent } from '@/interfaces'
+import { ICollection, IConfig, IDocument, IEvent } from '@/interfaces'
 import { ICCLWFamily, IUNFCCCFamily } from '@/interfaces/Family'
 
 const mockConfig = {
@@ -189,6 +189,14 @@ const mockDocument = {
   user_language_name: 'lang',
 }
 
+const mockCollection: ICollection = {
+  import_id: 'collection1',
+  title: 'Test collection',
+  description: 'Test description',
+  families: [],
+  organisation: 'UNFCCC',
+}
+
 const mockCCLWConfig: IConfig = {
   ...mockConfig,
   corpora: [
@@ -317,3 +325,4 @@ export { mockDocument2 }
 export { mockEvent }
 export { mockCCLWFamilyWithOneEvent }
 export { mockCCLWFamilyOneDocument }
+export { mockCollection }

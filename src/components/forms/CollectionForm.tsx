@@ -1,12 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import {
-  ICollection,
-  ICollectionFormPost,
-  IError,
-  TOrganisation,
-} from '@/interfaces'
+import { ICollection, ICollectionFormPost, IError } from '@/interfaces'
 import { collectionSchema } from '@/schemas/collectionSchema'
 import { createCollection, updateCollection } from '@/api/Collections'
 
@@ -27,7 +22,6 @@ import { ApiError } from '../feedback/ApiError'
 interface ICollectionForm {
   title: string
   description?: string
-  organisation: string
 }
 
 type TProps = {
@@ -53,11 +47,13 @@ export const CollectionForm = ({ collection: loadedCollection }: TProps) => {
     const collectionData: ICollectionFormPost = {
       title: collection.title,
       description: collection.description,
-      organisation: collection.organisation as TOrganisation,
     }
 
     if (loadedCollection) {
-      return await updateCollection(collectionData, loadedCollection.import_id)
+      return await updateCollection(
+        { ...collectionData, organisation: loadedCollection.organisation },
+        loadedCollection.import_id,
+      )
         .then(() => {
           toast.closeAll()
           toast({
@@ -106,7 +102,6 @@ export const CollectionForm = ({ collection: loadedCollection }: TProps) => {
       reset({
         title: loadedCollection.title,
         description: loadedCollection.description,
-        organisation: loadedCollection.organisation,
       })
     }
   }, [loadedCollection, reset])

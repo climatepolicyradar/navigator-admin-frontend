@@ -7,13 +7,11 @@ import Root from '@/Root'
 import Login from '@/views/auth/Login'
 import Dashboard from '@/views/dashboard/Dashboard'
 import ErrorPage from '@views/Error'
-import Collections from '@/views/collection/Collections'
-import CollectionList from '@/components/lists/CollectionList'
-import Collection from '@/views/collection/Collection'
 import Documents from '@/views/document/Documents'
 import DocumentList from '@/components/lists/DocumentList'
 import Document from '@/views/document/Document'
 import { familyRoutes } from './familyRoutes'
+import { collectionRoutes } from './collectionRoutes'
 
 const authenticatedRoutes = [
   {
@@ -34,28 +32,7 @@ const authenticatedRoutes = [
                 errorElement: <ErrorPage />,
               },
               ...familyRoutes,
-              {
-                path: '/collection/new',
-                element: <Collection />,
-                errorElement: <ErrorPage />,
-              },
-              {
-                path: 'collection/:importId/edit',
-                element: <Collection />,
-                errorElement: <ErrorPage />,
-              },
-              {
-                path: 'collections',
-                element: <Collections />,
-                errorElement: <ErrorPage />,
-                children: [
-                  {
-                    path: '',
-                    element: <CollectionList />,
-                    errorElement: <ErrorPage />,
-                  },
-                ],
-              },
+              ...collectionRoutes,
               {
                 path: 'document/:importId/edit',
                 element: <Document />,
