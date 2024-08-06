@@ -13,7 +13,7 @@ describe('Collection form', () => {
       }),
     ).toBeInTheDocument()
 
-    const newTitle = 'Test collection'
+    const newTitle = 'New collection title'
     await user.type(screen.getByRole('textbox', { name: 'Title' }), newTitle)
     await user.type(
       screen.getByRole('textbox', { name: 'Description' }),

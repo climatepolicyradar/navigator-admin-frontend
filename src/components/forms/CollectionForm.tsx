@@ -1,12 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import {
-  ICollection,
-  ICollectionFormPost,
-  IError,
-  TOrganisation,
-} from '@/interfaces'
+import { ICollection, ICollectionFormPost, IError } from '@/interfaces'
 import { collectionSchema } from '@/schemas/collectionSchema'
 import { createCollection, updateCollection } from '@/api/Collections'
 
@@ -23,7 +18,6 @@ import {
 } from '@chakra-ui/react'
 import { useNavigate } from 'react-router-dom'
 import { ApiError } from '../feedback/ApiError'
-import useConfig from '@/hooks/useConfig'
 
 interface ICollectionForm {
   title: string
@@ -38,8 +32,6 @@ export const CollectionForm = ({ collection: loadedCollection }: TProps) => {
   const navigate = useNavigate()
   const toast = useToast()
   const [formError, setFormError] = useState<IError | null | undefined>()
-  const { config } = useConfig()
-  const organisation = config?.corpora[0].organisation
   const {
     register,
     handleSubmit,
@@ -55,13 +47,13 @@ export const CollectionForm = ({ collection: loadedCollection }: TProps) => {
     const collectionData: ICollectionFormPost = {
       title: collection.title,
       description: collection.description,
-      organisation: loadedCollection
-        ? loadedCollection.organisation
-        : (organisation?.name as TOrganisation),
     }
 
     if (loadedCollection) {
-      return await updateCollection(collectionData, loadedCollection.import_id)
+      return await updateCollection(
+        { ...collectionData, organisation: loadedCollection.organisation },
+        loadedCollection.import_id,
+      )
         .then(() => {
           toast.closeAll()
           toast({
