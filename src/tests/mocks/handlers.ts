@@ -43,6 +43,9 @@ export const handlers = [
     return HttpResponse.json({ ...mockFamiliesData[0] })
   }),
 
+  http.get('*/v1/collection/new', () => {
+    return HttpResponse.json([])
+  }),
   http.get('*/v1/collections/*', () => {
     return HttpResponse.json([])
   }),
