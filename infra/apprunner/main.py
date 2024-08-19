@@ -3,9 +3,7 @@ from typing import Mapping, Optional
 
 import pulumi
 import pulumi_aws as aws
-
 from util.naming import DEFAULT_TAGS, NAME_PREFIX, SCALING_NAME
-
 
 CONFIG = pulumi.config.Config()
 _ECR_ACCESS_POLICY = {
@@ -60,12 +58,13 @@ def _get_apprunner_access_role() -> aws.iam.Role:
     return apprunner_access_role
 
 
-def create_frontend_auto_scaling_config() -> aws.apprunner.AutoScalingConfigurationVersion:
+def create_frontend_auto_scaling_config() -> (
+    aws.apprunner.AutoScalingConfigurationVersion
+):
     # Create a scaling configuration based on config
     scaling_config = aws.apprunner.AutoScalingConfigurationVersion(
         f"{NAME_PREFIX}-{SCALING_NAME}",
         auto_scaling_configuration_name=f"{NAME_PREFIX}-{SCALING_NAME}",
-
         max_concurrency=int(CONFIG.require("apprunner_frontend_max_concurrency")),
         max_size=int(CONFIG.require("apprunner_frontend_max_instance_count")),
         min_size=int(CONFIG.require("apprunner_frontend_min_instance_count")),

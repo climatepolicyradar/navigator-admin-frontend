@@ -1,6 +1,6 @@
 name: admin_frontend
 description: Admin Frontend App
 runtime:
-    name: python
-    options:
-        virtualenv: venv
+  name: python
+  options:
+    virtualenv: venv

@@ -81,7 +81,6 @@ def validate_stack_and_branch() -> None:
     if deploy_from_main_branch_only and is_branch_dirty():
         raise RuntimeError("The current branch has uncommitted changes.\n\n")
 
-
     if stack in ["production", "cclw-production"]:
         if not deploy_to_prod_stack_allowed:
             raise RuntimeError(

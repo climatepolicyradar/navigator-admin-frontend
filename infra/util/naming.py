@@ -1,4 +1,5 @@
 """Utility functions for naming things."""
+
 import pulumi
 
 
@@ -11,7 +12,7 @@ def tag_string():
 
 
 NAME_PREFIX = tag_string()
-SCALING_NAME="sc"
+SCALING_NAME = "sc"
 
 DEFAULT_TAGS = {
     "CPR-Created-By": "pulumi",
