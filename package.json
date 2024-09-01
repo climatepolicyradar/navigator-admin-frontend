@@ -27,7 +27,7 @@
     "html-to-draftjs": "^1.5.0",
     "jsdom": "^24.1.1",
     "jwt-decode": "^4.0.0",
-    "msw": "^2.3.4",
+    "msw": "^2.4.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-draft-wysiwyg": "^1.15.0",
