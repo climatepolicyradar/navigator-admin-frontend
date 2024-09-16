@@ -1492,16 +1492,16 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@mswjs/interceptors@^0.29.0":
-  version "0.29.1"
-  resolved "https://registry.yarnpkg.com/@mswjs/interceptors/-/interceptors-0.29.1.tgz#e77fc58b5188569041d0440b25c9e9ebb1ccd60a"
-  integrity sha512-3rDakgJZ77+RiQUuSK69t1F0m8BQKA8Vh5DCS5V0DWvNY67zob2JhhQrhCO0AKLGINTRSFd1tBaHcJTkhefoSw==
+"@mswjs/interceptors@^0.35.6":
+  version "0.35.6"
+  resolved "https://registry.yarnpkg.com/@mswjs/interceptors/-/interceptors-0.35.6.tgz#66c522036bc01fa6be87b46b49cc378b837bf510"
+  integrity sha512-PpD687w7qLxVMK176bpQjbzU9O0VC75QnBK5U1lKd29s4hIuxfTItUD6raNKyQ6BN8b64/8HE34RuYTkwH9uPQ==
   dependencies:
     "@open-draft/deferred-promise" "^2.2.0"
     "@open-draft/logger" "^0.3.0"
     "@open-draft/until" "^2.0.0"
     is-node-process "^1.2.0"
-    outvariant "^1.2.1"
+    outvariant "^1.4.3"
     strict-event-emitter "^0.5.1"
 
 "@nodelib/fs.scandir@2.1.5":
@@ -4286,16 +4286,16 @@ ms@2.1.2:
   resolved "https://registry.npmjs.org/ms/-/ms-2.1.2.tgz"
   integrity sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==
 
-msw@^2.3.4:
-  version "2.3.4"
-  resolved "https://registry.yarnpkg.com/msw/-/msw-2.3.4.tgz#3caac6c8e1ceb8040f512c32f9b8a6e850739c03"
-  integrity sha512-sHMlwrajgmZSA2l1o7qRSe+azm/I+x9lvVVcOxAzi4vCtH8uVPJk1K5BQYDkzGl+tt0RvM9huEXXdeGrgcc79g==
+msw@^2.4.7:
+  version "2.4.7"
+  resolved "https://registry.yarnpkg.com/msw/-/msw-2.4.7.tgz#b82a7a2e6c990d4a4512d58ae03a6b7cc8956d82"
+  integrity sha512-lLfwzRjTQhaYaoJq600wCFAmjLQnI7JI2VnUDmqj6icZbxgClwJqaJW2/++kkeQvKKoI8rG8NRFMutoG8+LT7w==
   dependencies:
     "@bundled-es-modules/cookie" "^2.0.0"
     "@bundled-es-modules/statuses" "^1.0.1"
     "@bundled-es-modules/tough-cookie" "^0.1.6"
     "@inquirer/confirm" "^3.0.0"
-    "@mswjs/interceptors" "^0.29.0"
+    "@mswjs/interceptors" "^0.35.6"
     "@open-draft/until" "^2.1.0"
     "@types/cookie" "^0.6.0"
     "@types/statuses" "^2.0.4"
@@ -4435,7 +4435,7 @@ optionator@^0.9.3:
     prelude-ls "^1.2.1"
     type-check "^0.4.0"
 
-outvariant@^1.2.1, outvariant@^1.4.0, outvariant@^1.4.2:
+outvariant@^1.4.0, outvariant@^1.4.2, outvariant@^1.4.3:
   version "1.4.3"
   resolved "https://registry.yarnpkg.com/outvariant/-/outvariant-1.4.3.tgz#221c1bfc093e8fec7075497e7799fdbf43d14873"
   integrity sha512-+Sl2UErvtsoajRDKCE5/dBz4DIvHXQQnAxtQTF04OJxY0+DyZXSo5P5Bb7XYWOh81syohlYL24hbDwxedPUJCA==
