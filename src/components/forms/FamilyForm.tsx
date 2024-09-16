@@ -18,10 +18,14 @@ import {
   IConfigTaxonomyCCLW,
   IDecodedToken,
 } from '@/interfaces'
+
 import { createFamily, updateFamily } from '@/api/Families'
 import { deleteDocument } from '@/api/Documents'
+
 import useConfig from '@/hooks/useConfig'
-import { canModify } from '@/utils/canModify'
+import useCorpus from '@/hooks/useCorpus'
+import useTaxonomy from '@/hooks/useTaxonomy'
+import useCollections from '@/hooks/useCollections'
 
 import {
   Box,
@@ -52,25 +56,26 @@ import {
   ModalBody,
   ModalCloseButton,
 } from '@chakra-ui/react'
+import { WarningIcon } from '@chakra-ui/icons'
 import { Select as CRSelect } from 'chakra-react-select'
-import useCollections from '@/hooks/useCollections'
+import { chakraStylesSelect } from '@/styles/chakra'
 import { Loader } from '../Loader'
-import { getCountries } from '@/utils/extractNestedGeographyData'
-import { generateOptions } from '@/utils/generateOptions'
-import { familySchema } from '@/schemas/familySchema'
 import { FamilyDocument } from '../family/FamilyDocument'
 import { ApiError } from '../feedback/ApiError'
 import { WYSIWYG } from '../form-components/WYSIWYG'
-import { decodeToken } from '@/utils/decodeToken'
-import { chakraStylesSelect } from '@/styles/chakra'
-import { WarningIcon } from '@chakra-ui/icons'
 import { FamilyEventList } from '../lists/FamilyEventList'
 import { EventEditDrawer } from '../drawers/EventEditDrawer'
-import useCorpus from '@/hooks/useCorpus'
-import useTaxonomy from '@/hooks/useTaxonomy'
 import { DocumentEditDrawer } from '../drawers/DocumentEditDrawer'
 import { DocumentForm } from './DocumentForm'
 import { EventForm } from './EventForm'
+
+import { canModify } from '@/utils/canModify'
+import { getCountries } from '@/utils/extractNestedGeographyData'
+import { decodeToken } from '@/utils/decodeToken'
+import { generateOptions } from '@/utils/generateOptions'
+import { stripHtml } from '@/utils/stripHtml'
+
+import { familySchema } from '@/schemas/familySchema'
 
 type TMultiSelect = {
   value: string
@@ -123,6 +128,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     handleSubmit,
     control,
     reset,
+    setError,
     setValue,
     formState: { errors, isSubmitting },
     formState: { dirtyFields },
@@ -260,6 +266,17 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   // object type is workaround for SubmitErrorHandler<FieldErrors> throwing a tsc error.
   const onSubmitErrorHandler = (error: object) => {
     console.log('onSubmitErrorHandler', error)
+    const submitHandlerErrors = error as {
+      [key: string]: { message: string; type: string }
+    }
+    // Set form errors manually
+    Object.keys(submitHandlerErrors).forEach((key) => {
+      if (key === 'summary')
+        setError('summary', {
+          type: 'required',
+          message: 'Summary is required',
+        })
+    })
   }
 
   // Child entity handlers
@@ -320,6 +337,9 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   }
 
   const summaryOnChange = (html: string) => {
+    if (stripHtml(html) === '') {
+      return setValue('summary', '', { shouldDirty: true })
+    }
     setValue('summary', html, { shouldDirty: true })
   }
 
@@ -525,12 +545,13 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 <FormLabel>Title</FormLabel>
                 <Input bg='white' {...register('title')} />
               </FormControl>
-              <FormControl isRequired>
+              <FormControl isRequired isInvalid={!!errors.summary}>
                 <FormLabel>Summary</FormLabel>
                 <WYSIWYG
                   html={loadedFamily?.summary}
                   onChange={summaryOnChange}
                 />
+                <FormErrorMessage>Summary is required</FormErrorMessage>
               </FormControl>
               <Controller
                 control={control}
