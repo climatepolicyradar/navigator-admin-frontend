@@ -111,7 +111,7 @@ jobs:
       - build
     permissions:
       contents: write
-    uses: climatepolicyradar/reusable-workflows/.github/workflows/semver.yml@v8
+    uses: climatepolicyradar/reusable-workflows/.github/workflows/semver.yml@v16
     with:
       repo-name: navigator-admin-frontend
       semver-tag: main-${GITHUB_SHA::8}
@@ -123,5 +123,5 @@ jobs:
     needs: semver
     permissions:
       contents: write
-    uses: climatepolicyradar/reusable-workflows/.github/workflows/git.yml@v8
+    uses: climatepolicyradar/reusable-workflows/.github/workflows/git.yml@v16
     secrets: inherit
