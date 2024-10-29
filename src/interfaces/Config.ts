@@ -42,6 +42,7 @@ export interface IConfigTaxonomyCCLW {
   instrument: IConfigMeta
   event_type: IConfigMeta
   _document: IConfigDocumentMetadata
+  _event: IConfigEventMetadata
 }
 
 export interface IConfigTaxonomyUNFCCC {
@@ -49,12 +50,18 @@ export interface IConfigTaxonomyUNFCCC {
   author_type: IConfigMeta
   event_type: IConfigMeta
   _document: IConfigDocumentMetadata
+  _event: IConfigEventMetadata
 }
 
 export interface IConfigDocumentMetadata {
   role: IConfigMeta
   type: IConfigMeta
 }
+
+export interface IConfigEventMetadata {
+  datetime_event_name: IConfigMeta
+}
+
 export interface IConfigOrganisationMetadata {
   name: string
   id: number
