@@ -33,7 +33,7 @@ interface IConfigMeta {
   allowed_values: string[]
 }
 
-export interface IConfigTaxonomyCCLW {
+export interface ICorpusTypeLawsAndPolicies {
   topic: IConfigMeta
   hazard: IConfigMeta
   sector: IConfigMeta
@@ -45,7 +45,7 @@ export interface IConfigTaxonomyCCLW {
   _event: IConfigEventMetadata
 }
 
-export interface IConfigTaxonomyUNFCCC {
+export interface ICorpusTypeIntAgreements {
   author: IConfigMeta
   author_type: IConfigMeta
   event_type: IConfigMeta
@@ -74,7 +74,7 @@ export interface IConfigCorpora {
   corpus_type: string
   corpus_type_description: string
   organisation: IConfigOrganisationMetadata
-  taxonomy: IConfigTaxonomyCCLW | IConfigTaxonomyUNFCCC
+  taxonomy: ICorpusTypeLawsAndPolicies | ICorpusTypeIntAgreements
 }
 
 export interface IConfig {

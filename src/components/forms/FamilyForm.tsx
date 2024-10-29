@@ -14,8 +14,8 @@ import {
   IEvent,
   ICollection,
   IConfigCorpus,
-  IConfigTaxonomyUNFCCC,
-  IConfigTaxonomyCCLW,
+  ICorpusTypeIntAgreements,
+  ICorpusTypeLawsAndPolicies,
   IDecodedToken,
 } from '@/interfaces'
 
@@ -680,7 +680,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                       control={control}
                       name='author_type'
                       render={({ field }) => {
-                        const tax = taxonomy as IConfigTaxonomyUNFCCC
+                        const tax = taxonomy as ICorpusTypeIntAgreements
                         return (
                           <FormControl
                             isRequired
@@ -719,7 +719,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                       control={control}
                       name='topic'
                       render={({ field }) => {
-                        const tax = taxonomy as IConfigTaxonomyCCLW
+                        const tax = taxonomy as ICorpusTypeLawsAndPolicies
                         return (
                           <FormControl>
                             <FormLabel>Topics</FormLabel>
@@ -746,7 +746,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                       control={control}
                       name='hazard'
                       render={({ field }) => {
-                        const tax = taxonomy as IConfigTaxonomyCCLW
+                        const tax = taxonomy as ICorpusTypeLawsAndPolicies
                         return (
                           <FormControl>
                             <FormLabel>Hazards</FormLabel>
@@ -768,7 +768,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                       control={control}
                       name='sector'
                       render={({ field }) => {
-                        const tax = taxonomy as IConfigTaxonomyCCLW
+                        const tax = taxonomy as ICorpusTypeLawsAndPolicies
                         return (
                           <FormControl>
                             <FormLabel>Sectors</FormLabel>
@@ -790,7 +790,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                       control={control}
                       name='keyword'
                       render={({ field }) => {
-                        const tax = taxonomy as IConfigTaxonomyCCLW
+                        const tax = taxonomy as ICorpusTypeLawsAndPolicies
                         return (
                           <FormControl>
                             <FormLabel>Keywords</FormLabel>
@@ -812,7 +812,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                       control={control}
                       name='framework'
                       render={({ field }) => {
-                        const tax = taxonomy as IConfigTaxonomyCCLW
+                        const tax = taxonomy as ICorpusTypeLawsAndPolicies
                         return (
                           <FormControl>
                             <FormLabel>Frameworks</FormLabel>
@@ -834,7 +834,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                       control={control}
                       name='instrument'
                       render={({ field }) => {
-                        const tax = taxonomy as IConfigTaxonomyCCLW
+                        const tax = taxonomy as ICorpusTypeLawsAndPolicies
                         return (
                           <FormControl>
                             <FormLabel>Instruments</FormLabel>

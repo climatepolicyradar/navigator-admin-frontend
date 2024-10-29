@@ -11,8 +11,8 @@ import {
   IDocumentFormPostModified,
   IDocumentMetadata,
   IError,
-  IConfigTaxonomyCCLW,
-  IConfigTaxonomyUNFCCC,
+  ICorpusTypeLawsAndPolicies,
+  ICorpusTypeIntAgreements,
 } from '@/interfaces'
 import { createDocument, updateDocument } from '@/api/Documents'
 import { documentSchema } from '@/schemas/documentSchema'
@@ -41,7 +41,7 @@ type TProps = {
   document?: IDocument
   familyId?: string
   canModify?: boolean
-  taxonomy?: IConfigTaxonomyCCLW | IConfigTaxonomyUNFCCC
+  taxonomy?: ICorpusTypeLawsAndPolicies | ICorpusTypeIntAgreements
   onSuccess?: (documentId: string) => void
 }
 

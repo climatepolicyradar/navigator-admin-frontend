@@ -10,8 +10,8 @@ import {
   IEventFormPost,
   IError,
   IEventFormPut,
-  IConfigTaxonomyCCLW,
-  IConfigTaxonomyUNFCCC,
+  ICorpusTypeLawsAndPolicies,
+  ICorpusTypeIntAgreements,
 } from '@/interfaces'
 import { eventSchema } from '@/schemas/eventSchema'
 import { createEvent, updateEvent } from '@/api/Events'
@@ -34,7 +34,7 @@ type TProps = {
   familyId: string
   canModify: boolean
   event?: IEvent
-  taxonomy?: IConfigTaxonomyCCLW | IConfigTaxonomyUNFCCC
+  taxonomy?: ICorpusTypeLawsAndPolicies | ICorpusTypeIntAgreements
   onSuccess?: (eventId: string) => void
 }
 
