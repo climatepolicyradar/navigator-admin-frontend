@@ -12,6 +12,8 @@ import {
   IEventFormPut,
   ICorpusTypeLawsAndPolicies,
   ICorpusTypeIntAgreements,
+  IEventMetadata,
+  IEventFormPostModified,
 } from '@/interfaces'
 import { eventSchema } from '@/schemas/eventSchema'
 import { createEvent, updateEvent } from '@/api/Events'
@@ -65,6 +67,32 @@ export const EventForm = ({
 
   const handleFormSubmission = async (event: TEventForm) => {
     setFormError(null)
+
+    const convertToModified = (
+      data: IEventFormPost,
+    ): IEventFormPostModified => {
+      const metadata: IEventMetadata = {
+        event_type: [],
+        datetime_event_name: [],
+      }
+      if (data.event_type_value) {
+        metadata.event_type = [data.event_type_value]
+      }
+      if (data.event_type_value) { // TODO 
+        metadata.datetime_event_name = [data.event_type_value]
+      }
+
+      return {
+        event_title: data.event_title,
+        date: data.date,
+        event_type_value: data.event_type_value,
+        family_import_id: data.family_import_id,
+        family_document_import_id: data?.family_document_import_id || null,
+        metadata: metadata,
+      }
+    }
+
+    const modifiedEventData = convertToModified(event) // TODO
 
     const eventDateFormatted = new Date(event.date)
 
