@@ -2,10 +2,17 @@ import { useEffect, useState } from 'react'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import {
+  BACK_TO_FAMILIES_ERROR_DETAIL,
+  NO_TAXONOMY_ERROR,
+} from '@/constants/errors'
+import {
   IDocument,
   IDocumentFormPost,
   IDocumentFormPostModified,
+  IDocumentMetadata,
   IError,
+  IConfigTaxonomyCCLW,
+  IConfigTaxonomyUNFCCC,
 } from '@/interfaces'
 import { createDocument, updateDocument } from '@/api/Documents'
 import { documentSchema } from '@/schemas/documentSchema'
@@ -34,6 +41,7 @@ type TProps = {
   document?: IDocument
   familyId?: string
   canModify?: boolean
+  taxonomy?: IConfigTaxonomyCCLW | IConfigTaxonomyUNFCCC
   onSuccess?: (documentId: string) => void
 }
 
@@ -41,6 +49,7 @@ export const DocumentForm = ({
   document: loadedDocument,
   familyId,
   canModify,
+  taxonomy,
   onSuccess,
 }: TProps) => {
   const { config, loading: configLoading, error: configError } = useConfig()
@@ -55,24 +64,31 @@ export const DocumentForm = ({
   } = useForm({
     resolver: yupResolver(documentSchema),
   })
-  const handleFormSubmission = async (
-    submittedDcumentData: IDocumentFormPost,
-  ) => {
+  const handleFormSubmission = async (formData: IDocumentFormPost) => {
     setFormError(null)
 
     const convertToModified = (
       data: IDocumentFormPost,
     ): IDocumentFormPostModified => {
+      const metadata: IDocumentMetadata = { role: [], type: [] }
+      if (data.role) {
+        metadata.role = [data.role]
+      }
+      if (data.type) {
+        metadata.type = [data.type]
+      }
+
       return {
-        ...data,
-        source_url: submittedDcumentData.source_url || null,
-        variant_name: submittedDcumentData.variant_name || null,
-        user_language_name:
-          submittedDcumentData.user_language_name?.label || null,
+        family_import_id: data.family_import_id,
+        title: data.title,
+        metadata: metadata,
+        source_url: data.source_url || null,
+        variant_name: data.variant_name || null,
+        user_language_name: data.user_language_name?.label || null,
       }
     }
 
-    const modifiedDocumentData = convertToModified(submittedDcumentData)
+    const modifiedDocumentData = convertToModified(formData)
 
     if (loadedDocument) {
       return await updateDocument(
@@ -131,8 +147,8 @@ export const DocumentForm = ({
       reset({
         family_import_id: loadedDocument.family_import_id,
         variant_name: loadedDocument.variant_name ?? '',
-        role: loadedDocument.role ?? '',
-        type: loadedDocument.type ?? '',
+        role: loadedDocument?.metadata?.role[0] ?? '',
+        type: loadedDocument?.metadata?.type[0] ?? '',
         title: loadedDocument.title,
         source_url: loadedDocument.source_url ?? '',
         user_language_name: loadedDocument.user_language_name
@@ -161,6 +177,12 @@ export const DocumentForm = ({
       )}
       {configError && <ApiError error={configError} />}
       {configLoading && <FormLoader />}
+      {!taxonomy && (
+        <ApiError
+          message={NO_TAXONOMY_ERROR}
+          detail={BACK_TO_FAMILIES_ERROR_DETAIL}
+        />
+      )}
       <form onSubmit={handleSubmit(onSubmit)}>
         <VStack gap='4' mb={12} align={'stretch'}>
           {formError && <ApiError error={formError} />}
@@ -189,7 +211,7 @@ export const DocumentForm = ({
                   <FormLabel as='legend'>Role</FormLabel>
                   <Select background='white' {...field}>
                     <option value=''>Please select</option>
-                    {config?.document?.roles.map((option) => (
+                    {taxonomy?._document?.role?.allowed_values.map((option) => (
                       <option key={option} value={option}>
                         {option}
                       </option>
@@ -209,7 +231,7 @@ export const DocumentForm = ({
                   <FormLabel as='legend'>Type</FormLabel>
                   <Select background='white' {...field}>
                     <option value=''>Please select</option>
-                    {config?.document?.types.map((option) => (
+                    {taxonomy?._document?.type?.allowed_values.map((option) => (
                       <option key={option} value={option}>
                         {option}
                       </option>

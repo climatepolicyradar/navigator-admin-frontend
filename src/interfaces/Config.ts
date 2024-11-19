@@ -41,12 +41,23 @@ export interface IConfigTaxonomyCCLW {
   framework: IConfigMeta
   instrument: IConfigMeta
   event_type: IConfigMeta
+  _document: IConfigDocumentMetadata
 }
 
 export interface IConfigTaxonomyUNFCCC {
   author: IConfigMeta
   author_type: IConfigMeta
   event_type: IConfigMeta
+  _document: IConfigDocumentMetadata
+}
+
+export interface IConfigDocumentMetadata {
+  role: IConfigMeta
+  type: IConfigMeta
+}
+export interface IConfigOrganisationMetadata {
+  name: string
+  id: number
 }
 
 export interface IConfigCorpora {
@@ -55,6 +66,7 @@ export interface IConfigCorpora {
   description: string
   corpus_type: string
   corpus_type_description: string
+  organisation: IConfigOrganisationMetadata
   taxonomy: IConfigTaxonomyCCLW | IConfigTaxonomyUNFCCC
 }
 
@@ -64,10 +76,6 @@ export interface IConfig {
     [key: string]: string
   }
   languagesSorted: IConfigLanguageSorted[]
-  taxonomies: {
-    CCLW: IConfigTaxonomyCCLW
-    UNFCCC: IConfigTaxonomyUNFCCC
-  }
   corpora: IConfigCorpora[]
   document: {
     roles: string[]

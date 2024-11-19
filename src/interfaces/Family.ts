@@ -10,8 +10,8 @@ interface IFamilyBase {
   status: string
   slug: string
   events: string[]
-  published_date: string
-  last_updated_date: string
+  published_date: string | null
+  last_updated_date: string | null
   documents: string[]
   collections: string[]
   organisation: TOrganisation
@@ -22,16 +22,12 @@ interface IFamilyBase {
   last_modified: string
 }
 
-export interface IMetadataBase {
-  event_type: string[]
-}
-
-export interface IUNFCCCMetadata extends IMetadataBase {
+export interface IUNFCCCMetadata {
   author: string[]
   author_type: string[]
 }
 
-export interface ICCLWMetadata extends IMetadataBase {
+export interface ICCLWMetadata {
   topic: string[]
   hazard: string[]
   sector: string[]

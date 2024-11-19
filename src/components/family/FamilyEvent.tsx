@@ -13,12 +13,15 @@ import { ApiError } from '../feedback/ApiError'
 import { DeleteButton } from '../buttons/Delete'
 import { formatDate } from '@/utils/formatDate'
 import { IEvent } from '@/interfaces'
+import { useEffect } from 'react'
 
 type TProps = {
   eventId: string
   canModify: boolean
   onEditClick?: (event: IEvent) => void
   onDeleteClick?: (eventId: string) => void
+  updatedEvent: string
+  setUpdatedEvent: (updateEvent: string) => void
 }
 
 export const FamilyEvent = ({
@@ -26,8 +29,17 @@ export const FamilyEvent = ({
   canModify,
   onEditClick,
   onDeleteClick,
+  updatedEvent,
+  setUpdatedEvent,
 }: TProps) => {
-  const { event, loading, error } = useEvent(eventId)
+  const { event, loading, error, reload } = useEvent(eventId)
+
+  useEffect(() => {
+    if (updatedEvent === eventId) {
+      reload()
+      setUpdatedEvent('')
+    }
+  }, [updatedEvent, setUpdatedEvent, reload, eventId])
 
   const handleEditClick = () => {
     onEditClick && event ? onEditClick(event) : null
@@ -64,7 +76,11 @@ export const FamilyEvent = ({
         <CardFooter>
           <Stack direction='row' spacing={4}>
             {!!onEditClick && (
-              <Button size='sm' onClick={handleEditClick}>
+              <Button
+                size='sm'
+                onClick={handleEditClick}
+                data-testid={`edit-${eventId}`}
+              >
                 Edit
               </Button>
             )}

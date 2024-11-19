@@ -1,36 +1,21 @@
-import { useState, useEffect } from 'react'
+import { IConfigCorpora } from '@/interfaces'
+import { useMemo } from 'react'
 
-import { IError, ICorpus } from '@/interfaces'
-import { getCorpus } from '@/api/Corpora'
-
-const useCorpus = (id?: string) => {
-  const [corpus, setCorpus] = useState<ICorpus | null>(null)
-  const [error, setError] = useState<IError | null | undefined>()
-  const [loading, setLoading] = useState<boolean>(false)
-
-  useEffect(() => {
-    let ignore = false
-    if (id) {
-      setLoading(true)
-
-      getCorpus(id)
-        .then(({ response }) => {
-          if (!ignore) setCorpus(response.data)
-        })
-        .catch((error: IError) => {
-          setError(error)
-        })
-        .finally(() => {
-          setLoading(false)
-        })
+const useCorpus = (
+  corpora?: IConfigCorpora[],
+  corpus_id?: string,
+  watchCorpusValue?: string,
+) => {
+  return useMemo(() => {
+    const getCorpusFromId = (corpusId?: string) => {
+      const corp = corpora?.find(
+        (corpus) => corpus.corpus_import_id === corpusId,
+      )
+      return corp ? corp : null
     }
 
-    return () => {
-      ignore = true
-    }
-  }, [id])
-
-  return { corpus, error, loading }
+    return getCorpusFromId(corpus_id ? corpus_id : watchCorpusValue)
+  }, [corpora, corpus_id, watchCorpusValue])
 }
 
 export default useCorpus

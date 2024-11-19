@@ -7,20 +7,14 @@ import Root from '@/Root'
 import Login from '@/views/auth/Login'
 import Dashboard from '@/views/dashboard/Dashboard'
 import ErrorPage from '@views/Error'
-import Family from '@/views/family/Family'
-import Families from '@/views/family/Families'
-import FamilyList, {
-  loader as familiesLoader,
-} from '@/components/lists/FamilyList'
-import Collections from '@/views/collection/Collections'
-import CollectionList from '@/components/lists/CollectionList'
-import Collection from '@/views/collection/Collection'
 import Documents from '@/views/document/Documents'
 import DocumentList from '@/components/lists/DocumentList'
 import Document from '@/views/document/Document'
 import Corpus from '@/views/corpus/Corpus'
 import Corpora from '@/views/corpus/Corpora'
 import CorpusList from '@/components/lists/CorpusList'
+import { familyRoutes } from './familyRoutes'
+import { collectionRoutes } from './collectionRoutes'
 
 const authenticatedRoutes = [
   {
@@ -40,51 +34,8 @@ const authenticatedRoutes = [
                 element: <Dashboard />,
                 errorElement: <ErrorPage />,
               },
-              {
-                path: '/family/new',
-                element: <Family />,
-                errorElement: <ErrorPage />,
-              },
-              {
-                path: 'family/:importId/edit',
-                element: <Family />,
-                errorElement: <ErrorPage />,
-              },
-              {
-                path: 'families',
-                element: <Families />,
-                errorElement: <ErrorPage />,
-                children: [
-                  {
-                    path: '',
-                    element: <FamilyList />,
-                    loader: familiesLoader,
-                    errorElement: <ErrorPage />,
-                  },
-                ],
-              },
-              {
-                path: '/collection/new',
-                element: <Collection />,
-                errorElement: <ErrorPage />,
-              },
-              {
-                path: 'collection/:importId/edit',
-                element: <Collection />,
-                errorElement: <ErrorPage />,
-              },
-              {
-                path: 'collections',
-                element: <Collections />,
-                errorElement: <ErrorPage />,
-                children: [
-                  {
-                    path: '',
-                    element: <CollectionList />,
-                    errorElement: <ErrorPage />,
-                  },
-                ],
-              },
+              ...familyRoutes,
+              ...collectionRoutes,
               {
                 path: 'document/:importId/edit',
                 element: <Document />,

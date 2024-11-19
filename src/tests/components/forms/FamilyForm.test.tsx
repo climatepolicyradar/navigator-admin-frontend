@@ -1,6 +1,4 @@
-import { configure, screen } from '@testing-library/react'
-import '@testing-library/jest-dom'
-import { render, cleanup } from '@testing-library/react'
+import { configure, screen, render, cleanup } from '@testing-library/react'
 import {
   configMock,
   mockDocument,
@@ -8,68 +6,58 @@ import {
 } from '@/tests/utilsTest/mocks'
 import { FamilyForm } from '@/components/forms/FamilyForm'
 import { TFamily } from '@/interfaces'
-import 'jest-localstorage-mock'
 import { TestWrapper } from '@/tests/utilsTest/render'
+import '@testing-library/jest-dom'
 
 const flushPromises = async () =>
   new Promise((resolve) => process.nextTick(resolve))
 
-// useBlocker only can be used in a router context
-jest.mock('react-router-dom', (): unknown => ({
-  ...jest.requireActual('react-router-dom'),
-  useBlocker: jest.fn(),
-}))
+vi.mock('react-router-dom', async (importOriginal) => {
+  const actual: unknown = await importOriginal()
+  return {
+    ...(actual as Record<string, unknown>),
+    useBlocker: vi.fn(),
+  }
+})
 
-// API calls
-jest.mock('@/api', () => ({
-  getApiUrl: jest.fn().mockReturnValue('http://mock-api-url'),
-}))
-
-const localStorageMock = {
-  getItem: () => 'token',
-  setItem: jest.fn(),
-  clear: jest.fn(),
-  length: 1,
-  key: jest.fn(),
-  removeItem: jest.fn(),
-}
-
-global.localStorage = localStorageMock
-
-jest.mock('@/hooks/useConfig', () =>
-  jest.fn().mockReturnValue({
+vi.mock('@/hooks/useConfig', () => ({
+  default: vi.fn().mockReturnValue({
     config: configMock,
     error: null,
     loading: false,
   }),
-)
+}))
 
-jest.mock('@/hooks/useCollections', () =>
-  jest.fn().mockReturnValue({
+vi.mock('@/hooks/useCollections', () => ({
+  default: vi.fn().mockReturnValue({
     collections: [],
     error: null,
     loading: false,
-    reload: jest.fn(),
+    reload: vi.fn(),
   }),
-)
+}))
 
-jest.mock('@/hooks/useDocument', () =>
-  jest.fn().mockReturnValue({
+vi.mock('@/hooks/useDocument', () => ({
+  default: vi.fn().mockReturnValue({
     document: mockDocument,
     error: null,
     loading: false,
   }),
-)
+}))
 
-jest.mock('@/hooks/useEvent', () =>
-  jest.fn().mockReturnValue({
-    event: {},
+vi.mock('@/hooks/useEvent', () => ({
+  default: vi.fn().mockReturnValue({
+    event: {
+      date: new Date(2021, 6, 11).toISOString(),
+      event_title: 'Test event title',
+      event_type_value: 'Appealed',
+    },
     error: null,
     loading: false,
   }),
-)
+}))
 
-jest.mock('@/utils/decodeToken', () => ({
+vi.mock('@/utils/decodeToken', () => ({
   decodeToken: () => ({
     sub: 'sub',
     email: 'user@here.com',
@@ -89,13 +77,10 @@ const renderComponent = (mockFamily: TFamily | undefined) =>
 describe('FamilyForm', () => {
   beforeAll(() => configure({ testIdAttribute: 'data-test-id' }))
 
-  beforeEach(() => {
-    localStorage.clear()
-  })
-
   afterEach(cleanup)
 
   it('warns when no access', async () => {
+    localStorage.clear()
     const testFamily = mockFamiliesData[1]
     renderComponent(testFamily)
     await flushPromises()
@@ -109,14 +94,17 @@ describe('FamilyForm', () => {
 
   it('renders FamilyReadDTO data on edit', async () => {
     const testFamily = mockFamiliesData[1]
-    localStorage.setItem('token', 'token')
-    const { getByTestId } = renderComponent(testFamily)
+    const { getByTestId, getAllByText } = renderComponent(testFamily)
     await flushPromises()
+    const expectedEvents = getAllByText('Test event title')
 
     expect(getByTestId('input-id')).toHaveValue(testFamily.import_id)
     expect(getByTestId('corpus-id')).toHaveValue(testFamily.corpus_import_id)
     expect(getByTestId('corpus-title')).toHaveValue(testFamily.corpus_title)
     expect(getByTestId('corpus-type')).toHaveValue(testFamily.corpus_type)
+
+    expect(expectedEvents).toHaveLength(2)
+    expect(expectedEvents[0]).toHaveTextContent('Test event title')
 
     expect(screen.queryByText('corpus')).toBeNull() // it doesn't exist
   })
@@ -125,7 +113,6 @@ describe('FamilyForm', () => {
 describe('FamilyForm Icons Visibility', () => {
   it('displays warning icon next to "Add new document" button when there are no documents', async () => {
     const familyWithoutDocuments = { ...mockFamiliesData[0], documents: [] }
-    localStorage.setItem('token', 'token')
     const { getByTestId } = renderComponent(familyWithoutDocuments)
     await flushPromises()
 
@@ -135,7 +122,6 @@ describe('FamilyForm Icons Visibility', () => {
 
   it('displays warning icon next to "Add new event" button when there are no events', async () => {
     const familyWithoutEvents = { ...mockFamiliesData[0], events: [] }
-    localStorage.setItem('token', 'token')
     const { getByTestId } = renderComponent(familyWithoutEvents)
     await flushPromises()
 
@@ -145,7 +131,6 @@ describe('FamilyForm Icons Visibility', () => {
 
   it('does not display warning icon next to "Add new document/events" button when there are documents/events', async () => {
     const family = mockFamiliesData[0]
-    localStorage.setItem('token', 'token')
     renderComponent(family)
     await flushPromises()
 

@@ -1,27 +1,18 @@
 import { useEffect, useState } from 'react'
-import { useForm, SubmitHandler, Controller } from 'react-hook-form'
+import { useForm, SubmitHandler } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import {
-  ICollection,
-  ICollectionFormPost,
-  IError,
-  TOrganisation,
-} from '@/interfaces'
+import { ICollection, ICollectionFormPost, IError } from '@/interfaces'
 import { collectionSchema } from '@/schemas/collectionSchema'
 import { createCollection, updateCollection } from '@/api/Collections'
 
 import {
   FormControl,
   FormLabel,
-  HStack,
   Input,
-  Radio,
-  RadioGroup,
   Textarea,
   VStack,
   Button,
   ButtonGroup,
-  FormErrorMessage,
   useToast,
   FormHelperText,
 } from '@chakra-ui/react'
@@ -31,7 +22,6 @@ import { ApiError } from '../feedback/ApiError'
 interface ICollectionForm {
   title: string
   description?: string
-  organisation: string
 }
 
 type TProps = {
@@ -45,9 +35,8 @@ export const CollectionForm = ({ collection: loadedCollection }: TProps) => {
   const {
     register,
     handleSubmit,
-    control,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
   } = useForm({
     resolver: yupResolver(collectionSchema),
   })
@@ -58,11 +47,13 @@ export const CollectionForm = ({ collection: loadedCollection }: TProps) => {
     const collectionData: ICollectionFormPost = {
       title: collection.title,
       description: collection.description,
-      organisation: collection.organisation as TOrganisation,
     }
 
     if (loadedCollection) {
-      return await updateCollection(collectionData, loadedCollection.import_id)
+      return await updateCollection(
+        { ...collectionData, organisation: loadedCollection.organisation },
+        loadedCollection.import_id,
+      )
         .then(() => {
           toast.closeAll()
           toast({
@@ -111,7 +102,6 @@ export const CollectionForm = ({ collection: loadedCollection }: TProps) => {
       reset({
         title: loadedCollection.title,
         description: loadedCollection.description,
-        organisation: loadedCollection.organisation,
       })
     }
   }, [loadedCollection, reset])
@@ -135,34 +125,6 @@ export const CollectionForm = ({ collection: loadedCollection }: TProps) => {
           <FormLabel>Description</FormLabel>
           <Textarea height={'300px'} bg='white' {...register('description')} />
         </FormControl>
-        <Controller
-          control={control}
-          name='organisation'
-          render={({ field }) => {
-            return (
-              <FormControl
-                isRequired
-                as='fieldset'
-                isInvalid={!!errors.organisation}
-              >
-                <FormLabel as='legend'>Organisation</FormLabel>
-                <RadioGroup {...field}>
-                  <HStack gap={4}>
-                    <Radio bg='white' value='CCLW'>
-                      CCLW
-                    </Radio>
-                    <Radio bg='white' value='UNFCCC'>
-                      UNFCCC
-                    </Radio>
-                  </HStack>
-                </RadioGroup>
-                <FormErrorMessage>
-                  Please select an organisation
-                </FormErrorMessage>
-              </FormControl>
-            )
-          }}
-        />
         <ButtonGroup>
           <Button
             type='submit'

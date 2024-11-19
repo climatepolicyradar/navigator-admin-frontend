@@ -1,122 +1,137 @@
 import { customRender } from '@/tests/utilsTest/render'
-import { fireEvent, screen, waitFor, within } from '@testing-library/react'
-import '@testing-library/jest-dom'
-
+import { screen, within } from '@testing-library/react'
 import FamilyList from '@/components/lists/FamilyList'
 import { mockFamiliesData } from '@/tests/utilsTest/mocks'
 import { formatDate } from '@/utils/formatDate'
+import userEvent from '@testing-library/user-event'
+import '@testing-library/jest-dom'
 
-jest.mock('@/api/Families', () => ({
-  getFamilies: jest.fn(),
-  deleteFamily: jest.fn(),
-}))
-
-jest.mock('react-router-dom', (): unknown => ({
-  ...jest.requireActual('react-router-dom'),
-  useLoaderData: () => ({
-    response: { data: mockFamiliesData },
-  }),
-}))
+vi.mock('react-router-dom', async (importOriginal) => {
+  const actual: unknown = await importOriginal()
+  return {
+    ...(actual as Record<string, unknown>),
+    useLoaderData: () => ({
+      response: { data: mockFamiliesData },
+    }),
+  }
+})
 
 const UNFCCCFamily = mockFamiliesData[0]
 const mockCCLWFamily = mockFamiliesData[1]
 
 describe('FamilyList', () => {
-  beforeEach(async () => {
+  it('renders without crashing', async () => {
     customRender(<FamilyList />)
-    await waitFor(() => {
-      expect(screen.getByText(UNFCCCFamily.title)).toBeInTheDocument()
-    })
-  })
-
-  it('renders without crashing', () => {
     // Verify expected family properties are rendered there
-    expect(screen.queryAllByText(UNFCCCFamily.title)).not.toHaveLength(0)
-    expect(screen.queryAllByText(UNFCCCFamily.category)).not.toHaveLength(0)
-    expect(screen.queryAllByText(UNFCCCFamily.geography)).not.toHaveLength(0)
+    expect(await screen.findAllByText(UNFCCCFamily.title)).toHaveLength(1)
+    expect(screen.getAllByText(UNFCCCFamily.category)).toHaveLength(2)
+    expect(screen.getAllByText(UNFCCCFamily.geography)).toHaveLength(2)
 
     // We put the formatDate here so that the formatting runs in the same locale
     // as the component when it runs formatDate.
     expect(
-      screen.queryAllByText(formatDate(UNFCCCFamily.published_date)),
-    ).not.toHaveLength(0)
+      screen.getAllByText(formatDate(UNFCCCFamily.published_date)),
+    ).toHaveLength(1)
     expect(
-      screen.queryAllByText(formatDate(UNFCCCFamily.last_updated_date)),
-    ).not.toHaveLength(0)
+      screen.getAllByText(formatDate(UNFCCCFamily.last_updated_date)),
+    ).toHaveLength(1)
+    expect(screen.getAllByText(formatDate(UNFCCCFamily.created))).toHaveLength(
+      1,
+    )
     expect(
-      screen.queryAllByText(formatDate(UNFCCCFamily.created)),
-    ).not.toHaveLength(0)
-    expect(
-      screen.queryAllByText(formatDate(UNFCCCFamily.last_modified)),
-    ).not.toHaveLength(0)
+      screen.getAllByText(formatDate(UNFCCCFamily.last_modified)),
+    ).toHaveLength(1)
   })
 
   it('sorts families by title when title header is clicked', async () => {
-    expect(screen.getByText(UNFCCCFamily.title)).toBeInTheDocument()
+    customRender(<FamilyList />)
+
     const titleHeader = screen.getByText('Title')
 
     // Sorted
-    fireEvent.click(titleHeader)
-    await waitFor(() => {
-      const allFamilies = screen.getAllByText(/Family/)
+    await userEvent.click(titleHeader)
 
-      const indexFamilyOne = allFamilies.findIndex(
-        (element) => element.textContent === mockCCLWFamily.title,
-      )
-      const indexFamilyTwo = allFamilies.findIndex(
-        (element) => element.textContent === UNFCCCFamily.title,
-      )
+    const sortedFamilies = screen.getAllByText(/Family/)
 
-      expect(indexFamilyOne).toBeLessThan(indexFamilyTwo)
-    })
+    const indexSortedFamilyOne = sortedFamilies.findIndex(
+      (element) => element.textContent === mockCCLWFamily.title,
+    )
+    const indexSortedFamilyTwo = sortedFamilies.findIndex(
+      (element) => element.textContent === UNFCCCFamily.title,
+    )
 
+    expect(indexSortedFamilyOne).toBeLessThan(indexSortedFamilyTwo)
     // Reversed
-    fireEvent.click(titleHeader)
-    await waitFor(() => {
-      const allFamilies = screen.getAllByText(/Family/)
+    await userEvent.click(titleHeader)
 
-      const indexFamilyOne = allFamilies.findIndex(
-        (element) => element.textContent === mockCCLWFamily.title,
-      )
-      const indexFamilyTwo = allFamilies.findIndex(
-        (element) => element.textContent === UNFCCCFamily.title,
-      )
+    const unsortedFamilies = screen.getAllByText(/Family/)
 
-      expect(indexFamilyOne).toBeGreaterThan(indexFamilyTwo)
-    })
+    const indexUnsortedFamilyOne = unsortedFamilies.findIndex(
+      (element) => element.textContent === mockCCLWFamily.title,
+    )
+    const indexUnsortedFamilyTwo = unsortedFamilies.findIndex(
+      (element) => element.textContent === UNFCCCFamily.title,
+    )
+
+    expect(indexUnsortedFamilyOne).toBeGreaterThan(indexUnsortedFamilyTwo)
   })
 
   it('shows a warning icon only for families without documents or events', async () => {
+    customRender(<FamilyList />)
+
     const familyIdWithoutDocumentsAndEvents = mockFamiliesData[2].import_id
     const familyIdWithoutDocuments = mockFamiliesData[3].import_id
     const familyIdWithoutEvents = mockFamiliesData[4].import_id
     const familyIdWithDocumentsAndEvents = UNFCCCFamily.import_id
-    await waitFor(() => {
-      const familyRowWithoutDocumentsAndEvents = within(
-        screen.getByTestId(`family-row-${familyIdWithoutDocumentsAndEvents}`),
-      )
-      const familyRowWithoutDocuments = within(
-        screen.getByTestId(`family-row-${familyIdWithoutDocuments}`),
-      )
-      const familyRowWithoutEvents = within(
-        screen.getByTestId(`family-row-${familyIdWithoutEvents}`),
-      )
-      const familyRowWithDocumentsAndEvents = within(
-        screen.getByTestId(`family-row-${familyIdWithDocumentsAndEvents}`),
-      )
+    const familyRowWithoutDocumentsAndEvents = within(
+      await screen.findByTestId(
+        `family-row-${familyIdWithoutDocumentsAndEvents}`,
+      ),
+    )
+    const familyRowWithoutDocuments = within(
+      screen.getByTestId(`family-row-${familyIdWithoutDocuments}`),
+    )
+    const familyRowWithoutEvents = within(
+      screen.getByTestId(`family-row-${familyIdWithoutEvents}`),
+    )
+    const familyRowWithDocumentsAndEvents = within(
+      screen.getByTestId(`family-row-${familyIdWithDocumentsAndEvents}`),
+    )
 
-      expect(
-        familyRowWithoutDocumentsAndEvents.queryByTestId('warning-icon'),
-      ).toBeInTheDocument()
-      expect(
-        familyRowWithoutDocuments.queryByTestId('warning-icon'),
-      ).toBeInTheDocument()
-      expect(
-        familyRowWithoutEvents.queryByTestId('warning-icon'),
-      ).toBeInTheDocument()
-      expect(
-        familyRowWithDocumentsAndEvents.queryByTestId('warning-icon'),
-      ).not.toBeInTheDocument()
-    })
+    expect(
+      familyRowWithoutDocumentsAndEvents.getByTestId('warning-icon'),
+    ).toBeInTheDocument()
+    expect(
+      familyRowWithoutDocuments.getByTestId('warning-icon'),
+    ).toBeInTheDocument()
+    expect(
+      familyRowWithoutEvents.getByTestId('warning-icon'),
+    ).toBeInTheDocument()
+    expect(
+      familyRowWithDocumentsAndEvents.queryByTestId('warning-icon'),
+    ).not.toBeInTheDocument()
+  })
+
+  it('shows N/A when there is no value for a published date and last updated date in a family document', () => {
+    customRender(<FamilyList />)
+
+    const familyIdWithoutEvents = mockFamiliesData[4].import_id
+    const rowWithoutEventElement = screen.getByTestId(
+      `family-row-${familyIdWithoutEvents}`,
+    )
+    const nonApplicableDatesNoEvents = within(
+      rowWithoutEventElement,
+    ).getAllByText('N/A')
+    expect(nonApplicableDatesNoEvents).toHaveLength(2)
+
+    const familyIdWithoutDocumentsAndEvents = mockFamiliesData[2].import_id
+    const rowWithoutEventAndDocumentElement = screen.getByTestId(
+      `family-row-${familyIdWithoutDocumentsAndEvents}`,
+    )
+
+    const nonApplicableDatesNoEventsAndDocuments = within(
+      rowWithoutEventAndDocumentElement,
+    ).getAllByText('N/A')
+    expect(nonApplicableDatesNoEventsAndDocuments).toHaveLength(2)
   })
 })

@@ -2,6 +2,10 @@ import { useEffect, useState } from 'react'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import {
+  BACK_TO_FAMILIES_ERROR_DETAIL,
+  NO_TAXONOMY_ERROR,
+} from '@/constants/errors'
+import {
   IEvent,
   IEventFormPost,
   IError,
@@ -139,10 +143,8 @@ export const EventForm = ({
     <>
       {!taxonomy && (
         <ApiError
-          message={'No taxonomy associated with the current family'}
-          detail={
-            'Please go back to the "Families" page, if you think there has been a mistake please contact the administrator.'
-          }
+          message={NO_TAXONOMY_ERROR}
+          detail={BACK_TO_FAMILIES_ERROR_DETAIL}
         />
       )}
       <form onSubmit={handleSubmit(onSubmit)}>

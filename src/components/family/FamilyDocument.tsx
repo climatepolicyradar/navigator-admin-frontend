@@ -14,12 +14,15 @@ import { ApiError } from '../feedback/ApiError'
 import { IDocument } from '@/interfaces'
 import { DeleteButton } from '../buttons/Delete'
 import { getStatusColour } from '@/utils/getStatusColour'
+import { useEffect } from 'react'
 
 type TProps = {
   documentId: string
   canModify: boolean
   onEditClick?: (document: IDocument) => void
   onDeleteClick?: (documentId: string) => void
+  updatedDocument: string
+  setUpdatedDocument: (updatedDocument: string) => void
 }
 
 export const FamilyDocument = ({
@@ -27,8 +30,17 @@ export const FamilyDocument = ({
   canModify,
   onEditClick,
   onDeleteClick,
+  updatedDocument,
+  setUpdatedDocument,
 }: TProps) => {
-  const { document, loading, error } = useDocument(documentId)
+  const { document, loading, error, reload } = useDocument(documentId)
+
+  useEffect(() => {
+    if (updatedDocument === documentId) {
+      reload()
+      setUpdatedDocument('')
+    }
+  }, [updatedDocument, setUpdatedDocument, reload, documentId])
 
   const handleEditClick = () => {
     onEditClick && document ? onEditClick(document) : null
@@ -59,8 +71,12 @@ export const FamilyDocument = ({
       <CardBody>
         <Text mb='2'>{document?.title}</Text>
         <HStack divider={<Text>·</Text>} gap={4}>
-          {document?.role && <Text>Role: {document.role}</Text>}
-          {document?.type && <Text>Type: {document.type}</Text>}
+          {document?.metadata?.role && (
+            <Text>Role: {document.metadata.role}</Text>
+          )}
+          {document?.metadata?.type && (
+            <Text>Type: {document.metadata.type}</Text>
+          )}
           {document?.variant_name && (
             <Text>Variant: {document.variant_name}</Text>
           )}
@@ -74,7 +90,11 @@ export const FamilyDocument = ({
           {document?.status.toLowerCase() !== 'deleted' && (
             <Stack direction='row' spacing={4}>
               {!!onEditClick && (
-                <Button size='sm' onClick={handleEditClick}>
+                <Button
+                  size='sm'
+                  onClick={handleEditClick}
+                  data-testid={`edit-${documentId}`}
+                >
                   Edit
                 </Button>
               )}

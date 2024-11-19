@@ -1,4 +1,4 @@
-import { IConfig } from '@/interfaces'
+import { ICollection, IConfig, IDocument, IEvent } from '@/interfaces'
 import { ICCLWFamily, IUNFCCCFamily } from '@/interfaces/Family'
 
 const mockConfig = {
@@ -23,63 +23,12 @@ const mockConfig = {
     { value: 'en', label: 'English' },
     { value: 'es', label: 'Spanish' },
   ],
-  corpora: [],
-  taxonomies: {
-    CCLW: {
-      topic: {
-        allow_any: false,
-        allow_blanks: false,
-        allowed_values: ['Topic One', 'Topic Two'],
-      },
-      hazard: {
-        allow_any: false,
-        allow_blanks: false,
-        allowed_values: ['Hazard One', 'Hazard Two'],
-      },
-      sector: {
-        allow_any: false,
-        allow_blanks: false,
-        allowed_values: ['Sector One', 'Sector Two'],
-      },
-      keyword: {
-        allow_any: false,
-        allow_blanks: false,
-        allowed_values: ['Keyword One', 'Keyword Two'],
-      },
-      framework: {
-        allow_any: false,
-        allow_blanks: false,
-        allowed_values: ['Framework One', 'Framework Two'],
-      },
-      instrument: {
-        allow_any: false,
-        allow_blanks: false,
-        allowed_values: ['Instrument One', 'Instrument Two'],
-      },
-      event_type: {
-        allow_any: false,
-        allow_blanks: false,
-        allowed_values: ['Event One', 'Event Two'],
-      },
+  corpora: [
+    {
+      corpus_import_id: 'CCLW.corpus.i00000001.n0000',
+      corpus_type: 'Law and Policies',
     },
-    UNFCCC: {
-      author: {
-        allow_any: false,
-        allow_blanks: false,
-        allowed_values: ['Author One', 'Author Two'],
-      },
-      author_type: {
-        allow_any: false,
-        allow_blanks: false,
-        allowed_values: ['Type One', 'Type Two'],
-      },
-      event_type: {
-        allow_any: false,
-        allow_blanks: false,
-        allowed_values: ['Event One', 'Event Two'],
-      },
-    },
-  },
+  ],
   document: {
     roles: ['Role One', 'Role Two'],
     types: ['Type One', 'Type Two'],
@@ -96,20 +45,19 @@ const mockUNFCCCFamily: IUNFCCCFamily = {
   status: 'active',
   slug: 'unfccc-family-one',
   events: ['event1', 'event2'],
-  published_date: '1/4/2021',
-  last_updated_date: '2/1/2021',
+  published_date: new Date(2021, 3, 1).toISOString(),
+  last_updated_date: new Date(2021, 0, 2).toISOString(),
   documents: ['document1', 'document2'],
   collections: ['collection1', 'collection2'],
   organisation: 'UNFCCC',
   corpus_import_id: 'UNFCCC.corpus.i00000001.n0000',
   corpus_title: 'UNFCCC Submissions',
   corpus_type: 'Intl. agreements',
-  created: '3/1/2021',
-  last_modified: '4/1/2021',
+  created: new Date(2021, 0, 3).toISOString(),
+  last_modified: new Date(2021, 0, 4).toISOString(),
   metadata: {
     author: ['Author One'],
     author_type: ['Type One'],
-    event_type: [],
   },
 }
 
@@ -122,16 +70,16 @@ const mockCCLWFamily: ICCLWFamily = {
   status: 'active',
   slug: 'cclw-family-two',
   events: ['event3', 'event4'],
-  published_date: '1/2/2021',
-  last_updated_date: '2/2/2021',
+  published_date: new Date(2021, 1, 1).toISOString(),
+  last_updated_date: new Date(2021, 1, 2).toISOString(),
   documents: ['document3', 'document4'],
   collections: ['collection3', 'collection4'],
   organisation: 'CCLW',
   corpus_import_id: 'CCLW.corpus.i00000001.n0000',
   corpus_title: 'CCLW national policies',
   corpus_type: 'Laws and Policies',
-  created: '3/2/2021',
-  last_modified: '4/2/2021',
+  created: new Date(2021, 1, 3).toISOString(),
+  last_modified: new Date(2021, 1, 4).toISOString(),
   metadata: {
     topic: ['Topic One', 'Topic Two'],
     hazard: ['Hazard One', 'Hazard Two'],
@@ -139,7 +87,6 @@ const mockCCLWFamily: ICCLWFamily = {
     keyword: ['Keyword One', 'Keyword Two'],
     framework: ['Framework One', 'Framework Two'],
     instrument: ['Instrument One', 'Instrument Two'],
-    event_type: [],
   },
 }
 
@@ -150,8 +97,10 @@ const mockUNFCCCFamilyNoDocumentsNoEvents: IUNFCCCFamily = {
   summary: 'Summary for UNFCCC Family Three with no documents and no events',
   documents: [], // Without documents
   events: [], // Without events
-  created: '5/1/2021',
-  last_modified: '6/1/2021',
+  created: new Date(2021, 0, 5).toISOString(),
+  last_modified: new Date(2021, 0, 6).toISOString(),
+  published_date: null,
+  last_updated_date: null,
 }
 
 const mockCCLWFamilyNoDocuments: ICCLWFamily = {
@@ -160,8 +109,8 @@ const mockCCLWFamilyNoDocuments: ICCLWFamily = {
   title: 'CCLW Family Four',
   summary: 'Summary for CCLW Family Four with no documents',
   documents: [], // Without documents
-  created: '5/2/2021',
-  last_modified: '6/2/2021',
+  created: new Date(2021, 1, 5).toISOString(),
+  last_modified: new Date(2021, 1, 5).toISOString(),
 }
 
 const mockCCLWFamilyNoEvents: ICCLWFamily = {
@@ -170,8 +119,57 @@ const mockCCLWFamilyNoEvents: ICCLWFamily = {
   title: 'CCLW Family Five',
   summary: 'Summary for CCLW Family Five with no events',
   events: [], // Without events
-  created: '7/2/2021',
-  last_modified: '8/2/2021',
+  created: new Date(2021, 1, 7).toISOString(),
+  last_modified: new Date(2021, 1, 8).toISOString(),
+  published_date: null,
+  last_updated_date: null,
+}
+
+const mockCCLWFamilyWithOneEvent: ICCLWFamily = {
+  ...mockCCLWFamilyNoDocuments,
+  import_id: 'CCLW.family.6.0',
+  title: 'CCLW Family Six',
+  summary: 'Summary for CCLW Family Six with one event',
+  events: ['event5'],
+  created: new Date(2021, 1, 7).toISOString(),
+  last_modified: new Date(2021, 1, 8).toISOString(),
+}
+
+const mockCCLWFamilyOneDocument: ICCLWFamily = {
+  ...mockCCLWFamilyNoDocuments,
+  import_id: 'CCLW.family.7.0',
+  title: 'CCLW Family Seven',
+  summary: 'Summary for CCLW Family Seven with one document',
+  documents: ['document5'],
+  created: new Date(2021, 1, 5).toISOString(),
+  last_modified: new Date(2021, 1, 6).toISOString(),
+}
+
+const mockEvent: IEvent = {
+  import_id: 'event5',
+  event_title: 'Test event title',
+  date: new Date(2024, 6, 11).toISOString(),
+  event_type_value: 'Event One',
+  event_status: 'Submitted',
+  family_import_id: 'CCLW.family.6.0',
+}
+
+const mockDocument2: IDocument = {
+  import_id: 'document5',
+  family_import_id: 'CCLW.family.7.0',
+  variant_name: null,
+  status: 'test',
+  slug: 'slug',
+  metadata: { role: ['Role One'], type: ['Type One'] },
+  physical_id: 1,
+  title: 'Test document title',
+  md5_sum: null,
+  cdn_object: null,
+  source_url: null,
+  content_type: null,
+  user_language_name: null,
+  created: new Date(2021, 0, 1).toISOString(),
+  last_modified: new Date(2021, 0, 1).toISOString(),
 }
 
 const mockDocument = {
@@ -191,6 +189,14 @@ const mockDocument = {
   user_language_name: 'lang',
 }
 
+const mockCollection: ICollection = {
+  import_id: 'collection1',
+  title: 'Test collection',
+  description: 'Test description',
+  families: [],
+  organisation: 'UNFCCC',
+}
+
 const mockCCLWConfig: IConfig = {
   ...mockConfig,
   corpora: [
@@ -200,6 +206,10 @@ const mockCCLWConfig: IConfig = {
       description: 'UNFCCC Submissions',
       corpus_type: 'CCLW national policies',
       corpus_type_description: 'Laws and Policies',
+      organisation: {
+        name: 'CCLW',
+        id: 1,
+      },
       taxonomy: {
         topic: {
           allow_any: false,
@@ -236,6 +246,18 @@ const mockCCLWConfig: IConfig = {
           allow_blanks: false,
           allowed_values: ['Event One', 'Event Two'],
         },
+        _document: {
+          role: {
+            allow_any: false,
+            allow_blanks: false,
+            allowed_values: ['Role One', 'Role Two'],
+          },
+          type: {
+            allow_any: false,
+            allow_blanks: false,
+            allowed_values: ['Type One', 'Type Two'],
+          },
+        },
       },
     },
   ],
@@ -250,6 +272,10 @@ const mockUNFCCCConfig: IConfig = {
       description: 'UNFCCC Submissions',
       corpus_type: 'Intl. agreements',
       corpus_type_description: 'Intl. agreements',
+      organisation: {
+        name: 'UNFCCC',
+        id: 3,
+      },
       taxonomy: {
         author: {
           allow_any: false,
@@ -265,6 +291,18 @@ const mockUNFCCCConfig: IConfig = {
           allow_any: false,
           allow_blanks: false,
           allowed_values: ['Event One', 'Event Two'],
+        },
+        _document: {
+          role: {
+            allow_any: false,
+            allow_blanks: false,
+            allowed_values: ['Role One', 'Role Two'],
+          },
+          type: {
+            allow_any: false,
+            allow_blanks: false,
+            allowed_values: ['Type One', 'Type Two'],
+          },
         },
       },
     },
@@ -283,3 +321,8 @@ export { mockConfig as configMock }
 export { mockCCLWConfig as cclwConfigMock }
 export { mockUNFCCCConfig as unfcccConfigMock }
 export { mockDocument }
+export { mockDocument2 }
+export { mockEvent }
+export { mockCCLWFamilyWithOneEvent }
+export { mockCCLWFamilyOneDocument }
+export { mockCollection }

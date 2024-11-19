@@ -18,10 +18,14 @@ import {
   IConfigTaxonomyCCLW,
   IDecodedToken,
 } from '@/interfaces'
+
 import { createFamily, updateFamily } from '@/api/Families'
 import { deleteDocument } from '@/api/Documents'
+
 import useConfig from '@/hooks/useConfig'
-import { canModify } from '@/utils/canModify'
+import useCorpus from '@/hooks/useCorpus'
+import useTaxonomy from '@/hooks/useTaxonomy'
+import useCollections from '@/hooks/useCollections'
 
 import {
   Box,
@@ -43,11 +47,6 @@ import {
   Divider,
   AbsoluteCenter,
   useDisclosure,
-  Drawer,
-  DrawerOverlay,
-  DrawerContent,
-  DrawerHeader,
-  DrawerBody,
   Flex,
   Modal,
   ModalOverlay,
@@ -57,23 +56,26 @@ import {
   ModalBody,
   ModalCloseButton,
 } from '@chakra-ui/react'
+import { WarningIcon } from '@chakra-ui/icons'
 import { Select as CRSelect } from 'chakra-react-select'
-import useCollections from '@/hooks/useCollections'
+import { chakraStylesSelect } from '@/styles/chakra'
 import { Loader } from '../Loader'
-import { getCountries } from '@/utils/extractNestedGeographyData'
-import { generateOptions } from '@/utils/generateOptions'
-import { familySchema } from '@/schemas/familySchema'
-import { DocumentForm } from './DocumentForm'
 import { FamilyDocument } from '../family/FamilyDocument'
 import { ApiError } from '../feedback/ApiError'
-import { FamilyEvent } from '../family/FamilyEvent'
-import { deleteEvent } from '@/api/Events'
-import { EventForm } from './EventForm'
-import { formatDate } from '@/utils/formatDate'
 import { WYSIWYG } from '../form-components/WYSIWYG'
+import { FamilyEventList } from '../lists/FamilyEventList'
+import { EventEditDrawer } from '../drawers/EventEditDrawer'
+import { DocumentEditDrawer } from '../drawers/DocumentEditDrawer'
+import { DocumentForm } from './DocumentForm'
+import { EventForm } from './EventForm'
+
+import { canModify } from '@/utils/canModify'
+import { getCountries } from '@/utils/extractNestedGeographyData'
 import { decodeToken } from '@/utils/decodeToken'
-import { chakraStylesSelect } from '@/styles/chakra'
-import { WarningIcon } from '@chakra-ui/icons'
+import { generateOptions } from '@/utils/generateOptions'
+import { stripHtml } from '@/utils/stripHtml'
+
+import { familySchema } from '@/schemas/familySchema'
 
 type TMultiSelect = {
   value: string
@@ -97,7 +99,7 @@ interface IFamilyForm {
   instrument?: TMultiSelect[]
 }
 
-type TChildEntity = 'document' | 'event'
+export type TChildEntity = 'document' | 'event'
 
 type TProps = {
   family?: TFamily
@@ -126,6 +128,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     handleSubmit,
     control,
     reset,
+    setError,
     setValue,
     formState: { errors, isSubmitting },
     formState: { dirtyFields },
@@ -139,35 +142,21 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   >()
   const [familyDocuments, setFamilyDocuments] = useState<string[]>([])
   const [familyEvents, setFamilyEvents] = useState<string[]>([])
+  const [updatedEvent, setUpdatedEvent] = useState<string>('')
+  const [updatedDocument, setUpdatedDocument] = useState<string>('')
 
   const watchCorpus = watch('corpus')
-  const corpusInfo = useMemo(() => {
-    const getCorpusFromId = (corpusId: string) => {
-      const corp = config?.corpora.find(
-        (corpus) => corpus.corpus_import_id === corpusId,
-      )
-      return corp ? corp : null
-    }
-
-    if (loadedFamily) {
-      return getCorpusFromId(loadedFamily?.corpus_import_id)
-    } else if (watchCorpus) {
-      return getCorpusFromId(watchCorpus?.value)
-    }
-    return null
-  }, [config?.corpora, loadedFamily, watchCorpus])
+  const corpusInfo = useCorpus(
+    config?.corpora,
+    loadedFamily?.corpus_import_id,
+    watchCorpus?.value,
+  )
 
   const corpusTitle = loadedFamily
     ? loadedFamily?.corpus_title
     : corpusInfo?.title
 
-  const taxonomy = useMemo(() => {
-    if (corpusInfo?.corpus_type === 'Law and Policies')
-      return corpusInfo?.taxonomy as IConfigTaxonomyCCLW
-    else if (corpusInfo?.corpus_type === 'Intl. agreements')
-      return corpusInfo?.taxonomy as IConfigTaxonomyUNFCCC
-    else return corpusInfo?.taxonomy
-  }, [corpusInfo])
+  const taxonomy = useTaxonomy(corpusInfo?.corpus_type, corpusInfo?.taxonomy)
 
   const userToken = useMemo(() => {
     const token = localStorage.getItem('token')
@@ -182,6 +171,11 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   // TODO: Get org_id from corpus PDCT-1171.
   const orgName = loadedFamily ? String(loadedFamily?.organisation) : null
 
+  const userCanModify = useMemo<boolean>(
+    () => canModify(orgName, isSuperUser, userAccess),
+    [orgName, isSuperUser, userAccess],
+  )
+
   // Family handlers
   const handleFormSubmission = async (family: IFamilyForm) => {
     setIsFormSubmitting(true)
@@ -192,7 +186,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       const metadata = familyMetadata as IUNFCCCMetadata
       if (family.author) metadata.author = [family.author]
       if (family.author_type) metadata.author_type = [family.author_type]
-      metadata.event_type = []
       familyMetadata = metadata
     } else if (corpusInfo?.corpus_type == 'Laws and Policies') {
       const metadata: ICCLWMetadata = {
@@ -203,7 +196,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
         framework: family.framework?.map((framework) => framework.value) || [],
         instrument:
           family.instrument?.map((instrument) => instrument.value) || [],
-        event_type: [],
       }
       familyMetadata = metadata
     }
@@ -274,6 +266,17 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   // object type is workaround for SubmitErrorHandler<FieldErrors> throwing a tsc error.
   const onSubmitErrorHandler = (error: object) => {
     console.log('onSubmitErrorHandler', error)
+    const submitHandlerErrors = error as {
+      [key: string]: { message: string; type: string }
+    }
+    // Set form errors manually
+    Object.keys(submitHandlerErrors).forEach((key) => {
+      if (key === 'summary')
+        setError('summary', {
+          type: 'required',
+          message: 'Summary is required',
+        })
+    })
   }
 
   // Child entity handlers
@@ -300,6 +303,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     if (familyDocuments.includes(documentId))
       setFamilyDocuments([...familyDocuments])
     else setFamilyDocuments([...familyDocuments, documentId])
+    setUpdatedDocument(documentId)
   }
 
   const onDocumentDeleteClick = async (documentId: string) => {
@@ -333,6 +337,9 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   }
 
   const summaryOnChange = (html: string) => {
+    if (stripHtml(html) === '') {
+      return setValue('summary', '', { shouldDirty: true })
+    }
     setValue('summary', html, { shouldDirty: true })
   }
 
@@ -341,36 +348,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     onClose()
     if (familyEvents.includes(eventId)) setFamilyEvents([...familyEvents])
     else setFamilyEvents([...familyEvents, eventId])
-  }
-
-  const onEventDeleteClick = async (eventId: string) => {
-    toast({
-      title: 'Event deletion in progress',
-      status: 'info',
-      position: 'top',
-    })
-    await deleteEvent(eventId)
-      .then(() => {
-        toast({
-          title: 'Document has been successful deleted',
-          status: 'success',
-          position: 'top',
-        })
-        const index = familyEvents.indexOf(eventId)
-        if (index > -1) {
-          const newEvents = [...familyEvents]
-          newEvents.splice(index, 1)
-          setFamilyEvents(newEvents)
-        }
-      })
-      .catch((error: IError) => {
-        toast({
-          title: 'Event has not been deleted',
-          description: error.message,
-          status: 'error',
-          position: 'top',
-        })
-      })
+    setUpdatedEvent(eventId)
   }
 
   const canLoadForm =
@@ -476,7 +454,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
           <SkeletonText mt='4' noOfLines={12} spacing='4' skeletonHeight='2' />
         </Box>
       )}
-      {!canModify(orgName, isSuperUser, userAccess) && (
+      {!userCanModify && (
         <ApiError
           message={`You do not have permission to edit document families in ${corpusTitle} `}
           detail='Please go back to the "Families" page, if you think there has been a mistake please contact the administrator.'
@@ -567,12 +545,13 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 <FormLabel>Title</FormLabel>
                 <Input bg='white' {...register('title')} />
               </FormControl>
-              <FormControl isRequired>
+              <FormControl isRequired isInvalid={!!errors.summary}>
                 <FormLabel>Summary</FormLabel>
                 <WYSIWYG
                   html={loadedFamily?.summary}
                   onChange={summaryOnChange}
                 />
+                <FormErrorMessage>Summary is required</FormErrorMessage>
               </FormControl>
               <Controller
                 control={control}
@@ -891,11 +870,13 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 <Flex direction='column' gap={4}>
                   {familyDocuments.map((familyDoc) => (
                     <FamilyDocument
-                      canModify={canModify(orgName, isSuperUser, userAccess)}
+                      canModify={userCanModify}
                       documentId={familyDoc}
                       key={familyDoc}
                       onEditClick={(id) => onEditEntityClick('document', id)}
                       onDeleteClick={onDocumentDeleteClick}
+                      updatedDocument={updatedDocument}
+                      setUpdatedDocument={setUpdatedDocument}
                     />
                   ))}
                 </Flex>
@@ -903,13 +884,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               {loadedFamily && (
                 <Box>
                   <Button
-                    isDisabled={
-                      !canModify(
-                        loadedFamily?.organisation,
-                        isSuperUser,
-                        userAccess,
-                      )
-                    }
+                    isDisabled={!userCanModify}
                     onClick={() => onAddNewEntityClick('document')}
                     rightIcon={
                       familyDocuments.length === 0 ? (
@@ -924,65 +899,18 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                   </Button>
                 </Box>
               )}
-              <Box position='relative' padding='10'>
-                <Divider />
-                <AbsoluteCenter bg='gray.50' px='4'>
-                  Events
-                </AbsoluteCenter>
-              </Box>
-              {!loadedFamily && (
-                <Text>
-                  Please create the family first before attempting to add events
-                </Text>
-              )}
-              {familyEvents.length && (
-                <Flex direction='column' gap={4}>
-                  {familyEvents.map((familyEvent) => (
-                    <FamilyEvent
-                      canModify={canModify(orgName, isSuperUser, userAccess)}
-                      eventId={familyEvent}
-                      key={familyEvent}
-                      onEditClick={(event) => onEditEntityClick('event', event)}
-                      onDeleteClick={onEventDeleteClick}
-                    />
-                  ))}
-                </Flex>
-              )}
-              {loadedFamily && (
-                <Box>
-                  <Button
-                    isDisabled={
-                      !canModify(
-                        loadedFamily?.organisation,
-                        isSuperUser,
-                        userAccess,
-                      )
-                    }
-                    onClick={() => onAddNewEntityClick('event')}
-                    rightIcon={
-                      familyEvents.length === 0 ? (
-                        <WarningIcon
-                          color='red.500'
-                          data-test-id='warning-icon-event'
-                        />
-                      ) : undefined
-                    }
-                  >
-                    Add new Event
-                  </Button>
-                </Box>
-              )}
+              <FamilyEventList
+                familyEvents={familyEvents}
+                canModify={userCanModify}
+                onEditEntityClick={onEditEntityClick}
+                onAddNewEntityClick={onAddNewEntityClick}
+                setFamilyEvents={setFamilyEvents}
+                loadedFamily={loadedFamily}
+                updatedEvent={updatedEvent}
+                setUpdatedEvent={setUpdatedEvent}
+              />
             </VStack>
-
-            <ButtonGroup
-              isDisabled={
-                !canModify(
-                  loadedFamily?.organisation || orgName,
-                  isSuperUser,
-                  userAccess,
-                )
-              }
-            >
+            <ButtonGroup isDisabled={!userCanModify}>
               <Button
                 type='submit'
                 colorScheme='blue'
@@ -993,52 +921,36 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               </Button>
             </ButtonGroup>
           </form>
-          <Drawer placement='right' onClose={onClose} isOpen={isOpen} size='lg'>
-            <DrawerOverlay />
-            {editingEntity === 'document' && loadedFamily && (
-              <DrawerContent>
-                <DrawerHeader borderBottomWidth='1px'>
-                  {editingDocument
-                    ? `Edit: ${editingDocument.title}`
-                    : 'Add new Document'}
-                </DrawerHeader>
-                <DrawerBody>
-                  <DocumentForm
-                    familyId={loadedFamily.import_id}
-                    canModify={canModify(
-                      loadedFamily?.organisation,
-                      isSuperUser,
-                      userAccess,
-                    )}
-                    onSuccess={onDocumentFormSuccess}
-                    document={editingDocument}
-                  />
-                </DrawerBody>
-              </DrawerContent>
-            )}
-            {editingEntity === 'event' && loadedFamily && (
-              <DrawerContent>
-                <DrawerHeader borderBottomWidth='1px'>
-                  {editingEvent
-                    ? `Edit: ${editingEvent.event_title}, on ${formatDate(editingEvent.date)}`
-                    : 'Add new Event'}
-                </DrawerHeader>
-                <DrawerBody>
-                  <EventForm
-                    familyId={loadedFamily.import_id}
-                    canModify={canModify(
-                      loadedFamily?.organisation,
-                      isSuperUser,
-                      userAccess,
-                    )}
-                    taxonomy={taxonomy}
-                    onSuccess={onEventFormSuccess}
-                    event={editingEvent}
-                  />
-                </DrawerBody>
-              </DrawerContent>
-            )}
-          </Drawer>
+          {editingEntity === 'document' && loadedFamily && (
+            <DocumentEditDrawer
+              editingDocument={editingDocument}
+              onClose={onClose}
+              isOpen={isOpen}
+            >
+              <DocumentForm
+                document={editingDocument}
+                familyId={loadedFamily.import_id}
+                canModify={userCanModify}
+                taxonomy={taxonomy}
+                onSuccess={onDocumentFormSuccess}
+              />
+            </DocumentEditDrawer>
+          )}
+          {editingEntity === 'event' && loadedFamily && (
+            <EventEditDrawer
+              editingEvent={editingEvent}
+              onClose={onClose}
+              isOpen={isOpen}
+            >
+              <EventForm
+                familyId={loadedFamily.import_id}
+                canModify={userCanModify}
+                taxonomy={taxonomy}
+                event={editingEvent}
+                onSuccess={onEventFormSuccess}
+              />
+            </EventEditDrawer>
+          )}
         </>
       )}
     </>

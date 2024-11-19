@@ -5,9 +5,8 @@ export interface IDocument {
   family_import_id: string
   variant_name: string | null
   status: string
-  role: string | null
-  type: string | null
   slug: string
+  metadata: IDocumentMetadata
   physical_id: number
   title: string
   md5_sum: string | null
@@ -32,9 +31,13 @@ export interface IDocumentFormPost {
 export interface IDocumentFormPostModified {
   family_import_id: string
   variant_name?: string | null
-  role: string
-  type: string
+  metadata: IDocumentMetadata
   title: string
   source_url?: string | null
   user_language_name?: string | null
+}
+
+export interface IDocumentMetadata {
+  role: string[]
+  type: string[]
 }
