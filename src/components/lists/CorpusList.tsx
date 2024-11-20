@@ -14,7 +14,6 @@ import {
   Box,
   HStack,
   Tooltip,
-  useToast,
   SkeletonText,
 } from '@chakra-ui/react'
 import { GoPencil } from 'react-icons/go'
@@ -33,8 +32,8 @@ export default function CorpusList() {
   const [filteredItems, setFilteredItems] = useState<ICorpus[]>()
   const [searchParams] = useSearchParams()
   const { corpora, loading, error } = useCorpora(searchParams.get('q') ?? '')
-  const [corpusError, setCorpusError] = useState<string | null | undefined>()
-  const [formError, setFormError] = useState<IError | null | undefined>()
+  const [corpusError] = useState<string | null | undefined>()
+  const [formError] = useState<IError | null | undefined>()
 
   const renderSortIcon = (key: keyof ICorpus) => {
     if (sortControls.key !== key) {

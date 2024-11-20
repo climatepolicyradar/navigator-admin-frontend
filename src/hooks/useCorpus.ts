@@ -39,7 +39,7 @@ const useCorpus = (id?: string) => {
       setLoading(true)
       handleGetCorpus()
     }
-  }, [handleGetCorpus])
+  }, [id, handleGetCorpus])
 
   return { corpus, error, loading, reload }
 }

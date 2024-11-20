@@ -1,17 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { ICorpus, ICorpusFormPost, IError, TOrganisation } from '@/interfaces'
+import { ICorpus, ICorpusFormPost, ICorpusFormPut, IError } from '@/interfaces'
 import { corpusSchema } from '@/schemas/corpusSchema'
 import { createCorpus, updateCorpus } from '@/api/Corpora'
 import { WYSIWYG } from '../form-components/WYSIWYG'
 import {
   FormControl,
   FormLabel,
-  HStack,
   Input,
-  Radio,
-  RadioGroup,
   Textarea,
   VStack,
   Button,
@@ -22,8 +19,6 @@ import {
 } from '@chakra-ui/react'
 import { useNavigate } from 'react-router-dom'
 import { ApiError } from '../feedback/ApiError'
-import { decodeToken } from '@/utils/decodeToken'
-import { config } from 'process'
 import { chakraStylesSelect } from '@/styles/chakra'
 import { Select as CRSelect } from 'chakra-react-select'
 import useConfig from '@/hooks/useConfig'
@@ -60,19 +55,16 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
 
   const handleFormSubmission = async (corpus: ICorpusForm) => {
     setFormError(null)
-    console.log('🚀 Starting form submission...')
-
-    const corpusData: ICorpusFormPost = {
-      title: corpus.title,
-      description: corpus.description,
-      corpus_text: corpus.corpus_text || null,
-      corpus_image_url: corpus.corpus_image_url || null,
-      corpus_type_name: corpus.corpus_type_name?.label || null,
-      corpus_type_description: corpus.corpus_type_description,
-    }
 
     if (loadedCorpus) {
-      console.log('🔄 Updating existing corpus...')
+      const corpusData: ICorpusFormPut = {
+        title: corpus.title,
+        description: corpus.description,
+        corpus_text: corpus.corpus_text || null,
+        corpus_image_url: corpus.corpus_image_url || null,
+        corpus_type_description: corpus.corpus_type_description,
+      }
+
       return await updateCorpus(corpusData, loadedCorpus.import_id)
         .then(() => {
           toast.closeAll()
@@ -93,7 +85,14 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
         })
     }
 
-    console.log('✨ Creating new corpus...')
+    const corpusData: ICorpusFormPost = {
+      title: corpus.title,
+      description: corpus.description,
+      corpus_text: corpus.corpus_text || null,
+      corpus_image_url: corpus.corpus_image_url || null,
+      corpus_type_name: corpus.corpus_type_name?.label,
+      organisation_id: corpus.organisation_id?.value,
+    }
     return await createCorpus(corpusData)
       .then((data) => {
         toast.closeAll()
@@ -140,6 +139,18 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
     })
   }
 
+  const getOrganisationNameById = (
+    organisationId: number,
+  ): string | undefined => {
+    const organisation = config?.corpora?.find(
+      (corpus) => corpus.organisation?.id === organisationId,
+    )
+    return organisation?.organisation?.name
+  }
+  const orgName = loadedCorpus
+    ? getOrganisationNameById(loadedCorpus.organisation_id)
+    : ''
+
   useEffect(() => {
     if (loadedCorpus) {
       reset({
@@ -154,6 +165,12 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
             }
           : undefined,
         corpus_type_description: loadedCorpus.corpus_type_description || '',
+        organisation_id: loadedCorpus.organisation_id
+          ? {
+              label: orgName,
+              value: loadedCorpus.organisation_id,
+            }
+          : undefined,
       })
       updateCorpusTypeDescription(loadedCorpus.corpus_type_name)
     }
@@ -165,7 +182,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
     if (watchedCorpusTypeName) {
       updateCorpusTypeDescription(watchedCorpusTypeName.label)
     }
-  }, [watchedCorpusTypeName, config])
+  }, [watchedCorpusTypeName, config, updateCorpusTypeDescription])
 
   return (
     <>
@@ -237,14 +254,55 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
               </FormControl>
             )}
           />
-          <FormControl isRequired>
-            <FormLabel>Corpus Type Description</FormLabel>
-            <Textarea
-              height={'100px'}
-              bg='white'
-              {...register('corpus_type_description')}
-            />
-          </FormControl>
+          {loadedCorpus && (
+            <FormControl isRequired>
+              <FormLabel>Corpus Type Description</FormLabel>
+              <Textarea
+                height={'100px'}
+                bg='white'
+                {...register('corpus_type_description')}
+              />
+            </FormControl>
+          )}
+          <Controller
+            control={control}
+            name='organisation_id'
+            render={({ field }) => (
+              <FormControl
+                as='fieldset'
+                isRequired
+                isInvalid={!!errors.organisation_id}
+              >
+                <FormLabel as='legend'>Organisation</FormLabel>
+                <div data-testid='organisation-select'>
+                  <CRSelect
+                    chakraStyles={chakraStylesSelect}
+                    isClearable={true}
+                    isMulti={false}
+                    isSearchable={true}
+                    options={
+                      Array.from(
+                        new Set(
+                          config?.corpora?.map((corpus) => ({
+                            label: corpus.organisation?.name,
+                            value: corpus.organisation?.id,
+                          })),
+                        ),
+                      ).map((org) => ({
+                        label: org.label,
+                        value: org.value,
+                      })) || []
+                    }
+                    isDisabled={!!loadedCorpus}
+                    {...field}
+                  />
+                </div>
+                <FormErrorMessage>
+                  {errors.organisation_id?.message}
+                </FormErrorMessage>
+              </FormControl>
+            )}
+          />
           <ButtonGroup>
             <Button
               type='submit'

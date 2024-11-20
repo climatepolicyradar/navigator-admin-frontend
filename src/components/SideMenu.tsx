@@ -27,9 +27,6 @@ import {
   GoPeople,
 } from 'react-icons/go'
 import Logout from './Logout'
-import { useMemo } from 'react'
-import { IDecodedToken } from '@/interfaces'
-import { decodeToken } from '@/utils/decodeToken'
 import useToken from '@/hooks/useToken'
 
 const IconLink = ({

@@ -1,7 +1,7 @@
 import { AxiosError } from 'axios'
 
 import API from '@/api'
-import { ICorpus, ICorpusFormPost, IError } from '@/interfaces'
+import { ICorpus, ICorpusFormPost, ICorpusFormPut, IError } from '@/interfaces'
 import { setToken } from '@/api/Auth'
 
 export async function getCorpora(query?: string) {
@@ -64,7 +64,7 @@ export async function createCorpus(data: ICorpusFormPost) {
   return { response }
 }
 
-export async function updateCorpus(data: ICorpusFormPost, importId: string) {
+export async function updateCorpus(data: ICorpusFormPut, importId: string) {
   setToken(API)
 
   const response = await API.put<ICorpus>('/v1/corpora/' + importId, data)
@@ -82,22 +82,3 @@ export async function updateCorpus(data: ICorpusFormPost, importId: string) {
 
   return { response }
 }
-
-// export async function deleteCorpus(id: string) {
-//   setToken(API)
-
-//   const response = await API.delete('/v1/corpora/' + id)
-//     .then((response) => {
-//       return response
-//     })
-//     .catch((error: AxiosError<{ detail: string }>) => {
-//       const e: IError = {
-//         status: error.response?.status || 500,
-//         detail: error.response?.data?.detail || 'Unknown error',
-//         message: error.message,
-//       }
-//       throw e
-//     })
-
-//   return { response }
-// }
