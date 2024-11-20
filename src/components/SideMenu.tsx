@@ -30,6 +30,7 @@ import Logout from './Logout'
 import { useMemo } from 'react'
 import { IDecodedToken } from '@/interfaces'
 import { decodeToken } from '@/utils/decodeToken'
+import useToken from '@/hooks/useToken'
 
 const IconLink = ({
   icon,
@@ -65,13 +66,7 @@ export function SideMenu() {
   const isCurrentPage = (page: string) =>
     pathname.split('/').reverse()[0] === page
 
-  const userToken = useMemo(() => {
-    const token = localStorage.getItem('token')
-    if (!token) return null
-    const decodedToken: IDecodedToken | null = decodeToken(token)
-    return decodedToken
-  }, [])
-
+  const userToken = useToken()
   const isSuperUser = !userToken ? false : userToken.is_superuser
 
   return (

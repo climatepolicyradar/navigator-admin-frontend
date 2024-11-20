@@ -45,11 +45,11 @@ export default function Corpora() {
           </Form>
         </Box>
         <Spacer />
-        {/* <ButtonGroup>
+        <ButtonGroup>
           <Button as={Link} colorScheme='blue' to='/corpus/new'>
             Add new Corpus
           </Button>
-        </ButtonGroup> */}
+        </ButtonGroup>
       </Flex>
       <Outlet />
     </Flex>

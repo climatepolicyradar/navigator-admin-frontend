@@ -9,9 +9,9 @@ import {
 } from '@chakra-ui/react'
 import { ArrowBackIcon } from '@chakra-ui/icons'
 import { CorpusForm } from '@/components/forms/CorpusForm'
-import useCorpus from '@/hooks/useCorpus'
 import { Loader } from '@/components/Loader'
 import { ApiError } from '@/components/feedback/ApiError'
+import useCorpus from '@/hooks/useCorpus'
 
 export default function Corpus() {
   const { importId } = useParams()

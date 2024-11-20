@@ -45,24 +45,24 @@ export async function getCorpus(id: string) {
   return { response }
 }
 
-// export async function createCorpus(data: ICorpusFormPost) {
-//   setToken(API)
+export async function createCorpus(data: ICorpusFormPost) {
+  setToken(API)
 
-//   const response = await API.post<string>('/v1/corpora', data)
-//     .then((response) => {
-//       return response.data
-//     })
-//     .catch((error: AxiosError<{ detail: string }>) => {
-//       const e: IError = {
-//         status: error.response?.status || 500,
-//         detail: error.response?.data?.detail || 'Unknown error',
-//         message: error.message,
-//       }
-//       throw e
-//     })
+  const response = await API.post<string>('/v1/corpora', data)
+    .then((response) => {
+      return response.data
+    })
+    .catch((error: AxiosError<{ detail: string }>) => {
+      const e: IError = {
+        status: error.response?.status || 500,
+        detail: error.response?.data?.detail || 'Unknown error',
+        message: error.message,
+      }
+      throw e
+    })
 
-//   return { response }
-// }
+  return { response }
+}
 
 export async function updateCorpus(data: ICorpusFormPost, importId: string) {
   setToken(API)

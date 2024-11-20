@@ -19,7 +19,6 @@ import {
 } from '@chakra-ui/react'
 import { GoPencil } from 'react-icons/go'
 
-import { DeleteButton } from '../buttons/Delete'
 import useCorpora from '@/hooks/useCorpora'
 import { Loader } from '../Loader'
 import { sortBy } from '@/utils/sortBy'
@@ -33,10 +32,7 @@ export default function CorpusList() {
   }>({ key: 'import_id', reverse: false })
   const [filteredItems, setFilteredItems] = useState<ICorpus[]>()
   const [searchParams] = useSearchParams()
-  const { corpora, loading, error, reload } = useCorpora(
-    searchParams.get('q') ?? '',
-  )
-  const toast = useToast()
+  const { corpora, loading, error } = useCorpora(searchParams.get('q') ?? '')
   const [corpusError, setCorpusError] = useState<string | null | undefined>()
   const [formError, setFormError] = useState<IError | null | undefined>()
 
@@ -50,36 +46,6 @@ export default function CorpusList() {
       return <ArrowUpIcon />
     }
   }
-
-  // const handleDeleteClick = async (id: string) => {
-  //   setFormError(null)
-  //   setCorpusError(null)
-
-  //   toast({
-  //     title: 'Corpus deletion in progress',
-  //     status: 'info',
-  //     position: 'top',
-  //   })
-  //   await deleteCorpus(id)
-  //     .then(() => {
-  //       toast({
-  //         title: 'Corpus has been successful deleted',
-  //         status: 'success',
-  //         position: 'top',
-  //       })
-  //       reload()
-  //     })
-  //     .catch((error: IError) => {
-  //       setCorpusError(id)
-  //       setFormError(error)
-  //       toast({
-  //         title: 'Corpus has not been deleted',
-  //         description: error.message,
-  //         status: 'error',
-  //         position: 'top',
-  //       })
-  //     })
-  // }
 
   const handleHeaderClick = (key: keyof ICorpus) => {
     if (sortControls.key === key) {
@@ -118,7 +84,6 @@ export default function CorpusList() {
             <Table size='sm' variant={'striped'}>
               <Thead>
                 <Tr>
-                  {/* <Th onClick={() => handleHeaderClick('import_id')}>ID</Th> */}
                   <Th
                     onClick={() => handleHeaderClick('title')}
                     cursor='pointer'
@@ -131,7 +96,7 @@ export default function CorpusList() {
                   >
                     Organisation {renderSortIcon('organisation')}
                   </Th>
-                  <Th>Families</Th>
+                  <Th>Corpus Type</Th>
                   <Th></Th>
                 </Tr>
               </Thead>
@@ -153,10 +118,9 @@ export default function CorpusList() {
                       corpus.import_id === corpusError ? 'red.500' : 'inherit'
                     }
                   >
-                    {/* <Td>{corpus.import_id}</Td> */}
                     <Td>{corpus.title}</Td>
                     <Td>{corpus.organisation_name}</Td>
-                    <Td>{corpus.description}</Td>
+                    <Td>{corpus.corpus_type_name}</Td>
                     <Td>
                       <HStack gap={2}>
                         <Tooltip label='Edit'>
@@ -170,11 +134,6 @@ export default function CorpusList() {
                             />
                           </Link>
                         </Tooltip>
-                        {/* <DeleteButton
-                          entityName='Corpus'
-                          entityTitle={corpus.title}
-                          callback={() => handleDeleteClick(corpus.import_id)}
-                        /> */}
                       </HStack>
                     </Td>
                   </Tr>

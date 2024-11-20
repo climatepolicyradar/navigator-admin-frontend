@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { IError, ICorpus } from '@/interfaces'
 import { getCorpora } from '@/api/Corpora'
 
-const useCorpora = (query: string) => {
+const useCorpora = (id: string) => {
   const [corpora, setCorpora] = useState<ICorpus[]>([])
   const [error, setError] = useState<IError | null | undefined>()
   const [loading, setLoading] = useState<boolean>(false)
@@ -12,7 +12,7 @@ const useCorpora = (query: string) => {
     setLoading(true)
     setError(null)
 
-    getCorpora(query)
+    getCorpora(id)
       .then(({ response }) => {
         setCorpora(response)
       })
@@ -22,7 +22,7 @@ const useCorpora = (query: string) => {
       .finally(() => {
         setLoading(false)
       })
-  }, [query])
+  }, [id])
 
   const reload = () => {
     handleGetCorpora()

@@ -70,6 +70,12 @@ export interface IConfigCorpora {
   taxonomy: IConfigTaxonomyCCLW | IConfigTaxonomyUNFCCC
 }
 
+export interface IConfigCorpusTypes {
+  name: string
+  description: string
+  taxonomy: IConfigTaxonomyCCLW | IConfigTaxonomyUNFCCC
+}
+
 export interface IConfig {
   geographies: IConfigGeography[]
   languages: {
@@ -77,6 +83,7 @@ export interface IConfig {
   }
   languagesSorted: IConfigLanguageSorted[]
   corpora: IConfigCorpora[]
+  corpus_types: IConfigCorpusTypes[]
   document: {
     roles: string[]
     types: string[]
