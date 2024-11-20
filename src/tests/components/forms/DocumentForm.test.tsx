@@ -87,7 +87,7 @@ describe('DocumentForm', () => {
     expect(screen.getByText('Role One')).toBeInTheDocument()
   })
 
-  it('shows allowed values in alphabetical order when clicking on type dropdown', () => {
+  it('shows allowed values in alphabetical order in document type dropdown', () => {
     const taxonomyWithUnorderedDocTypes = {
       ...mockTaxonomy,
       _document: {
