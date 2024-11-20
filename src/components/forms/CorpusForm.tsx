@@ -4,7 +4,6 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { ICorpus, ICorpusFormPost, ICorpusFormPut, IError } from '@/interfaces'
 import { corpusSchema } from '@/schemas/corpusSchema'
 import { createCorpus, updateCorpus } from '@/api/Corpora'
-import { WYSIWYG } from '../form-components/WYSIWYG'
 import {
   FormControl,
   FormLabel,
@@ -16,12 +15,15 @@ import {
   FormErrorMessage,
   useToast,
   FormHelperText,
+  Tooltip,
+  Icon,
 } from '@chakra-ui/react'
 import { useNavigate } from 'react-router-dom'
 import { ApiError } from '../feedback/ApiError'
 import { chakraStylesSelect } from '@/styles/chakra'
 import { Select as CRSelect } from 'chakra-react-select'
 import useConfig from '@/hooks/useConfig'
+import { InfoOutlineIcon } from '@chakra-ui/icons'
 
 interface ICorpusForm {
   title: string
@@ -126,10 +128,6 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
     console.log('onSubmitErrorHandler', error)
   }
 
-  const corpusTextOnChange = (html: string) => {
-    setValue('corpus_text', html, { shouldDirty: true })
-  }
-
   const updateCorpusTypeDescription = (typeName: string | undefined) => {
     const selectedType = config?.corpus_types?.find(
       (ct) => ct.name === typeName,
@@ -204,7 +202,12 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
             <Input bg='white' {...register('title')} />
           </FormControl>
           <FormControl isRequired>
-            <FormLabel>Description</FormLabel>
+            <FormLabel>
+              Description
+              <Tooltip label='This is the internally used description of this corpus'>
+                <Icon as={InfoOutlineIcon} ml={2} cursor='pointer' />
+              </Tooltip>
+            </FormLabel>
             <Textarea
               height={'100px'}
               bg='white'
@@ -212,10 +215,16 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
             />
           </FormControl>
           <FormControl>
-            <FormLabel>Corpus Text</FormLabel>
-            <WYSIWYG
-              html={loadedCorpus?.corpus_text}
-              onChange={corpusTextOnChange}
+            <FormLabel>
+              Corpus Text
+              <Tooltip label='This is exposed on the navigator application as the public facing description of this corpus'>
+                <Icon as={InfoOutlineIcon} ml={2} cursor='pointer' />
+              </Tooltip>
+            </FormLabel>
+            <Textarea
+              height={'100px'}
+              bg='white'
+              {...register('corpus_text')}
             />
           </FormControl>
           <FormControl>
@@ -256,7 +265,12 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
           />
           {loadedCorpus && (
             <FormControl isRequired>
-              <FormLabel>Corpus Type Description</FormLabel>
+              <FormLabel>
+                Corpus Type Description
+                <Tooltip label='Updating this will also apply this change to all other corpora of this type'>
+                  <Icon as={InfoOutlineIcon} ml={2} cursor='pointer' />
+                </Tooltip>
+              </FormLabel>
               <Textarea
                 height={'100px'}
                 bg='white'
