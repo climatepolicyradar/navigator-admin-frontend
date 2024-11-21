@@ -231,11 +231,13 @@ export const DocumentForm = ({
                   <FormLabel as='legend'>Type</FormLabel>
                   <Select background='white' {...field}>
                     <option value=''>Please select</option>
-                    {taxonomy?._document?.type?.allowed_values.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
+                    {taxonomy?._document?.type?.allowed_values
+                      .sort()
+                      .map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
                   </Select>
                   <FormErrorMessage>Please select a type</FormErrorMessage>
                 </FormControl>
