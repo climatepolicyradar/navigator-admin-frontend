@@ -87,6 +87,39 @@ describe('DocumentForm', () => {
     expect(screen.getByText('Role One')).toBeInTheDocument()
   })
 
+  it('shows allowed values in alphabetical order in document type dropdown', () => {
+    const taxonomyWithUnorderedDocTypes = {
+      ...mockTaxonomy,
+      _document: {
+        role: {
+          allow_any: false,
+          allow_blanks: false,
+          allowed_values: ['Role One', 'Role Two'],
+        },
+        type: {
+          allow_any: false,
+          allow_blanks: false,
+          allowed_values: ['C', 'A', 'B'],
+        },
+      },
+    }
+
+    customRender(
+      <DocumentForm
+        familyId={'test'}
+        onSuccess={onDocumentFormSuccess}
+        document={mockDocument}
+        taxonomy={taxonomyWithUnorderedDocTypes}
+      />,
+    )
+
+    const allowedValues = within(screen.getByRole('group', { name: 'Type' }))
+      .getAllByRole('option')
+      .map((option) => option.textContent)
+
+    expect(allowedValues).toEqual(['Please select', 'A', 'B', 'C'])
+  })
+
   it('validate incorrect document URL', async () => {
     customRender(
       <DocumentForm
