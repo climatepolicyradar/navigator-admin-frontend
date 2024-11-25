@@ -1,14 +1,10 @@
 import { IDecodedToken } from '@/interfaces'
 import { decodeToken } from '@/utils/decodeToken'
-import { useMemo } from 'react'
+import { useAuth } from './useAuth'
 
 const useToken = (): IDecodedToken | null => {
-  return useMemo(() => {
-    const token = localStorage.getItem('token')
-    if (!token) return null
-    const decodedToken: IDecodedToken | null = decodeToken(token)
-    return decodedToken
-  }, [])
+  const { token } = useAuth()
+  return token ? decodeToken(token) : null
 }
 
 export default useToken
