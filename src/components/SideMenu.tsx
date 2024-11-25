@@ -24,7 +24,6 @@ import {
   GoComment,
   GoClock,
   GoLog,
-  GoPeople,
 } from 'react-icons/go'
 import Logout from './Logout'
 import useToken from '@/hooks/useToken'
@@ -120,13 +119,6 @@ export function SideMenu() {
                       current={isCurrentPage('corpora')}
                     >
                       Corpora
-                    </IconLink>
-                    <IconLink
-                      icon={<Icon as={GoPeople} mr='2' />}
-                      to='/users'
-                      current={isCurrentPage('users')}
-                    >
-                      Organisations & Users
                     </IconLink>
                   </>
                 )}
