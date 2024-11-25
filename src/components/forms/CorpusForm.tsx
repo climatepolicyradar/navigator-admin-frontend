@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import {
   useForm,
   SubmitHandler,
@@ -44,6 +44,7 @@ import useConfig from '@/hooks/useConfig'
 import { InfoOutlineIcon } from '@chakra-ui/icons'
 import { WYSIWYG } from '../form-components/WYSIWYG'
 import * as yup from 'yup'
+import { stripHtml } from '@/utils/stripHtml'
 
 interface CorpusType {
   name: string
@@ -66,8 +67,8 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
     control,
     reset,
     formState: { errors, isSubmitting },
-    getValues,
     setValue,
+    getValues,
     watch,
   } = useForm<CorpusFormData>({
     resolver: yupResolver(corpusSchema),
@@ -80,96 +81,113 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isConfirmed, setIsConfirmed] = useState(false)
 
-  const handleFormSubmission = async (formValues: CorpusFormData) => {
-    setFormError(null)
+  const handleFormSubmission = useCallback(
+    async (formValues: CorpusFormData) => {
+      setFormError(null)
 
-    // Only check for corpus type description changes if updating an existing corpus
-    if (
-      loadedCorpus &&
-      formValues.corpus_type_description !== initialDescriptionRef.current &&
-      !isConfirmed
-    ) {
-      setIsModalOpen(true)
-      return
-    }
+      // Only check for corpus type description changes if updating an existing corpus
+      if (
+        loadedCorpus &&
+        formValues.corpus_type_description !== initialDescriptionRef.current &&
+        !isConfirmed
+      ) {
+        setIsModalOpen(true)
+        return
+      }
 
-    const convertEmptyToNull = (
-      value: string | undefined | null,
-    ): string | null => {
-      return !value || value.trim() === '' ? null : value
-    }
+      const convertEmptyToNull = (
+        value: string | undefined | null,
+      ): string | null => {
+        return !value || value.trim() === '' ? null : value
+      }
 
-    if (loadedCorpus) {
-      const formData: ICorpusFormPut = {
+      if (loadedCorpus) {
+        const formData: ICorpusFormPut = {
+          title: formValues.title,
+          description: formValues.description,
+          corpus_text: convertEmptyToNull(formValues.corpus_text),
+          corpus_image_url: convertEmptyToNull(formValues.corpus_image_url),
+          corpus_type_description: formValues.corpus_type_description,
+        }
+        console.log(formData)
+
+        return await updateCorpus(formData, loadedCorpus.import_id)
+          .then(() => {
+            toast.closeAll()
+            toast({
+              title: 'Corpus has been successfully updated',
+              status: 'success',
+              position: 'top',
+            })
+            navigate('/corpora')
+          })
+          .catch((error: IError) => {
+            console.error('❌ Error during form submission:', error)
+            setFormError(error)
+            toast({
+              title: 'Corpus has not been updated',
+              description: error.message,
+              status: 'error',
+              position: 'top',
+            })
+          })
+      }
+
+      const formData: ICorpusFormPost = {
         title: formValues.title,
         description: formValues.description,
         corpus_text: convertEmptyToNull(formValues.corpus_text),
         corpus_image_url: convertEmptyToNull(formValues.corpus_image_url),
-        corpus_type_description: formValues.corpus_type_description,
+        corpus_type_name: formValues.corpus_type_name.value,
+        organisation_id: formValues.organisation_id.value,
       }
-      console.log(formData)
 
-      return await updateCorpus(formData, loadedCorpus.import_id)
+      return await createCorpus(formData)
         .then(() => {
           toast.closeAll()
           toast({
-            title: 'Corpus has been successfully updated',
+            title: 'Corpus has been successfully created',
             status: 'success',
             position: 'top',
           })
+          navigate(`/corpora`)
         })
         .catch((error: IError) => {
+          console.error('❌ Error during form submission:', error)
           setFormError(error)
           toast({
-            title: 'Corpus has not been updated',
+            title: 'Corpus has not been created',
             description: error.message,
             status: 'error',
             position: 'top',
           })
         })
-    }
+    },
+    [
+      loadedCorpus,
+      isConfirmed,
+      initialDescriptionRef,
+      navigate,
+      toast,
+      setFormError,
+    ],
+  )
 
-    const formData: ICorpusFormPost = {
-      title: formValues.title,
-      description: formValues.description,
-      corpus_text: convertEmptyToNull(formValues.corpus_text),
-      corpus_image_url: convertEmptyToNull(formValues.corpus_image_url),
-      corpus_type_name: formValues.corpus_type_name.value,
-      organisation_id: formValues.organisation_id.value,
-    }
-
-    return await createCorpus(formData)
-      .then((data) => {
-        toast.closeAll()
-        toast({
-          title: 'Corpus has been successfully created',
-          status: 'success',
-          position: 'top',
-        })
-        navigate(`/corpus/${data.response}/edit`, { replace: true })
+  const onSubmit: SubmitHandler<CorpusFormData> = useCallback(
+    (data) => {
+      void handleFormSubmission(data).catch((error: IError) => {
+        console.error(error)
       })
-      .catch((error: IError) => {
-        console.error('❌ Error during form submission:', error)
-        setFormError(error)
-        toast({
-          title: 'Corpus has not been created',
-          description: error.message,
-          status: 'error',
-          position: 'top',
-        })
-      })
-  } // end handleFormSubmission
+    },
+    [handleFormSubmission],
+  )
 
-  const onSubmit: SubmitHandler<CorpusFormData> = (data) => {
-    handleFormSubmission(data).catch((error: IError) => {
-      console.error(error)
-    })
-  }
-
-  // object type is workaround for SubmitErrorHandler<FieldErrors> throwing a tsc error.
-  const onSubmitErrorHandler: SubmitErrorHandler<CorpusFormData> = (errors) => {
-    console.error(errors)
-  }
+  const onSubmitErrorHandler: SubmitErrorHandler<CorpusFormData> = useCallback(
+    (errors) => {
+      console.error(errors)
+    },
+    [],
+  )
 
   const handleModalConfirm = () => {
     setIsConfirmed(true)
@@ -180,24 +198,11 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
     setIsModalOpen(false)
   }
 
-  const handleFormSubmissionWithConfirmation = () => {
+  const handleFormSubmissionWithConfirmation = useCallback(() => {
     if (isConfirmed) {
       void handleSubmit(onSubmit, onSubmitErrorHandler)()
     }
-  }
-
-  useEffect(() => {
-    handleFormSubmissionWithConfirmation()
-  }, [isConfirmed]) // Only run when confirmation state changes
-
-  const watchedCorpusTypeName = watch('corpus_type_name')
-
-  const updateCorpusTypeDescription = (typeName: string | undefined) => {
-    const selectedType = uniqueCorpusTypes.find((ct) => ct.name === typeName)
-    setValue('corpus_type_description', selectedType?.description || '', {
-      shouldDirty: true,
-    })
-  }
+  }, [isConfirmed, handleSubmit, onSubmit, onSubmitErrorHandler])
 
   /**
    * Generate a list of unique corpus type dictionaries.
@@ -224,20 +229,37 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
   }
   const uniqueCorpusTypes = getUniqueCorpusTypes(config?.corpora || [])
 
+  const updateCorpusTypeDescription = useCallback(
+    (typeName: string | undefined) => {
+      const selectedType = uniqueCorpusTypes.find((ct) => ct.name === typeName)
+      setValue('corpus_type_description', selectedType?.description || '', {
+        shouldDirty: true,
+      })
+    },
+    [uniqueCorpusTypes, setValue],
+  )
+
+  const getOrganisationNameById = useCallback(
+    (organisationId: number): string | undefined => {
+      const organisation = config?.corpora?.find(
+        (corpus) => corpus.organisation?.id === organisationId,
+      )
+      return organisation?.organisation?.name
+    },
+    [config?.corpora],
+  )
+
+  useEffect(() => {
+    handleFormSubmissionWithConfirmation()
+  }, [handleFormSubmissionWithConfirmation])
+
+  const watchedCorpusTypeName = watch('corpus_type_name')
+
   useEffect(() => {
     if (watchedCorpusTypeName) {
       updateCorpusTypeDescription(watchedCorpusTypeName.label)
     }
-  }, [watchedCorpusTypeName]) // Only run when corpus type changes
-
-  const getOrganisationNameById = (
-    organisationId: number,
-  ): string | undefined => {
-    const organisation = config?.corpora?.find(
-      (corpus) => corpus.organisation?.id === organisationId,
-    )
-    return organisation?.organisation?.name
-  }
+  }, [watchedCorpusTypeName, updateCorpusTypeDescription])
 
   useEffect(() => {
     if (loadedCorpus && !configLoading) {
@@ -262,9 +284,12 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
           : undefined,
       })
     }
-  }, [loadedCorpus, configLoading]) // Only run when corpus or config loading state changes
+  }, [loadedCorpus, configLoading, getOrganisationNameById, reset])
 
   const corpusTextOnChange = (html: string) => {
+    if (stripHtml(html) === '') {
+      return setValue('corpus_text', '', { shouldDirty: true })
+    }
     setValue('corpus_text', html, { shouldDirty: true })
   }
 
