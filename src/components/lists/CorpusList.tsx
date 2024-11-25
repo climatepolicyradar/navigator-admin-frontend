@@ -90,10 +90,10 @@ export default function CorpusList() {
                     Title {renderSortIcon('title')}
                   </Th>
                   <Th
-                    onClick={() => handleHeaderClick('organisation')}
+                    onClick={() => handleHeaderClick('organisation_name')}
                     cursor='pointer'
                   >
-                    Organisation {renderSortIcon('organisation')}
+                    Organisation {renderSortIcon('organisation_name')}
                   </Th>
                   <Th>Corpus Type</Th>
                   <Th></Th>

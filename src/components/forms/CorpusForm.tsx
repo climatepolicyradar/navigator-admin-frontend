@@ -1,7 +1,18 @@
-import { useEffect, useState } from 'react'
-import { useForm, SubmitHandler, Controller } from 'react-hook-form'
+import { useEffect, useRef, useState } from 'react'
+import {
+  useForm,
+  SubmitHandler,
+  SubmitErrorHandler,
+  Controller,
+} from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { ICorpus, ICorpusFormPost, ICorpusFormPut, IError } from '@/interfaces'
+import {
+  IConfigCorpora,
+  ICorpus,
+  ICorpusFormPost,
+  ICorpusFormPut,
+  IError,
+} from '@/interfaces'
 import { corpusSchema } from '@/schemas/corpusSchema'
 import { createCorpus, updateCorpus } from '@/api/Corpora'
 import {
@@ -17,6 +28,13 @@ import {
   FormHelperText,
   Tooltip,
   Icon,
+  ModalOverlay,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  Modal,
 } from '@chakra-ui/react'
 import { useNavigate } from 'react-router-dom'
 import { ApiError } from '../feedback/ApiError'
@@ -24,19 +42,19 @@ import { chakraStylesSelect } from '@/styles/chakra'
 import { Select as CRSelect } from 'chakra-react-select'
 import useConfig from '@/hooks/useConfig'
 import { InfoOutlineIcon } from '@chakra-ui/icons'
+import { WYSIWYG } from '../form-components/WYSIWYG'
+import * as yup from 'yup'
 
-interface ICorpusForm {
-  title: string
-  description?: string
-  corpus_text: string | null
-  corpus_image_url: string | null
-  corpus_type_name?: string
-  corpus_type_description?: string
+interface CorpusType {
+  name: string
+  description: string
 }
 
 type TProps = {
   corpus?: ICorpus
 }
+
+type CorpusFormData = yup.InferType<typeof corpusSchema>
 
 export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
   const navigate = useNavigate()
@@ -47,27 +65,51 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
     handleSubmit,
     control,
     reset,
-    setValue,
     formState: { errors, isSubmitting },
+    getValues,
+    setValue,
     watch,
-  } = useForm({
+  } = useForm<CorpusFormData>({
     resolver: yupResolver(corpusSchema),
   })
   const { config, loading: configLoading, error: configError } = useConfig()
 
-  const handleFormSubmission = async (corpus: ICorpusForm) => {
+  const initialDescriptionRef = useRef<string | undefined>(
+    loadedCorpus?.corpus_type_description,
+  )
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isConfirmed, setIsConfirmed] = useState(false)
+
+  const handleFormSubmission = async (formValues: CorpusFormData) => {
     setFormError(null)
 
-    if (loadedCorpus) {
-      const corpusData: ICorpusFormPut = {
-        title: corpus.title,
-        description: corpus.description,
-        corpus_text: corpus.corpus_text || null,
-        corpus_image_url: corpus.corpus_image_url || null,
-        corpus_type_description: corpus.corpus_type_description,
-      }
+    // Only check for corpus type description changes if updating an existing corpus
+    if (
+      loadedCorpus &&
+      formValues.corpus_type_description !== initialDescriptionRef.current &&
+      !isConfirmed
+    ) {
+      setIsModalOpen(true)
+      return
+    }
 
-      return await updateCorpus(corpusData, loadedCorpus.import_id)
+    const convertEmptyToNull = (
+      value: string | undefined | null,
+    ): string | null => {
+      return !value || value.trim() === '' ? null : value
+    }
+
+    if (loadedCorpus) {
+      const formData: ICorpusFormPut = {
+        title: formValues.title,
+        description: formValues.description,
+        corpus_text: convertEmptyToNull(formValues.corpus_text),
+        corpus_image_url: convertEmptyToNull(formValues.corpus_image_url),
+        corpus_type_description: formValues.corpus_type_description,
+      }
+      console.log(formData)
+
+      return await updateCorpus(formData, loadedCorpus.import_id)
         .then(() => {
           toast.closeAll()
           toast({
@@ -87,15 +129,16 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
         })
     }
 
-    const corpusData: ICorpusFormPost = {
-      title: corpus.title,
-      description: corpus.description,
-      corpus_text: corpus.corpus_text || null,
-      corpus_image_url: corpus.corpus_image_url || null,
-      corpus_type_name: corpus.corpus_type_name?.label,
-      organisation_id: corpus.organisation_id?.value,
+    const formData: ICorpusFormPost = {
+      title: formValues.title,
+      description: formValues.description,
+      corpus_text: convertEmptyToNull(formValues.corpus_text),
+      corpus_image_url: convertEmptyToNull(formValues.corpus_image_url),
+      corpus_type_name: formValues.corpus_type_name.value,
+      organisation_id: formValues.organisation_id.value,
     }
-    return await createCorpus(corpusData)
+
+    return await createCorpus(formData)
       .then((data) => {
         toast.closeAll()
         toast({
@@ -117,25 +160,75 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
       })
   } // end handleFormSubmission
 
-  const onSubmit: SubmitHandler<ICorpusForm> = (data) => {
+  const onSubmit: SubmitHandler<CorpusFormData> = (data) => {
     handleFormSubmission(data).catch((error: IError) => {
       console.error(error)
     })
   }
 
   // object type is workaround for SubmitErrorHandler<FieldErrors> throwing a tsc error.
-  const onSubmitErrorHandler = (error: object) => {
-    console.log('onSubmitErrorHandler', error)
+  const onSubmitErrorHandler: SubmitErrorHandler<CorpusFormData> = (errors) => {
+    console.error(errors)
   }
 
+  const handleModalConfirm = () => {
+    setIsConfirmed(true)
+    setIsModalOpen(false)
+  }
+
+  const handleModalCancel = () => {
+    setIsModalOpen(false)
+  }
+
+  const handleFormSubmissionWithConfirmation = () => {
+    if (isConfirmed) {
+      void handleSubmit(onSubmit, onSubmitErrorHandler)()
+    }
+  }
+
+  useEffect(() => {
+    handleFormSubmissionWithConfirmation()
+  }, [isConfirmed]) // Only run when confirmation state changes
+
+  const watchedCorpusTypeName = watch('corpus_type_name')
+
   const updateCorpusTypeDescription = (typeName: string | undefined) => {
-    const selectedType = config?.corpus_types?.find(
-      (ct) => ct.name === typeName,
-    )
+    const selectedType = uniqueCorpusTypes.find((ct) => ct.name === typeName)
     setValue('corpus_type_description', selectedType?.description || '', {
       shouldDirty: true,
     })
   }
+
+  /**
+   * Generate a list of unique corpus type dictionaries.
+   *
+   * @param corpora - List of corpus items.
+   * @returns List of unique corpus type dictionaries.
+   */
+  const getUniqueCorpusTypes = (corpora: IConfigCorpora[]): CorpusType[] => {
+    const seen = new Set<string>()
+    const uniqueCorpusTypes: CorpusType[] = []
+
+    corpora.forEach((c) => {
+      const uniqueKey = `${c.corpus_type}-${c.corpus_type_description}`
+      if (!seen.has(uniqueKey)) {
+        seen.add(uniqueKey)
+        uniqueCorpusTypes.push({
+          name: c.corpus_type,
+          description: c.corpus_type_description,
+        })
+      }
+    })
+
+    return uniqueCorpusTypes
+  }
+  const uniqueCorpusTypes = getUniqueCorpusTypes(config?.corpora || [])
+
+  useEffect(() => {
+    if (watchedCorpusTypeName) {
+      updateCorpusTypeDescription(watchedCorpusTypeName.label)
+    }
+  }, [watchedCorpusTypeName]) // Only run when corpus type changes
 
   const getOrganisationNameById = (
     organisationId: number,
@@ -145,12 +238,10 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
     )
     return organisation?.organisation?.name
   }
-  const orgName = loadedCorpus
-    ? getOrganisationNameById(loadedCorpus.organisation_id)
-    : ''
 
   useEffect(() => {
-    if (loadedCorpus) {
+    if (loadedCorpus && !configLoading) {
+      const orgName = getOrganisationNameById(loadedCorpus.organisation_id)
       reset({
         title: loadedCorpus.title || '',
         description: loadedCorpus.description || '',
@@ -170,17 +261,12 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
             }
           : undefined,
       })
-      updateCorpusTypeDescription(loadedCorpus.corpus_type_name)
     }
-  }, [loadedCorpus, reset])
+  }, [loadedCorpus, configLoading]) // Only run when corpus or config loading state changes
 
-  const watchedCorpusTypeName = watch('corpus_type_name')
-
-  useEffect(() => {
-    if (watchedCorpusTypeName) {
-      updateCorpusTypeDescription(watchedCorpusTypeName.label)
-    }
-  }, [watchedCorpusTypeName, config, updateCorpusTypeDescription])
+  const corpusTextOnChange = (html: string) => {
+    setValue('corpus_text', html, { shouldDirty: true })
+  }
 
   return (
     <>
@@ -221,10 +307,9 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
                 <Icon as={InfoOutlineIcon} ml={2} cursor='pointer' />
               </Tooltip>
             </FormLabel>
-            <Textarea
-              height={'100px'}
-              bg='white'
-              {...register('corpus_text')}
+            <WYSIWYG
+              html={loadedCorpus?.corpus_text || ''}
+              onChange={corpusTextOnChange}
             />
           </FormControl>
           <FormControl>
@@ -248,7 +333,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
                     isMulti={false}
                     isSearchable={true}
                     options={
-                      config?.corpus_types?.map((ct) => ({
+                      uniqueCorpusTypes.map((ct) => ({
                         label: ct.name,
                         value: ct.name,
                       })) || []
@@ -278,6 +363,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
               />
             </FormControl>
           )}
+
           <Controller
             control={control}
             name='organisation_id'
@@ -317,13 +403,48 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
               </FormControl>
             )}
           />
+
+          <Modal isOpen={isModalOpen} onClose={handleModalCancel}>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Confirm Update</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                <p>
+                  You have changed the corpus type description of{' '}
+                  <strong>
+                    {getValues('corpus_type_name')?.label || 'unknown'}
+                  </strong>
+                  .
+                </p>
+                <br></br>
+                <p>
+                  This will update all corpora with the type{' '}
+                  <strong>
+                    {getValues('corpus_type_name')?.label || 'unknown'}
+                  </strong>{' '}
+                  with the description{' '}
+                  <em style={{ color: 'blue' }}>
+                    {getValues('corpus_type_description') || 'unknown'}
+                  </em>
+                  .
+                </p>
+                <br></br>
+                Do you wish to proceed?
+              </ModalBody>
+              <ModalFooter>
+                <Button colorScheme='blue' mr={3} onClick={handleModalConfirm}>
+                  Confirm
+                </Button>
+                <Button variant='ghost' onClick={handleModalCancel}>
+                  Cancel
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+
           <ButtonGroup>
-            <Button
-              type='submit'
-              colorScheme='blue'
-              onSubmit={handleSubmit(onSubmit, onSubmitErrorHandler)}
-              disabled={isSubmitting}
-            >
+            <Button type='submit' colorScheme='blue' disabled={isSubmitting}>
               {(loadedCorpus ? 'Update ' : 'Create new ') + ' Corpus'}
             </Button>
           </ButtonGroup>
