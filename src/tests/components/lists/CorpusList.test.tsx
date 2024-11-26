@@ -107,16 +107,22 @@ describe('CorpusList', () => {
     // Check first corpus row
     const firstRowCells = rows[0].querySelectorAll('td')
     expect(firstRowCells[0]).toHaveTextContent(mockCorpora[0].title)
-    expect(firstRowCells[1]).toHaveTextContent(mockCorpora[0].organisation_name)
-    expect(firstRowCells[2]).toHaveTextContent(mockCorpora[0].corpus_type_name)
+    expect(firstRowCells[1]).toHaveTextContent(
+      mockCorpora[0].organisation_name || '',
+    )
+    expect(firstRowCells[2]).toHaveTextContent(
+      mockCorpora[0].corpus_type_name || '',
+    )
 
     // Check second corpus row
     const secondRowCells = rows[1].querySelectorAll('td')
     expect(secondRowCells[0]).toHaveTextContent(mockCorpora[1].title)
     expect(secondRowCells[1]).toHaveTextContent(
-      mockCorpora[1].organisation_name,
+      mockCorpora[1].organisation_name || '',
     )
-    expect(secondRowCells[2]).toHaveTextContent(mockCorpora[1].corpus_type_name)
+    expect(secondRowCells[2]).toHaveTextContent(
+      mockCorpora[1].corpus_type_name || '',
+    )
 
     // Check edit buttons
     const editButtons = screen.getAllByRole('button', { name: /edit corpus/i })

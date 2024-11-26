@@ -73,22 +73,26 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
   } = useForm<CorpusFormData>({
     resolver: yupResolver(corpusSchema),
   })
-  const {
-    config,
-    loading: configLoading,
-    error: configError,
-  } = useConfig()
+  const { config, loading: configLoading, error: configError } = useConfig()
 
   const initialDescriptionRef = useRef<string | undefined>(
     loadedCorpus?.corpus_type_description,
   )
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isConfirmed, setIsConfirmed] = useState(false)
-  const [isDescriptionManuallyEdited, setIsDescriptionManuallyEdited] = useState(false)
+  const [isDescriptionManuallyEdited, setIsDescriptionManuallyEdited] =
+    useState(false)
 
   const handleFormSubmission = useCallback(
     async (formValues: CorpusFormData) => {
       setFormError(null)
+
+      // Check if description has actually changed from initial value
+      if (
+        formValues.corpus_type_description !== initialDescriptionRef.current
+      ) {
+        setIsDescriptionManuallyEdited(true)
+      }
 
       // Only check for corpus type description changes if updating an existing corpus
       if (
@@ -110,11 +114,12 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
         const formData: ICorpusFormPut = {
           title: formValues.title,
           description: formValues.description,
-          corpus_text: convertEmptyToNull(formValues.corpus_text),
+          corpus_text: convertEmptyToNull(
+            stripHtml(formValues.corpus_text || ''),
+          ),
           corpus_image_url: convertEmptyToNull(formValues.corpus_image_url),
           corpus_type_description: formValues.corpus_type_description,
         }
-        console.log(formData)
 
         return await updateCorpus(formData, loadedCorpus.import_id)
           .then(() => {
@@ -141,7 +146,9 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
       const formData: ICorpusFormPost = {
         title: formValues.title,
         description: formValues.description,
-        corpus_text: convertEmptyToNull(formValues.corpus_text),
+        corpus_text: convertEmptyToNull(
+          stripHtml(formValues.corpus_text || ''),
+        ),
         corpus_image_url: convertEmptyToNull(formValues.corpus_image_url),
         corpus_type_name: formValues.corpus_type_name.value,
         organisation_id: formValues.organisation_id.value,
@@ -180,7 +187,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
 
   const onSubmit: SubmitHandler<CorpusFormData> = useCallback(
     (data) => {
-      void handleFormSubmission(data).catch((error: IError) => {
+      handleFormSubmission(data).catch((error: IError) => {
         console.error(error)
       })
     },
@@ -205,7 +212,9 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
 
   const handleFormSubmissionWithConfirmation = useCallback(() => {
     if (isConfirmed) {
-      void handleSubmit(onSubmit, onSubmitErrorHandler)()
+      void handleSubmit(onSubmit, onSubmitErrorHandler)().catch((error) => {
+        console.error('Form submission error:', error)
+      })
     }
   }, [isConfirmed, handleSubmit, onSubmit, onSubmitErrorHandler])
 
@@ -237,18 +246,20 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
   const updateCorpusTypeDescription = useCallback(
     (typeName: string | undefined) => {
       if (!isDescriptionManuallyEdited) {
-        const selectedType = uniqueCorpusTypes.find((ct) => ct.name === typeName)
-        setValue('corpus_type_description', selectedType?.description || '', {
-          shouldDirty: true,
-        })
+        const selectedType = uniqueCorpusTypes.find(
+          (ct) => ct.name === typeName,
+        )
+        void setValue(
+          'corpus_type_description',
+          selectedType?.description || '',
+          {
+            shouldDirty: true,
+          },
+        )
       }
     },
     [uniqueCorpusTypes, setValue, isDescriptionManuallyEdited],
   )
-
-  const handleDescriptionChange = () => {
-    setIsDescriptionManuallyEdited(true)
-  }
 
   const getOrganisationNameById = useCallback(
     (organisationId: number): string | undefined => {
@@ -387,7 +398,10 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
             )}
           />
           {loadedCorpus && (
-            <FormControl isRequired isInvalid={!!errors.corpus_type_description}>
+            <FormControl
+              isRequired
+              isInvalid={!!errors.corpus_type_description}
+            >
               <FormLabel>
                 Corpus Type Description
                 <Tooltip label='Updating this will also apply this change to all other corpora of this type'>
@@ -398,10 +412,6 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
                 height={'100px'}
                 bg='white'
                 {...register('corpus_type_description')}
-                onChange={(e) => {
-                  register('corpus_type_description').onChange(e)
-                  handleDescriptionChange()
-                }}
               />
             </FormControl>
           )}
@@ -487,7 +497,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
 
           <ButtonGroup>
             <Button type='submit' colorScheme='blue' disabled={isSubmitting}>
-              {(loadedCorpus ? 'Update ' : 'Create new ') + ' Corpus'}
+              {(loadedCorpus ? 'Update ' : 'Create new ') + 'Corpus'}
             </Button>
           </ButtonGroup>
         </VStack>

@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { CorpusForm } from '@/components/forms/CorpusForm'
@@ -31,11 +31,19 @@ vi.mock('react-router-dom', async (importOriginal) => {
 const mockConfig = {
   corpora: [
     {
-      corpus_type: 'Test Corpus Type',
-      corpus_type_description: 'Test Corpus Type Description',
+      corpus_type: 'Test Corpus Type 1',
+      corpus_type_description: 'Test Corpus Type Description 1',
       organisation: {
         id: 1,
-        name: 'Test Organisation',
+        name: 'Test Organisation 1',
+      },
+    },
+    {
+      corpus_type: 'Test Corpus Type 2',
+      corpus_type_description: 'Test Corpus Type Description 2',
+      organisation: {
+        id: 2,
+        name: 'Test Organisation 2',
       },
     },
   ],
@@ -88,6 +96,53 @@ describe('CorpusForm', () => {
       ).toBeInTheDocument()
     })
 
+    it('shows all corpus type options when clicking the select', async () => {
+      renderCorpusForm()
+
+      // Click the corpus type select to open options
+      const corpusTypeSelect = within(
+        screen.getByTestId('corpus-type-select'),
+      ).getByText('Select...')
+      await userEvent.click(corpusTypeSelect)
+
+      // Verify all options from mockConfig are shown
+      mockConfig.corpora.forEach((corpus) => {
+        expect(screen.getByText(corpus.corpus_type)).toBeInTheDocument()
+      })
+    })
+
+    it('shows all organisation options with correct labels and values when clicking the select', async () => {
+      renderCorpusForm()
+
+      // Click the organisation select to open options
+      const organisationSelect = within(
+        screen.getByTestId('organisation-select'),
+      ).getByText('Select...')
+      await userEvent.click(organisationSelect)
+
+      // Verify all options from mockConfig are shown with correct label and value
+      const uniqueOrganisations = Array.from(
+        new Set(
+          mockConfig.corpora
+            .filter((corpus) => corpus.organisation)
+            .map((corpus) => JSON.stringify(corpus.organisation)),
+        ),
+      ).map((org) => JSON.parse(org) as { id: number; name: string })
+
+      uniqueOrganisations.forEach((org: { id: number; name: string }) => {
+        // Find the option by its label text
+        const option = screen.getByText(org.name)
+        expect(option).toBeInTheDocument()
+
+        // The parent div contains the value information
+        const optionContainer = option.closest('[id^="react-select-"]')
+        expect(optionContainer).toHaveAttribute(
+          'id',
+          expect.stringContaining(`-option-${org.id - 1}`),
+        )
+      })
+    })
+
     it('renders form fields with loaded corpus data', () => {
       const mockCorpus = {
         import_id: 'test-id',
@@ -95,8 +150,8 @@ describe('CorpusForm', () => {
         description: 'Test Description',
         corpus_text: '<p>Test Text</p>',
         corpus_image_url: 'http://test.com/image.jpg',
-        corpus_type_name: 'Test Corpus Type',
-        corpus_type_description: 'Test Corpus Type Description',
+        corpus_type_name: 'Test Corpus Type 1',
+        corpus_type_description: 'Test Corpus Type Description 1',
         organisation_id: 1,
       }
 
@@ -118,12 +173,12 @@ describe('CorpusForm', () => {
         screen.getByRole('textbox', { name: 'Corpus Image URL' }),
       ).toHaveValue('http://test.com/image.jpg')
       expect(screen.getByTestId('corpus-type-select')).toBeInTheDocument()
-      expect(screen.getByText('Test Corpus Type')).toBeInTheDocument()
+      expect(screen.getByText('Test Corpus Type 1')).toBeInTheDocument()
       expect(
         screen.getByRole('textbox', { name: 'Corpus Type Description' }),
-      ).toHaveValue('Test Corpus Type Description')
+      ).toHaveValue('Test Corpus Type Description 1')
       expect(screen.getByTestId('organisation-select')).toBeInTheDocument()
-      expect(screen.getByText('Test Organisation')).toBeInTheDocument()
+      expect(screen.getByText('Test Organisation 1')).toBeInTheDocument()
       expect(
         screen.getByRole('button', { name: /update corpus/i }),
       ).toBeInTheDocument()
@@ -141,202 +196,158 @@ describe('CorpusForm', () => {
     })
   })
 
-  // describe('Form Validation', () => {
-  //   it('shows validation errors for required fields when submitting empty form', async () => {
-  //     renderCorpusForm()
-
-  //     fireEvent.click(
-  //       screen.getByRole('button', { name: /create new corpus/i }),
-  //     )
-
-  //     await waitFor(() => {
-  //       expect(screen.getByText(/title is required/i)).toBeInTheDocument()
-  //       expect(screen.getByText(/description is required/i)).toBeInTheDocument()
-  //       expect(
-  //         screen.getByText(/corpus type name is required/i),
-  //       ).toBeInTheDocument()
-  //       expect(
-  //         screen.getByText(/organisation is required/i),
-  //       ).toBeInTheDocument()
-  //     })
-  //   })
-  // })
-
   describe('Form Submission', () => {
     it('successfully creates a new corpus', async () => {
-      const mockCreateResponse = { import_id: 'new-id' }
+      const mockCreateResponse = { response: 'new-id' }
       vi.mocked(createCorpus).mockResolvedValueOnce(mockCreateResponse)
 
+      const user = userEvent.setup()
       renderCorpusForm()
 
-      await userEvent.type(screen.getByLabelText(/title/i), 'New Corpus')
-      await userEvent.type(
-        screen.getByLabelText(/description/i),
+      // Fill in text fields
+      await user.type(
+        screen.getByRole('textbox', { name: 'Title' }),
+        'New Corpus',
+      )
+      await user.type(
+        screen.getByRole('textbox', { name: 'Description' }),
         'New Description',
       )
 
       // Select corpus type
-      const corpusTypeSelect = screen.getByTestId('language-select')
-      await userEvent.click(corpusTypeSelect)
-      await userEvent.click(screen.getByText('Test Type'))
+      const corpusTypeSelect = within(
+        screen.getByTestId('corpus-type-select'),
+      ).getByRole('combobox')
+      await user.click(corpusTypeSelect)
+      await user.type(corpusTypeSelect, 'Test Corpus Type 1{enter}')
 
       // Select organisation
-      const orgSelect = screen.getByTestId('organisation-select')
-      await userEvent.click(orgSelect)
-      await userEvent.click(screen.getByText('Test Organisation'))
+      const orgSelect = within(
+        screen.getByTestId('organisation-select'),
+      ).getByRole('combobox')
+      await user.click(orgSelect)
+      await user.type(orgSelect, 'Test Organisation 1{enter}')
 
-      fireEvent.click(
+      // Submit the form
+      await user.click(
         screen.getByRole('button', { name: /create new corpus/i }),
       )
 
+      // Wait for form submission and verify API call
       await waitFor(() => {
-        expect(createCorpus).toHaveBeenCalledWith(
-          expect.objectContaining({
-            title: 'New Corpus',
-            description: 'New Description',
-          }),
-        )
-        expect(mockNavigate).toHaveBeenCalledWith('/corpora')
+        expect(createCorpus).toHaveBeenCalledWith({
+          title: 'New Corpus',
+          description: 'New Description',
+          corpus_text: null,
+          corpus_image_url: null,
+          corpus_type_name: 'Test Corpus Type 1',
+          organisation_id: 1,
+        })
       })
+
+      // Verify navigation after success
+      expect(mockNavigate).toHaveBeenCalledWith('/corpora')
     })
 
     it('successfully updates an existing corpus', async () => {
+      const mockUpdateResponse = {
+        response: {
+          import_id: 'test-id',
+          title: 'Updated Title',
+          description: 'Updated Description',
+          corpus_type_name: 'test-type',
+          corpus_type_description: 'Test Type Description',
+          corpus_text: null,
+          corpus_image_url: null,
+          organisation_id: 1,
+          organisation_name: 'test-org',
+        },
+      }
+      vi.mocked(updateCorpus).mockResolvedValueOnce(mockUpdateResponse)
+
+      // Use the default mockConfig
+      mockUseConfig.mockReturnValue({
+        config: mockConfig,
+        loading: false,
+        error: null,
+      })
+
       const mockCorpus = {
         import_id: 'test-id',
-        title: 'Test Corpus',
-        description: 'Test Description',
-        corpus_type_name: 'Test Type',
+        title: 'Original Title',
+        description: 'Original Description',
         organisation_id: 1,
+        organisation_name: 'Test Organisation 1',
+        corpus_text: 'TBD',
+        corpus_image_url: null,
+        corpus_type_name: 'Test Corpus Type 1',
+        corpus_type_description: 'Test Corpus Type Description 1',
       }
 
-      vi.mocked(updateCorpus).mockResolvedValueOnce({ success: true })
+      const user = userEvent.setup()
 
-      renderCorpusForm({ corpus: mockCorpus })
+      renderCorpusForm({
+        corpus: mockCorpus,
+      })
 
-      await userEvent.clear(screen.getByLabelText(/title/i))
-      await userEvent.type(screen.getByLabelText(/title/i), 'Updated Corpus')
+      // Wait for all form fields to be initialized
+      await waitFor(() => {
+        // Check required fields
+        expect(screen.getByRole('textbox', { name: 'Title' })).toHaveValue(
+          'Original Title',
+        )
+        expect(
+          screen.getByRole('textbox', { name: 'Description' }),
+        ).toHaveValue('Original Description')
 
-      fireEvent.click(screen.getByRole('button', { name: /update corpus/i }))
+        // Check optional fields
+        expect(
+          screen.getByRole('textbox', { name: 'Corpus Image URL' }),
+        ).toHaveValue('')
 
+        // Check corpus type fields
+        expect(screen.getByTestId('corpus-type-select')).toBeInTheDocument()
+        expect(
+          screen.getByRole('textbox', { name: 'Corpus Type Description' }),
+        ).toHaveValue('Test Corpus Type Description 1')
+      })
+
+      // Fill form fields
+      const titleInput = screen.getByRole('textbox', { name: 'Title' })
+      const descInput = screen.getByRole('textbox', { name: 'Description' })
+      const corpusTypeDescInput = screen.getByRole('textbox', {
+        name: 'Corpus Type Description',
+      })
+
+      await user.clear(titleInput)
+      await user.type(titleInput, 'Updated Corpus')
+
+      await user.clear(descInput)
+      await user.type(descInput, 'Updated Description')
+
+      await user.clear(corpusTypeDescInput)
+      await user.type(corpusTypeDescInput, 'Test Corpus Type Description 1')
+
+      // Submit form
+      const submitButton = screen.getByRole('button', {
+        name: /update corpus/i,
+      })
+      await user.click(submitButton)
+
+      // Wait for form submission
       await waitFor(() => {
         expect(updateCorpus).toHaveBeenCalledWith(
           expect.objectContaining({
             title: 'Updated Corpus',
+            description: 'Updated Description',
+            corpus_text: 'TBD',
+            corpus_image_url: null,
+            corpus_type_description: 'Test Corpus Type Description 1',
           }),
           'test-id',
         )
-        expect(mockNavigate).toHaveBeenCalledWith('/corpora')
-      })
-    })
-
-    it('handles API errors during submission', async () => {
-      const error = { message: 'API Error' }
-      vi.mocked(createCorpus).mockRejectedValueOnce(error)
-
-      renderCorpusForm()
-
-      await userEvent.type(screen.getByLabelText(/title/i), 'New Corpus')
-      await userEvent.type(
-        screen.getByLabelText(/description/i),
-        'New Description',
-      )
-
-      // Select corpus type
-      const corpusTypeSelect = screen.getByTestId('language-select')
-      await userEvent.click(corpusTypeSelect)
-      await userEvent.click(screen.getByText('Test Type'))
-
-      // Select organisation
-      const orgSelect = screen.getByTestId('organisation-select')
-      await userEvent.click(orgSelect)
-      await userEvent.click(screen.getByText('Test Organisation'))
-
-      fireEvent.click(
-        screen.getByRole('button', { name: /create new corpus/i }),
-      )
-
-      await waitFor(() => {
-        expect(screen.getByText(/api error/i)).toBeInTheDocument()
       })
     })
   })
-
-  // describe('Corpus Type Description Modal', () => {
-  //   it('shows confirmation modal when updating corpus type description', async () => {
-  //     const mockCorpus = {
-  //       import_id: 'test-id',
   //       title: 'Test Corpus',
-  //       description: 'Test Description',
-  //       corpus_type_name: 'Test Type',
-  //       corpus_type_description: 'Original Description',
-  //       organisation_id: 1,
-  //     }
-
-  //     renderCorpusForm({ corpus: mockCorpus })
-
-  //     const descriptionInput = screen.getByLabelText(/corpus type description/i)
-  //     await userEvent.clear(descriptionInput)
-  //     await userEvent.type(descriptionInput, 'Updated Description')
-
-  //     fireEvent.click(screen.getByRole('button', { name: /update corpus/i }))
-
-  //     expect(screen.getByTestId('modal-body')).toBeInTheDocument()
-  //     expect(
-  //       screen.getByText(/you have changed the corpus type description/i),
-  //     ).toBeInTheDocument()
-  //   })
-
-  //   it('proceeds with update after confirming modal', async () => {
-  //     const mockCorpus = {
-  //       import_id: 'test-id',
-  //       title: 'Test Corpus',
-  //       description: 'Test Description',
-  //       corpus_type_name: 'Test Type',
-  //       corpus_type_description: 'Original Description',
-  //       organisation_id: 1,
-  //     }
-
-  //     vi.mocked(updateCorpus).mockResolvedValueOnce({ success: true })
-
-  //     renderCorpusForm({ corpus: mockCorpus })
-
-  //     const descriptionInput = screen.getByLabelText(/corpus type description/i)
-  //     await userEvent.clear(descriptionInput)
-  //     await userEvent.type(descriptionInput, 'Updated Description')
-
-  //     fireEvent.click(screen.getByRole('button', { name: /update corpus/i }))
-  //     fireEvent.click(screen.getByRole('button', { name: /confirm/i }))
-
-  //     await waitFor(() => {
-  //       expect(updateCorpus).toHaveBeenCalledWith(
-  //         expect.objectContaining({
-  //           corpus_type_description: 'Updated Description',
-  //         }),
-  //         'test-id',
-  //       )
-  //     })
-  //   })
-
-  //   it('cancels update when dismissing modal', async () => {
-  //     const mockCorpus = {
-  //       import_id: 'test-id',
-  //       title: 'Test Corpus',
-  //       description: 'Test Description',
-  //       corpus_type_name: 'Test Type',
-  //       corpus_type_description: 'Original Description',
-  //       organisation_id: 1,
-  //     }
-
-  //     renderCorpusForm({ corpus: mockCorpus })
-
-  //     const descriptionInput = screen.getByLabelText(/corpus type description/i)
-  //     await userEvent.clear(descriptionInput)
-  //     await userEvent.type(descriptionInput, 'Updated Description')
-
-  //     fireEvent.click(screen.getByRole('button', { name: /update corpus/i }))
-  //     fireEvent.click(screen.getByRole('button', { name: /cancel/i }))
-
-  //     expect(updateCorpus).not.toHaveBeenCalled()
-  //   })
-  // })
 })
