@@ -18,13 +18,15 @@ import {
   Tooltip,
   useToast,
   Flex,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverBody,
+  Spinner,
 } from '@chakra-ui/react'
 import { GoPencil } from 'react-icons/go'
 import { FiFilter } from 'react-icons/fi'
+import { Select } from 'chakra-react-select'
 
 import { DeleteButton } from '../buttons/Delete'
 import { sortBy } from '@/utils/sortBy'
@@ -39,6 +41,8 @@ import { getStatusAlias } from '@/utils/getStatusAlias'
 import { ApiError } from '../feedback/ApiError'
 import { canModify } from '@/utils/canModify'
 import { decodeToken } from '@/utils/decodeToken'
+import useConfig from '@/hooks/useConfig'
+import { getCountries } from '@/utils/extractNestedGeographyData'
 
 interface ILoaderProps {
   request: {
@@ -67,9 +71,9 @@ export async function loader({ request }: ILoaderProps) {
 
 export default function FamilyList() {
   const [filteredItems, setFilteredItems] = useState<TFamily[]>()
-  const [selectedGeography, setSelectedGeography] = useState<string | null>(
-    null,
-  )
+  const [selectedGeographies, setSelectedGeographies] = useState<
+    Array<{ value: string; label: string }>
+  >([])
   const [sortControls, setSortControls] = useState<{
     key: keyof TFamily
     reverse: boolean
@@ -77,6 +81,7 @@ export default function FamilyList() {
   const {
     response: { data: families },
   } = useLoaderData() as { response: { data: TFamily[] } }
+  const { config, loading: configLoading } = useConfig()
   const toast = useToast()
   const [familyError, setFamilyError] = useState<string | null | undefined>()
   const [formError, setFormError] = useState<IError | null | undefined>()
@@ -141,26 +146,46 @@ export default function FamilyList() {
 
   useEffect(() => {
     // First filter by geography
-    const geographyFiltered = families.filter(
-      (item) => !selectedGeography || item.geography === selectedGeography,
+    const geographyFiltered = families.filter((item) =>
+      selectedGeographies.length === 0
+        ? true
+        : selectedGeographies.some(
+            (selected) => selected.value === item.geography,
+          ),
     )
     // Then sort the filtered results
     const sortedAndFiltered = geographyFiltered
       .slice()
       .sort(sortBy(sortControls.key, sortControls.reverse))
     setFilteredItems(sortedAndFiltered)
-  }, [families, selectedGeography, sortControls])
+  }, [families, selectedGeographies, sortControls])
 
-  // Get unique geographies from all families
-  const uniqueGeographies = useMemo(() => {
+  // Get unique geographies from all families and map them to their display values
+  const geographyOptions = useMemo(() => {
+    if (!config) return []
+
+    // Create a map of geography values to display values
+    const geoMap = new Map<string, string>()
+    const countries = getCountries(config.geographies)
+    countries.forEach((country) => {
+      geoMap.set(country.value, country.display_value)
+    })
+
+    // Get unique geographies from families and map to display values
     const geographies = new Set<string>()
     families.forEach((family) => {
       if (family.geography) {
         geographies.add(family.geography)
       }
     })
-    return Array.from(geographies).sort()
-  }, [families])
+
+    return Array.from(geographies)
+      .sort()
+      .map((geography) => ({
+        value: geography,
+        label: geoMap.get(geography) || geography, // Fallback to the value if no display value found
+      }))
+  }, [families, config])
 
   return (
     <Box flex={1}>
@@ -185,35 +210,44 @@ export default function FamilyList() {
               <Th>
                 <Flex gap={2} align='center'>
                   <span>Geographies</span>
-                  <Menu>
-                    <MenuButton
-                      as={IconButton}
-                      aria-label='Filter geographies'
-                      icon={<FiFilter />}
-                      size='xs'
-                      variant='ghost'
-                      colorScheme={selectedGeography ? 'blue' : 'gray'}
-                    />
-                    <MenuList>
-                      <MenuItem
-                        onClick={() => setSelectedGeography(null)}
-                        fontWeight={!selectedGeography ? 'bold' : 'normal'}
-                      >
-                        All Geographies
-                      </MenuItem>
-                      {uniqueGeographies.map((geography) => (
-                        <MenuItem
-                          key={geography}
-                          onClick={() => setSelectedGeography(geography)}
-                          fontWeight={
-                            selectedGeography === geography ? 'bold' : 'normal'
-                          }
-                        >
-                          {geography}
-                        </MenuItem>
-                      ))}
-                    </MenuList>
-                  </Menu>
+                  <Popover>
+                    <PopoverTrigger>
+                      <IconButton
+                        aria-label='Filter geographies'
+                        icon={<FiFilter />}
+                        size='xs'
+                        variant='ghost'
+                        colorScheme={
+                          selectedGeographies.length > 0 ? 'blue' : 'gray'
+                        }
+                      />
+                    </PopoverTrigger>
+                    <PopoverContent>
+                      <PopoverBody>
+                        {configLoading ? (
+                          <Spinner size='sm' />
+                        ) : (
+                          <Select
+                            isMulti
+                            isClearable
+                            options={geographyOptions}
+                            value={selectedGeographies}
+                            onChange={(newValue) => {
+                              setSelectedGeographies(
+                                newValue as Array<{
+                                  value: string
+                                  label: string
+                                }>,
+                              )
+                            }}
+                            placeholder='Select geographies...'
+                            closeMenuOnSelect={false}
+                            size='sm'
+                          />
+                        )}
+                      </PopoverBody>
+                    </PopoverContent>
+                  </Popover>
                 </Flex>
               </Th>
               <Th
