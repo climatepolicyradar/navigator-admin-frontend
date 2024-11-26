@@ -73,13 +73,18 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
   } = useForm<CorpusFormData>({
     resolver: yupResolver(corpusSchema),
   })
-  const { config, loading: configLoading, error: configError } = useConfig()
+  const {
+    config,
+    loading: configLoading,
+    error: configError,
+  } = useConfig()
 
   const initialDescriptionRef = useRef<string | undefined>(
     loadedCorpus?.corpus_type_description,
   )
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isConfirmed, setIsConfirmed] = useState(false)
+  const [isDescriptionManuallyEdited, setIsDescriptionManuallyEdited] = useState(false)
 
   const handleFormSubmission = useCallback(
     async (formValues: CorpusFormData) => {
@@ -231,13 +236,19 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
 
   const updateCorpusTypeDescription = useCallback(
     (typeName: string | undefined) => {
-      const selectedType = uniqueCorpusTypes.find((ct) => ct.name === typeName)
-      setValue('corpus_type_description', selectedType?.description || '', {
-        shouldDirty: true,
-      })
+      if (!isDescriptionManuallyEdited) {
+        const selectedType = uniqueCorpusTypes.find((ct) => ct.name === typeName)
+        setValue('corpus_type_description', selectedType?.description || '', {
+          shouldDirty: true,
+        })
+      }
     },
-    [uniqueCorpusTypes, setValue],
+    [uniqueCorpusTypes, setValue, isDescriptionManuallyEdited],
   )
+
+  const handleDescriptionChange = () => {
+    setIsDescriptionManuallyEdited(true)
+  }
 
   const getOrganisationNameById = useCallback(
     (organisationId: number): string | undefined => {
@@ -249,17 +260,16 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
     [config?.corpora],
   )
 
-  useEffect(() => {
-    handleFormSubmissionWithConfirmation()
-  }, [handleFormSubmissionWithConfirmation])
-
   const watchedCorpusTypeName = watch('corpus_type_name')
-
   useEffect(() => {
     if (watchedCorpusTypeName) {
       updateCorpusTypeDescription(watchedCorpusTypeName.label)
     }
-  }, [watchedCorpusTypeName, updateCorpusTypeDescription])
+  }, [watchedCorpusTypeName, config, updateCorpusTypeDescription])
+
+  useEffect(() => {
+    handleFormSubmissionWithConfirmation()
+  }, [handleFormSubmissionWithConfirmation])
 
   useEffect(() => {
     if (loadedCorpus && !configLoading) {
@@ -283,7 +293,9 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
             }
           : undefined,
       })
+      updateCorpusTypeDescription(loadedCorpus.corpus_type_name)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadedCorpus, configLoading, getOrganisationNameById, reset])
 
   const corpusTextOnChange = (html: string) => {
@@ -326,13 +338,14 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
             />
           </FormControl>
           <FormControl>
-            <FormLabel>
+            <FormLabel htmlFor='corpus-text-editor'>
               Corpus Text
               <Tooltip label='This is exposed on the navigator application as the public facing description of this corpus'>
                 <Icon as={InfoOutlineIcon} ml={2} cursor='pointer' />
               </Tooltip>
             </FormLabel>
             <WYSIWYG
+              id='corpus-text-editor'
               html={loadedCorpus?.corpus_text || ''}
               onChange={corpusTextOnChange}
             />
@@ -351,7 +364,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
                 isInvalid={!!errors.corpus_type_name}
               >
                 <FormLabel as='legend'>Corpus Type Name</FormLabel>
-                <div data-testid='language-select'>
+                <div data-testid='corpus-type-select'>
                   <CRSelect
                     chakraStyles={chakraStylesSelect}
                     isClearable={true}
@@ -374,7 +387,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
             )}
           />
           {loadedCorpus && (
-            <FormControl isRequired>
+            <FormControl isRequired isInvalid={!!errors.corpus_type_description}>
               <FormLabel>
                 Corpus Type Description
                 <Tooltip label='Updating this will also apply this change to all other corpora of this type'>
@@ -385,6 +398,10 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
                 height={'100px'}
                 bg='white'
                 {...register('corpus_type_description')}
+                onChange={(e) => {
+                  register('corpus_type_description').onChange(e)
+                  handleDescriptionChange()
+                }}
               />
             </FormControl>
           )}
@@ -434,7 +451,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
             <ModalContent>
               <ModalHeader>Confirm Update</ModalHeader>
               <ModalCloseButton />
-              <ModalBody>
+              <ModalBody data-testid='modal-body'>
                 <p>
                   You have changed the corpus type description of{' '}
                   <strong>
