@@ -167,7 +167,7 @@ export default function FamilyList() {
                 cursor='pointer'
               >
                 <Flex gap={2} align='center'>
-                  Geography {renderSortIcon('geography')}
+                  Geographies {renderSortIcon('geography')}
                 </Flex>
               </Th>
               <Th
@@ -245,7 +245,15 @@ export default function FamilyList() {
                   </Flex>
                 </Td>
                 <Td>{family.category}</Td>
-                <Td>{family.geography}</Td>
+                <Td>
+                  <Flex gap={1} wrap='wrap'>
+                    {family.geography && (
+                      <Badge colorScheme='gray' variant='subtle'>
+                        {family.geography}
+                      </Badge>
+                    )}
+                  </Flex>
+                </Td>
                 <Td>{formatDate(family.published_date)}</Td>
                 <Td>{formatDate(family.last_updated_date)}</Td>
                 <Td>
