@@ -18,8 +18,13 @@ import {
   Tooltip,
   useToast,
   Flex,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
 } from '@chakra-ui/react'
 import { GoPencil } from 'react-icons/go'
+import { FiFilter } from 'react-icons/fi'
 
 import { DeleteButton } from '../buttons/Delete'
 import { sortBy } from '@/utils/sortBy'
@@ -61,11 +66,14 @@ export async function loader({ request }: ILoaderProps) {
 }
 
 export default function FamilyList() {
+  const [filteredItems, setFilteredItems] = useState<TFamily[]>()
+  const [selectedGeography, setSelectedGeography] = useState<string | null>(
+    null,
+  )
   const [sortControls, setSortControls] = useState<{
     key: keyof TFamily
     reverse: boolean
-  }>({ key: 'slug', reverse: false })
-  const [filteredItems, setFilteredItems] = useState<TFamily[]>()
+  }>({ key: 'title', reverse: false })
   const {
     response: { data: families },
   } = useLoaderData() as { response: { data: TFamily[] } }
@@ -82,17 +90,6 @@ export default function FamilyList() {
 
   const userAccess = !userToken ? null : userToken.authorisation
   const isSuperuser = !userToken ? false : userToken.is_superuser
-
-  const renderSortIcon = (key: keyof TFamily) => {
-    if (sortControls.key !== key) {
-      return <ArrowUpDownIcon />
-    }
-    if (sortControls.reverse) {
-      return <ArrowDownIcon />
-    } else {
-      return <ArrowUpIcon />
-    }
-  }
 
   const handleDeleteClick = async (id: string) => {
     setFormError(null)
@@ -123,6 +120,17 @@ export default function FamilyList() {
       })
   }
 
+  const renderSortIcon = (key: keyof TFamily) => {
+    if (sortControls.key !== key) {
+      return <ArrowUpDownIcon />
+    }
+    if (sortControls.reverse) {
+      return <ArrowDownIcon />
+    } else {
+      return <ArrowUpIcon />
+    }
+  }
+
   const handleHeaderClick = (key: keyof TFamily) => {
     if (sortControls.key === key) {
       setSortControls({ key, reverse: !sortControls.reverse })
@@ -132,14 +140,26 @@ export default function FamilyList() {
   }
 
   useEffect(() => {
-    const sortedItems = families
+    // First filter by geography
+    const geographyFiltered = families.filter(
+      (item) => !selectedGeography || item.geography === selectedGeography,
+    )
+    // Then sort the filtered results
+    const sortedAndFiltered = geographyFiltered
       .slice()
       .sort(sortBy(sortControls.key, sortControls.reverse))
-    setFilteredItems(sortedItems)
-  }, [sortControls, families])
+    setFilteredItems(sortedAndFiltered)
+  }, [families, selectedGeography, sortControls])
 
-  useEffect(() => {
-    setFilteredItems(families)
+  // Get unique geographies from all families
+  const uniqueGeographies = useMemo(() => {
+    const geographies = new Set<string>()
+    families.forEach((family) => {
+      if (family.geography) {
+        geographies.add(family.geography)
+      }
+    })
+    return Array.from(geographies).sort()
   }, [families])
 
   return (
@@ -162,12 +182,38 @@ export default function FamilyList() {
                   Category {renderSortIcon('category')}
                 </Flex>
               </Th>
-              <Th
-                onClick={() => handleHeaderClick('geography')}
-                cursor='pointer'
-              >
+              <Th>
                 <Flex gap={2} align='center'>
-                  Geographies {renderSortIcon('geography')}
+                  <span>Geographies</span>
+                  <Menu>
+                    <MenuButton
+                      as={IconButton}
+                      aria-label='Filter geographies'
+                      icon={<FiFilter />}
+                      size='xs'
+                      variant='ghost'
+                      colorScheme={selectedGeography ? 'blue' : 'gray'}
+                    />
+                    <MenuList>
+                      <MenuItem
+                        onClick={() => setSelectedGeography(null)}
+                        fontWeight={!selectedGeography ? 'bold' : 'normal'}
+                      >
+                        All Geographies
+                      </MenuItem>
+                      {uniqueGeographies.map((geography) => (
+                        <MenuItem
+                          key={geography}
+                          onClick={() => setSelectedGeography(geography)}
+                          fontWeight={
+                            selectedGeography === geography ? 'bold' : 'normal'
+                          }
+                        >
+                          {geography}
+                        </MenuItem>
+                      ))}
+                    </MenuList>
+                  </Menu>
                 </Flex>
               </Th>
               <Th
@@ -214,7 +260,9 @@ export default function FamilyList() {
                 </Tooltip>
               </Th>
               <Th onClick={() => handleHeaderClick('status')} cursor='pointer'>
-                Status {renderSortIcon('status')}
+                <Flex gap={2} align='center'>
+                  Status {renderSortIcon('status')}
+                </Flex>
               </Th>
               <Th></Th>
             </Tr>
