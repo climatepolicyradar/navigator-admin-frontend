@@ -75,7 +75,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
   })
   const { config, loading: configLoading, error: configError } = useConfig()
 
-  const initialDescriptionRef = useRef<string | undefined>(
+  const initialDescription = useRef<string | undefined>(
     loadedCorpus?.corpus_type_description,
   )
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -88,16 +88,14 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
       setFormError(null)
 
       // Check if description has actually changed from initial value
-      if (
-        formValues.corpus_type_description !== initialDescriptionRef.current
-      ) {
+      if (formValues.corpus_type_description !== initialDescription.current) {
         setIsDescriptionManuallyEdited(true)
       }
 
       // Only check for corpus type description changes if updating an existing corpus
       if (
         loadedCorpus &&
-        formValues.corpus_type_description !== initialDescriptionRef.current &&
+        formValues.corpus_type_description !== initialDescription.current &&
         !isConfirmed
       ) {
         setIsModalOpen(true)
@@ -178,7 +176,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
     [
       loadedCorpus,
       isConfirmed,
-      initialDescriptionRef,
+      initialDescription,
       navigate,
       toast,
       setFormError,
@@ -218,12 +216,6 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
     }
   }, [isConfirmed, handleSubmit, onSubmit, onSubmitErrorHandler])
 
-  /**
-   * Generate a list of unique corpus type dictionaries.
-   *
-   * @param corpora - List of corpus items.
-   * @returns List of unique corpus type dictionaries.
-   */
   const getUniqueCorpusTypes = (corpora: IConfigCorpora[]): CorpusType[] => {
     const seen = new Set<string>()
     const uniqueCorpusTypes: CorpusType[] = []
