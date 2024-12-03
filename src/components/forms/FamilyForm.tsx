@@ -69,11 +69,17 @@ import { EventForm } from './EventForm'
 import { canModify } from '@/utils/canModify'
 import { getCountries } from '@/utils/extractNestedGeographyData'
 import { decodeToken } from '@/utils/decodeToken'
-import { generateOptions } from '@/utils/generateOptions'
 import { stripHtml } from '@/utils/stripHtml'
 
 import { familySchema } from '@/schemas/familySchema'
 import useCorpusFromConfig from '@/hooks/useCorpusFromConfig'
+
+import {
+  renderDynamicMetadataField,
+  CORPUS_METADATA_CONFIG,
+  generateDynamicValidationSchema,
+  generateOptions,
+} from './DynamicMetadataFields'
 
 type TMultiSelect = {
   value: string
@@ -105,45 +111,6 @@ type TProps = {
 
 const getCollection = (collectionId: string, collections: ICollection[]) => {
   return collections.find((collection) => collection.import_id === collectionId)
-}
-
-// Define a type for corpus metadata configuration
-type CorpusMetadataConfig = {
-  [corpusType: string]: {
-    renderFields: string[]
-    validationFields: string[]
-  }
-}
-
-// Centralized configuration for corpus metadata
-const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
-  'Intl. agreements': {
-    renderFields: ['author', 'author_type'],
-    validationFields: ['author', 'author_type'],
-  },
-  'Laws and Policies': {
-    renderFields: [
-      'topic',
-      'hazard',
-      'sector',
-      'keyword',
-      'framework',
-      'instrument',
-    ],
-    validationFields: [
-      'topic',
-      'hazard',
-      'sector',
-      'keyword',
-      'framework',
-      'instrument',
-    ],
-  },
-  // Easy to extend for new corpus types
-  default: {
-    renderFields: [],
-    validationFields: [],
-  },
 }
 
 export const FamilyForm = ({ family: loadedFamily }: TProps) => {
@@ -502,209 +469,21 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
         const taxonomyField = taxonomy[fieldKey as keyof typeof taxonomy]
         if (!taxonomyField) return null
 
-        // Determine field rendering based on taxonomy configuration
-        const allowedValues = taxonomyField.allowed_values || []
-        const isAllowAny = taxonomyField.allow_any
-        const isAllowBlanks = taxonomyField.allow_blanks
-
-        // Render free text input if allow_any is true
-        if (isAllowAny) {
-          return (
-            <FormControl key={fieldKey} isInvalid={!!errors[fieldKey]}>
-              <FormLabel>
-                {fieldKey.charAt(0).toUpperCase() + fieldKey.slice(1)}
-              </FormLabel>
-              <Controller
-                control={control}
-                name={fieldKey}
-                render={({ field }) => (
-                  <Input
-                    {...field}
-                    placeholder={`Enter ${fieldKey}`}
-                    type='text'
-                  />
-                )}
-              />
-              {errors[fieldKey] && (
-                <FormErrorMessage>
-                  {errors[fieldKey]?.message as string}
-                </FormErrorMessage>
-              )}
-            </FormControl>
-          )
-        }
-
-        // Special handling for author_type (radio group)
-        if (fieldKey === 'author_type') {
-          return (
-            <FormControl
-              key={fieldKey}
-              isRequired={!isAllowBlanks}
-              as='fieldset'
-              isInvalid={!!errors[fieldKey]}
-            >
-              <FormLabel as='legend'>Author Type</FormLabel>
-              <Controller
-                control={control}
-                name={fieldKey}
-                render={({ field }) => (
-                  <RadioGroup {...field}>
-                    <HStack gap={4}>
-                      {allowedValues.map((value) => (
-                        <Radio bg='white' value={value} key={value}>
-                          {value}
-                        </Radio>
-                      ))}
-                    </HStack>
-                  </RadioGroup>
-                )}
-              />
-              {errors[fieldKey] && (
-                <FormErrorMessage>
-                  Please select an author type
-                </FormErrorMessage>
-              )}
-            </FormControl>
-          )
-        }
-
-        // Render select box if allowed_values is not empty
-        if (allowedValues.length > 0) {
-          return (
-            <FormControl key={fieldKey} isInvalid={!!errors[fieldKey]}>
-              <FormLabel>
-                {fieldKey.charAt(0).toUpperCase() + fieldKey.slice(1)}
-              </FormLabel>
-              <Controller
-                control={control}
-                name={fieldKey}
-                render={({ field }) => (
-                  <CRSelect
-                    chakraStyles={chakraStylesSelect}
-                    isClearable={false}
-                    isMulti={
-                      fieldKey !== 'author' && fieldKey !== 'author_type'
-                    }
-                    isSearchable={true}
-                    options={generateOptions(allowedValues)}
-                    {...field}
-                  />
-                )}
-              />
-              {errors[fieldKey] && (
-                <FormErrorMessage>
-                  {errors[fieldKey]?.message as string}
-                </FormErrorMessage>
-              )}
-              {fieldKey !== 'author' && (
-                <FormHelperText>
-                  You can search and select multiple options
-                </FormHelperText>
-              )}
-            </FormControl>
-          )
-        }
-
-        // Fallback to default text input if no specific rendering rules apply
-        return (
-          <FormControl key={fieldKey} isInvalid={!!errors[fieldKey]}>
-            <FormLabel>
-              {fieldKey.charAt(0).toUpperCase() + fieldKey.slice(1)}
-            </FormLabel>
-            <Controller
-              control={control}
-              name={fieldKey}
-              render={({ field }) => (
-                <Input
-                  {...field}
-                  placeholder={`Enter ${fieldKey}`}
-                  type='text'
-                />
-              )}
-            />
-            {errors[fieldKey] && (
-              <FormErrorMessage>
-                {errors[fieldKey]?.message as string}
-              </FormErrorMessage>
-            )}
-          </FormControl>
-        )
+        return renderDynamicMetadataField({
+          fieldKey,
+          taxonomyField,
+          control,
+          errors,
+          chakraStylesSelect,
+          corpusType: corpusInfo.corpus_type,
+        })
       })
       .filter(Boolean)
   }, [corpusInfo, taxonomy, control, errors])
 
   const dynamicValidationSchema = useMemo(() => {
-    if (!taxonomy) return familySchema
-
-    // Get validation fields based on corpus type, fallback to default
-    const { validationFields } =
-      CORPUS_METADATA_CONFIG[corpusInfo?.corpus_type] ||
-      CORPUS_METADATA_CONFIG['default']
-
-    const metadataValidation = validationFields.reduce((acc, fieldKey) => {
-      const taxonomyField = taxonomy[fieldKey as keyof typeof taxonomy]
-
-      if (taxonomyField) {
-        // Get allowed values for the current field
-        const allowedValues = taxonomyField.allowed_values || []
-
-        // If allow_any is true, use a simple string validation
-        if (taxonomyField.allow_any) {
-          acc[fieldKey] = yup.string()
-        }
-        // For multi-select fields with allowed values
-        else if (
-          allowedValues.length > 0 &&
-          fieldKey !== 'author' &&
-          fieldKey !== 'author_type'
-        ) {
-          acc[fieldKey] = yup.array().of(yup.string())
-        }
-        // For single select or text fields
-        else {
-          // Use allow_blanks to determine if the field is required
-          acc[fieldKey] = taxonomyField.allow_blanks
-            ? yup.string()
-            : yup.string().required(`${fieldKey} is required`)
-        }
-      }
-
-      return acc
-    }, {} as any)
-
-    return familySchema.shape({
-      ...metadataValidation,
-    })
+    return generateDynamicValidationSchema(taxonomy, corpusInfo, familySchema)
   }, [taxonomy, corpusInfo, familySchema])
-
-  useEffect(() => {
-    if (taxonomy) {
-      // Get fields to reset based on corpus type
-      const { validationFields } =
-        CORPUS_METADATA_CONFIG[corpusInfo?.corpus_type] ||
-        CORPUS_METADATA_CONFIG['default']
-
-      const currentValues = getValues()
-      const resetValues = validationFields.reduce((acc, field) => {
-        acc[field] = undefined
-        return acc
-      }, {} as any)
-
-      reset(
-        {
-          ...currentValues,
-          ...resetValues,
-        },
-        {
-          keepErrors: false,
-          keepDirty: true,
-        },
-      )
-
-      // Update validation resolver
-      setValue('resolver', yupResolver(dynamicValidationSchema))
-    }
-  }, [taxonomy, corpusInfo, dynamicValidationSchema])
 
   return (
     <>
@@ -911,6 +690,10 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                           </Radio>
                           <Radio bg='white' value='UNFCCC'>
                             UNFCCC
+                          </Radio>
+
+                          <Radio bg='white' value='MCF'>
+                            MCF
                           </Radio>
                         </HStack>
                       </RadioGroup>
