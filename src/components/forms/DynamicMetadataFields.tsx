@@ -10,15 +10,15 @@ import {
   HStack,
   Box,
   AbsoluteCenter,
-  Divider
+  Divider,
 } from '@chakra-ui/react'
 import { Controller, Control, FieldErrors } from 'react-hook-form'
 import { Select as CRSelect } from 'chakra-react-select'
 import * as yup from 'yup'
 
 // Utility function to generate select options
-export const generateOptions = (values: string[]) => 
-  values.map(value => ({ value, label: value }))
+export const generateOptions = (values: string[]) =>
+  values.map((value) => ({ value, label: value }))
 
 // Configuration type for corpus metadata
 export type CorpusMetadataConfig = {
@@ -80,7 +80,7 @@ export const renderDynamicMetadataField = ({
   control,
   errors,
   chakraStylesSelect,
-  corpusType
+  corpusType,
 }: DynamicMetadataFieldProps) => {
   const allowedValues = taxonomyField.allowed_values || []
   const isAllowAny = taxonomyField.allow_any
@@ -97,11 +97,7 @@ export const renderDynamicMetadataField = ({
           control={control}
           name={fieldKey}
           render={({ field }) => (
-            <Input
-              {...field}
-              placeholder={`Enter ${fieldKey}`}
-              type='text'
-            />
+            <Input {...field} placeholder={`Enter ${fieldKey}`} type='text' />
           )}
         />
         {errors[fieldKey] && (
@@ -139,9 +135,7 @@ export const renderDynamicMetadataField = ({
           )}
         />
         {errors[fieldKey] && (
-          <FormErrorMessage>
-            Please select an author type
-          </FormErrorMessage>
+          <FormErrorMessage>Please select an author type</FormErrorMessage>
         )}
       </FormControl>
     )
@@ -161,9 +155,7 @@ export const renderDynamicMetadataField = ({
             <CRSelect
               chakraStyles={chakraStylesSelect}
               isClearable={false}
-              isMulti={
-                fieldKey !== 'author' && fieldKey !== 'author_type'
-              }
+              isMulti={fieldKey !== 'author' && fieldKey !== 'author_type'}
               isSearchable={true}
               options={generateOptions(allowedValues)}
               {...field}
@@ -194,11 +186,7 @@ export const renderDynamicMetadataField = ({
         control={control}
         name={fieldKey}
         render={({ field }) => (
-          <Input
-            {...field}
-            placeholder={`Enter ${fieldKey}`}
-            type='text'
-          />
+          <Input {...field} placeholder={`Enter ${fieldKey}`} type='text' />
         )}
       />
       {errors[fieldKey] && (
@@ -214,9 +202,9 @@ export const renderDynamicMetadataField = ({
 export const generateDynamicValidationSchema = (
   taxonomy: any,
   corpusInfo: any,
-  familySchema: any,
+  schema: any,
 ) => {
-  if (!taxonomy) return familySchema
+  if (!taxonomy) return schema
 
   // Get validation fields based on corpus type, fallback to default
   const { validationFields } =
@@ -254,7 +242,7 @@ export const generateDynamicValidationSchema = (
     return acc
   }, {} as any)
 
-  return familySchema.shape({
+  return schema.shape({
     ...metadataValidation,
   })
 }
