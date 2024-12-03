@@ -97,7 +97,7 @@ export const renderDynamicMetadataField = ({
           control={control}
           name={fieldKey}
           render={({ field }) => (
-            <Input {...field} placeholder={`Enter ${fieldKey}`} type='text' />
+            <Input {...field} bg='white' aria-label={fieldKey} type='text' />
           )}
         />
         {errors[fieldKey] && (
