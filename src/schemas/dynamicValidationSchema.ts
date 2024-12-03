@@ -8,7 +8,7 @@ export type CorpusMetadataConfig = {
   }
 }
 
-// Centralized configuration for corpus metadata
+// Centralised configuration for corpus metadata
 export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
   'Intl. agreements': {
     renderFields: ['author', 'author_type'],

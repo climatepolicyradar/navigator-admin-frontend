@@ -76,10 +76,12 @@ import useCorpusFromConfig from '@/hooks/useCorpusFromConfig'
 
 import {
   renderDynamicMetadataField,
-  CORPUS_METADATA_CONFIG,
   generateOptions,
 } from './DynamicMetadataFields'
-import { generateDynamicValidationSchema } from '@/schemas/dynamicValidationSchema'
+import {
+  CORPUS_METADATA_CONFIG,
+  generateDynamicValidationSchema,
+} from '@/schemas/dynamicValidationSchema'
 
 type TMultiSelect = {
   value: string

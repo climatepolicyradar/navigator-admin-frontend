@@ -15,45 +15,6 @@ import { Select as CRSelect } from 'chakra-react-select'
 export const generateOptions = (values: string[]) =>
   values.map((value) => ({ value, label: value }))
 
-// Configuration type for corpus metadata
-export type CorpusMetadataConfig = {
-  [corpusType: string]: {
-    renderFields: string[]
-    validationFields: string[]
-  }
-}
-
-// Centralised configuration for corpus metadata
-export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
-  'Intl. agreements': {
-    renderFields: ['author', 'author_type'],
-    validationFields: ['author', 'author_type'],
-  },
-  'Laws and Policies': {
-    renderFields: [
-      'topic',
-      'hazard',
-      'sector',
-      'keyword',
-      'framework',
-      'instrument',
-    ],
-    validationFields: [
-      'topic',
-      'hazard',
-      'sector',
-      'keyword',
-      'framework',
-      'instrument',
-    ],
-  },
-  // Easy to extend for new corpus types
-  default: {
-    renderFields: [],
-    validationFields: [],
-  },
-}
-
 // Interface for rendering dynamic metadata fields
 interface DynamicMetadataFieldProps {
   fieldKey: string
