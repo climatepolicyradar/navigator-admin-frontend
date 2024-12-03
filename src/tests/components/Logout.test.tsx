@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest'
+import { vi, describe, it, expect, beforeEach } from 'vitest'
 import { BrowserRouter } from 'react-router-dom'
 import Logout from '@/components/Logout'
 import { AuthContext } from '@/providers/AuthProvider'
@@ -31,10 +31,6 @@ describe('Logout Component', () => {
   beforeEach(() => {
     // Clear all mocks before each test
     vi.clearAllMocks()
-  })
-
-  afterEach(() => {
-    // Clean up after each test
   })
 
   it('signs out with a single click', async () => {
