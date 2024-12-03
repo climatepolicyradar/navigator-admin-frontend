@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo, useCallback } from 'react'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useBlocker, useNavigate } from 'react-router-dom'
-
+import * as yup from 'yup'
 import {
   IError,
   TFamilyFormPost,
@@ -14,8 +14,6 @@ import {
   IEvent,
   ICollection,
   IConfigCorpus,
-  IConfigTaxonomyUNFCCC,
-  IConfigTaxonomyCCLW,
   IDecodedToken,
 } from '@/interfaces'
 
@@ -109,6 +107,45 @@ const getCollection = (collectionId: string, collections: ICollection[]) => {
   return collections.find((collection) => collection.import_id === collectionId)
 }
 
+// Define a type for corpus metadata configuration
+type CorpusMetadataConfig = {
+  [corpusType: string]: {
+    renderFields: string[]
+    validationFields: string[]
+  }
+}
+
+// Centralized configuration for corpus metadata
+const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
+  'Intl. agreements': {
+    renderFields: ['author', 'author_type'],
+    validationFields: ['author', 'author_type'],
+  },
+  'Laws and Policies': {
+    renderFields: [
+      'topic',
+      'hazard',
+      'sector',
+      'keyword',
+      'framework',
+      'instrument',
+    ],
+    validationFields: [
+      'topic',
+      'hazard',
+      'sector',
+      'keyword',
+      'framework',
+      'instrument',
+    ],
+  },
+  // Easy to extend for new corpus types
+  default: {
+    renderFields: [],
+    validationFields: [],
+  },
+}
+
 export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   const [isLeavingModalOpen, setIsLeavingModalOpen] = useState(false)
   const [isFormSubmitting, setIsFormSubmitting] = useState(false)
@@ -130,6 +167,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     reset,
     setError,
     setValue,
+    getValues,
     formState: { errors, isSubmitting },
     formState: { dirtyFields },
   } = useForm({
@@ -152,11 +190,15 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     watchCorpus?.value,
   )
 
+  console.log('config?.corpora', config?.corpora)
+
   const corpusTitle = loadedFamily
     ? loadedFamily?.corpus_title
     : corpusInfo?.title
 
   const taxonomy = useTaxonomy(corpusInfo?.corpus_type, corpusInfo?.taxonomy)
+  console.log('corpusInfo', corpusInfo)
+  console.log('taxonomy', taxonomy)
 
   const userToken = useMemo(() => {
     const token = localStorage.getItem('token')
@@ -446,6 +488,224 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     }
   }, [handleBeforeUnload])
 
+  const renderDynamicMetadataFields = useCallback(() => {
+    if (!corpusInfo || !taxonomy) return null
+
+    // Get render fields based on corpus type, fallback to default
+    const { renderFields } =
+      CORPUS_METADATA_CONFIG[corpusInfo.corpus_type] ||
+      CORPUS_METADATA_CONFIG['default']
+
+    return renderFields
+      .map((fieldKey) => {
+        // Check if the field exists in the taxonomy
+        const taxonomyField = taxonomy[fieldKey as keyof typeof taxonomy]
+        if (!taxonomyField) return null
+
+        // Determine field rendering based on taxonomy configuration
+        const allowedValues = taxonomyField.allowed_values || []
+        const isAllowAny = taxonomyField.allow_any
+        const isAllowBlanks = taxonomyField.allow_blanks
+
+        // Render free text input if allow_any is true
+        if (isAllowAny) {
+          return (
+            <FormControl key={fieldKey} isInvalid={!!errors[fieldKey]}>
+              <FormLabel>
+                {fieldKey.charAt(0).toUpperCase() + fieldKey.slice(1)}
+              </FormLabel>
+              <Controller
+                control={control}
+                name={fieldKey}
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    placeholder={`Enter ${fieldKey}`}
+                    type='text'
+                  />
+                )}
+              />
+              {errors[fieldKey] && (
+                <FormErrorMessage>
+                  {errors[fieldKey]?.message as string}
+                </FormErrorMessage>
+              )}
+            </FormControl>
+          )
+        }
+
+        // Special handling for author_type (radio group)
+        if (fieldKey === 'author_type') {
+          return (
+            <FormControl
+              key={fieldKey}
+              isRequired={!isAllowBlanks}
+              as='fieldset'
+              isInvalid={!!errors[fieldKey]}
+            >
+              <FormLabel as='legend'>Author Type</FormLabel>
+              <Controller
+                control={control}
+                name={fieldKey}
+                render={({ field }) => (
+                  <RadioGroup {...field}>
+                    <HStack gap={4}>
+                      {allowedValues.map((value) => (
+                        <Radio bg='white' value={value} key={value}>
+                          {value}
+                        </Radio>
+                      ))}
+                    </HStack>
+                  </RadioGroup>
+                )}
+              />
+              {errors[fieldKey] && (
+                <FormErrorMessage>
+                  Please select an author type
+                </FormErrorMessage>
+              )}
+            </FormControl>
+          )
+        }
+
+        // Render select box if allowed_values is not empty
+        if (allowedValues.length > 0) {
+          return (
+            <FormControl key={fieldKey} isInvalid={!!errors[fieldKey]}>
+              <FormLabel>
+                {fieldKey.charAt(0).toUpperCase() + fieldKey.slice(1)}
+              </FormLabel>
+              <Controller
+                control={control}
+                name={fieldKey}
+                render={({ field }) => (
+                  <CRSelect
+                    chakraStyles={chakraStylesSelect}
+                    isClearable={false}
+                    isMulti={
+                      fieldKey !== 'author' && fieldKey !== 'author_type'
+                    }
+                    isSearchable={true}
+                    options={generateOptions(allowedValues)}
+                    {...field}
+                  />
+                )}
+              />
+              {errors[fieldKey] && (
+                <FormErrorMessage>
+                  {errors[fieldKey]?.message as string}
+                </FormErrorMessage>
+              )}
+              {fieldKey !== 'author' && (
+                <FormHelperText>
+                  You can search and select multiple options
+                </FormHelperText>
+              )}
+            </FormControl>
+          )
+        }
+
+        // Fallback to default text input if no specific rendering rules apply
+        return (
+          <FormControl key={fieldKey} isInvalid={!!errors[fieldKey]}>
+            <FormLabel>
+              {fieldKey.charAt(0).toUpperCase() + fieldKey.slice(1)}
+            </FormLabel>
+            <Controller
+              control={control}
+              name={fieldKey}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  placeholder={`Enter ${fieldKey}`}
+                  type='text'
+                />
+              )}
+            />
+            {errors[fieldKey] && (
+              <FormErrorMessage>
+                {errors[fieldKey]?.message as string}
+              </FormErrorMessage>
+            )}
+          </FormControl>
+        )
+      })
+      .filter(Boolean)
+  }, [corpusInfo, taxonomy, control, errors])
+
+  const dynamicValidationSchema = useMemo(() => {
+    if (!taxonomy) return familySchema
+
+    // Get validation fields based on corpus type, fallback to default
+    const { validationFields } =
+      CORPUS_METADATA_CONFIG[corpusInfo?.corpus_type] ||
+      CORPUS_METADATA_CONFIG['default']
+
+    const metadataValidation = validationFields.reduce((acc, fieldKey) => {
+      const taxonomyField = taxonomy[fieldKey as keyof typeof taxonomy]
+
+      if (taxonomyField) {
+        // Get allowed values for the current field
+        const allowedValues = taxonomyField.allowed_values || []
+
+        // If allow_any is true, use a simple string validation
+        if (taxonomyField.allow_any) {
+          acc[fieldKey] = yup.string()
+        }
+        // For multi-select fields with allowed values
+        else if (
+          allowedValues.length > 0 &&
+          fieldKey !== 'author' &&
+          fieldKey !== 'author_type'
+        ) {
+          acc[fieldKey] = yup.array().of(yup.string())
+        }
+        // For single select or text fields
+        else {
+          // Use allow_blanks to determine if the field is required
+          acc[fieldKey] = taxonomyField.allow_blanks
+            ? yup.string()
+            : yup.string().required(`${fieldKey} is required`)
+        }
+      }
+
+      return acc
+    }, {} as any)
+
+    return familySchema.shape({
+      ...metadataValidation,
+    })
+  }, [taxonomy, corpusInfo, familySchema])
+
+  useEffect(() => {
+    if (taxonomy) {
+      // Get fields to reset based on corpus type
+      const { validationFields } =
+        CORPUS_METADATA_CONFIG[corpusInfo?.corpus_type] ||
+        CORPUS_METADATA_CONFIG['default']
+
+      const currentValues = getValues()
+      const resetValues = validationFields.reduce((acc, field) => {
+        acc[field] = undefined
+        return acc
+      }, {} as any)
+
+      reset(
+        {
+          ...currentValues,
+          ...resetValues,
+        },
+        {
+          keepErrors: false,
+          keepDirty: true,
+        },
+      )
+
+      // Update validation resolver
+      setValue('resolver', yupResolver(dynamicValidationSchema))
+    }
+  }, [taxonomy, corpusInfo, dynamicValidationSchema])
+
   return (
     <>
       {(configLoading || collectionsLoading) && (
@@ -669,191 +929,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                   </AbsoluteCenter>
                 </Box>
               )}
-              {corpusInfo !== null &&
-                corpusInfo?.corpus_type === 'Intl. agreements' && (
-                  <>
-                    <FormControl isRequired>
-                      <FormLabel>Author</FormLabel>
-                      <Input bg='white' {...register('author')} />
-                    </FormControl>
-                    <Controller
-                      control={control}
-                      name='author_type'
-                      render={({ field }) => {
-                        const tax = taxonomy as IConfigTaxonomyUNFCCC
-                        return (
-                          <FormControl
-                            isRequired
-                            as='fieldset'
-                            isInvalid={!!errors.author_type}
-                          >
-                            <FormLabel as='legend'>Author type</FormLabel>
-                            <RadioGroup {...field}>
-                              <HStack gap={4}>
-                                {tax?.author_type.allowed_values.map(
-                                  (authorType) => (
-                                    <Radio
-                                      bg='white'
-                                      value={authorType}
-                                      key={authorType}
-                                    >
-                                      {authorType}
-                                    </Radio>
-                                  ),
-                                )}
-                              </HStack>
-                            </RadioGroup>
-                            <FormErrorMessage>
-                              Please select an author type
-                            </FormErrorMessage>
-                          </FormControl>
-                        )
-                      }}
-                    />
-                  </>
-                )}
-              {corpusInfo !== null &&
-                corpusInfo?.corpus_type === 'Laws and Policies' && (
-                  <>
-                    <Controller
-                      control={control}
-                      name='topic'
-                      render={({ field }) => {
-                        const tax = taxonomy as IConfigTaxonomyCCLW
-                        return (
-                          <FormControl>
-                            <FormLabel>Topics</FormLabel>
-                            <CRSelect
-                              chakraStyles={chakraStylesSelect}
-                              isClearable={false}
-                              isMulti={true}
-                              isSearchable={true}
-                              options={generateOptions(
-                                tax?.topic.allowed_values || [],
-                              )}
-                              {...field}
-                            />
-
-                            <FormHelperText>
-                              You are able to search and can select multiple
-                              options.
-                            </FormHelperText>
-                          </FormControl>
-                        )
-                      }}
-                    />
-                    <Controller
-                      control={control}
-                      name='hazard'
-                      render={({ field }) => {
-                        const tax = taxonomy as IConfigTaxonomyCCLW
-                        return (
-                          <FormControl>
-                            <FormLabel>Hazards</FormLabel>
-                            <CRSelect
-                              chakraStyles={chakraStylesSelect}
-                              isClearable={false}
-                              isMulti={true}
-                              isSearchable={true}
-                              options={generateOptions(
-                                tax?.hazard.allowed_values || [],
-                              )}
-                              {...field}
-                            />
-                          </FormControl>
-                        )
-                      }}
-                    />
-                    <Controller
-                      control={control}
-                      name='sector'
-                      render={({ field }) => {
-                        const tax = taxonomy as IConfigTaxonomyCCLW
-                        return (
-                          <FormControl>
-                            <FormLabel>Sectors</FormLabel>
-                            <CRSelect
-                              chakraStyles={chakraStylesSelect}
-                              isClearable={false}
-                              isMulti={true}
-                              isSearchable={true}
-                              options={generateOptions(
-                                tax?.sector.allowed_values || [],
-                              )}
-                              {...field}
-                            />
-                          </FormControl>
-                        )
-                      }}
-                    />
-                    <Controller
-                      control={control}
-                      name='keyword'
-                      render={({ field }) => {
-                        const tax = taxonomy as IConfigTaxonomyCCLW
-                        return (
-                          <FormControl>
-                            <FormLabel>Keywords</FormLabel>
-                            <CRSelect
-                              chakraStyles={chakraStylesSelect}
-                              isClearable={false}
-                              isMulti={true}
-                              isSearchable={true}
-                              options={generateOptions(
-                                tax?.keyword.allowed_values || [],
-                              )}
-                              {...field}
-                            />
-                          </FormControl>
-                        )
-                      }}
-                    />
-                    <Controller
-                      control={control}
-                      name='framework'
-                      render={({ field }) => {
-                        const tax = taxonomy as IConfigTaxonomyCCLW
-                        return (
-                          <FormControl>
-                            <FormLabel>Frameworks</FormLabel>
-                            <CRSelect
-                              chakraStyles={chakraStylesSelect}
-                              isClearable={false}
-                              isMulti={true}
-                              isSearchable={true}
-                              options={generateOptions(
-                                tax?.framework.allowed_values || [],
-                              )}
-                              {...field}
-                            />
-                          </FormControl>
-                        )
-                      }}
-                    />
-                    <Controller
-                      control={control}
-                      name='instrument'
-                      render={({ field }) => {
-                        const tax = taxonomy as IConfigTaxonomyCCLW
-                        return (
-                          <FormControl>
-                            <FormLabel>Instruments</FormLabel>
-                            <CRSelect
-                              chakraStyles={chakraStylesSelect}
-                              isClearable={false}
-                              isMulti={true}
-                              isSearchable={true}
-                              options={generateOptions(
-                                tax?.instrument.allowed_values || [],
-                              )}
-                              {...field}
-                            />
-                          </FormControl>
-                        )
-                      }}
-                    />
-                  </>
-                )}
+              {renderDynamicMetadataFields()}
               <Box position='relative' padding='10'>
                 <Divider />
                 <AbsoluteCenter bg='gray.50' px='4'>
