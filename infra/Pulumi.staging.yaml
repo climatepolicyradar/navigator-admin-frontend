@@ -5,7 +5,6 @@ config:
   admin_frontend:apprunner_frontend_max_concurrency: "50"
   admin_frontend:apprunner_frontend_max_instance_count: "10"
   admin_frontend:apprunner_frontend_min_instance_count: "1"
-  admin_frontend:docker_tag: 1.4.32-beta
   admin_frontend:ecr_uri:
     secure: AAABAGWdtx4q9wyoa14MX4Ej3W8hRgv+9wXg/+9WDmNSwlk755sENrz3vcK8ZnaJn9yZkNLI49VkL7EJvcmHYg2Fkh3N84m07GbRKNzBBgyAUCW5ffTdD/LS+H6mwr8CKtjjxHQ=
   admin_frontend:hostname: https://admin.dev.climatepolicyradar.org
@@ -13,3 +12,5 @@ config:
   admin_frontend:validation_account_id:
     secure: AAABAML/NGllT3ud2OIF47uyzD7KUbHFnfNUui+U7A36zDLXmAZsFGK+EIc=
   aws:region: eu-west-1
+environment:
+  - admin_frontend/staging
