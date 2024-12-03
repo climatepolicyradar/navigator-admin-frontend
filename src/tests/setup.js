@@ -8,6 +8,11 @@ import { vi } from 'vitest'
 expect.extend(matchers)
 
 // Mock matchMedia
+//
+// This is used for testing responsive design features as many UI components from Chakra UI
+// depend on this to determine the current viewport size & to apply responsive styles.
+//
+// The browsers's window.matchMedia is not available in the JSDOM test env.
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
   value: vi.fn().mockImplementation((query) => ({
@@ -23,6 +28,11 @@ Object.defineProperty(window, 'matchMedia', {
 })
 
 // Mock ResizeObserver
+//
+// This is used to detect changes in element dimensions that components often use to
+// adjust their size e.g., tables, modals.
+//
+// This helps to prevent errors during tests.
 class ResizeObserverMock {
   observe() {}
   unobserve() {}
@@ -31,7 +41,13 @@ class ResizeObserverMock {
 
 window.ResizeObserver = window.ResizeObserver || ResizeObserverMock
 
-// Mock IntersectionObserver
+// Mock IntersectionObserver.
+//
+// This is used for detecting when an element is in the viewport. This is particularly
+// useful for features such as infinite scrolling, lazy loading or visibility based
+// animations.
+//
+// This helps to prevent errors since this API is not available in the JSDOM test env.
 class IntersectionObserverMock {
   observe() {}
   unobserve() {}

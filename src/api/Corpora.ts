@@ -8,7 +8,7 @@ export async function getCorpora(query?: string) {
   setToken(API)
 
   const response = await API.get<ICorpus[]>('/v1/corpora/', {
-    params: { q: query || '', max_results: 999999 },
+    params: { q: query || '' },
   })
     .then((response) => {
       return response.data

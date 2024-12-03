@@ -37,7 +37,7 @@ export default function Corpora() {
               />
               <IconButton
                 type='submit'
-                aria-label='Search database'
+                aria-label='Search corpora'
                 icon={<SearchIcon />}
                 roundedLeft={0}
               />

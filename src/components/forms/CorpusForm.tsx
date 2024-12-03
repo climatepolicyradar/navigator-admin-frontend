@@ -424,19 +424,17 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
                     isClearable={true}
                     isMulti={false}
                     isSearchable={true}
-                    options={
-                      Array.from(
-                        new Set(
-                          config?.corpora?.map((corpus) => ({
-                            label: corpus.organisation?.name,
-                            value: corpus.organisation?.id,
-                          })),
-                        ),
-                      ).map((org) => ({
-                        label: org.label,
-                        value: org.value,
-                      })) || []
-                    }
+                    options={Array.from(
+                      new Set(
+                        config?.corpora?.map((corpus) => ({
+                          label: corpus.organisation?.name,
+                          value: corpus.organisation?.id,
+                        })),
+                      ),
+                    ).map((org) => ({
+                      label: org.label,
+                      value: org.value,
+                    }))}
                     isDisabled={!!loadedCorpus}
                     {...field}
                   />
