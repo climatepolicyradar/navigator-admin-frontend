@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   FormControl,
   FormLabel,
@@ -8,9 +7,6 @@ import {
   RadioGroup,
   Radio,
   HStack,
-  Box,
-  AbsoluteCenter,
-  Divider,
 } from '@chakra-ui/react'
 import { Controller, Control, FieldErrors } from 'react-hook-form'
 import { Select as CRSelect } from 'chakra-react-select'
@@ -28,7 +24,7 @@ export type CorpusMetadataConfig = {
   }
 }
 
-// Centralized configuration for corpus metadata
+// Centralised configuration for corpus metadata
 export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
   'Intl. agreements': {
     renderFields: ['author', 'author_type'],
