@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react'
-import { Link, useLoaderData } from 'react-router-dom'
+import { Link, useLoaderData, useSearchParams } from 'react-router-dom'
 import { deleteFamily, getFamilies, TFamilySearchQuery } from '@/api/Families'
 import { IError, TFamily } from '@/interfaces'
 import { formatDate, formatDateTime } from '@/utils/formatDate'
@@ -85,6 +85,8 @@ export default function FamilyList() {
   const toast = useToast()
   const [familyError, setFamilyError] = useState<string | null | undefined>()
   const [formError, setFormError] = useState<IError | null | undefined>()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const qGeography = searchParams.get('geography')
 
   const userToken = useMemo(() => {
     const token = localStorage.getItem('token')
@@ -160,32 +162,36 @@ export default function FamilyList() {
     setFilteredItems(sortedAndFiltered)
   }, [families, selectedGeographies, sortControls])
 
-  // Get unique geographies from all families and map them to their display values
+  useEffect(() => {
+    if (qGeography) {
+      setSelectedGeographies([{ value: qGeography, label: qGeography }])
+    } else {
+      setSelectedGeographies([])
+    }
+  }, [qGeography])
+
+  const handleGeographyChange = (newValue: unknown) => {
+    const selectedItems = newValue as Array<{ value: string; label: string }>
+    // Update the URL params
+    setSearchParams({
+      q: searchParams.get('q') ?? '',
+      status: searchParams.get('status') ?? '',
+      geography: selectedItems.length > 0 ? selectedItems[0].value : '',
+    })
+  }
+
+  // Get all available geographies from config
   const geographyOptions = useMemo(() => {
     if (!config) return []
 
-    // Create a map of geography values to display values
-    const geoMap = new Map<string, string>()
     const countries = getCountries(config.geographies)
-    countries.forEach((country) => {
-      geoMap.set(country.value, country.display_value)
-    })
-
-    // Get unique geographies from families and map to display values
-    const geographies = new Set<string>()
-    families.forEach((family) => {
-      if (family.geography) {
-        geographies.add(family.geography)
-      }
-    })
-
-    return Array.from(geographies)
-      .sort()
-      .map((geography) => ({
-        value: geography,
-        label: geoMap.get(geography) || geography, // Fallback to the value if no display value found
+    return countries
+      .map((country) => ({
+        value: country.display_value,
+        label: country.display_value,
       }))
-  }, [families, config])
+      .sort((a, b) => a.label.localeCompare(b.label))
+  }, [config])
 
   return (
     <Box flex={1}>
@@ -232,14 +238,7 @@ export default function FamilyList() {
                             isClearable
                             options={geographyOptions}
                             value={selectedGeographies}
-                            onChange={(newValue) => {
-                              setSelectedGeographies(
-                                newValue as Array<{
-                                  value: string
-                                  label: string
-                                }>,
-                              )
-                            }}
+                            onChange={handleGeographyChange}
                             placeholder='Select geographies...'
                             closeMenuOnSelect={false}
                             size='sm'

@@ -40,9 +40,10 @@ export default function Families() {
   const qGeography = searchParams.get('geography')
   const qStatus = searchParams.get('status')
 
-  const countries = getCountries(config?.geographies).map((country) => {
-    return { value: country.display_value, label: country.display_value }
-  })
+  const countries = getCountries(config?.geographies).map((country) => ({
+    value: country.display_value,
+    label: country.display_value,
+  }))
 
   const handleChangeGeo = (newValue: unknown) => {
     const selectedItem = newValue as { value: string; label: string }
