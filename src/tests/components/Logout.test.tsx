@@ -1,4 +1,5 @@
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest'
 import { BrowserRouter } from 'react-router-dom'
 import Logout from '@/components/Logout'
@@ -30,16 +31,15 @@ describe('Logout Component', () => {
   beforeEach(() => {
     // Clear all mocks before each test
     vi.clearAllMocks()
-    // Reset timers before each test
-    vi.useFakeTimers()
   })
 
   afterEach(() => {
-    vi.useRealTimers()
+    // Clean up after each test
   })
 
-  it('signs out with a single click', () => {
+  it('signs out with a single click', async () => {
     // Arrange
+    const user = userEvent.setup()
     render(
       <BrowserRouter>
         <AuthContext.Provider value={mockAuthContext}>
@@ -50,8 +50,7 @@ describe('Logout Component', () => {
 
     // Act
     const signOutButton = screen.getByRole('button', { name: /sign out/i })
-    fireEvent.click(signOutButton)
-    vi.runAllTimers()
+    await user.click(signOutButton)
 
     // Assert
     expect(mockLogout).toHaveBeenCalledTimes(1)
@@ -69,7 +68,7 @@ describe('Logout Component', () => {
       </BrowserRouter>,
     )
 
-    // Assert
+    // Act & Assert
     const signOutButton = screen.queryByRole('button', { name: /sign out/i })
     expect(signOutButton).not.toBeInTheDocument()
   })
