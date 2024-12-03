@@ -14,6 +14,28 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
     renderFields: ['author', 'author_type'],
     validationFields: ['author', 'author_type'],
   },
+  'AF': {
+    renderFields: [
+      'region',
+      'sector',
+      'status',
+      'implementing_agency',
+      'project_id',
+      'project_url',
+      'project_value_co_financing',
+      'project_value_fund_spend',
+    ],
+    validationFields: [
+      'region',
+      'sector',
+      'status',
+      'implementing_agency',
+      'project_id',
+      'project_url',
+      'project_value_co_financing',
+      'project_value_fund_spend',
+    ],
+  },
   'Laws and Policies': {
     renderFields: [
       'topic',

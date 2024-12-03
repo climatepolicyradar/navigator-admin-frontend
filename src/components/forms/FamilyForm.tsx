@@ -187,6 +187,8 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     [orgName, isSuperUser, userAccess],
   )
 
+  console.log(loadedFamily)
+
   // Family handlers
   const handleFormSubmission = async (family: IFamilyForm) => {
     setIsFormSubmitting(true)
