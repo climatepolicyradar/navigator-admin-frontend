@@ -10,6 +10,9 @@ import ErrorPage from '@views/Error'
 import Documents from '@/views/document/Documents'
 import DocumentList from '@/components/lists/DocumentList'
 import Document from '@/views/document/Document'
+import Corpus from '@/views/corpus/Corpus'
+import Corpora from '@/views/corpus/Corpora'
+import CorpusList from '@/components/lists/CorpusList'
 import { familyRoutes } from './familyRoutes'
 import { collectionRoutes } from './collectionRoutes'
 
@@ -46,6 +49,28 @@ const authenticatedRoutes = [
                   {
                     path: '',
                     element: <DocumentList />,
+                    errorElement: <ErrorPage />,
+                  },
+                ],
+              },
+              {
+                path: '/corpus/new',
+                element: <Corpus />,
+                errorElement: <ErrorPage />,
+              },
+              {
+                path: 'corpus/:importId/edit',
+                element: <Corpus />,
+                errorElement: <ErrorPage />,
+              },
+              {
+                path: 'corpora',
+                element: <Corpora />,
+                errorElement: <ErrorPage />,
+                children: [
+                  {
+                    path: '',
+                    element: <CorpusList />,
                     errorElement: <ErrorPage />,
                   },
                 ],

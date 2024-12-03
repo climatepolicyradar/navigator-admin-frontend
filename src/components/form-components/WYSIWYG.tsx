@@ -9,11 +9,12 @@ import { Card, CardBody } from '@chakra-ui/react'
 type TProps = {
   html?: string
   onChange: (html: string) => void
+  id?: string
 }
 
 const DEFAULT_HTML = '<p></p>'
 
-export const WYSIWYG = ({ html = DEFAULT_HTML, onChange }: TProps) => {
+export const WYSIWYG = ({ html = DEFAULT_HTML, onChange, id }: TProps) => {
   const [editorState, setEditorState] = useState<EditorState>(() =>
     EditorState.createEmpty(),
   )
@@ -43,6 +44,7 @@ export const WYSIWYG = ({ html = DEFAULT_HTML, onChange }: TProps) => {
       <Card>
         <CardBody>
           <Editor
+            data-testid={id}
             editorState={editorState}
             wrapperClassName='demo-wrapper'
             editorClassName='demo-editor'
