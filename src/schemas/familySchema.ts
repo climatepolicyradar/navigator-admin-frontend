@@ -1,30 +1,22 @@
 import { IConfigCorpus } from '@/interfaces'
 import * as yup from 'yup'
 
-export const familySchema = yup
+// Base schema for core family fields
+export const baseFamilySchema = yup
   .object({
-    title: yup.string().required(),
-    summary: yup.string().required(),
-    geography: yup.string().required(),
-    category: yup.string().required(),
+    title: yup.string().required('Title is required'),
+    summary: yup.string().required('Summary is required'),
+    geography: yup.string().required('Geography is required'),
+    category: yup.string().required('Category is required'),
     corpus: yup.object({
-      label: yup.string().required(),
-      value: yup.string().required(),
+      label: yup.string().required('Corpus label is required'),
+      value: yup.string().required('Corpus value is required'),
     }),
     collections: yup.array().optional(),
-    author: yup.string().when('corpus', {
-      is: (val: IConfigCorpus) => val.label == 'UNFCCC Submissions',
-      then: (schema) => schema.required(),
-    }),
-    author_type: yup.string().when('corpus', {
-      is: (val: IConfigCorpus) => val.label == 'UNFCCC Submissions',
-      then: (schema) => schema.required(),
-    }),
-    topic: yup.array().optional(),
-    hazard: yup.array().optional(),
-    sector: yup.array().optional(),
-    keyword: yup.array().optional(),
-    framework: yup.array().optional(),
-    instrument: yup.array().optional(),
   })
   .required()
+
+// Function to merge base schema with dynamic metadata schema
+export const createFamilySchema = (metadataSchema: yup.ObjectSchema<any>) => {
+  return baseFamilySchema.concat(metadataSchema)
+}

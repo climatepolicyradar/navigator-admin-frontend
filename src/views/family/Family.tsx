@@ -61,9 +61,6 @@ export default function Family() {
             </Box>
           </>
         )}
-        {family && (
-          <Text>Last updated on: {formatDateTime(family.last_modified)}</Text>
-        )}
         {canLoadForm && <FamilyForm family={family ?? undefined} />}
       </Box>
     </>

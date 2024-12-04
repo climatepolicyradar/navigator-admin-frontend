@@ -3,35 +3,11 @@ import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useBlocker, useNavigate } from 'react-router-dom'
 import {
-  IError,
-  TFamilyFormPost,
-  TFamilyFormPostMetadata,
-  IUNFCCCMetadata,
-  ICCLWMetadata,
-  TFamily,
-  IDocument,
-  IEvent,
-  ICollection,
-  IConfigCorpus,
-  IDecodedToken,
-} from '@/interfaces'
-
-import { createFamily, updateFamily } from '@/api/Families'
-import { deleteDocument } from '@/api/Documents'
-
-import useConfig from '@/hooks/useConfig'
-import useTaxonomy from '@/hooks/useTaxonomy'
-import useCollections from '@/hooks/useCollections'
-
-import {
   Box,
   FormControl,
   FormLabel,
   HStack,
   Input,
-  Radio,
-  RadioGroup,
-  Select,
   VStack,
   Text,
   Button,
@@ -52,65 +28,52 @@ import {
   ModalCloseButton,
 } from '@chakra-ui/react'
 import { WarningIcon } from '@chakra-ui/icons'
-import { Select as CRSelect } from 'chakra-react-select'
-import { chakraStylesSelect } from '@/styles/chakra'
-import { Loader } from '../Loader'
-import { FamilyDocument } from '../family/FamilyDocument'
-import { ApiError } from '../feedback/ApiError'
-import { WYSIWYG } from '../form-components/WYSIWYG'
-import { FamilyEventList } from '../lists/FamilyEventList'
-import { EventEditDrawer } from '../drawers/EventEditDrawer'
-import { DocumentEditDrawer } from '../drawers/DocumentEditDrawer'
-import { DocumentForm } from './DocumentForm'
-import { EventForm } from './EventForm'
 
+import { familySchema } from '@/schemas/familySchema'
+import useCorpusFromConfig from '@/hooks/useCorpusFromConfig'
+import useConfig from '@/hooks/useConfig'
+import useTaxonomy from '@/hooks/useTaxonomy'
+import useCollections from '@/hooks/useCollections'
+
+import { DynamicMetadataField } from './DynamicMetadataFields'
+import { generateOptions } from '@/utils/generateOptions'
+import { SelectField } from './fields/SelectField'
+import { TextField } from './fields/TextField'
+import { RadioGroupField } from './fields/RadioGroupField'
+import { WYSIWYGField } from './fields/WYSIWYGField'
+import { MetadataSection } from './sections/MetadataSection'
+import { DocumentSection } from './sections/DocumentSection'
+import { EventSection } from './sections/EventSection'
+import { UnsavedChangesModal } from './modals/UnsavedChangesModal'
+import { ReadOnlyFields } from './ReadOnlyFields'
+
+import {
+  IFamilyForm,
+  TFamilyFormPost,
+  TFamilyFormPostMetadata,
+  IUNFCCCMetadata,
+  ICCLWMetadata,
+} from '@/types/metadata'
+import { TChildEntity } from '@/types/entities'
 import { canModify } from '@/utils/canModify'
 import { getCountries } from '@/utils/extractNestedGeographyData'
 import { decodeToken } from '@/utils/decodeToken'
 import { stripHtml } from '@/utils/stripHtml'
-
-import { familySchema } from '@/schemas/familySchema'
-import useCorpusFromConfig from '@/hooks/useCorpusFromConfig'
-
-import { DynamicMetadataField, generateOptions } from './DynamicMetadataFields'
 import {
   CORPUS_METADATA_CONFIG,
   generateDynamicValidationSchema,
 } from '@/schemas/dynamicValidationSchema'
+import { createFamily, updateFamily } from '@/api/Families'
+import { deleteDocument } from '@/api/Documents'
+import { baseFamilySchema, createFamilySchema } from '@/schemas/familySchema'
 
-type TMultiSelect = {
-  value: string
-  label: string
-}
-
-interface IFamilyForm {
-  title: string
-  summary: string
-  geography: string
-  category: string
-  corpus: IConfigCorpus
-  collections?: TMultiSelect[]
-  author?: string
-  author_type?: string
-  topic?: TMultiSelect[]
-  hazard?: TMultiSelect[]
-  sector?: TMultiSelect[]
-  keyword?: TMultiSelect[]
-  framework?: TMultiSelect[]
-  instrument?: TMultiSelect[]
-}
-
-export type TChildEntity = 'document' | 'event'
-
-type TProps = {
+interface FamilyFormProps {
   family?: TFamily
 }
 
-const getCollection = (collectionId: string, collections: ICollection[]) => {
-  return collections.find((collection) => collection.import_id === collectionId)
-}
-
-export const FamilyForm = ({ family: loadedFamily }: TProps) => {
+export const FamilyForm: React.FC<FamilyFormProps> = ({
+  family: loadedFamily,
+}) => {
   const [isLeavingModalOpen, setIsLeavingModalOpen] = useState(false)
   const [isFormSubmitting, setIsFormSubmitting] = useState(false)
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -123,182 +86,124 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   } = useCollections('')
   const toast = useToast()
   const [formError, setFormError] = useState<IError | null | undefined>()
+
+  // Initialize corpus and taxonomy first
+  const initialCorpusInfo = useCorpusFromConfig(
+    config?.corpora,
+    loadedFamily?.corpus_import_id,
+    loadedFamily?.corpus_import_id,
+  )
+  const initialTaxonomy = useTaxonomy(
+    initialCorpusInfo?.corpus_type,
+    initialCorpusInfo?.taxonomy,
+    loadedFamily?.corpus_import_id,
+  )
+
+  // Create initial validation schema
+  const validationSchema = useMemo(() => {
+    const metadataSchema = generateDynamicValidationSchema(
+      initialTaxonomy,
+      initialCorpusInfo,
+    )
+    return createFamilySchema(metadataSchema)
+  }, [initialTaxonomy, initialCorpusInfo])
+
   const {
-    register,
-    watch,
-    handleSubmit,
     control,
+    handleSubmit,
     reset,
     setError,
     setValue,
-    formState: { errors, isSubmitting },
-    formState: { dirtyFields },
+    watch,
+    formState: { errors, isSubmitting, dirtyFields },
+    trigger,
   } = useForm<IFamilyForm>({
-    resolver: yupResolver(familySchema),
+    resolver: yupResolver(validationSchema),
   })
-  const [editingEntity, setEditingEntity] = useState<TChildEntity | undefined>()
-  const [editingEvent, setEditingEvent] = useState<IEvent | undefined>()
-  const [editingDocument, setEditingDocument] = useState<
-    IDocument | undefined
-  >()
-  const [familyDocuments, setFamilyDocuments] = useState<string[]>([])
-  const [familyEvents, setFamilyEvents] = useState<string[]>([])
-  const [updatedEvent, setUpdatedEvent] = useState<string>('')
-  const [updatedDocument, setUpdatedDocument] = useState<string>('')
 
+  // Watch for corpus changes and update schema
   const watchCorpus = watch('corpus')
   const corpusInfo = useCorpusFromConfig(
     config?.corpora,
     loadedFamily?.corpus_import_id,
     watchCorpus?.value,
   )
+  const taxonomy = useTaxonomy(
+    corpusInfo?.corpus_type,
+    corpusInfo?.taxonomy,
+    watchCorpus?.value,
+  )
 
-  console.log('loadedFamily', loadedFamily)
-  console.log('corpusInfo', corpusInfo)
-  console.log('CORPUS_METADATA_CONFIG', CORPUS_METADATA_CONFIG)
-
+  // Update validation schema when corpus/taxonomy changes
   useEffect(() => {
-    if (loadedFamily && corpusInfo) {
-      console.log('Loaded Family Metadata:', loadedFamily.metadata)
-      console.log('Corpus Type:', corpusInfo.corpus_type)
-      console.log(
-        'Render Fields:',
-        CORPUS_METADATA_CONFIG[corpusInfo.corpus_type]?.renderFields,
-      )
-    }
-  }, [loadedFamily, corpusInfo])
+    const metadataSchema = generateDynamicValidationSchema(taxonomy, corpusInfo)
+    const newSchema = createFamilySchema(metadataSchema)
+    // Re-trigger form validation with new schema
+    trigger()
+  }, [taxonomy, corpusInfo])
 
-  useEffect(() => {
-    if (loadedFamily) {
-      console.log('Full Loaded Family Metadata:', loadedFamily.metadata)
-      console.log('Metadata Keys:', Object.keys(loadedFamily.metadata))
+  const [editingEntity, setEditingEntity] = useState<TChildEntity | undefined>()
+  const [editingEvent, setEditingEvent] = useState<IEvent | undefined>()
+  const [editingDocument, setEditingDocument] = useState<
+    IDocument | undefined
+  >()
+  const [familyDocuments, setFamilyDocuments] = useState<string[]>([])
+  const [familyEvents, setFamilyEvents] = useState<string[]>(
+    loadedFamily?.events || [],
+  )
+  const [updatedEvent, setUpdatedEvent] = useState<string>('')
+  const [updatedDocument, setUpdatedDocument] = useState<string>('')
 
-      // Detailed logging for each metadata field
-      const metadataFields = [
-        'topic',
-        'hazard',
-        'sector',
-        'keyword',
-        'framework',
-        'instrument',
-        'author',
-        'author_type',
-      ]
-
-      metadataFields.forEach((field) => {
-        console.log(`${field} exists:`, field in loadedFamily.metadata)
-        if (field in loadedFamily.metadata) {
-          console.log(`${field} value:`, loadedFamily.metadata[field])
-        }
-      })
+  const userAccess = useMemo(() => {
+    const token = localStorage.getItem('token')
+    if (!token) return { canModify: false, isSuperUser: false }
+    const decodedToken = decodeToken(token)
+    return {
+      canModify: canModify(
+        loadedFamily ? String(loadedFamily.organisation) : null,
+        decodedToken?.is_superuser,
+        decodedToken?.authorisation,
+      ),
+      isSuperUser: decodedToken?.is_superuser || false,
     }
   }, [loadedFamily])
 
-  const corpusTitle = loadedFamily
-    ? loadedFamily?.corpus_title
-    : corpusInfo?.title
-
-  const taxonomy = useTaxonomy(corpusInfo?.corpus_type, corpusInfo?.taxonomy)
-  console.log('taxonomy', taxonomy)
-
-  const userToken = useMemo(() => {
-    const token = localStorage.getItem('token')
-    if (!token) return null
-    const decodedToken: IDecodedToken | null = decodeToken(token)
-    return decodedToken
-  }, [])
-
-  const userAccess = !userToken ? null : userToken.authorisation
-  const isSuperUser = !userToken ? false : userToken.is_superuser
-
-  // TODO: Get org_id from corpus PDCT-1171.
-  const orgName = loadedFamily ? String(loadedFamily?.organisation) : null
-
-  const userCanModify = useMemo<boolean>(
-    () => canModify(orgName, isSuperUser, userAccess),
-    [orgName, isSuperUser, userAccess],
-  )
-
-  // Family handlers
-  const handleFormSubmission = async (family: IFamilyForm) => {
+  const handleFormSubmission = async (formData: IFamilyForm) => {
     setIsFormSubmitting(true)
     setFormError(null)
 
-    let familyMetadata = {} as TFamilyFormPostMetadata
-    if (corpusInfo?.corpus_type == 'Intl. agreements') {
-      const metadata = familyMetadata as IUNFCCCMetadata
-      if (family.author) metadata.author = [family.author]
-      if (family.author_type) metadata.author_type = [family.author_type]
-      familyMetadata = metadata
-    } else if (corpusInfo?.corpus_type == 'Laws and Policies') {
-      const metadata: ICCLWMetadata = {
-        topic: family.topic?.map((topic) => topic.value) || [],
-        hazard: family.hazard?.map((hazard) => hazard.value) || [],
-        sector: family.sector?.map((sector) => sector.value) || [],
-        keyword: family.keyword?.map((keyword) => keyword.value) || [],
-        framework: family.framework?.map((framework) => framework.value) || [],
-        instrument:
-          family.instrument?.map((instrument) => instrument.value) || [],
-      }
-      familyMetadata = metadata
-    }
+    const familyMetadata = generateFamilyMetadata(formData, corpusInfo)
+    const familyData = generateFamilyData(formData, familyMetadata)
 
-    // @ts-expect-error: TODO: fix this
-    const familyData: TFamilyFormPost = {
-      title: family.title,
-      summary: family.summary,
-      geography: family.geography,
-      category: family.category,
-      corpus_import_id: family.corpus?.value || '',
-      collections:
-        family.collections?.map((collection) => collection.value) || [],
-      metadata: familyMetadata,
-    }
-
-    if (loadedFamily) {
-      return await updateFamily(familyData, loadedFamily.import_id)
-        .then(() => {
-          toast.closeAll()
-          toast({
-            title: 'Family has been successfully updated',
-            status: 'success',
-            position: 'top',
-          })
+    try {
+      if (loadedFamily) {
+        await updateFamily(familyData, loadedFamily.import_id)
+        toast({
+          title: 'Family has been successfully updated',
+          status: 'success',
+          position: 'top',
         })
-        .catch((error: IError) => {
-          setFormError(error)
-          toast({
-            title: 'Family has not been updated',
-            description: error.message,
-            status: 'error',
-            position: 'top',
-          })
-        })
-    }
-
-    return await createFamily(familyData)
-      .then((data) => {
-        toast.closeAll()
+      } else {
+        const response = await createFamily(familyData)
         toast({
           title: 'Family has been successfully created',
           status: 'success',
           position: 'top',
         })
-        navigate(`/family/${data.response}/edit`)
+        navigate(`/family/${response.response}/edit`)
+      }
+    } catch (error) {
+      setFormError(error as IError)
+      toast({
+        title: `Family has not been ${loadedFamily ? 'updated' : 'created'}`,
+        description: (error as IError).message,
+        status: 'error',
+        position: 'top',
       })
-      .catch((error: IError) => {
-        setFormError(error)
-        toast({
-          title: 'Family has not been created',
-          description: error.message,
-          status: 'error',
-          position: 'top',
-        })
-      })
-      .finally(() => {
-        setIsFormSubmitting(false)
-      })
-  } // end handleFormSubmission
+    } finally {
+      setIsFormSubmitting(false)
+    }
+  }
 
   const onSubmit: SubmitHandler<IFamilyForm> = (data) => {
     handleFormSubmission(data).catch((error: IError) => {
@@ -306,13 +211,11 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     })
   }
 
-  // object type is workaround for SubmitErrorHandler<FieldErrors> throwing a tsc error.
   const onSubmitErrorHandler = (error: object) => {
     console.log('onSubmitErrorHandler', error)
     const submitHandlerErrors = error as {
       [key: string]: { message: string; type: string }
     }
-    // Set form errors manually
     Object.keys(submitHandlerErrors).forEach((key) => {
       if (key === 'summary')
         setError('summary', {
@@ -322,7 +225,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     })
   }
 
-  // Child entity handlers
   const onAddNewEntityClick = (entityType: TChildEntity) => {
     setEditingEntity(entityType)
     if (entityType === 'document') setEditingDocument(undefined)
@@ -340,7 +242,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     onOpen()
   }
 
-  // Document handlers
   const onDocumentFormSuccess = (documentId: string) => {
     onClose()
     if (familyDocuments.includes(documentId))
@@ -386,7 +287,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     setValue('summary', html, { shouldDirty: true })
   }
 
-  // Event handlers
   const onEventFormSuccess = (eventId: string) => {
     onClose()
     if (familyEvents.includes(eventId)) setFamilyEvents([...familyEvents])
@@ -397,73 +297,48 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   const canLoadForm =
     !configLoading && !collectionsLoading && !configError && !collectionsError
 
+  console.log('Loading tax data:', taxonomy)
   useEffect(() => {
-    if (loadedFamily) {
-      setFamilyDocuments(loadedFamily.documents)
-      setFamilyEvents(loadedFamily.events)
-      // set the form values to that of the loaded family
+    if (loadedFamily && collections) {
+      console.log(loadedFamily)
+      setFamilyDocuments(loadedFamily.documents || [])
+      setFamilyEvents(loadedFamily.events || [])
+
       reset({
         title: loadedFamily.title,
         summary: loadedFamily.summary,
-        collections: loadedFamily.collections.map((collectionId) => {
-          const collection = getCollection(collectionId, collections)
-          if (!collection) return null
-          return {
-            value: collection.import_id,
-            label: collection.title,
-          }
-        }),
-        geography: loadedFamily.geography,
-        category: loadedFamily.category,
-        corpus: loadedFamily.corpus_import_id
+        collections:
+          loadedFamily.collections
+            ?.map((collectionId) => {
+              const collection = collections.find(
+                (c) => c.import_id === collectionId,
+              )
+              return collection
+                ? {
+                    value: collection.import_id,
+                    label: collection.title,
+                  }
+                : null
+            })
+            .filter(Boolean) || [],
+        geography: loadedFamily.geography
           ? {
-              label: loadedFamily.corpus_import_id,
-              value: loadedFamily.corpus_import_id,
+              value: loadedFamily.geography,
+              label:
+                getCountries(config?.geographies).find(
+                  (country) => country.value === loadedFamily.geography,
+                )?.display_value || loadedFamily.geography,
             }
           : undefined,
-        topic:
-          'topic' in loadedFamily.metadata &&
-          Array.isArray(loadedFamily.metadata.topic)
-            ? generateOptions(loadedFamily.metadata.topic)
-            : [],
-        hazard:
-          'hazard' in loadedFamily.metadata &&
-          Array.isArray(loadedFamily.metadata.hazard)
-            ? generateOptions(loadedFamily.metadata.hazard)
-            : [],
-        sector:
-          'sector' in loadedFamily.metadata &&
-          Array.isArray(loadedFamily.metadata.sector)
-            ? generateOptions(loadedFamily.metadata.sector)
-            : [],
-        keyword:
-          'keyword' in loadedFamily.metadata &&
-          Array.isArray(loadedFamily.metadata.keyword)
-            ? generateOptions(loadedFamily.metadata.keyword)
-            : [],
-        framework:
-          'framework' in loadedFamily.metadata &&
-          Array.isArray(loadedFamily.metadata.framework)
-            ? generateOptions(loadedFamily.metadata.framework)
-            : [],
-        instrument:
-          'instrument' in loadedFamily.metadata &&
-          Array.isArray(loadedFamily.metadata.instrument)
-            ? generateOptions(loadedFamily.metadata.instrument)
-            : [],
-        author:
-          'author' in loadedFamily.metadata
-            ? loadedFamily.metadata.author[0]
-            : '',
-        author_type:
-          'author_type' in loadedFamily.metadata
-            ? loadedFamily.metadata.author_type[0]
-            : '',
+        category: loadedFamily.category,
+        corpus: {
+          value: loadedFamily.corpus_import_id,
+          label: loadedFamily.corpus_name,
+        },
       })
     }
   }, [loadedFamily, collections, reset])
 
-  // Internal and external navigation blocker for unsaved changes
   const blocker = useBlocker(
     ({ currentLocation, nextLocation }) =>
       !isFormSubmitting &&
@@ -495,373 +370,167 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     }
   }, [handleBeforeUnload])
 
-  const renderDynamicMetadataFields = useCallback(() => {
-    if (!corpusInfo || !taxonomy) return null
-
-    return (
-      taxonomy &&
-      Object.entries(
-        (CORPUS_METADATA_CONFIG[corpusInfo?.corpus_type]?.renderFields ||
-          {}) as Record<string, { type: FieldType }>,
-      ).map(([fieldKey, fieldConfig]) => (
-        <DynamicMetadataField
-          key={fieldKey}
-          fieldKey={fieldKey}
-          taxonomyField={taxonomy[fieldKey]}
-          control={control}
-          errors={errors}
-          fieldType={fieldConfig.type}
-        />
-      ))
-    )
-  }, [corpusInfo, taxonomy, control, errors])
-
-  const validationSchema = useMemo(() => {
-    return generateDynamicValidationSchema(taxonomy, corpusInfo)
-  }, [taxonomy, corpusInfo])
-
   return (
     <>
-      {(configLoading || collectionsLoading) && (
-        <Box padding='4' bg='white'>
-          <Loader />
-          <SkeletonText mt='4' noOfLines={12} spacing='4' skeletonHeight='2' />
-        </Box>
+      {!canLoadForm && (
+        <SkeletonText mt='4' noOfLines={12} spacing='4' skeletonHeight='2' />
       )}
-      {!userCanModify && (
+      {!userAccess.canModify && (
         <ApiError
-          message={`You do not have permission to edit document families in ${corpusTitle} `}
+          message={`You do not have permission to edit document families in ${corpusInfo?.title} `}
           detail='Please go back to the "Families" page, if you think there has been a mistake please contact the administrator.'
         />
       )}
-      {configError && <ApiError error={configError} />}
-      {collectionsError && <ApiError error={collectionsError} />}
       {(configError || collectionsError) && (
-        <ApiError
-          message='Please create a collection first'
-          detail='You can do this by clicking the button below'
-        />
+        <ApiError error={configError || collectionsError} />
       )}
+
       {canLoadForm && (
-        <>
-          {isLeavingModalOpen && (
-            <Modal
-              isOpen={isLeavingModalOpen}
-              onClose={() => setIsLeavingModalOpen(false)}
-            >
-              <ModalOverlay />
-              <ModalContent>
-                <ModalHeader>Are you sure you want to leave?</ModalHeader>
-                <ModalCloseButton />
-                <ModalBody>Changes that you made may not be saved.</ModalBody>
-                <ModalFooter>
-                  <Button
-                    colorScheme='gray'
-                    mr={3}
-                    onClick={() => setIsLeavingModalOpen(false)}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    colorScheme='red'
-                    onClick={() => {
-                      blocker.proceed?.()
-                      setIsLeavingModalOpen(false)
-                    }}
-                  >
-                    Leave without saving
-                  </Button>
-                </ModalFooter>
-              </ModalContent>
-            </Modal>
-          )}
-          <form onSubmit={handleSubmit(onSubmit, onSubmitErrorHandler)}>
-            <VStack gap='4' mb={12} mt={4} align={'stretch'}>
-              {formError && <ApiError error={formError} />}
-              {loadedFamily && (
-                <>
-                  <FormControl isRequired isReadOnly isDisabled>
-                    <FormLabel>Import ID</FormLabel>
-                    <Input
-                      data-test-id='input-id'
-                      bg='white'
-                      value={loadedFamily?.import_id}
-                    />
-                  </FormControl>
-                  <FormControl isRequired isReadOnly isDisabled>
-                    <FormLabel>Corpus ID</FormLabel>
-                    <Input
-                      data-test-id='corpus-id'
-                      bg='white'
-                      value={loadedFamily?.corpus_import_id}
-                    />
-                  </FormControl>
+        <form onSubmit={handleSubmit(onSubmit, onSubmitErrorHandler)}>
+          <VStack gap='4' mb={12} mt={4} align={'stretch'}>
+            {formError && <ApiError error={formError} />}
 
-                  <FormControl isRequired isReadOnly isDisabled>
-                    <FormLabel>Corpus Title</FormLabel>
-                    <Input
-                      data-test-id='corpus-title'
-                      bg='white'
-                      value={loadedFamily?.corpus_title}
-                    />
-                  </FormControl>
-                  <FormControl isRequired isReadOnly isDisabled>
-                    <FormLabel>Corpus Type</FormLabel>
-                    <Input
-                      data-test-id='corpus-type'
-                      bg='white'
-                      value={loadedFamily?.corpus_type}
-                    />
-                  </FormControl>
-                </>
-              )}
-              <FormControl isRequired>
-                <FormLabel>Title</FormLabel>
-                <Input bg='white' {...register('title')} />
-              </FormControl>
-              <FormControl isRequired isInvalid={!!errors.summary}>
-                <FormLabel>Summary</FormLabel>
-                <WYSIWYG
-                  html={loadedFamily?.summary}
-                  onChange={summaryOnChange}
-                />
-                <FormErrorMessage>Summary is required</FormErrorMessage>
-              </FormControl>
-              <Controller
-                control={control}
-                name='collections'
-                render={({ field }) => {
-                  return (
-                    <FormControl>
-                      <FormLabel>Collections</FormLabel>
-                      <CRSelect
-                        chakraStyles={chakraStylesSelect}
-                        isClearable={false}
-                        isMulti={true}
-                        isSearchable={true}
-                        options={
-                          collections?.map((collection) => ({
-                            value: collection.import_id,
-                            label: collection.title,
-                          })) || []
-                        }
-                        {...field}
-                      />
-                    </FormControl>
-                  )
-                }}
-              />
-              <Controller
-                control={control}
-                name='geography'
-                render={({ field }) => {
-                  return (
-                    <FormControl
-                      isRequired
-                      as='fieldset'
-                      isInvalid={!!errors.geography}
-                    >
-                      <FormLabel>Geography</FormLabel>
-                      <Select background='white' {...field}>
-                        <option value=''>Please select</option>
-                        {getCountries(config?.geographies).map((country) => (
-                          <option key={country.id} value={country.value}>
-                            {country.display_value}
-                          </option>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  )
-                }}
-              />
-              {!loadedFamily && (
-                <Controller
-                  control={control}
-                  data-test-id='corpus'
-                  name='corpus'
-                  render={({ field }) => {
-                    return (
-                      <FormControl isRequired>
-                        <FormLabel>Corpus</FormLabel>
-                        <CRSelect
-                          chakraStyles={chakraStylesSelect}
-                          isClearable={false}
-                          isMulti={false}
-                          isSearchable={true}
-                          options={
-                            config?.corpora.map((corpus) => ({
-                              value: corpus.corpus_import_id,
-                              label: corpus.title,
-                            })) || []
-                          }
-                          {...field}
-                        />
-                      </FormControl>
-                    )
-                  }}
-                />
-              )}
-              <Controller
-                control={control}
-                name='category'
-                render={({ field }) => {
-                  return (
-                    <FormControl
-                      isRequired
-                      as='fieldset'
-                      isInvalid={!!errors.category}
-                    >
-                      <FormLabel as='legend'>Category</FormLabel>
-                      <RadioGroup {...field}>
-                        <HStack gap={4}>
-                          <Radio bg='white' value='Executive'>
-                            Executive
-                          </Radio>
-                          <Radio bg='white' value='Legislative'>
-                            Legislative
-                          </Radio>
-                          <Radio bg='white' value='Litigation'>
-                            Litigation
-                          </Radio>
-                          <Radio bg='white' value='UNFCCC'>
-                            UNFCCC
-                          </Radio>
+            {loadedFamily && <ReadOnlyFields family={loadedFamily} />}
 
-                          <Radio bg='white' value='MCF'>
-                            MCF
-                          </Radio>
-                        </HStack>
-                      </RadioGroup>
-                      <FormErrorMessage>
-                        Please select a category
-                      </FormErrorMessage>
-                    </FormControl>
-                  )
-                }}
+            <TextField
+              name='title'
+              label='Title'
+              control={control}
+              isRequired={true}
+            />
+
+            <WYSIWYGField
+              name='summary'
+              label='Summary'
+              control={control}
+              defaultValue={loadedFamily?.summary}
+              onChange={summaryOnChange}
+              error={errors.summary}
+            />
+
+            <SelectField
+              name='collections'
+              label='Collections'
+              control={control}
+              options={
+                collections?.map((collection) => ({
+                  value: collection.import_id,
+                  label: collection.title,
+                })) || []
+              }
+              isMulti={true}
+              isRequired={false}
+            />
+
+            <SelectField
+              name='geography'
+              label='Geography'
+              control={control}
+              options={getCountries(config?.geographies).map((country) => ({
+                value: country.value,
+                label: country.display_value,
+              }))}
+              isMulti={false}
+              isRequired={true}
+            />
+
+            {!loadedFamily && (
+              <SelectField
+                name='corpus'
+                label='Corpus'
+                control={control}
+                options={
+                  config?.corpora.map((corpus) => ({
+                    value: corpus.corpus_import_id,
+                    label: corpus.title,
+                  })) || []
+                }
+                rules={{ required: true }}
               />
-              {corpusInfo !== null && (
-                <Box position='relative' padding='10'>
-                  <Divider />
-                  <AbsoluteCenter bg='gray.50' px='4'>
-                    Metadata
-                  </AbsoluteCenter>
-                </Box>
-              )}
-              {taxonomy &&
-                Object.entries(
-                  (CORPUS_METADATA_CONFIG[corpusInfo?.corpus_type]
-                    ?.renderFields || {}) as Record<
-                    string,
-                    { type: FieldType }
-                  >,
-                ).map(([fieldKey, fieldConfig]) => (
-                  <DynamicMetadataField
-                    key={fieldKey}
-                    fieldKey={fieldKey}
-                    taxonomyField={taxonomy[fieldKey]}
-                    control={control}
-                    errors={errors}
-                    fieldType={fieldConfig.type}
-                  />
-                ))}
-              <Box position='relative' padding='10'>
-                <Divider />
-                <AbsoluteCenter bg='gray.50' px='4'>
-                  Documents
-                </AbsoluteCenter>
-              </Box>
-              {!loadedFamily && (
-                <Text>
-                  Please create the family first before attempting to add
-                  documents
-                </Text>
-              )}
-              {familyDocuments.length && (
-                <Flex direction='column' gap={4}>
-                  {familyDocuments.map((familyDoc) => (
-                    <FamilyDocument
-                      canModify={userCanModify}
-                      documentId={familyDoc}
-                      key={familyDoc}
-                      onEditClick={(id) => onEditEntityClick('document', id)}
-                      onDeleteClick={onDocumentDeleteClick}
-                      updatedDocument={updatedDocument}
-                      setUpdatedDocument={setUpdatedDocument}
-                    />
-                  ))}
-                </Flex>
-              )}
-              {loadedFamily && (
-                <Box>
-                  <Button
-                    isDisabled={!userCanModify}
-                    onClick={() => onAddNewEntityClick('document')}
-                    rightIcon={
-                      familyDocuments.length === 0 ? (
-                        <WarningIcon
-                          color='red.500'
-                          data-test-id='warning-icon-document'
-                        />
-                      ) : undefined
-                    }
-                  >
-                    Add new Document
-                  </Button>
-                </Box>
-              )}
-              <FamilyEventList
-                familyEvents={familyEvents}
-                canModify={userCanModify}
-                onEditEntityClick={onEditEntityClick}
-                onAddNewEntityClick={onAddNewEntityClick}
-                setFamilyEvents={setFamilyEvents}
+            )}
+
+            <RadioGroupField
+              name='category'
+              label='Category'
+              control={control}
+              options={[
+                { value: 'Executive', label: 'Executive' },
+                { value: 'Legislative', label: 'Legislative' },
+                { value: 'Litigation', label: 'Litigation' },
+                { value: 'UNFCCC', label: 'UNFCCC' },
+                { value: 'MCF', label: 'MCF' },
+              ]}
+              rules={{ required: true }}
+            />
+
+            {corpusInfo && (
+              <MetadataSection
+                corpusInfo={corpusInfo}
+                taxonomy={taxonomy}
+                control={control}
+                errors={errors}
                 loadedFamily={loadedFamily}
-                updatedEvent={updatedEvent}
-                setUpdatedEvent={setUpdatedEvent}
+                reset={reset}
               />
-            </VStack>
-            <ButtonGroup isDisabled={!userCanModify}>
+            )}
+
+            <Divider />
+
+            <DocumentSection
+              familyDocuments={familyDocuments}
+              userCanModify={userAccess.canModify}
+              onAddNew={onAddNewEntityClick}
+              onEdit={onEditEntityClick}
+              onDelete={onDocumentDeleteClick}
+              updatedDocument={updatedDocument}
+              setUpdatedDocument={setUpdatedDocument}
+              isNewFamily={!loadedFamily}
+            />
+
+            <EventSection
+              familyEvents={familyEvents}
+              userCanModify={userAccess.canModify}
+              onAddNew={onAddNewEntityClick}
+              onEdit={onEditEntityClick}
+              updatedEvent={updatedEvent}
+              setUpdatedEvent={setUpdatedEvent}
+              isNewFamily={!loadedFamily}
+              onSetFamilyEvents={setFamilyEvents}
+            />
+
+            <ButtonGroup>
               <Button
                 type='submit'
                 colorScheme='blue'
-                onSubmit={handleSubmit(onSubmit, onSubmitErrorHandler)}
-                disabled={isSubmitting}
+                isLoading={isSubmitting}
+                isDisabled={!userAccess.canModify}
               >
-                {(loadedFamily ? 'Update ' : 'Create new ') + ' Family'}
+                {loadedFamily ? 'Update Family' : 'Create Family'}
               </Button>
             </ButtonGroup>
-          </form>
-          {editingEntity === 'document' && loadedFamily && (
-            <DocumentEditDrawer
-              editingDocument={editingDocument}
-              onClose={onClose}
-              isOpen={isOpen}
-            >
-              <DocumentForm
-                document={editingDocument}
-                familyId={loadedFamily.import_id}
-                canModify={userCanModify}
-                taxonomy={taxonomy}
-                onSuccess={onDocumentFormSuccess}
-              />
-            </DocumentEditDrawer>
-          )}
-          {editingEntity === 'event' && loadedFamily && (
-            <EventEditDrawer
-              editingEvent={editingEvent}
-              onClose={onClose}
-              isOpen={isOpen}
-            >
-              <EventForm
-                familyId={loadedFamily.import_id}
-                canModify={userCanModify}
-                taxonomy={taxonomy}
-                event={editingEvent}
-                onSuccess={onEventFormSuccess}
-              />
-            </EventEditDrawer>
-          )}
-        </>
+          </VStack>
+        </form>
+      )}
+
+      <UnsavedChangesModal
+        isOpen={isLeavingModalOpen}
+        onClose={() => setIsLeavingModalOpen(false)}
+        onConfirm={() => {
+          blocker.proceed?.()
+          setIsLeavingModalOpen(false)
+        }}
+      />
+
+      {isOpen && editingEntity && (
+        <EntityEditDrawer
+          isOpen={isOpen}
+          onClose={onClose}
+          entity={editingEntity}
+          document={editingDocument}
+          event={editingEvent}
+          onDocumentSuccess={onDocumentFormSuccess}
+          onEventSuccess={onEventFormSuccess}
+        />
       )}
     </>
   )
