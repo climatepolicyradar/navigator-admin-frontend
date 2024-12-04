@@ -28,7 +28,7 @@ export const MetadataSection: React.FC<MetadataSectionProps> = ({
         const fieldConfig = CORPUS_METADATA_CONFIG[corpusInfo.corpus_type]?.renderFields?.[key]
         if (!fieldConfig) return acc
 
-        if (fieldConfig.type === FieldType.SINGLE_SELECT || fieldConfig.type === FieldType.TEXT) {
+        if (fieldConfig.type === FieldType.SINGLE_SELECT) {
           acc[key] = value?.[0] ? {
             value: value[0],
             label: value[0]
@@ -38,6 +38,8 @@ export const MetadataSection: React.FC<MetadataSectionProps> = ({
             value: v,
             label: v
           })) || []
+        } else if (fieldConfig.type === FieldType.TEXT || fieldConfig.type === FieldType.NUMBER) {
+          acc[key] = value?.[0] || ''
         } else {
           acc[key] = value?.[0] || ''
         }

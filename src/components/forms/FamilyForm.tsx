@@ -427,7 +427,7 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
               label='Geography'
               control={control}
               options={getCountries(config?.geographies).map((country) => ({
-                value: country.value,
+                value: country.id,
                 label: country.display_value,
               }))}
               isMulti={false}
@@ -445,7 +445,7 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
                     label: corpus.title,
                   })) || []
                 }
-                rules={{ required: true }}
+                isRequired={true}
               />
             )}
 
