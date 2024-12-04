@@ -131,10 +131,9 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     reset,
     setError,
     setValue,
-    getValues,
     formState: { errors, isSubmitting },
     formState: { dirtyFields },
-  } = useForm({
+  } = useForm<IFamilyForm>({
     resolver: yupResolver(familySchema),
   })
   const [editingEntity, setEditingEntity] = useState<TChildEntity | undefined>()
@@ -423,27 +422,33 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
             }
           : undefined,
         topic:
-          'topic' in loadedFamily.metadata
+          'topic' in loadedFamily.metadata &&
+          Array.isArray(loadedFamily.metadata.topic)
             ? generateOptions(loadedFamily.metadata.topic)
             : [],
         hazard:
-          'hazard' in loadedFamily.metadata
+          'hazard' in loadedFamily.metadata &&
+          Array.isArray(loadedFamily.metadata.hazard)
             ? generateOptions(loadedFamily.metadata.hazard)
             : [],
         sector:
-          'sector' in loadedFamily.metadata
+          'sector' in loadedFamily.metadata &&
+          Array.isArray(loadedFamily.metadata.sector)
             ? generateOptions(loadedFamily.metadata.sector)
             : [],
         keyword:
-          'keyword' in loadedFamily.metadata
+          'keyword' in loadedFamily.metadata &&
+          Array.isArray(loadedFamily.metadata.keyword)
             ? generateOptions(loadedFamily.metadata.keyword)
             : [],
         framework:
-          'framework' in loadedFamily.metadata
+          'framework' in loadedFamily.metadata &&
+          Array.isArray(loadedFamily.metadata.framework)
             ? generateOptions(loadedFamily.metadata.framework)
             : [],
         instrument:
-          'instrument' in loadedFamily.metadata
+          'instrument' in loadedFamily.metadata &&
+          Array.isArray(loadedFamily.metadata.instrument)
             ? generateOptions(loadedFamily.metadata.instrument)
             : [],
         author:
@@ -496,7 +501,8 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     return (
       taxonomy &&
       Object.entries(
-        CORPUS_METADATA_CONFIG[corpusInfo?.corpus_type]?.renderFields || {},
+        (CORPUS_METADATA_CONFIG[corpusInfo?.corpus_type]?.renderFields ||
+          {}) as Record<string, { type: FieldType }>,
       ).map(([fieldKey, fieldConfig]) => (
         <DynamicMetadataField
           key={fieldKey}
@@ -510,9 +516,9 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     )
   }, [corpusInfo, taxonomy, control, errors])
 
-  const dynamicValidationSchema = useMemo(() => {
-    return generateDynamicValidationSchema(taxonomy, corpusInfo, familySchema)
-  }, [taxonomy, corpusInfo, familySchema])
+  const validationSchema = useMemo(() => {
+    return generateDynamicValidationSchema(taxonomy, corpusInfo)
+  }, [taxonomy, corpusInfo])
 
   return (
     <>
@@ -743,8 +749,11 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               )}
               {taxonomy &&
                 Object.entries(
-                  CORPUS_METADATA_CONFIG[corpusInfo?.corpus_type]
-                    ?.renderFields || {},
+                  (CORPUS_METADATA_CONFIG[corpusInfo?.corpus_type]
+                    ?.renderFields || {}) as Record<
+                    string,
+                    { type: FieldType }
+                  >,
                 ).map(([fieldKey, fieldConfig]) => (
                   <DynamicMetadataField
                     key={fieldKey}

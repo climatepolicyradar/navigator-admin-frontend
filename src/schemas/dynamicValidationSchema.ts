@@ -78,18 +78,35 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
   },
 }
 
+// Types for taxonomy and corpus info
+export interface TaxonomyField {
+  allowed_values?: string[]
+  allow_any?: boolean
+  allow_blanks?: boolean
+}
+
+export interface Taxonomy {
+  [key: string]: TaxonomyField
+}
+
+export interface CorpusInfo {
+  corpus_type: string
+}
+
+type ValidationSchema = yup.ObjectSchema<any>
+
 // Validation schema generation utility
 export const generateDynamicValidationSchema = (
-  taxonomy: any,
-  corpusInfo: any,
-  schema: any,
-) => {
+  taxonomy: Taxonomy,
+  corpusInfo: CorpusInfo,
+  schema: ValidationSchema,
+): ValidationSchema => {
   if (!taxonomy) return schema
 
   const metadataValidation = CORPUS_METADATA_CONFIG[
     corpusInfo?.corpus_type
-  ]?.validationFields.reduce((acc, fieldKey) => {
-    const taxonomyField = taxonomy[fieldKey as keyof typeof taxonomy]
+  ]?.validationFields.reduce<Record<string, yup.Schema>>((acc, fieldKey) => {
+    const taxonomyField = taxonomy[fieldKey]
     const renderField =
       CORPUS_METADATA_CONFIG[corpusInfo?.corpus_type]?.renderFields[fieldKey]
 
@@ -128,9 +145,7 @@ export const generateDynamicValidationSchema = (
     }
 
     return acc
-  }, {} as any)
+  }, {})
 
-  return schema.shape({
-    ...metadataValidation,
-  })
+  return schema.shape(metadataValidation)
 }
