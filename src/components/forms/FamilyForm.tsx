@@ -2,7 +2,6 @@ import { useEffect, useState, useMemo, useCallback } from 'react'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useBlocker, useNavigate } from 'react-router-dom'
-import * as yup from 'yup'
 import {
   IError,
   TFamilyFormPost,
@@ -27,7 +26,6 @@ import useCollections from '@/hooks/useCollections'
 import {
   Box,
   FormControl,
-  FormHelperText,
   FormLabel,
   HStack,
   Input,
@@ -78,7 +76,6 @@ import { DynamicMetadataField, generateOptions } from './DynamicMetadataFields'
 import {
   CORPUS_METADATA_CONFIG,
   generateDynamicValidationSchema,
-  FieldType,
 } from '@/schemas/dynamicValidationSchema'
 
 type TMultiSelect = {
@@ -165,8 +162,9 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     if (loadedFamily && corpusInfo) {
       console.log('Loaded Family Metadata:', loadedFamily.metadata)
       console.log('Corpus Type:', corpusInfo.corpus_type)
-      console.log('Render Fields:', 
-        CORPUS_METADATA_CONFIG[corpusInfo.corpus_type]?.renderFields
+      console.log(
+        'Render Fields:',
+        CORPUS_METADATA_CONFIG[corpusInfo.corpus_type]?.renderFields,
       )
     }
   }, [loadedFamily, corpusInfo])
@@ -175,14 +173,20 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     if (loadedFamily) {
       console.log('Full Loaded Family Metadata:', loadedFamily.metadata)
       console.log('Metadata Keys:', Object.keys(loadedFamily.metadata))
-      
+
       // Detailed logging for each metadata field
       const metadataFields = [
-        'topic', 'hazard', 'sector', 'keyword', 
-        'framework', 'instrument', 'author', 'author_type'
+        'topic',
+        'hazard',
+        'sector',
+        'keyword',
+        'framework',
+        'instrument',
+        'author',
+        'author_type',
       ]
-      
-      metadataFields.forEach(field => {
+
+      metadataFields.forEach((field) => {
         console.log(`${field} exists:`, field in loadedFamily.metadata)
         if (field in loadedFamily.metadata) {
           console.log(`${field} value:`, loadedFamily.metadata[field])
