@@ -74,13 +74,11 @@ import { stripHtml } from '@/utils/stripHtml'
 import { familySchema } from '@/schemas/familySchema'
 import useCorpusFromConfig from '@/hooks/useCorpusFromConfig'
 
-import {
-  renderDynamicMetadataField,
-  generateOptions,
-} from './DynamicMetadataFields'
+import { DynamicMetadataField, generateOptions } from './DynamicMetadataFields'
 import {
   CORPUS_METADATA_CONFIG,
   generateDynamicValidationSchema,
+  FieldType,
 } from '@/schemas/dynamicValidationSchema'
 
 type TMultiSelect = {
@@ -159,14 +157,45 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     watchCorpus?.value,
   )
 
-  console.log('config?.corpora', config?.corpora)
+  console.log('loadedFamily', loadedFamily)
+  console.log('corpusInfo', corpusInfo)
+  console.log('CORPUS_METADATA_CONFIG', CORPUS_METADATA_CONFIG)
+
+  useEffect(() => {
+    if (loadedFamily && corpusInfo) {
+      console.log('Loaded Family Metadata:', loadedFamily.metadata)
+      console.log('Corpus Type:', corpusInfo.corpus_type)
+      console.log('Render Fields:', 
+        CORPUS_METADATA_CONFIG[corpusInfo.corpus_type]?.renderFields
+      )
+    }
+  }, [loadedFamily, corpusInfo])
+
+  useEffect(() => {
+    if (loadedFamily) {
+      console.log('Full Loaded Family Metadata:', loadedFamily.metadata)
+      console.log('Metadata Keys:', Object.keys(loadedFamily.metadata))
+      
+      // Detailed logging for each metadata field
+      const metadataFields = [
+        'topic', 'hazard', 'sector', 'keyword', 
+        'framework', 'instrument', 'author', 'author_type'
+      ]
+      
+      metadataFields.forEach(field => {
+        console.log(`${field} exists:`, field in loadedFamily.metadata)
+        if (field in loadedFamily.metadata) {
+          console.log(`${field} value:`, loadedFamily.metadata[field])
+        }
+      })
+    }
+  }, [loadedFamily])
 
   const corpusTitle = loadedFamily
     ? loadedFamily?.corpus_title
     : corpusInfo?.title
 
   const taxonomy = useTaxonomy(corpusInfo?.corpus_type, corpusInfo?.taxonomy)
-  console.log('corpusInfo', corpusInfo)
   console.log('taxonomy', taxonomy)
 
   const userToken = useMemo(() => {
@@ -186,8 +215,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     () => canModify(orgName, isSuperUser, userAccess),
     [orgName, isSuperUser, userAccess],
   )
-
-  console.log(loadedFamily)
 
   // Family handlers
   const handleFormSubmission = async (family: IFamilyForm) => {
@@ -462,27 +489,21 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   const renderDynamicMetadataFields = useCallback(() => {
     if (!corpusInfo || !taxonomy) return null
 
-    // Get render fields based on corpus type, fallback to default
-    const { renderFields } =
-      CORPUS_METADATA_CONFIG[corpusInfo.corpus_type] ||
-      CORPUS_METADATA_CONFIG['default']
-
-    return renderFields
-      .map((fieldKey) => {
-        // Check if the field exists in the taxonomy
-        const taxonomyField = taxonomy[fieldKey as keyof typeof taxonomy]
-        if (!taxonomyField) return null
-
-        return renderDynamicMetadataField({
-          fieldKey,
-          taxonomyField,
-          control,
-          errors,
-          chakraStylesSelect,
-          corpusType: corpusInfo.corpus_type,
-        })
-      })
-      .filter(Boolean)
+    return (
+      taxonomy &&
+      Object.entries(
+        CORPUS_METADATA_CONFIG[corpusInfo?.corpus_type]?.renderFields || {},
+      ).map(([fieldKey, fieldConfig]) => (
+        <DynamicMetadataField
+          key={fieldKey}
+          fieldKey={fieldKey}
+          taxonomyField={taxonomy[fieldKey]}
+          control={control}
+          errors={errors}
+          fieldType={fieldConfig.type}
+        />
+      ))
+    )
   }, [corpusInfo, taxonomy, control, errors])
 
   const dynamicValidationSchema = useMemo(() => {
@@ -716,7 +737,20 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                   </AbsoluteCenter>
                 </Box>
               )}
-              {renderDynamicMetadataFields()}
+              {taxonomy &&
+                Object.entries(
+                  CORPUS_METADATA_CONFIG[corpusInfo?.corpus_type]
+                    ?.renderFields || {},
+                ).map(([fieldKey, fieldConfig]) => (
+                  <DynamicMetadataField
+                    key={fieldKey}
+                    fieldKey={fieldKey}
+                    taxonomyField={taxonomy[fieldKey]}
+                    control={control}
+                    errors={errors}
+                    fieldType={fieldConfig.type}
+                  />
+                ))}
               <Box position='relative' padding='10'>
                 <Divider />
                 <AbsoluteCenter bg='gray.50' px='4'>

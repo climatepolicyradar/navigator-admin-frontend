@@ -10,10 +10,27 @@ import {
 } from '@chakra-ui/react'
 import { Controller, Control, FieldErrors } from 'react-hook-form'
 import { Select as CRSelect } from 'chakra-react-select'
+import * as yup from 'yup'
+import {
+  generateDynamicValidationSchema,
+  CORPUS_METADATA_CONFIG,
+  CorpusMetadataConfig,
+  FieldType,
+} from '@/schemas/dynamicValidationSchema'
+import React from 'react'
+import { chakraStylesSelect } from '@/styles/chakra'
 
 // Utility function to generate select options
 export const generateOptions = (values: string[]) =>
   values.map((value) => ({ value, label: value }))
+
+// Utility function to format field labels
+const formatFieldLabel = (key: string): string => {
+  return key
+    .split('_')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ')
+}
 
 // Interface for rendering dynamic metadata fields
 interface DynamicMetadataFieldProps {
@@ -24,132 +41,88 @@ interface DynamicMetadataFieldProps {
     allow_blanks?: boolean
   }
   control: Control<any>
-  errors: FieldErrors
-  chakraStylesSelect?: any
-  corpusType?: string
+  errors: FieldErrors<any>
+  fieldType: FieldType
 }
 
-// Render a dynamic metadata field based on taxonomy configuration
-export const renderDynamicMetadataField = ({
-  fieldKey,
-  taxonomyField,
-  control,
-  errors,
-  chakraStylesSelect,
-  corpusType,
-}: DynamicMetadataFieldProps) => {
-  const allowedValues = taxonomyField.allowed_values || []
-  const isAllowAny = taxonomyField.allow_any
-  const isAllowBlanks = taxonomyField.allow_blanks
+export const DynamicMetadataField: React.FC<DynamicMetadataFieldProps> =
+  React.memo(({ fieldKey, taxonomyField, control, errors, fieldType }) => {
+    const allowedValues = taxonomyField.allowed_values || []
+    const isAllowAny = taxonomyField.allow_any
+    const isAllowBlanks = taxonomyField.allow_blanks
 
-  // Render free text input if allow_any is true
-  if (isAllowAny) {
-    return (
-      <FormControl key={fieldKey} isInvalid={!!errors[fieldKey]}>
-        <FormLabel>
-          {fieldKey.charAt(0).toUpperCase() + fieldKey.slice(1)}
-        </FormLabel>
-        <Controller
-          control={control}
-          name={fieldKey}
-          render={({ field }) => (
-            <Input {...field} bg='white' aria-label={fieldKey} type='text' />
-          )}
-        />
-        {errors[fieldKey] && (
-          <FormErrorMessage>
-            {errors[fieldKey]?.message as string}
-          </FormErrorMessage>
-        )}
-      </FormControl>
-    )
-  }
+    const renderFieldByType = () => {
+      if (isAllowAny) {
+        return renderTextField()
+      }
 
-  // Special handling for author_type (radio group)
-  if (fieldKey === 'author_type') {
-    return (
-      <FormControl
-        key={fieldKey}
-        isRequired={!isAllowBlanks}
-        as='fieldset'
-        isInvalid={!!errors[fieldKey]}
-      >
-        <FormLabel as='legend'>Author Type</FormLabel>
-        <Controller
-          control={control}
-          name={fieldKey}
-          render={({ field }) => (
-            <RadioGroup {...field}>
-              <HStack gap={4}>
-                {allowedValues.map((value) => (
-                  <Radio bg='white' value={value} key={value}>
-                    {value}
-                  </Radio>
-                ))}
-              </HStack>
-            </RadioGroup>
-          )}
-        />
-        {errors[fieldKey] && (
-          <FormErrorMessage>Please select an author type</FormErrorMessage>
-        )}
-      </FormControl>
-    )
-  }
+      switch (fieldType) {
+        case FieldType.MULTI_SELECT:
+        case FieldType.SINGLE_SELECT:
+          return renderSelectField()
+        case FieldType.TEXT:
+          return renderTextField()
+        case FieldType.NUMBER:
+          return renderNumberField()
+        default:
+          return renderTextField()
+      }
+    }
 
-  // Render select box if allowed_values is not empty
-  if (allowedValues.length > 0) {
-    return (
-      <FormControl key={fieldKey} isInvalid={!!errors[fieldKey]}>
-        <FormLabel>
-          {fieldKey.charAt(0).toUpperCase() + fieldKey.slice(1)}
-        </FormLabel>
-        <Controller
-          control={control}
-          name={fieldKey}
-          render={({ field }) => (
-            <CRSelect
-              chakraStyles={chakraStylesSelect}
-              isClearable={false}
-              isMulti={fieldKey !== 'author' && fieldKey !== 'author_type'}
-              isSearchable={true}
-              options={generateOptions(allowedValues)}
-              {...field}
-            />
-          )}
-        />
-        {errors[fieldKey] && (
-          <FormErrorMessage>
-            {errors[fieldKey]?.message as string}
-          </FormErrorMessage>
-        )}
-        {fieldKey !== 'author' && (
-          <FormHelperText>
-            You can search and select multiple options
-          </FormHelperText>
-        )}
-      </FormControl>
-    )
-  }
-
-  // Fallback to default text input if no specific rendering rules apply
-  return (
-    <FormControl key={fieldKey} isInvalid={!!errors[fieldKey]}>
-      <FormLabel>
-        {fieldKey.charAt(0).toUpperCase() + fieldKey.slice(1)}
-      </FormLabel>
+    const renderSelectField = () => (
       <Controller
-        control={control}
         name={fieldKey}
+        control={control}
         render={({ field }) => (
-          <Input {...field} placeholder={`Enter ${fieldKey}`} type='text' />
+          <CRSelect
+            chakraStyles={chakraStylesSelect}
+            isClearable={false}
+            isMulti={fieldType === FieldType.MULTI_SELECT}
+            isSearchable={true}
+            options={generateOptions(allowedValues)}
+            {...field}
+          />
         )}
       />
-      {errors[fieldKey] && (
+    )
+
+    const renderTextField = () => (
+      <Controller
+        name={fieldKey}
+        control={control}
+        render={({ field }) => (
+          <Input {...field} bg='white' placeholder={`Enter ${fieldKey}`} />
+        )}
+      />
+    )
+
+    const renderNumberField = () => (
+      <Controller
+        name={fieldKey}
+        control={control}
+        render={({ field }) => (
+          <Input
+            {...field}
+            bg='white'
+            type='number'
+            placeholder={`Enter ${fieldKey}`}
+          />
+        )}
+      />
+    )
+
+    return (
+      <FormControl isInvalid={!!errors[fieldKey]} mb={4} isRequired={!isAllowBlanks}>
+        <FormLabel>{formatFieldLabel(fieldKey)}</FormLabel>
+        {fieldType === FieldType.MULTI_SELECT && (
+          <FormHelperText mb={2}>
+            You are able to search and can select multiple options
+          </FormHelperText>
+        )}
+        {renderFieldByType()}
         <FormErrorMessage>
-          {errors[fieldKey]?.message as string}
+          {errors[fieldKey] && `${fieldKey} is required`}
         </FormErrorMessage>
-      )}
-    </FormControl>
-  )
-}
+      </FormControl>
+    )
+  })

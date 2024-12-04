@@ -1,9 +1,24 @@
 import * as yup from 'yup'
 
-// Configuration type for corpus metadata
+// Enum for field types to ensure type safety and scalability
+export enum FieldType {
+  TEXT = 'text',
+  MULTI_SELECT = 'multi_select',
+  SINGLE_SELECT = 'single_select',
+  NUMBER = 'number',
+  DATE = 'date',
+}
+
+// Enhanced configuration type for corpus metadata
 export type CorpusMetadataConfig = {
   [corpusType: string]: {
-    renderFields: string[]
+    renderFields: {
+      [fieldKey: string]: {
+        type: FieldType
+        label?: string
+        allowedValues?: string[]
+      }
+    }
     validationFields: string[]
   }
 }
@@ -11,40 +26,21 @@ export type CorpusMetadataConfig = {
 // Centralised configuration for corpus metadata
 export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
   'Intl. agreements': {
-    renderFields: ['author', 'author_type'],
+    renderFields: {
+      author: { type: FieldType.TEXT },
+      author_type: { type: FieldType.SINGLE_SELECT },
+    },
     validationFields: ['author', 'author_type'],
   },
-  'AF': {
-    renderFields: [
-      'region',
-      'sector',
-      'status',
-      'implementing_agency',
-      'project_id',
-      'project_url',
-      'project_value_co_financing',
-      'project_value_fund_spend',
-    ],
-    validationFields: [
-      'region',
-      'sector',
-      'status',
-      'implementing_agency',
-      'project_id',
-      'project_url',
-      'project_value_co_financing',
-      'project_value_fund_spend',
-    ],
-  },
   'Laws and Policies': {
-    renderFields: [
-      'topic',
-      'hazard',
-      'sector',
-      'keyword',
-      'framework',
-      'instrument',
-    ],
+    renderFields: {
+      topic: { type: FieldType.MULTI_SELECT },
+      hazard: { type: FieldType.MULTI_SELECT },
+      sector: { type: FieldType.MULTI_SELECT },
+      keyword: { type: FieldType.MULTI_SELECT },
+      framework: { type: FieldType.MULTI_SELECT },
+      instrument: { type: FieldType.MULTI_SELECT },
+    },
     validationFields: [
       'topic',
       'hazard',
@@ -54,9 +50,30 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
       'instrument',
     ],
   },
-  // Easy to extend for new corpus types
+  AF: {
+    renderFields: {
+      region: { type: FieldType.MULTI_SELECT },
+      sector: { type: FieldType.MULTI_SELECT },
+      implementing_agency: { type: FieldType.MULTI_SELECT },
+      status: { type: FieldType.SINGLE_SELECT },
+      project_id: { type: FieldType.TEXT },
+      project_url: { type: FieldType.TEXT },
+      project_value_co_financing: { type: FieldType.NUMBER },
+      project_value_fund_spend: { type: FieldType.NUMBER },
+    },
+    validationFields: [
+      'project_id',
+      'project_url',
+      'region',
+      'sector',
+      'status',
+      'implementing_agency',
+      'project_value_co_financing',
+      'project_value_fund_spend',
+    ],
+  },
   default: {
-    renderFields: [],
+    renderFields: {},
     validationFields: [],
   },
 }
@@ -69,36 +86,44 @@ export const generateDynamicValidationSchema = (
 ) => {
   if (!taxonomy) return schema
 
-  // Get validation fields based on corpus type, fallback to default
-  const { validationFields } =
-    CORPUS_METADATA_CONFIG[corpusInfo?.corpus_type] ||
-    CORPUS_METADATA_CONFIG['default']
-
-  const metadataValidation = validationFields.reduce((acc, fieldKey) => {
+  const metadataValidation = CORPUS_METADATA_CONFIG[
+    corpusInfo?.corpus_type
+  ]?.validationFields.reduce((acc, fieldKey) => {
     const taxonomyField = taxonomy[fieldKey as keyof typeof taxonomy]
+    const renderField =
+      CORPUS_METADATA_CONFIG[corpusInfo?.corpus_type]?.renderFields[fieldKey]
 
     if (taxonomyField) {
-      // Get allowed values for the current field
-      const allowedValues = taxonomyField.allowed_values || []
-
-      // If allow_any is true, use a simple string validation
-      if (taxonomyField.allow_any) {
-        acc[fieldKey] = yup.string()
-      }
-      // For multi-select fields with allowed values
-      else if (
-        allowedValues.length > 0 &&
-        fieldKey !== 'author' &&
-        fieldKey !== 'author_type'
-      ) {
-        acc[fieldKey] = yup.array().of(yup.string())
-      }
-      // For single select or text fields
-      else {
-        // Use allow_blanks to determine if the field is required
-        acc[fieldKey] = taxonomyField.allow_blanks
-          ? yup.string()
-          : yup.string().required(`${fieldKey} is required`)
+      // Determine validation based on field type and allow_blanks
+      switch (renderField?.type) {
+        case FieldType.TEXT:
+          acc[fieldKey] = taxonomyField.allow_blanks
+            ? yup.string()
+            : yup.string().required(`${fieldKey} is required`)
+          break
+        case FieldType.MULTI_SELECT:
+          acc[fieldKey] = taxonomyField.allow_blanks
+            ? yup.array().of(yup.string())
+            : yup.array().of(yup.string()).min(1, `${fieldKey} is required`)
+          break
+        case FieldType.SINGLE_SELECT:
+          acc[fieldKey] = taxonomyField.allow_blanks
+            ? yup.string()
+            : yup.string().required(`${fieldKey} is required`)
+          break
+        case FieldType.NUMBER:
+          acc[fieldKey] = taxonomyField.allow_blanks
+            ? yup.number()
+            : yup.number().required(`${fieldKey} is required`)
+          break
+        case FieldType.DATE:
+          acc[fieldKey] = taxonomyField.allow_blanks
+            ? yup.date()
+            : yup.date().required(`${fieldKey} is required`)
+          break
+        default:
+          // Fallback for unspecified types
+          acc[fieldKey] = yup.string()
       }
     }
 
