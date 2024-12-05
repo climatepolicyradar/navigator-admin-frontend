@@ -80,10 +80,12 @@ export const MetadataSection: React.FC<MetadataSectionProps> = ({
         <DynamicMetadataFields
           key={fieldKey}
           fieldKey={fieldKey}
-          taxonomyField={taxonomy[fieldKey] || { 
-            allow_blanks: true, 
-            allow_any: false 
-          }}
+          taxonomyField={
+            taxonomy[fieldKey] || {
+              allow_blanks: true,
+              allow_any: false,
+            }
+          }
           control={control}
           errors={errors}
           fieldType={fieldConfig.type}

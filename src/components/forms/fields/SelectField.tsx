@@ -1,8 +1,8 @@
 import React from 'react'
-import { Controller, Control, FieldErrors } from 'react-hook-form'
+import { Controller, Control } from 'react-hook-form'
 import { Select as CRSelect } from 'chakra-react-select'
 import { chakraStylesSelect } from '@/styles/chakra'
-import { FieldType, SelectOption } from '@/types/metadata'
+import { SelectOption } from '@/types/metadata'
 import { generateSelectOptions } from '@/utils/metadataUtils'
 import { FormControl, FormLabel, FormErrorMessage } from '@chakra-ui/react'
 

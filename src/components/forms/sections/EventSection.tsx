@@ -1,5 +1,14 @@
 import React from 'react'
-import { FamilyEventList } from '@/components/lists/FamilyEventList'
+import {
+  Box,
+  Button,
+  Divider,
+  AbsoluteCenter,
+  Flex,
+  Text,
+} from '@chakra-ui/react'
+import { WarningIcon } from '@chakra-ui/icons'
+import { FamilyEvent } from '@/components/family/FamilyEvent'
 import { IEvent } from '@/interfaces'
 
 interface EventSectionProps {
@@ -7,10 +16,10 @@ interface EventSectionProps {
   userCanModify: boolean
   onAddNew: (type: 'event') => void
   onEdit: (type: 'event', event: IEvent) => void
+  onDelete: (eventId: string) => void
   updatedEvent: string
   setUpdatedEvent: (id: string) => void
   isNewFamily: boolean
-  onSetFamilyEvents: (events: string[]) => void
 }
 
 export const EventSection: React.FC<EventSectionProps> = ({
@@ -18,21 +27,60 @@ export const EventSection: React.FC<EventSectionProps> = ({
   userCanModify,
   onAddNew,
   onEdit,
+  onDelete,
   updatedEvent,
   setUpdatedEvent,
   isNewFamily,
-  onSetFamilyEvents,
 }) => {
   return (
-    <FamilyEventList
-      familyEvents={familyEvents}
-      setFamilyEvents={onSetFamilyEvents}
-      canModify={userCanModify}
-      onEditEntityClick={(event) => onEdit('event', event)}
-      onAddNewEntityClick={() => onAddNew('event')}
-      loadedFamily={!isNewFamily}
-      updatedEvent={updatedEvent}
-      setUpdatedEvent={setUpdatedEvent}
-    />
+    <>
+      <Box position='relative' padding='10'>
+        <Divider />
+        <AbsoluteCenter bg='gray.50' px='4'>
+          Events
+        </AbsoluteCenter>
+      </Box>
+
+      {isNewFamily && (
+        <Text>
+          Please create the family first before attempting to add events
+        </Text>
+      )}
+
+      {familyEvents.length > 0 && (
+        <Flex direction='column' gap={4}>
+          {familyEvents.map((eventId) => (
+            <FamilyEvent
+              key={eventId}
+              eventId={eventId}
+              canModify={userCanModify}
+              onEditClick={(event) => onEdit('event', event)}
+              onDeleteClick={onDelete}
+              updatedEvent={updatedEvent}
+              setUpdatedEvent={setUpdatedEvent}
+            />
+          ))}
+        </Flex>
+      )}
+
+      {!isNewFamily && (
+        <Box>
+          <Button
+            isDisabled={!userCanModify}
+            onClick={() => onAddNew('event')}
+            rightIcon={
+              familyEvents.length === 0 ? (
+                <WarningIcon
+                  color='red.500'
+                  data-test-id='warning-icon-event'
+                />
+              ) : undefined
+            }
+          >
+            Add new Event
+          </Button>
+        </Box>
+      )}
+    </>
   )
 }

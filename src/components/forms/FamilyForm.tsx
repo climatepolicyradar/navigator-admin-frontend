@@ -6,7 +6,6 @@ import {
   VStack,
   Button,
   ButtonGroup,
-  FormErrorMessage,
   useToast,
   SkeletonText,
   Divider,
@@ -40,13 +39,11 @@ import { canModify } from '@/utils/canModify'
 import { getCountries } from '@/utils/extractNestedGeographyData'
 import { decodeToken } from '@/utils/decodeToken'
 import { stripHtml } from '@/utils/stripHtml'
-import {
-  CORPUS_METADATA_CONFIG,
-  generateDynamicValidationSchema,
-} from '@/schemas/dynamicValidationSchema'
+import { generateDynamicValidationSchema } from '@/schemas/dynamicValidationSchema'
 import { createFamily, updateFamily } from '@/api/Families'
 import { deleteDocument } from '@/api/Documents'
-import { baseFamilySchema, createFamilySchema } from '@/schemas/familySchema'
+import { deleteEvent } from '@/api/Events'
+import { createFamilySchema } from '@/schemas/familySchema'
 import { ApiError } from '../feedback/ApiError'
 
 interface FamilyFormProps {
@@ -307,6 +304,34 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
     setUpdatedEvent(eventId)
   }
 
+  const onEventDeleteClick = async (eventId: string) => {
+    toast({
+      title: 'Event deletion in progress',
+      status: 'info',
+    })
+    await deleteEvent(eventId)
+      .then(() => {
+        toast({
+          title: 'Event has been successfully deleted',
+          status: 'success',
+        })
+        const index = familyEvents.indexOf(eventId)
+        if (index > -1) {
+          const newEvents = [...familyEvents]
+          newEvents.splice(index, 1)
+          setFamilyEvents(newEvents)
+        }
+        setUpdatedEvent(eventId)
+      })
+      .catch((error: IError) => {
+        toast({
+          title: 'Event has not been deleted',
+          description: error.message,
+          status: 'error',
+        })
+      })
+  }
+
   const canLoadForm =
     !configLoading && !collectionsLoading && !configError && !collectionsError
 
@@ -508,10 +533,10 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
               userCanModify={userAccess.canModify}
               onAddNew={onAddNewEntityClick}
               onEdit={onEditEntityClick}
+              onDelete={onEventDeleteClick}
               updatedEvent={updatedEvent}
               setUpdatedEvent={setUpdatedEvent}
               isNewFamily={!loadedFamily}
-              onSetFamilyEvents={setFamilyEvents}
             />
 
             <ButtonGroup>

@@ -69,6 +69,7 @@ export const EventForm = ({
       : undefined,
   })
 
+  // Preload form with event data when loadedEvent changes
   useEffect(() => {
     if (loadedEvent) {
       reset({
