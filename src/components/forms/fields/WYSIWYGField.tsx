@@ -1,11 +1,4 @@
-import React from 'react'
-import {
-  Control,
-  Controller,
-  FieldValues,
-  Path,
-  RegisterOptions,
-} from 'react-hook-form'
+import { Control, Controller, FieldValues, Path } from 'react-hook-form'
 import { FormControl, FormLabel, FormErrorMessage } from '@chakra-ui/react'
 import { WYSIWYG } from '@/components/form-components/WYSIWYG'
 import { FieldError } from 'react-hook-form'

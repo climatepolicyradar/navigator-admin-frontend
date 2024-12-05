@@ -1,10 +1,6 @@
 import { useEffect, useState } from 'react'
-import { useForm, SubmitHandler, Controller } from 'react-hook-form'
+import { useForm, SubmitHandler } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import {
-  BACK_TO_FAMILIES_ERROR_DETAIL,
-  NO_TAXONOMY_ERROR,
-} from '@/constants/errors'
 import {
   IEvent,
   IEventFormPost,
@@ -27,7 +23,6 @@ import {
   useToast,
   Select,
 } from '@chakra-ui/react'
-import { ApiError } from '../feedback/ApiError'
 import { formatDateISO } from '@/utils/formatDate'
 
 type TaxonomyEventType =
@@ -61,7 +56,6 @@ export const EventForm = ({
   const {
     register,
     handleSubmit,
-    control,
     reset,
     formState: { errors, isSubmitting },
   } = useForm<TEventForm>({

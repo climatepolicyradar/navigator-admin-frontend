@@ -1,5 +1,4 @@
 import { Control, FieldErrors } from 'react-hook-form'
-import * as yup from 'yup'
 
 export enum FieldType {
   TEXT = 'text',
@@ -9,6 +8,7 @@ export enum FieldType {
   DATE = 'date',
 }
 
+// Types for taxonomy and corpus info
 export interface TaxonomyField {
   allowed_values?: string[]
   allow_any?: boolean
@@ -21,7 +21,7 @@ export interface Taxonomy {
 
 export interface CorpusInfo {
   corpus_type: string
-  title?: string
+  title?: string // TODO Do we need this?
 }
 
 export interface MetadataFieldConfig {
@@ -30,6 +30,7 @@ export interface MetadataFieldConfig {
   allowedValues?: string[]
 }
 
+// Enhanced configuration type for corpus metadata
 export interface CorpusMetadataConfig {
   [corpusType: string]: {
     renderFields: Record<string, MetadataFieldConfig>
@@ -50,4 +51,57 @@ export interface DynamicMetadataFieldProps<T extends Record<string, any>> {
   fieldType: FieldType
 }
 
-export type ValidationSchema = yup.ObjectSchema<any>
+// Centralised configuration for corpus metadata
+export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
+  'Intl. agreements': {
+    renderFields: {
+      author: { type: FieldType.TEXT },
+      author_type: { type: FieldType.SINGLE_SELECT },
+    },
+    validationFields: ['author', 'author_type'],
+  },
+  'Laws and Policies': {
+    renderFields: {
+      topic: { type: FieldType.MULTI_SELECT },
+      hazard: { type: FieldType.MULTI_SELECT },
+      sector: { type: FieldType.MULTI_SELECT },
+      keyword: { type: FieldType.MULTI_SELECT },
+      framework: { type: FieldType.MULTI_SELECT },
+      instrument: { type: FieldType.MULTI_SELECT },
+    },
+    validationFields: [
+      'topic',
+      'hazard',
+      'sector',
+      'keyword',
+      'framework',
+      'instrument',
+    ],
+  },
+  AF: {
+    renderFields: {
+      region: { type: FieldType.MULTI_SELECT },
+      sector: { type: FieldType.MULTI_SELECT },
+      implementing_agency: { type: FieldType.MULTI_SELECT },
+      status: { type: FieldType.SINGLE_SELECT },
+      project_id: { type: FieldType.TEXT },
+      project_url: { type: FieldType.TEXT },
+      project_value_co_financing: { type: FieldType.NUMBER },
+      project_value_fund_spend: { type: FieldType.NUMBER },
+    },
+    validationFields: [
+      'project_id',
+      'project_url',
+      'region',
+      'sector',
+      'status',
+      'implementing_agency',
+      'project_value_co_financing',
+      'project_value_fund_spend',
+    ],
+  },
+  default: {
+    renderFields: {},
+    validationFields: [],
+  },
+}

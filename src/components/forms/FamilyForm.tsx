@@ -1,42 +1,23 @@
-import { useEffect, useState, useMemo, useCallback } from 'react'
-import { useForm, SubmitHandler, Controller } from 'react-hook-form'
+import { useEffect, useState, useMemo } from 'react'
+import { useForm, SubmitHandler } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useBlocker, useNavigate } from 'react-router-dom'
 import {
-  Box,
-  FormControl,
-  FormLabel,
-  HStack,
-  Input,
   VStack,
-  Text,
   Button,
   ButtonGroup,
   FormErrorMessage,
   useToast,
   SkeletonText,
   Divider,
-  AbsoluteCenter,
   useDisclosure,
-  Flex,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
 } from '@chakra-ui/react'
-import { WarningIcon } from '@chakra-ui/icons'
 
-import { familySchema } from '@/schemas/familySchema'
 import useCorpusFromConfig from '@/hooks/useCorpusFromConfig'
 import useConfig from '@/hooks/useConfig'
 import useTaxonomy from '@/hooks/useTaxonomy'
 import useCollections from '@/hooks/useCollections'
 
-import { DynamicMetadataField } from './DynamicMetadataFields'
-import { generateOptions } from '@/utils/generateOptions'
 import { SelectField } from './fields/SelectField'
 import { TextField } from './fields/TextField'
 import { RadioGroupField } from './fields/RadioGroupField'
@@ -49,12 +30,11 @@ import { ReadOnlyFields } from './ReadOnlyFields'
 import { EntityEditDrawer } from '../drawers/EntityEditDrawer'
 
 import {
-  IFamilyForm,
   TFamilyFormPost,
+  IInternationalAgreementsMetadata,
+  ILawsAndPoliciesMetadata,
   TFamilyFormPostMetadata,
-  IUNFCCCMetadata,
-  ICCLWMetadata,
-} from '@/types/metadata'
+} from '@/interfaces/Family'
 import { TChildEntity } from '@/types/entities'
 import { canModify } from '@/utils/canModify'
 import { getCountries } from '@/utils/extractNestedGeographyData'
@@ -67,6 +47,7 @@ import {
 import { createFamily, updateFamily } from '@/api/Families'
 import { deleteDocument } from '@/api/Documents'
 import { baseFamilySchema, createFamilySchema } from '@/schemas/familySchema'
+import { ApiError } from '../feedback/ApiError'
 
 interface FamilyFormProps {
   family?: TFamily
@@ -111,6 +92,7 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
 
   const {
     control,
+    register,
     handleSubmit,
     reset,
     setError,
@@ -118,7 +100,7 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
     watch,
     formState: { errors, isSubmitting, dirtyFields },
     trigger,
-  } = useForm<IFamilyForm>({
+  } = useForm<IFamilyFormPost>({
     resolver: yupResolver(validationSchema),
   })
 
@@ -142,6 +124,14 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
     // Re-trigger form validation with new schema
     trigger()
   }, [taxonomy, corpusInfo])
+
+  // Determine if the corpus is an MCF type
+  const isMCFCorpus = useMemo(() => {
+    return (
+      watchCorpus?.value?.startsWith('MCF') ||
+      loadedFamily?.corpus_import_id?.startsWith('MCF')
+    )
+  }, [watchCorpus?.value, loadedFamily?.corpus_import_id])
 
   const [editingEntity, setEditingEntity] = useState<TChildEntity | undefined>()
   const [editingEvent, setEditingEvent] = useState<IEvent | undefined>()
@@ -169,29 +159,63 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
     }
   }, [loadedFamily])
 
-  const handleFormSubmission = async (formData: IFamilyForm) => {
+  const handleFormSubmission = async (formData: IFamilyFormPost) => {
     setIsFormSubmitting(true)
     setFormError(null)
 
-    const familyMetadata = generateFamilyMetadata(formData, corpusInfo)
-    const familyData = generateFamilyData(formData, familyMetadata)
+    // Dynamically generate metadata based on corpus type
+    const familyMetadata = {} as TFamilyFormPostMetadata
+
+    // Handle International Agreements metadata
+    if (corpusInfo?.corpus_type === 'Intl. agreements') {
+      const intlAgreementsMetadata: IInternationalAgreementsMetadata = {
+        author: formData.author ? [formData.author] : [],
+        author_type: formData.author_type ? [formData.author_type] : [],
+      }
+      Object.assign(familyMetadata, intlAgreementsMetadata)
+    }
+
+    // Handle Laws and Policies metadata
+    else if (corpusInfo?.corpus_type === 'Laws and Policies') {
+      const lawsPoliciesMetadata: ILawsAndPoliciesMetadata = {
+        topic: formData.topic?.map((topic) => topic.value) || [],
+        hazard: formData.hazard?.map((hazard) => hazard.value) || [],
+        sector: formData.sector?.map((sector) => sector.value) || [],
+        keyword: formData.keyword?.map((keyword) => keyword.value) || [],
+        framework:
+          formData.framework?.map((framework) => framework.value) || [],
+        instrument:
+          formData.instrument?.map((instrument) => instrument.value) || [],
+      }
+      Object.assign(familyMetadata, lawsPoliciesMetadata)
+    }
+
+    // Prepare submission data
+    const submissionData: TFamilyFormPost = {
+      title: formData.title,
+      summary: formData.summary,
+      geography: formData.geography?.value || '',
+      category: isMCFCorpus ? 'MCF' : formData.category,
+      corpus_import_id: formData.corpus?.value || '',
+      collections:
+        formData.collections?.map((collection) => collection.value) || [],
+      metadata: familyMetadata,
+    }
 
     try {
       if (loadedFamily) {
-        await updateFamily(familyData, loadedFamily.import_id)
+        await updateFamily(submissionData, loadedFamily.import_id)
         toast({
           title: 'Family has been successfully updated',
           status: 'success',
-          position: 'top',
         })
       } else {
-        const response = await createFamily(familyData)
+        const createResult = await createFamily(submissionData)
         toast({
           title: 'Family has been successfully created',
           status: 'success',
-          position: 'top',
         })
-        navigate(`/family/${response.response}/edit`)
+        navigate(`/family/${createResult.response}/edit`)
       }
     } catch (error) {
       setFormError(error as IError)
@@ -199,31 +223,22 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
         title: `Family has not been ${loadedFamily ? 'updated' : 'created'}`,
         description: (error as IError).message,
         status: 'error',
-        position: 'top',
       })
     } finally {
       setIsFormSubmitting(false)
     }
   }
 
-  const onSubmit: SubmitHandler<IFamilyForm> = (data) => {
-    handleFormSubmission(data).catch((error: IError) => {
-      console.error(error)
-    })
+  const onSubmit: SubmitHandler<IFamilyFormPost> = async (data) => {
+    try {
+      await handleFormSubmission(data)
+    } catch (error) {
+      console.log('onSubmitErrorHandler', error)
+    }
   }
 
   const onSubmitErrorHandler = (error: object) => {
     console.log('onSubmitErrorHandler', error)
-    const submitHandlerErrors = error as {
-      [key: string]: { message: string; type: string }
-    }
-    Object.keys(submitHandlerErrors).forEach((key) => {
-      if (key === 'summary')
-        setError('summary', {
-          type: 'required',
-          message: 'Summary is required',
-        })
-    })
   }
 
   const onAddNewEntityClick = (entityType: TChildEntity) => {
@@ -255,14 +270,12 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
     toast({
       title: 'Document deletion in progress',
       status: 'info',
-      position: 'top',
     })
     await deleteDocument(documentId)
       .then(() => {
         toast({
           title: 'Document has been successful deleted',
           status: 'success',
-          position: 'top',
         })
         const index = familyDocuments.indexOf(documentId)
         if (index > -1) {
@@ -276,7 +289,6 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
           title: 'Document has not been deleted',
           description: error.message,
           status: 'error',
-          position: 'top',
         })
       })
   }
@@ -298,14 +310,12 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
   const canLoadForm =
     !configLoading && !collectionsLoading && !configError && !collectionsError
 
-  console.log('Loading tax data:', taxonomy)
   useEffect(() => {
     if (loadedFamily && collections) {
-      console.log(loadedFamily)
       setFamilyDocuments(loadedFamily.documents || [])
       setFamilyEvents(loadedFamily.events || [])
 
-      reset({
+      const resetValues: Partial<IFamilyFormPost> = {
         title: loadedFamily.title,
         summary: loadedFamily.summary,
         collections:
@@ -331,31 +341,30 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
                 )?.display_value || loadedFamily.geography,
             }
           : undefined,
-        category: loadedFamily.category,
-        corpus: {
-          value: loadedFamily.corpus_import_id,
-          label: loadedFamily.corpus_name,
-        },
-      })
+        corpus: loadedFamily.corpus_import_id
+          ? {
+              label: loadedFamily.corpus_import_id,
+              value: loadedFamily.corpus_import_id,
+            }
+          : undefined,
+      }
+
+      // Set category to MCF for MCF corpora
+      if (isMCFCorpus) {
+        resetValues.category = 'MCF'
+      } else {
+        resetValues.category = loadedFamily.category
+      }
+
+      reset(resetValues)
     }
-  }, [loadedFamily, collections, reset])
+  }, [loadedFamily, collections, reset, isMCFCorpus])
 
   const blocker = useBlocker(
     ({ currentLocation, nextLocation }) =>
       !isFormSubmitting &&
       Object.keys(dirtyFields).length > 0 &&
       currentLocation.pathname !== nextLocation.pathname,
-  )
-
-  const handleBeforeUnload = useCallback(
-    (event: BeforeUnloadEvent) => {
-      if (Object.keys(dirtyFields).length > 0 && !isFormSubmitting) {
-        event.preventDefault()
-        event.returnValue =
-          'Are you sure you want leave? Changes that you made may not be saved.'
-      }
-    },
-    [dirtyFields, isFormSubmitting],
   )
 
   useEffect(() => {
@@ -365,11 +374,10 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
   }, [blocker])
 
   useEffect(() => {
-    window.addEventListener('beforeunload', handleBeforeUnload)
     return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload)
+      window.removeEventListener('beforeunload', () => {})
     }
-  }, [handleBeforeUnload])
+  }, [])
 
   return (
     <>
@@ -450,32 +458,38 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
               />
             )}
 
-            <RadioGroupField
-              name='category'
-              label='Category'
-              control={control}
-              options={[
-                { value: 'Executive', label: 'Executive' },
-                { value: 'Legislative', label: 'Legislative' },
-                { value: 'Litigation', label: 'Litigation' },
-                { value: 'UNFCCC', label: 'UNFCCC' },
-                { value: 'MCF', label: 'MCF' },
-              ]}
-              rules={{ required: true }}
-            />
+            {!isMCFCorpus ? (
+              <RadioGroupField
+                name='category'
+                label='Category'
+                control={control}
+                options={
+                  // These are the global family categories. We set MCF as the category directly
+                  // in the form above if the family corpus is a MCF corpus.
+                  [
+                    { value: 'Executive', label: 'Executive' },
+                    { value: 'Legislative', label: 'Legislative' },
+                    { value: 'Litigation', label: 'Litigation' },
+                    { value: 'UNFCCC', label: 'UNFCCC' },
+                  ]
+                }
+                rules={{ required: true }}
+              />
+            ) : null}
 
             {corpusInfo && (
-              <MetadataSection
-                corpusInfo={corpusInfo}
-                taxonomy={taxonomy}
-                control={control}
-                errors={errors}
-                loadedFamily={loadedFamily}
-                reset={reset}
-              />
+              <>
+                <MetadataSection
+                  corpusInfo={corpusInfo}
+                  taxonomy={taxonomy}
+                  control={control}
+                  errors={errors}
+                  loadedFamily={loadedFamily}
+                  reset={reset}
+                />
+                <Divider />
+              </>
             )}
-
-            <Divider />
 
             <DocumentSection
               familyDocuments={familyDocuments}

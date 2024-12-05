@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { Control, FieldErrors, UseFormReset } from 'react-hook-form'
 import { Box, Divider, AbsoluteCenter } from '@chakra-ui/react'
-import { DynamicMetadataField } from '../DynamicMetadataFields'
+import { DynamicMetadataFields } from '../DynamicMetadataFields'
 import {
   CORPUS_METADATA_CONFIG,
   FieldType,
@@ -80,10 +80,10 @@ export const MetadataSection: React.FC<MetadataSectionProps> = ({
         (CORPUS_METADATA_CONFIG[corpusInfo.corpus_type]?.renderFields ||
           {}) as Record<string, { type: FieldType }>,
       ).map(([fieldKey, fieldConfig]) => (
-        <DynamicMetadataField
+        <DynamicMetadataFields
           key={fieldKey}
           fieldKey={fieldKey}
-          taxonomyField={taxonomy[fieldKey]}
+          taxonomyField={taxonomy[fieldKey] || {}}
           control={control}
           errors={errors}
           fieldType={fieldConfig.type}

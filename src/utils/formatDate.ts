@@ -14,11 +14,11 @@ export const formatDateISO = (
 ): string => {
   if (!date) return ''
 
-  const d = date instanceof Date ? date : new Date(date)
+  const d = date instanceof Date ? date : new Date(String(date))
 
   // Check if the date is valid
   if (isNaN(d.getTime())) {
-    console.warn(`Invalid date: ${date}`)
+    console.warn(`Invalid date: ${String(date)}`)
     return ''
   }
 

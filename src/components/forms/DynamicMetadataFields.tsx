@@ -5,7 +5,7 @@ import {
   FormErrorMessage,
   FormHelperText,
 } from '@chakra-ui/react'
-import { Controller, Control, FieldErrors } from 'react-hook-form'
+import { Control, FieldErrors } from 'react-hook-form'
 import { FieldType } from '@/types/metadata'
 import { formatFieldLabel } from '@/utils/metadataUtils'
 import { SelectField } from './fields/SelectField'
@@ -67,11 +67,7 @@ export const DynamicMetadataFields = <T extends Record<string, any>>({
     <FormControl
       isInvalid={!!errors[fieldKey]}
       mb={4}
-      isRequired={
-        // Only mark as required if the field is in validationFields and allow_blanks is false
-        validationFields.includes(fieldKey) &&
-        taxonomyField.allow_blanks === false
-      }
+      isRequired={validationFields.includes(fieldKey) && !allow_blanks}
     >
       <FormLabel>{formatFieldLabel(fieldKey)}</FormLabel>
       {fieldType === FieldType.MULTI_SELECT && (

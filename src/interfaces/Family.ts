@@ -1,3 +1,4 @@
+// Corpus type metadata (aka taxonomy).
 export interface IInternationalAgreementsMetadata {
   author: string[]
   author_type: string[]

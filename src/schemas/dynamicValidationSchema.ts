@@ -3,135 +3,8 @@ import {
   FieldType,
   Taxonomy,
   CorpusInfo,
-  CorpusMetadataConfig,
-  ValidationSchema,
+  CORPUS_METADATA_CONFIG,
 } from '@/types/metadata'
-
-// Enum for field types to ensure type safety and scalability
-export enum FieldType {
-  TEXT = 'text',
-  MULTI_SELECT = 'multi_select',
-  SINGLE_SELECT = 'single_select',
-  NUMBER = 'number',
-  DATE = 'date',
-}
-
-// Enhanced configuration type for corpus metadata
-export type CorpusMetadataConfig = {
-  [corpusType: string]: {
-    renderFields: {
-      [fieldKey: string]: {
-        type: FieldType
-        label?: string
-        allowedValues?: string[]
-      }
-    }
-    validationFields: string[]
-  }
-}
-
-// Centralised configuration for corpus metadata
-export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
-  'Intl. agreements': {
-    renderFields: {
-      author: { type: FieldType.TEXT },
-      author_type: { type: FieldType.SINGLE_SELECT },
-    },
-    validationFields: ['author', 'author_type'],
-  },
-  'Laws and Policies': {
-    renderFields: {
-      topic: { type: FieldType.MULTI_SELECT },
-      hazard: { type: FieldType.MULTI_SELECT },
-      sector: { type: FieldType.MULTI_SELECT },
-      keyword: { type: FieldType.MULTI_SELECT },
-      framework: { type: FieldType.MULTI_SELECT },
-      instrument: { type: FieldType.MULTI_SELECT },
-    },
-    validationFields: [
-      'topic',
-      'hazard',
-      'sector',
-      'keyword',
-      'framework',
-      'instrument',
-    ],
-  },
-  AF: {
-    renderFields: {
-      region: { type: FieldType.MULTI_SELECT },
-      sector: { type: FieldType.MULTI_SELECT },
-      implementing_agency: { type: FieldType.MULTI_SELECT },
-      status: { type: FieldType.SINGLE_SELECT },
-      project_id: { type: FieldType.TEXT },
-      project_url: { type: FieldType.TEXT },
-      project_value_co_financing: { type: FieldType.NUMBER },
-      project_value_fund_spend: { type: FieldType.NUMBER },
-    },
-    validationFields: [
-      'project_id',
-      'project_url',
-      'region',
-      'sector',
-      'status',
-      'implementing_agency',
-      'project_value_co_financing',
-      'project_value_fund_spend',
-    ],
-  },
-  default: {
-    renderFields: {},
-    validationFields: [],
-  },
-}
-
-const getFieldValidation = (
-  fieldType: FieldType,
-  isRequired: boolean,
-  fieldKey: string,
-): yup.Schema => {
-  switch (fieldType) {
-    case FieldType.TEXT:
-      return isRequired
-        ? yup.string().required(`${fieldKey} is required`)
-        : yup.string()
-    case FieldType.MULTI_SELECT:
-      return isRequired
-        ? yup.array().of(yup.string()).min(1, `${fieldKey} is required`)
-        : yup.array().of(yup.string())
-    case FieldType.SINGLE_SELECT:
-      return isRequired
-        ? yup.string().required(`${fieldKey} is required`)
-        : yup.string()
-    case FieldType.NUMBER:
-      return isRequired
-        ? yup.number().required(`${fieldKey} is required`)
-        : yup.number()
-    case FieldType.DATE:
-      return isRequired
-        ? yup.date().required(`${fieldKey} is required`)
-        : yup.date()
-    default:
-      return yup.string()
-  }
-}
-
-// Types for taxonomy and corpus info
-export interface TaxonomyField {
-  allowed_values?: string[]
-  allow_any?: boolean
-  allow_blanks?: boolean
-}
-
-export interface Taxonomy {
-  [key: string]: TaxonomyField
-}
-
-export interface CorpusInfo {
-  corpus_type: string
-}
-
-type ValidationSchema = yup.ObjectSchema<any>
 
 export const generateDynamicValidationSchema = (
   taxonomy: Taxonomy | null,
@@ -150,7 +23,9 @@ export const generateDynamicValidationSchema = (
     (acc, [fieldKey, fieldConfig]) => {
       // Get the field's taxonomy configuration
       const taxonomyField = taxonomy[fieldKey]
-      const isRequired = validationFields.includes(fieldKey)
+      const isRequired =
+        validationFields.includes(fieldKey) &&
+        (!taxonomyField || taxonomyField.allow_blanks === false)
 
       // Generate field validation based on field type and requirements
       let fieldValidation: yup.Schema

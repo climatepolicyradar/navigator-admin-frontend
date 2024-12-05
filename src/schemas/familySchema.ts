@@ -1,6 +1,6 @@
 import * as yup from 'yup'
 
-// Base schema for core family fields
+// Base schema for core family fields (non-metadata)
 export const baseFamilySchema = yup
   .object({
     title: yup.string().required('Title is required'),
