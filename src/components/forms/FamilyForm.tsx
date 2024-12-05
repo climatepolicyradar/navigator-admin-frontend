@@ -415,6 +415,7 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
               defaultValue={loadedFamily?.summary}
               onChange={summaryOnChange}
               error={errors.summary}
+              isRequired={true}
             />
 
             <SelectField
