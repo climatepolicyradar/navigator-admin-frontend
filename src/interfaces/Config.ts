@@ -13,7 +13,7 @@ export interface IConfigGeography {
   node: IConfigGeographyNode
   children: IConfigGeography[]
 }
-interface IChakraSelect extends OptionBase {
+export interface IChakraSelect extends OptionBase {
   value: string
   label: string
 }
@@ -42,6 +42,7 @@ export interface IConfigTaxonomyCCLW {
   instrument: IConfigMeta
   event_type: IConfigMeta
   _document: IConfigDocumentMetadata
+  _event: IConfigEventMetadata
 }
 
 export interface IConfigTaxonomyUNFCCC {
@@ -49,8 +50,14 @@ export interface IConfigTaxonomyUNFCCC {
   author_type: IConfigMeta
   event_type: IConfigMeta
   _document: IConfigDocumentMetadata
+  _event: IConfigEventMetadata
 }
 
+export type TTaxonomy = IConfigTaxonomyCCLW | IConfigTaxonomyUNFCCC
+
+export interface IConfigEventMetadata {
+  event_type: IConfigMeta
+}
 export interface IConfigDocumentMetadata {
   role: IConfigMeta
   type: IConfigMeta
@@ -67,7 +74,7 @@ export interface IConfigCorpora {
   corpus_type: string
   corpus_type_description: string
   organisation: IConfigOrganisationMetadata
-  taxonomy: IConfigTaxonomyCCLW | IConfigTaxonomyUNFCCC
+  taxonomy: TTaxonomy
 }
 
 export interface IConfig {

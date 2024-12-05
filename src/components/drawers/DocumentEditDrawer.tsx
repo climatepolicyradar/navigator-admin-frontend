@@ -6,17 +6,17 @@ import {
   DrawerHeader,
   DrawerOverlay,
 } from '@chakra-ui/react'
-import { TDocument } from '@/interfaces'
+import { IDocument, TTaxonomy } from '@/interfaces'
 import { DocumentForm } from '../forms/DocumentForm'
 
 interface DocumentEditDrawerProps {
-  document?: TDocument
+  document?: IDocument
   familyId?: string
   onClose: () => void
   isOpen: boolean
   onSuccess?: (documentId: string) => void
   canModify?: boolean
-  taxonomy?: any
+  taxonomy?: TTaxonomy
 }
 
 export const DocumentEditDrawer: React.FC<DocumentEditDrawerProps> = ({

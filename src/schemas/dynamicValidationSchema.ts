@@ -6,10 +6,12 @@ import {
   CORPUS_METADATA_CONFIG,
 } from '@/interfaces/Metadata'
 
-export const generateDynamicValidationSchema = (
+export const generateDynamicValidationSchema = <
+  T extends Record<string, unknown>,
+>(
   taxonomy: Taxonomy | null,
   corpusInfo: CorpusInfo | null,
-): yup.ObjectSchema<any> => {
+): yup.ObjectSchema<T> => {
   if (!taxonomy || !corpusInfo) {
     return yup.object({}).required()
   }
@@ -85,7 +87,7 @@ export const generateDynamicValidationSchema = (
         [fieldKey]: fieldValidation,
       }
     },
-    {},
+    {} as T,
   )
 
   return yup.object(schemaShape).required()

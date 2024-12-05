@@ -1,5 +1,5 @@
 import React from 'react'
-import { Controller, Control } from 'react-hook-form'
+import { Controller, Control, RegisterOptions } from 'react-hook-form'
 import { Select as CRSelect } from 'chakra-react-select'
 import { chakraStylesSelect } from '@/styles/chakra'
 import { SelectOption } from '@/interfaces/Metadata'
@@ -12,7 +12,7 @@ interface SelectFieldProps<T extends Record<string, any>> {
   control: Control<T>
   options: string[] | SelectOption[]
   isMulti?: boolean
-  rules?: any
+  rules?: RegisterOptions
   isRequired?: boolean
 }
 

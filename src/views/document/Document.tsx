@@ -15,7 +15,6 @@ import { ApiError } from '@/components/feedback/ApiError'
 import useDocument from '@/hooks/useDocument'
 import useFamily from '@/hooks/useFamily'
 import useConfig from '@/hooks/useConfig'
-import useTaxonomy from '@/hooks/useTaxonomy'
 import { decodeToken } from '@/utils/decodeToken'
 import { IDecodedToken } from '@/interfaces'
 import { canModify } from '@/utils/canModify'
@@ -34,7 +33,7 @@ export default function Document() {
     config?.corpora,
     family?.corpus_import_id,
   )
-  const taxonomy = useTaxonomy(corpusInfo?.corpus_type, corpusInfo?.taxonomy)
+  const taxonomy = corpusInfo?.taxonomy
   const userToken = useMemo(() => {
     const token = localStorage.getItem('token')
     if (!token) return null

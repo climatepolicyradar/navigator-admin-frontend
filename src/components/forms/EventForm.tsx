@@ -24,6 +24,7 @@ import {
   Select,
 } from '@chakra-ui/react'
 import { formatDateISO } from '@/utils/formatDate'
+import { ApiError } from '../feedback/ApiError'
 
 type TaxonomyEventType =
   | { event_type: string[] }
@@ -153,67 +154,70 @@ export const EventForm = ({
   const invalidEventCreation = !loadedEvent && !familyId
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <VStack gap='4' mb={12} align={'stretch'}>
-        <FormControl isRequired isInvalid={!!errors.event_title}>
-          <FormLabel>Event Title</FormLabel>
-          <Input
-            {...register('event_title')}
-            placeholder='Enter event title'
-            isReadOnly={!canModify}
-          />
-          {errors.event_title && (
-            <FormErrorMessage>{errors.event_title.message}</FormErrorMessage>
-          )}
-        </FormControl>
+    <>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <VStack gap='4' mb={12} align={'stretch'}>
+          {formError && <ApiError error={formError} />}
+          <FormControl isRequired isInvalid={!!errors.event_title}>
+            <FormLabel>Event Title</FormLabel>
+            <Input
+              {...register('event_title')}
+              placeholder='Enter event title'
+              isReadOnly={!canModify}
+            />
+            {errors.event_title && (
+              <FormErrorMessage>{errors.event_title.message}</FormErrorMessage>
+            )}
+          </FormControl>
 
-        <FormControl isRequired isInvalid={!!errors.date}>
-          <FormLabel>Date</FormLabel>
-          <Input type='date' {...register('date')} isReadOnly={!canModify} />
-          {errors.date && (
-            <FormErrorMessage>{errors.date.message}</FormErrorMessage>
-          )}
-        </FormControl>
+          <FormControl isRequired isInvalid={!!errors.date}>
+            <FormLabel>Date</FormLabel>
+            <Input type='date' {...register('date')} isReadOnly={!canModify} />
+            {errors.date && (
+              <FormErrorMessage>{errors.date.message}</FormErrorMessage>
+            )}
+          </FormControl>
 
-        <FormControl isRequired isInvalid={!!errors.event_type_value}>
-          <FormLabel>Event Type</FormLabel>
-          <Select
-            {...register('event_type_value')}
-            placeholder='Select event type'
-            isReadOnly={!canModify}
-          >
-            {/* Add event type options from taxonomy if available */}
-            {taxonomy?.event_type &&
-              (Array.isArray(taxonomy.event_type)
-                ? taxonomy.event_type.map((type) => (
-                    <option key={type} value={type}>
-                      {type}
-                    </option>
-                  ))
-                : taxonomy.event_type.allowed_values?.map((type) => (
-                    <option key={type} value={type}>
-                      {type}
-                    </option>
-                  )))}
-          </Select>
-          {errors.event_type_value && (
-            <FormErrorMessage>
-              {errors.event_type_value.message}
-            </FormErrorMessage>
-          )}
-        </FormControl>
+          <FormControl isRequired isInvalid={!!errors.event_type_value}>
+            <FormLabel>Event Type</FormLabel>
+            <Select
+              {...register('event_type_value')}
+              placeholder='Select event type'
+              isReadOnly={!canModify}
+            >
+              {/* Add event type options from taxonomy if available */}
+              {taxonomy?.event_type &&
+                (Array.isArray(taxonomy.event_type)
+                  ? taxonomy.event_type.map((type) => (
+                      <option key={type} value={type}>
+                        {type}
+                      </option>
+                    ))
+                  : taxonomy.event_type.allowed_values?.map((type) => (
+                      <option key={type} value={type}>
+                        {type}
+                      </option>
+                    )))}
+            </Select>
+            {errors.event_type_value && (
+              <FormErrorMessage>
+                {errors.event_type_value.message}
+              </FormErrorMessage>
+            )}
+          </FormControl>
 
-        <ButtonGroup isDisabled={!canModify}>
-          <Button
-            type='submit'
-            colorScheme='blue'
-            isLoading={isSubmitting}
-            isDisabled={!canModify || invalidEventCreation}
-          >
-            {loadedEvent ? 'Update Event' : 'Create New Event'}
-          </Button>
-        </ButtonGroup>
-      </VStack>
-    </form>
+          <ButtonGroup isDisabled={!canModify}>
+            <Button
+              type='submit'
+              colorScheme='blue'
+              isLoading={isSubmitting}
+              isDisabled={!canModify || invalidEventCreation}
+            >
+              {loadedEvent ? 'Update Event' : 'Create New Event'}
+            </Button>
+          </ButtonGroup>
+        </VStack>
+      </form>
+    </>
   )
 }

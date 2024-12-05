@@ -3,11 +3,11 @@ import { Control, FieldErrors, UseFormReset } from 'react-hook-form'
 import { Box, Divider, AbsoluteCenter } from '@chakra-ui/react'
 import { DynamicMetadataFields } from '../DynamicMetadataFields'
 import { CORPUS_METADATA_CONFIG, FieldType } from '@/interfaces/Metadata'
-import { IConfigCorpus, TFamily } from '@/interfaces'
+import { IConfigCorpora, TFamily, TTaxonomy } from '@/interfaces'
 
 interface MetadataSectionProps {
-  corpusInfo: IConfigCorpus
-  taxonomy: any
+  corpusInfo: IConfigCorpora
+  taxonomy: TTaxonomy
   control: Control<any>
   errors: FieldErrors<any>
   loadedFamily?: TFamily
@@ -24,37 +24,31 @@ export const MetadataSection: React.FC<MetadataSectionProps> = ({
 }) => {
   useEffect(() => {
     if (loadedFamily?.metadata && corpusInfo) {
-      const metadataValues = Object.entries(loadedFamily.metadata).reduce(
-        (acc, [key, value]) => {
-          const fieldConfig =
-            CORPUS_METADATA_CONFIG[corpusInfo.corpus_type]?.renderFields?.[key]
-          if (!fieldConfig) return acc
+      const metadataValues = Object.entries(loadedFamily.metadata).reduce<
+        Record<string, any>
+      >((acc, [key, value]) => {
+        const fieldConfig =
+          CORPUS_METADATA_CONFIG[corpusInfo.corpus_type]?.renderFields?.[key]
+        if (!fieldConfig) return acc
 
-          if (fieldConfig.type === FieldType.SINGLE_SELECT) {
-            acc[key] = value?.[0]
-              ? {
-                  value: value[0],
-                  label: value[0],
-                }
-              : undefined
-          } else if (fieldConfig.type === FieldType.MULTI_SELECT) {
-            acc[key] =
-              value?.map((v) => ({
-                value: v,
-                label: v,
-              })) || []
-          } else if (
-            fieldConfig.type === FieldType.TEXT ||
-            fieldConfig.type === FieldType.NUMBER
-          ) {
-            acc[key] = value?.[0] || ''
-          } else {
-            acc[key] = value?.[0] || ''
-          }
-          return acc
-        },
-        {} as Record<string, any>,
-      )
+        if (fieldConfig.type === FieldType.SINGLE_SELECT) {
+          acc[key] = value?.[0]
+            ? {
+                value: value[0],
+                label: value[0],
+              }
+            : undefined
+        } else if (fieldConfig.type === FieldType.MULTI_SELECT) {
+          acc[key] = value?.map((v) => ({
+            value: v,
+            label: v,
+          }))
+        } else {
+          acc[key] = value?.[0]
+        }
+
+        return acc
+      }, {})
 
       reset((formValues) => ({
         ...formValues,

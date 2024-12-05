@@ -19,6 +19,10 @@ export interface Taxonomy {
   [key: string]: TaxonomyField
 }
 
+export interface SubTaxonomy {
+  [key: string]: Taxonomy
+}
+
 export interface CorpusInfo {
   corpus_type: string
   title?: string // TODO Do we need this?
@@ -76,28 +80,6 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
       'keyword',
       'framework',
       'instrument',
-    ],
-  },
-  AF: {
-    renderFields: {
-      region: { type: FieldType.MULTI_SELECT },
-      sector: { type: FieldType.MULTI_SELECT },
-      implementing_agency: { type: FieldType.MULTI_SELECT },
-      status: { type: FieldType.SINGLE_SELECT },
-      project_id: { type: FieldType.TEXT },
-      project_url: { type: FieldType.TEXT },
-      project_value_co_financing: { type: FieldType.NUMBER },
-      project_value_fund_spend: { type: FieldType.NUMBER },
-    },
-    validationFields: [
-      'project_id',
-      'project_url',
-      'region',
-      'sector',
-      'status',
-      'implementing_agency',
-      'project_value_co_financing',
-      'project_value_fund_spend',
     ],
   },
   default: {

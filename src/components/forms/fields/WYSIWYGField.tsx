@@ -28,7 +28,7 @@ export const WYSIWYGField = <T extends FieldValues>({
       name={name}
       rules={{
         required: isRequired ? 'This field is required' : false,
-        validate: (value) =>
+        validate: (value: string) =>
           isRequired
             ? (value && value.trim() !== '') || 'This field is required'
             : true,

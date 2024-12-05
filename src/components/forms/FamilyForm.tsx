@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useCallback } from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useBlocker, useNavigate } from 'react-router-dom'
@@ -14,7 +14,6 @@ import {
 
 import useCorpusFromConfig from '@/hooks/useCorpusFromConfig'
 import useConfig from '@/hooks/useConfig'
-import useTaxonomy from '@/hooks/useTaxonomy'
 import useCollections from '@/hooks/useCollections'
 
 import { SelectField } from './fields/SelectField'
@@ -33,8 +32,8 @@ import {
   IInternationalAgreementsMetadata,
   ILawsAndPoliciesMetadata,
   TFamilyFormPostMetadata,
+  TFamily,
 } from '@/interfaces/Family'
-import { TChildEntity } from '@/types/entities'
 import { canModify } from '@/utils/canModify'
 import { getCountries } from '@/utils/extractNestedGeographyData'
 import { decodeToken } from '@/utils/decodeToken'
@@ -45,10 +44,26 @@ import { deleteDocument } from '@/api/Documents'
 import { deleteEvent } from '@/api/Events'
 import { createFamilySchema } from '@/schemas/familySchema'
 import { ApiError } from '../feedback/ApiError'
+// import { IChakraSelect } from '@/interfaces/Config'
+import { IDocument } from '@/interfaces/Document'
+import { IEvent } from '@/interfaces/Event'
+import { IError } from '@/interfaces/Auth'
+import { IConfigCorpora, TTaxonomy } from '@/interfaces'
 
 interface FamilyFormProps {
   family?: TFamily
 }
+
+type TChildEntity = 'event' | 'document'
+
+// interface IFamilyFormBase {
+//   title: string
+//   summary: string
+//   geography: IChakraSelect
+//   category: string
+//   corpus: IChakraSelect
+//   collections?: IChakraSelect[]
+// }
 
 export const FamilyForm: React.FC<FamilyFormProps> = ({
   family: loadedFamily,
@@ -66,38 +81,48 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
   const toast = useToast()
   const [formError, setFormError] = useState<IError | null | undefined>()
 
+  // Determine corpus import ID based on loaded family or form input
+  const getCorpusImportId = (
+    loadedFamily?: TFamily,
+    watchCorpus?: { value: string },
+  ) => loadedFamily?.corpus_import_id || watchCorpus?.value
+
   // Initialise corpus and taxonomy first
   const initialCorpusInfo = useCorpusFromConfig(
     config?.corpora,
-    loadedFamily?.corpus_import_id,
-    loadedFamily?.corpus_import_id,
+    getCorpusImportId(loadedFamily),
+    getCorpusImportId(loadedFamily),
   )
-  const initialTaxonomy = useTaxonomy(
-    initialCorpusInfo?.corpus_type,
-    initialCorpusInfo?.taxonomy,
-    loadedFamily?.corpus_import_id,
+  const initialTaxonomy = initialCorpusInfo?.taxonomy
+
+  // Create validation schema
+  const createValidationSchema = useCallback(
+    (currentTaxonomy?: TTaxonomy, currentCorpusInfo?: IConfigCorpora) => {
+      const metadataSchema =
+        generateDynamicValidationSchema<TFamilyFormPostMetadata>(
+          currentTaxonomy,
+          currentCorpusInfo,
+        )
+      return createFamilySchema(metadataSchema)
+    },
+    [],
   )
 
-  // Create initial validation schema
-  const validationSchema = useMemo(() => {
-    const metadataSchema = generateDynamicValidationSchema(
-      initialTaxonomy,
-      initialCorpusInfo,
-    )
-    return createFamilySchema(metadataSchema)
-  }, [initialTaxonomy, initialCorpusInfo])
+  // Initial validation schema
+  const validationSchema = useMemo(
+    () => createValidationSchema(initialTaxonomy, initialCorpusInfo),
+    [initialTaxonomy, initialCorpusInfo, createValidationSchema],
+  )
 
   const {
     control,
-    register,
     handleSubmit,
     reset,
-    setError,
     setValue,
     watch,
     formState: { errors, isSubmitting, dirtyFields },
     trigger,
-  } = useForm<IFamilyFormPost>({
+  } = useForm<TFamilyFormPost>({
     resolver: yupResolver(validationSchema),
   })
 
@@ -105,22 +130,17 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
   const watchCorpus = watch('corpus')
   const corpusInfo = useCorpusFromConfig(
     config?.corpora,
-    loadedFamily?.corpus_import_id,
-    watchCorpus?.value,
+    getCorpusImportId(loadedFamily),
+    getCorpusImportId(loadedFamily, watchCorpus),
   )
-  const taxonomy = useTaxonomy(
-    corpusInfo?.corpus_type,
-    corpusInfo?.taxonomy,
-    watchCorpus?.value,
-  )
+  const taxonomy = corpusInfo?.taxonomy
 
   // Update validation schema when corpus/taxonomy changes
   useEffect(() => {
-    const metadataSchema = generateDynamicValidationSchema(taxonomy, corpusInfo)
-    const newSchema = createFamilySchema(metadataSchema)
+    const newSchema = createValidationSchema(taxonomy, corpusInfo)
     // Re-trigger form validation with new schema
     trigger()
-  }, [taxonomy, corpusInfo])
+  }, [taxonomy, corpusInfo, createValidationSchema, trigger])
 
   // Determine if the corpus is an MCF type
   const isMCFCorpus = useMemo(() => {
@@ -149,14 +169,14 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
     return {
       canModify: canModify(
         loadedFamily ? String(loadedFamily.organisation) : null,
-        decodedToken?.is_superuser,
+        decodedToken?.is_superuser ?? false,
         decodedToken?.authorisation,
       ),
       isSuperUser: decodedToken?.is_superuser || false,
     }
   }, [loadedFamily])
 
-  const handleFormSubmission = async (formData: IFamilyFormPost) => {
+  const handleFormSubmission = async (formData: TFamilyFormPost) => {
     setIsFormSubmitting(true)
     setFormError(null)
 
@@ -175,14 +195,18 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
     // Handle Laws and Policies metadata
     else if (corpusInfo?.corpus_type === 'Laws and Policies') {
       const lawsPoliciesMetadata: ILawsAndPoliciesMetadata = {
-        topic: formData.topic?.map((topic) => topic.value) || [],
-        hazard: formData.hazard?.map((hazard) => hazard.value) || [],
-        sector: formData.sector?.map((sector) => sector.value) || [],
-        keyword: formData.keyword?.map((keyword) => keyword.value) || [],
+        topic: formData.topic?.map((topic) => topic.value as string) || [],
+        hazard: formData.hazard?.map((hazard) => hazard.value as string) || [],
+        sector: formData.sector?.map((sector) => sector.value as string) || [],
+        keyword:
+          formData.keyword?.map((keyword) => keyword.value as string) || [],
         framework:
-          formData.framework?.map((framework) => framework.value) || [],
+          formData.framework?.map((framework) => framework.value as string) ||
+          [],
         instrument:
-          formData.instrument?.map((instrument) => instrument.value) || [],
+          formData.instrument?.map(
+            (instrument) => instrument.value as string,
+          ) || [],
       }
       Object.assign(familyMetadata, lawsPoliciesMetadata)
     }
@@ -226,7 +250,7 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
     }
   }
 
-  const onSubmit: SubmitHandler<IFamilyFormPost> = async (data) => {
+  const onSubmit: SubmitHandler<TFamilyFormPost> = async (data) => {
     try {
       await handleFormSubmission(data)
     } catch (error) {
@@ -340,7 +364,7 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
       setFamilyDocuments(loadedFamily.documents || [])
       setFamilyEvents(loadedFamily.events || [])
 
-      const resetValues: Partial<IFamilyFormPost> = {
+      const resetValues: Partial<TFamilyFormPost> = {
         title: loadedFamily.title,
         summary: loadedFamily.summary,
         collections:
@@ -415,8 +439,8 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
           detail='Please go back to the "Families" page, if you think there has been a mistake please contact the administrator.'
         />
       )}
-      {(configError || collectionsError) && (
-        <ApiError error={configError || collectionsError} />
+      {(configError || collectionsError || formError) && (
+        <ApiError error={configError || collectionsError || formError} />
       )}
 
       {canLoadForm && (

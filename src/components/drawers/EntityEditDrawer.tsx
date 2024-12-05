@@ -1,18 +1,18 @@
 import React from 'react'
 import { DocumentEditDrawer } from './DocumentEditDrawer'
 import { EventEditDrawer } from './EventEditDrawer'
-import { TDocument, TEvent } from '@/interfaces'
+import { IDocument, IEvent, TTaxonomy } from '@/interfaces'
 
 interface EntityEditDrawerProps {
   isOpen: boolean
   onClose: () => void
   entity: 'document' | 'event'
-  document?: TDocument
-  event?: TEvent
-  onDocumentSuccess?: (document: TDocument) => void
-  onEventSuccess?: (event: TEvent) => void
+  document?: IDocument
+  event?: IEvent
+  onDocumentSuccess?: (document: IDocument) => void
+  onEventSuccess?: (event: IEvent) => void
   familyId?: string
-  taxonomy?: any
+  taxonomy?: TTaxonomy
   canModify?: boolean
 }
 

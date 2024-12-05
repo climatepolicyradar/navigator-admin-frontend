@@ -6,18 +6,18 @@ import {
   DrawerHeader,
   DrawerOverlay,
 } from '@chakra-ui/react'
-import { TEvent } from '@/interfaces'
+import { IEvent, TTaxonomy } from '@/interfaces'
 import { EventForm } from '../forms/EventForm'
 import { formatDate } from '@/utils/formatDate'
 
 interface EventEditDrawerProps {
-  event?: TEvent
+  event?: IEvent
   familyId?: string
   onClose: () => void
   isOpen: boolean
   onSuccess?: (eventId: string) => void
   canModify?: boolean
-  taxonomy?: any
+  taxonomy?: TTaxonomy
 }
 
 export const EventEditDrawer: React.FC<EventEditDrawerProps> = ({
