@@ -1,7 +1,6 @@
 import '@testing-library/jest-dom'
 import { render, screen } from '@testing-library/react'
 import { EventEditDrawer } from '@/components/drawers/EventEditDrawer'
-import { EventForm } from '@/components/forms/EventForm'
 import { formatDate } from '@/utils/formatDate'
 
 describe('EventEditDrawer', () => {
@@ -21,17 +20,12 @@ describe('EventEditDrawer', () => {
     }
     render(
       <EventEditDrawer
-        editingEvent={editingEvent}
+        event={editingEvent}
         onClose={() => {}}
         isOpen={true}
-      >
-        <EventForm
-          familyId={'1'}
-          canModify={true}
-          event={editingEvent}
-          onSuccess={() => {}}
-        />
-      </EventEditDrawer>,
+        canModify={true}
+        familyId={'1'}
+      />,
     )
     expect(
       screen.getByText(
@@ -45,13 +39,17 @@ describe('EventEditDrawer', () => {
 
   it('renders create new event form if an editingEvent is not passed in', () => {
     render(
-      <EventEditDrawer onClose={() => {}} isOpen={true}>
-        <EventForm familyId={'1'} canModify={true} onSuccess={() => {}} />
-      </EventEditDrawer>,
+      <EventEditDrawer
+        onClose={() => {}}
+        isOpen={true}
+        familyId={'1'}
+        canModify={true}
+        onSuccess={() => {}}
+      />,
     )
     expect(screen.getByText('Add new Event')).toBeInTheDocument()
     expect(
-      screen.getByRole('button', { name: 'Create new Event' }),
+      screen.getByRole('button', { name: 'Create New Event' }),
     ).toBeInTheDocument()
   })
 })
