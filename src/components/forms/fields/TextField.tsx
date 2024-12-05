@@ -1,6 +1,11 @@
 import React from 'react'
 import { Controller, Control } from 'react-hook-form'
-import { Input, FormControl, FormLabel, FormErrorMessage } from '@chakra-ui/react'
+import {
+  Input,
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+} from '@chakra-ui/react'
 
 interface TextFieldProps<T extends Record<string, any>> {
   name: string
@@ -28,7 +33,7 @@ export const TextField = <T extends Record<string, any>>({
           {label && <FormLabel>{label}</FormLabel>}
           <Input
             {...field}
-            bg="white"
+            bg='white'
             type={type}
             placeholder={placeholder ?? `Enter ${name}`}
           />

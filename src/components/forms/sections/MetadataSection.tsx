@@ -2,7 +2,10 @@ import React, { useEffect } from 'react'
 import { Control, FieldErrors, UseFormReset } from 'react-hook-form'
 import { Box, Divider, AbsoluteCenter } from '@chakra-ui/react'
 import { DynamicMetadataField } from '../DynamicMetadataFields'
-import { CORPUS_METADATA_CONFIG, FieldType } from '@/schemas/dynamicValidationSchema'
+import {
+  CORPUS_METADATA_CONFIG,
+  FieldType,
+} from '@/schemas/dynamicValidationSchema'
 import { IConfigCorpus, TFamily } from '@/interfaces'
 
 interface MetadataSectionProps {
@@ -24,31 +27,41 @@ export const MetadataSection: React.FC<MetadataSectionProps> = ({
 }) => {
   useEffect(() => {
     if (loadedFamily?.metadata && corpusInfo) {
-      const metadataValues = Object.entries(loadedFamily.metadata).reduce((acc, [key, value]) => {
-        const fieldConfig = CORPUS_METADATA_CONFIG[corpusInfo.corpus_type]?.renderFields?.[key]
-        if (!fieldConfig) return acc
+      const metadataValues = Object.entries(loadedFamily.metadata).reduce(
+        (acc, [key, value]) => {
+          const fieldConfig =
+            CORPUS_METADATA_CONFIG[corpusInfo.corpus_type]?.renderFields?.[key]
+          if (!fieldConfig) return acc
 
-        if (fieldConfig.type === FieldType.SINGLE_SELECT) {
-          acc[key] = value?.[0] ? {
-            value: value[0],
-            label: value[0]
-          } : undefined
-        } else if (fieldConfig.type === FieldType.MULTI_SELECT) {
-          acc[key] = value?.map(v => ({
-            value: v,
-            label: v
-          })) || []
-        } else if (fieldConfig.type === FieldType.TEXT || fieldConfig.type === FieldType.NUMBER) {
-          acc[key] = value?.[0] || ''
-        } else {
-          acc[key] = value?.[0] || ''
-        }
-        return acc
-      }, {} as Record<string, any>)
+          if (fieldConfig.type === FieldType.SINGLE_SELECT) {
+            acc[key] = value?.[0]
+              ? {
+                  value: value[0],
+                  label: value[0],
+                }
+              : undefined
+          } else if (fieldConfig.type === FieldType.MULTI_SELECT) {
+            acc[key] =
+              value?.map((v) => ({
+                value: v,
+                label: v,
+              })) || []
+          } else if (
+            fieldConfig.type === FieldType.TEXT ||
+            fieldConfig.type === FieldType.NUMBER
+          ) {
+            acc[key] = value?.[0] || ''
+          } else {
+            acc[key] = value?.[0] || ''
+          }
+          return acc
+        },
+        {} as Record<string, any>,
+      )
 
       reset((formValues) => ({
         ...formValues,
-        ...metadataValues
+        ...metadataValues,
       }))
     }
   }, [loadedFamily, corpusInfo, reset])
@@ -57,17 +70,15 @@ export const MetadataSection: React.FC<MetadataSectionProps> = ({
 
   return (
     <>
-      <Box position="relative" padding="10">
+      <Box position='relative' padding='10'>
         <Divider />
-        <AbsoluteCenter bg="gray.50" px="4">
+        <AbsoluteCenter bg='gray.50' px='4'>
           Metadata
         </AbsoluteCenter>
       </Box>
       {Object.entries(
-        (CORPUS_METADATA_CONFIG[corpusInfo.corpus_type]?.renderFields || {}) as Record<
-          string,
-          { type: FieldType }
-        >
+        (CORPUS_METADATA_CONFIG[corpusInfo.corpus_type]?.renderFields ||
+          {}) as Record<string, { type: FieldType }>,
       ).map(([fieldKey, fieldConfig]) => (
         <DynamicMetadataField
           key={fieldKey}

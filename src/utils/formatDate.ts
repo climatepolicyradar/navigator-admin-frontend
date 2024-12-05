@@ -9,7 +9,18 @@ export const formatDateTime = (date: string) => {
   return d.toLocaleString()
 }
 
-export const formatDateISO = (date: string) => {
-  const d = new Date(date)
+export const formatDateISO = (
+  date: string | Date | null | undefined,
+): string => {
+  if (!date) return ''
+
+  const d = date instanceof Date ? date : new Date(date)
+
+  // Check if the date is valid
+  if (isNaN(d.getTime())) {
+    console.warn(`Invalid date: ${date}`)
+    return ''
+  }
+
   return d.toISOString().split('T')[0]
 }

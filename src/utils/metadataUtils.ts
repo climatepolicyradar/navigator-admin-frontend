@@ -8,8 +8,8 @@ export const formatFieldLabel = (key: string): string => {
 }
 
 export const generateSelectOptions = (values?: string[]): SelectOption[] => {
-  if (!values) return [];
-  return values.map((value) => ({ value, label: value }));
+  if (!values) return []
+  return values.map((value) => ({ value, label: value }))
 }
 
 export const isArrayField = (fieldType: string): boolean => {

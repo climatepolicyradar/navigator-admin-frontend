@@ -1,5 +1,11 @@
 import React from 'react'
-import { Control, Controller, FieldValues, Path, RegisterOptions } from 'react-hook-form'
+import {
+  Control,
+  Controller,
+  FieldValues,
+  Path,
+  RegisterOptions,
+} from 'react-hook-form'
 import {
   FormControl,
   FormLabel,
@@ -36,11 +42,11 @@ export const RadioGroupField = <T extends FieldValues>({
       rules={rules}
       render={({ field, fieldState: { error } }) => (
         <FormControl isRequired={!!rules?.required} isInvalid={!!error}>
-          <FormLabel as="legend">{label}</FormLabel>
+          <FormLabel as='legend'>{label}</FormLabel>
           <RadioGroup {...field}>
             <HStack gap={4}>
               {options.map((option) => (
-                <Radio key={option.value} bg="white" value={option.value}>
+                <Radio key={option.value} bg='white' value={option.value}>
                   {option.label}
                 </Radio>
               ))}

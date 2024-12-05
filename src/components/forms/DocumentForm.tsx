@@ -48,23 +48,91 @@ type TProps = {
 export const DocumentForm = ({
   document: loadedDocument,
   familyId,
-  canModify,
+  canModify = false,
   taxonomy,
   onSuccess,
 }: TProps) => {
+  console.log('DocumentForm Initialized', {
+    loadedDocument,
+    familyId,
+    canModify,
+    taxonomy,
+  })
+
   const { config, loading: configLoading, error: configError } = useConfig()
   const toast = useToast()
   const [formError, setFormError] = useState<IError | null | undefined>()
+
   const {
     control,
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors, isSubmitting },
-  } = useForm({
+  } = useForm<IDocumentFormPost>({
     resolver: yupResolver(documentSchema),
+    defaultValues: {
+      family_import_id: familyId || loadedDocument?.family_import_id || '',
+    },
   })
+
+  // Ensure family_import_id is always set
+  useEffect(() => {
+    console.log('Setting family_import_id', {
+      familyId,
+      loadedDocument,
+      currentValue: familyId || loadedDocument?.family_import_id,
+    })
+
+    if (familyId || loadedDocument?.family_import_id) {
+      setValue('family_import_id', familyId || loadedDocument?.family_import_id)
+    }
+  }, [familyId, loadedDocument, setValue])
+
+  // Initialize form with existing document data
+  useEffect(() => {
+    console.log('Initializing form with document data', { loadedDocument })
+
+    if (loadedDocument) {
+      reset({
+        family_import_id: loadedDocument.family_import_id || familyId,
+        variant_name: loadedDocument.variant_name ?? '',
+        role: loadedDocument?.metadata?.role[0] ?? '',
+        type: loadedDocument?.metadata?.type[0] ?? '',
+        title: loadedDocument.title,
+        source_url: loadedDocument.source_url ?? '',
+        user_language_name: loadedDocument.user_language_name
+          ? {
+              label: loadedDocument.user_language_name,
+              value: loadedDocument.user_language_name,
+            }
+          : undefined,
+      })
+    }
+  }, [loadedDocument, familyId, reset])
+
+  const invalidDocumentCreation = !loadedDocument && !familyId
+
   const handleFormSubmission = async (formData: IDocumentFormPost) => {
+    console.log('Form Submission Started', {
+      formData,
+      familyId,
+      loadedDocument,
+      family_import_id: formData.family_import_id || familyId,
+    })
+
+    // Ensure family_import_id is always present
+    if (!formData.family_import_id && !familyId) {
+      toast({
+        title: 'Error',
+        description: 'Family ID is required for document creation',
+        status: 'error',
+        position: 'top',
+      })
+      return
+    }
+
     setFormError(null)
 
     const convertToModified = (
@@ -79,7 +147,7 @@ export const DocumentForm = ({
       }
 
       return {
-        family_import_id: data.family_import_id,
+        family_import_id: data.family_import_id || familyId || '',
         title: data.title,
         metadata: metadata,
         source_url: data.source_url || null,
@@ -89,81 +157,49 @@ export const DocumentForm = ({
     }
 
     const modifiedDocumentData = convertToModified(formData)
+    console.log('Modified Document Data', { modifiedDocumentData })
 
-    if (loadedDocument) {
-      return await updateDocument(
-        modifiedDocumentData,
-        loadedDocument.import_id,
-      )
-        .then((data) => {
-          toast.closeAll()
-          toast({
-            title: 'Document has been successfully updated',
-            status: 'success',
-            position: 'top',
-          })
-          onSuccess && onSuccess(data.response.import_id)
+    try {
+      if (loadedDocument) {
+        const updateResult = await updateDocument(
+          modifiedDocumentData,
+          loadedDocument.import_id,
+        )
+        console.log('Update Result', updateResult)
+        toast({
+          title: 'Document has been successfully updated',
+          status: 'success',
+          position: 'top',
         })
-        .catch((error: IError) => {
-          setFormError(error)
-          toast({
-            title: 'Document has not been updated',
-            description: error.message,
-            status: 'error',
-            position: 'top',
-          })
-        })
-    }
-
-    return await createDocument(modifiedDocumentData)
-      .then((data) => {
-        toast.closeAll()
+        onSuccess && onSuccess(updateResult.response.import_id)
+      } else {
+        const createResult = await createDocument(modifiedDocumentData)
+        console.log('Create Result', createResult)
         toast({
           title: 'Document has been successfully created',
           status: 'success',
           position: 'top',
         })
-        onSuccess && onSuccess(data.response)
-      })
-      .catch((error: IError) => {
-        setFormError(error)
-        toast({
-          title: 'Document has not been created',
-          description: error.message,
-          status: 'error',
-          position: 'top',
-        })
-      })
-  } // end handleFormSubmission
-
-  const onSubmit: SubmitHandler<IDocumentFormPost> = (data) =>
-    handleFormSubmission(data)
-
-  const invalidDocumentCreation = !loadedDocument && !familyId
-
-  useEffect(() => {
-    // Handle both loading an existing document and creating a new one (for a given family)
-    if (loadedDocument) {
-      reset({
-        family_import_id: loadedDocument.family_import_id,
-        variant_name: loadedDocument.variant_name ?? '',
-        role: loadedDocument?.metadata?.role[0] ?? '',
-        type: loadedDocument?.metadata?.type[0] ?? '',
-        title: loadedDocument.title,
-        source_url: loadedDocument.source_url ?? '',
-        user_language_name: loadedDocument.user_language_name
-          ? {
-              label: loadedDocument.user_language_name,
-              value: loadedDocument.user_language_name,
-            }
-          : undefined,
-      })
-    } else if (familyId) {
-      reset({
-        family_import_id: familyId,
+        onSuccess && onSuccess(createResult.response)
+      }
+    } catch (error) {
+      console.error('Document Submission Error', error)
+      setFormError(error as IError)
+      toast({
+        title: loadedDocument
+          ? 'Document Update Failed'
+          : 'Document Creation Failed',
+        description: (error as IError)?.message,
+        status: 'error',
+        position: 'top',
       })
     }
-  }, [loadedDocument, familyId, reset])
+  }
+
+  const onSubmit: SubmitHandler<IDocumentFormPost> = (data) => {
+    console.log('onSubmit called', { data })
+    return handleFormSubmission(data)
+  }
 
   return (
     <>
@@ -188,13 +224,20 @@ export const DocumentForm = ({
           {formError && <ApiError error={formError} />}
           <FormControl isRequired isReadOnly isDisabled>
             <FormLabel>Family ID</FormLabel>
-            <Input bg='white' {...register('family_import_id')} />
+            <Input
+              bg='white'
+              {...register('family_import_id')}
+              value={familyId || loadedDocument?.family_import_id || ''}
+              readOnly
+            />
             <FormHelperText>This field is not editable</FormHelperText>
           </FormControl>
+
           <FormControl isRequired>
             <FormLabel>Title</FormLabel>
             <Input bg='white' {...register('title')} />
           </FormControl>
+
           <FormControl isInvalid={!!errors.source_url}>
             <FormLabel>Source URL</FormLabel>
             <Input bg='white' {...register('source_url')} />
@@ -202,6 +245,7 @@ export const DocumentForm = ({
               {errors.source_url && errors.source_url.message}
             </FormErrorMessage>
           </FormControl>
+
           <Controller
             control={control}
             name='role'
@@ -222,6 +266,7 @@ export const DocumentForm = ({
               )
             }}
           />
+
           <Controller
             control={control}
             name='type'
@@ -242,6 +287,7 @@ export const DocumentForm = ({
               )
             }}
           />
+
           <Controller
             control={control}
             name='variant_name'
@@ -262,6 +308,7 @@ export const DocumentForm = ({
               )
             }}
           />
+
           <Controller
             control={control}
             name='user_language_name'
@@ -289,12 +336,13 @@ export const DocumentForm = ({
               )
             }}
           />
+
           <ButtonGroup isDisabled={!canModify}>
             <Button
               type='submit'
               colorScheme='blue'
-              onSubmit={handleSubmit(onSubmit)}
-              disabled={isSubmitting}
+              isLoading={isSubmitting}
+              isDisabled={!canModify || invalidDocumentCreation}
             >
               {(loadedDocument ? 'Update ' : 'Create new ') + ' Document'}
             </Button>

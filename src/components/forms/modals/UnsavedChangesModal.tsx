@@ -29,10 +29,10 @@ export const UnsavedChangesModal: React.FC<UnsavedChangesModalProps> = ({
         <ModalCloseButton />
         <ModalBody>Changes that you made may not be saved.</ModalBody>
         <ModalFooter>
-          <Button colorScheme="gray" mr={3} onClick={onClose}>
+          <Button colorScheme='gray' mr={3} onClick={onClose}>
             Cancel
           </Button>
-          <Button colorScheme="red" onClick={onConfirm}>
+          <Button colorScheme='red' onClick={onConfirm}>
             Leave without saving
           </Button>
         </ModalFooter>

@@ -46,6 +46,7 @@ import { DocumentSection } from './sections/DocumentSection'
 import { EventSection } from './sections/EventSection'
 import { UnsavedChangesModal } from './modals/UnsavedChangesModal'
 import { ReadOnlyFields } from './ReadOnlyFields'
+import { EntityEditDrawer } from '../drawers/EntityEditDrawer'
 
 import {
   IFamilyForm,
@@ -530,6 +531,9 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
           event={editingEvent}
           onDocumentSuccess={onDocumentFormSuccess}
           onEventSuccess={onEventFormSuccess}
+          familyId={loadedFamily?.import_id}
+          taxonomy={taxonomy}
+          canModify={userAccess.canModify}
         />
       )}
     </>

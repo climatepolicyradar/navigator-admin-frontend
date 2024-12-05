@@ -26,11 +26,13 @@ export const SelectField = <T extends Record<string, any>>({
   isRequired,
 }: SelectFieldProps<T>): React.ReactElement => {
   // Determine if options are already in SelectOption format
-  const selectOptions = options ? 
-    (Array.isArray(options) && options.length > 0 && 
-    typeof options[0] === 'object' && 'value' in options[0] 
-    ? options 
-    : generateSelectOptions(options as string[])) 
+  const selectOptions = options
+    ? Array.isArray(options) &&
+      options.length > 0 &&
+      typeof options[0] === 'object' &&
+      'value' in options[0]
+      ? options
+      : generateSelectOptions(options as string[])
     : []
 
   return (
@@ -48,7 +50,7 @@ export const SelectField = <T extends Record<string, any>>({
             return value || 'This field is required'
           }
           return true
-        }
+        },
       }}
       render={({ field, fieldState: { error } }) => (
         <FormControl isInvalid={!!error} isRequired={isRequired}>

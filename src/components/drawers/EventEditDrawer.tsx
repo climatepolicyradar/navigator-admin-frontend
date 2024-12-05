@@ -1,4 +1,4 @@
-import { formatDate } from '@/utils/formatDate'
+import React from 'react'
 import {
   Drawer,
   DrawerBody,
@@ -6,34 +6,51 @@ import {
   DrawerHeader,
   DrawerOverlay,
 } from '@chakra-ui/react'
-import { IEvent } from '@/interfaces'
-import { PropsWithChildren } from 'react'
+import { TEvent } from '@/interfaces'
+import { EventForm } from '../forms/EventForm'
+import { formatDate } from '@/utils/formatDate'
 
-type TProps = {
-  editingEvent?: IEvent
+interface EventEditDrawerProps {
+  event?: TEvent
+  familyId?: string
   onClose: () => void
   isOpen: boolean
+  onSuccess?: (eventId: string) => void
+  canModify?: boolean
+  taxonomy?: any
 }
 
-export const EventEditDrawer = ({
-  editingEvent,
+export const EventEditDrawer: React.FC<EventEditDrawerProps> = ({
+  event: loadedEvent,
+  familyId,
   onClose,
   isOpen,
-  children,
-}: PropsWithChildren<TProps>) => {
+  onSuccess,
+  canModify,
+  taxonomy,
+}) => {
   return (
-    <>
-      <Drawer placement='right' onClose={onClose} isOpen={isOpen} size='lg'>
-        <DrawerOverlay />
-        <DrawerContent>
-          <DrawerHeader borderBottomWidth='1px'>
-            {editingEvent
-              ? `Edit: ${editingEvent.event_title}, on ${formatDate(editingEvent.date)}`
-              : 'Add new Event'}
-          </DrawerHeader>
-          <DrawerBody>{children}</DrawerBody>
-        </DrawerContent>
-      </Drawer>
-    </>
+    <Drawer placement='right' onClose={onClose} isOpen={isOpen} size='lg'>
+      <DrawerOverlay />
+      <DrawerContent>
+        <DrawerHeader borderBottomWidth='1px'>
+          {loadedEvent
+            ? `Edit: ${loadedEvent.event_title}, on ${formatDate(loadedEvent.date)}`
+            : 'Add new Event'}
+        </DrawerHeader>
+        <DrawerBody>
+          <EventForm
+            event={loadedEvent}
+            familyId={familyId}
+            canModify={canModify}
+            taxonomy={taxonomy}
+            onSuccess={(eventId) => {
+              onSuccess?.(eventId)
+              onClose()
+            }}
+          />
+        </DrawerBody>
+      </DrawerContent>
+    </Drawer>
   )
 }

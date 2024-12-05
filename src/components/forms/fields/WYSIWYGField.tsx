@@ -1,5 +1,11 @@
 import React from 'react'
-import { Control, Controller, FieldValues, Path, RegisterOptions } from 'react-hook-form'
+import {
+  Control,
+  Controller,
+  FieldValues,
+  Path,
+  RegisterOptions,
+} from 'react-hook-form'
 import { FormControl, FormLabel, FormErrorMessage } from '@chakra-ui/react'
 import { WYSIWYG } from '@/components/form-components/WYSIWYG'
 import { FieldError } from 'react-hook-form'
@@ -27,9 +33,12 @@ export const WYSIWYGField = <T extends FieldValues>({
     <Controller
       control={control}
       name={name}
-      rules={{ 
+      rules={{
         required: isRequired ? 'This field is required' : false,
-        validate: (value) => isRequired ? (value && value.trim() !== '') || 'This field is required' : true
+        validate: (value) =>
+          isRequired
+            ? (value && value.trim() !== '') || 'This field is required'
+            : true,
       }}
       render={({ field }) => (
         <FormControl isRequired={isRequired} isInvalid={!!error}>

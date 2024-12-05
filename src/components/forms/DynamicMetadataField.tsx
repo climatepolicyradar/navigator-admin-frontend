@@ -17,7 +17,11 @@ export const DynamicMetadataField = <T extends Record<string, any>>({
   errors,
   fieldType,
 }: DynamicMetadataFieldProps<T>): React.ReactElement => {
-  const { allowed_values = [], allow_any = false, allow_blanks = true } = taxonomyField
+  const {
+    allowed_values = [],
+    allow_any = false,
+    allow_blanks = true,
+  } = taxonomyField
 
   const renderField = () => {
     if (allow_any) {
@@ -36,7 +40,7 @@ export const DynamicMetadataField = <T extends Record<string, any>>({
           />
         )
       case FieldType.NUMBER:
-        return <TextField<T> name={fieldKey} control={control} type="number" />
+        return <TextField<T> name={fieldKey} control={control} type='number' />
       case FieldType.TEXT:
       default:
         return <TextField<T> name={fieldKey} control={control} />
