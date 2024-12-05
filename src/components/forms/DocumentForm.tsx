@@ -52,13 +52,6 @@ export const DocumentForm = ({
   taxonomy,
   onSuccess,
 }: TProps) => {
-  console.log('DocumentForm Initialized', {
-    loadedDocument,
-    familyId,
-    canModify,
-    taxonomy,
-  })
-
   const { config, loading: configLoading, error: configError } = useConfig()
   const toast = useToast()
   const [formError, setFormError] = useState<IError | null | undefined>()
@@ -72,19 +65,10 @@ export const DocumentForm = ({
     formState: { errors, isSubmitting },
   } = useForm<IDocumentFormPost>({
     resolver: yupResolver(documentSchema),
-    defaultValues: {
-      family_import_id: familyId || loadedDocument?.family_import_id || '',
-    },
   })
 
   // Ensure family_import_id is always set
   useEffect(() => {
-    console.log('Setting family_import_id', {
-      familyId,
-      loadedDocument,
-      currentValue: familyId || loadedDocument?.family_import_id,
-    })
-
     if (familyId || loadedDocument?.family_import_id) {
       setValue('family_import_id', familyId || loadedDocument?.family_import_id)
     }
@@ -92,8 +76,6 @@ export const DocumentForm = ({
 
   // Initialize form with existing document data
   useEffect(() => {
-    console.log('Initializing form with document data', { loadedDocument })
-
     if (loadedDocument) {
       reset({
         family_import_id: loadedDocument.family_import_id || familyId,
@@ -115,13 +97,6 @@ export const DocumentForm = ({
   const invalidDocumentCreation = !loadedDocument && !familyId
 
   const handleFormSubmission = async (formData: IDocumentFormPost) => {
-    console.log('Form Submission Started', {
-      formData,
-      familyId,
-      loadedDocument,
-      family_import_id: formData.family_import_id || familyId,
-    })
-
     // Ensure family_import_id is always present
     if (!formData.family_import_id && !familyId) {
       toast({
@@ -157,7 +132,6 @@ export const DocumentForm = ({
     }
 
     const modifiedDocumentData = convertToModified(formData)
-    console.log('Modified Document Data', { modifiedDocumentData })
 
     try {
       if (loadedDocument) {
@@ -165,7 +139,6 @@ export const DocumentForm = ({
           modifiedDocumentData,
           loadedDocument.import_id,
         )
-        console.log('Update Result', updateResult)
         toast({
           title: 'Document has been successfully updated',
           status: 'success',
@@ -174,7 +147,6 @@ export const DocumentForm = ({
         onSuccess && onSuccess(updateResult.response.import_id)
       } else {
         const createResult = await createDocument(modifiedDocumentData)
-        console.log('Create Result', createResult)
         toast({
           title: 'Document has been successfully created',
           status: 'success',
@@ -183,7 +155,6 @@ export const DocumentForm = ({
         onSuccess && onSuccess(createResult.response)
       }
     } catch (error) {
-      console.error('Document Submission Error', error)
       setFormError(error as IError)
       toast({
         title: loadedDocument
@@ -197,7 +168,6 @@ export const DocumentForm = ({
   }
 
   const onSubmit: SubmitHandler<IDocumentFormPost> = (data) => {
-    console.log('onSubmit called', { data })
     return handleFormSubmission(data)
   }
 

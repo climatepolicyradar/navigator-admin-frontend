@@ -28,10 +28,6 @@ export const DocumentEditDrawer: React.FC<DocumentEditDrawerProps> = ({
   canModify,
   taxonomy,
 }) => {
-  console.log('document', document)
-  console.log('familyId', familyId)
-  console.log('taxonomy', taxonomy)
-
   return (
     <Drawer placement='right' onClose={onClose} isOpen={isOpen} size='lg'>
       <DrawerOverlay />
