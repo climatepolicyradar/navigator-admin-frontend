@@ -69,7 +69,7 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
   const toast = useToast()
   const [formError, setFormError] = useState<IError | null | undefined>()
 
-  // Initialize corpus and taxonomy first
+  // Initialise corpus and taxonomy first
   const initialCorpusInfo = useCorpusFromConfig(
     config?.corpora,
     loadedFamily?.corpus_import_id,

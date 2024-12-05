@@ -22,7 +22,6 @@ export interface DynamicMetadataFieldProps<T extends Record<string, any>> {
   control: Control<T>
   errors: FieldErrors<T>
   fieldType: FieldType
-  validationFields?: string[]
 }
 
 export const DynamicMetadataFields = <T extends Record<string, any>>({
@@ -31,7 +30,6 @@ export const DynamicMetadataFields = <T extends Record<string, any>>({
   control,
   errors,
   fieldType,
-  validationFields = [],
 }: DynamicMetadataFieldProps<T>): React.ReactElement => {
   const {
     allowed_values = [],
@@ -63,12 +61,11 @@ export const DynamicMetadataFields = <T extends Record<string, any>>({
     }
   }
 
+  // Explicitly log the requirement logic
+  const isRequired = !allow_blanks
+
   return (
-    <FormControl
-      isInvalid={!!errors[fieldKey]}
-      mb={4}
-      isRequired={validationFields.includes(fieldKey) && !allow_blanks}
-    >
+    <FormControl isInvalid={!!errors[fieldKey]} mb={4} isRequired={isRequired}>
       <FormLabel>{formatFieldLabel(fieldKey)}</FormLabel>
       {fieldType === FieldType.MULTI_SELECT && (
         <FormHelperText mb={2}>

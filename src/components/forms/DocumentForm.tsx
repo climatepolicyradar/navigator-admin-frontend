@@ -74,14 +74,18 @@ export const DocumentForm = ({
     }
   }, [familyId, loadedDocument, setValue])
 
-  // Initialize form with existing document data
+  // Initialise form with existing document data
   useEffect(() => {
     if (loadedDocument) {
       reset({
         family_import_id: loadedDocument.family_import_id || familyId,
         variant_name: loadedDocument.variant_name ?? '',
-        role: loadedDocument?.metadata?.role[0] ?? '',
-        type: loadedDocument?.metadata?.type[0] ?? '',
+        role: loadedDocument?.metadata?.role
+          ? loadedDocument?.metadata?.role[0]
+          : '',
+        type: loadedDocument?.metadata?.type
+          ? loadedDocument?.metadata?.type[0]
+          : '',
         title: loadedDocument.title,
         source_url: loadedDocument.source_url ?? '',
         user_language_name: loadedDocument.user_language_name
