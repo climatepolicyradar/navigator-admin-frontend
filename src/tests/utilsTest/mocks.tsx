@@ -1,5 +1,8 @@
 import { ICollection, IConfig, IDocument, IEvent } from '@/interfaces'
-import { ICCLWFamily, IUNFCCCFamily } from '@/interfaces/Family'
+import {
+  ILawsAndPoliciesFamily,
+  IInternationalAgreementsFamily,
+} from '@/interfaces/Family'
 
 const mockConfig = {
   geographies: [
@@ -36,7 +39,7 @@ const mockConfig = {
   },
 }
 
-const mockUNFCCCFamily: IUNFCCCFamily = {
+const mockUNFCCCFamily: IInternationalAgreementsFamily = {
   import_id: 'UNFCCC.family.1.0',
   title: 'UNFCCC Family One',
   summary: 'Summary for UNFCCC Family One',
@@ -61,7 +64,7 @@ const mockUNFCCCFamily: IUNFCCCFamily = {
   },
 }
 
-const mockCCLWFamily: ICCLWFamily = {
+const mockCCLWFamily: ILawsAndPoliciesFamily = {
   import_id: 'CCLW.family.2.0',
   title: 'CCLW Family Two',
   summary: 'Summary for CCLW Family Two',
@@ -90,7 +93,7 @@ const mockCCLWFamily: ICCLWFamily = {
   },
 }
 
-const mockUNFCCCFamilyNoDocumentsNoEvents: IUNFCCCFamily = {
+const mockUNFCCCFamilyNoDocumentsNoEvents: IInternationalAgreementsFamily = {
   ...mockUNFCCCFamily,
   import_id: 'UNFCCC.family.3.0',
   title: 'UNFCCC Family Three',
@@ -103,7 +106,7 @@ const mockUNFCCCFamilyNoDocumentsNoEvents: IUNFCCCFamily = {
   last_updated_date: null,
 }
 
-const mockCCLWFamilyNoDocuments: ICCLWFamily = {
+const mockCCLWFamilyNoDocuments: ILawsAndPoliciesFamily = {
   ...mockCCLWFamily,
   import_id: 'CCLW.family.4.0',
   title: 'CCLW Family Four',
@@ -113,7 +116,7 @@ const mockCCLWFamilyNoDocuments: ICCLWFamily = {
   last_modified: new Date(2021, 1, 5).toISOString(),
 }
 
-const mockCCLWFamilyNoEvents: ICCLWFamily = {
+const mockCCLWFamilyNoEvents: ILawsAndPoliciesFamily = {
   ...mockCCLWFamily,
   import_id: 'CCLW.family.5.0',
   title: 'CCLW Family Five',
@@ -125,7 +128,7 @@ const mockCCLWFamilyNoEvents: ICCLWFamily = {
   last_updated_date: null,
 }
 
-const mockCCLWFamilyWithOneEvent: ICCLWFamily = {
+const mockCCLWFamilyWithOneEvent: ILawsAndPoliciesFamily = {
   ...mockCCLWFamilyNoDocuments,
   import_id: 'CCLW.family.6.0',
   title: 'CCLW Family Six',
@@ -135,7 +138,7 @@ const mockCCLWFamilyWithOneEvent: ICCLWFamily = {
   last_modified: new Date(2021, 1, 8).toISOString(),
 }
 
-const mockCCLWFamilyOneDocument: ICCLWFamily = {
+const mockCCLWFamilyOneDocument: ILawsAndPoliciesFamily = {
   ...mockCCLWFamilyNoDocuments,
   import_id: 'CCLW.family.7.0',
   title: 'CCLW Family Seven',
