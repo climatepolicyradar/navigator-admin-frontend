@@ -2,7 +2,7 @@ import React from 'react'
 import { Controller, Control } from 'react-hook-form'
 import { Select as CRSelect } from 'chakra-react-select'
 import { chakraStylesSelect } from '@/styles/chakra'
-import { SelectOption } from '@/types/metadata'
+import { SelectOption } from '@/interfaces/Metadata'
 import { generateSelectOptions } from '@/utils/metadataUtils'
 import { FormControl, FormLabel, FormErrorMessage } from '@chakra-ui/react'
 

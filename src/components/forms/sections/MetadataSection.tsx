@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { Control, FieldErrors, UseFormReset } from 'react-hook-form'
 import { Box, Divider, AbsoluteCenter } from '@chakra-ui/react'
 import { DynamicMetadataFields } from '../DynamicMetadataFields'
-import { CORPUS_METADATA_CONFIG, FieldType } from '@/types/metadata'
+import { CORPUS_METADATA_CONFIG, FieldType } from '@/interfaces/Metadata'
 import { IConfigCorpus, TFamily } from '@/interfaces'
 
 interface MetadataSectionProps {
