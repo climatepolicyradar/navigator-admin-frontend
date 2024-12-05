@@ -4,7 +4,7 @@ import {
   Taxonomy,
   CorpusInfo,
   CORPUS_METADATA_CONFIG,
-} from '@/types/metadata'
+} from '@/interfaces/Metadata'
 
 export const generateDynamicValidationSchema = (
   taxonomy: Taxonomy | null,

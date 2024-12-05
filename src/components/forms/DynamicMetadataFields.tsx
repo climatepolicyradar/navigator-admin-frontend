@@ -6,7 +6,7 @@ import {
   FormHelperText,
 } from '@chakra-ui/react'
 import { Control, FieldErrors } from 'react-hook-form'
-import { FieldType } from '@/types/metadata'
+import { FieldType } from '@/interfaces/Metadata'
 import { formatFieldLabel } from '@/utils/metadataUtils'
 import { SelectField } from './fields/SelectField'
 import { TextField } from './fields/TextField'

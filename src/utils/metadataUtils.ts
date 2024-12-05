@@ -1,4 +1,4 @@
-import { SelectOption } from '@/types/metadata'
+import { SelectOption } from '@/interfaces/Metadata'
 
 export const formatFieldLabel = (key: string): string => {
   return key
