@@ -1,125 +1,88 @@
+import React from 'react'
 import {
   FormControl,
   FormLabel,
   FormErrorMessage,
   FormHelperText,
-  Input,
 } from '@chakra-ui/react'
 import { Controller, Control, FieldErrors } from 'react-hook-form'
-import { Select as CRSelect } from 'chakra-react-select'
-import { FieldType } from '@/schemas/dynamicValidationSchema'
-import React from 'react'
-import { chakraStylesSelect } from '@/styles/chakra'
+import { FieldType } from '@/types/metadata'
+import { formatFieldLabel } from '@/utils/metadataUtils'
+import { SelectField } from './fields/SelectField'
+import { TextField } from './fields/TextField'
 
 // Interface for rendering dynamic metadata fields
-interface DynamicMetadataFieldProps {
+export interface DynamicMetadataFieldProps<T extends Record<string, any>> {
   fieldKey: string
   taxonomyField: {
     allowed_values?: string[]
     allow_any?: boolean
     allow_blanks?: boolean
   }
-  control: Control<any>
-  errors: FieldErrors<any>
+  control: Control<T>
+  errors: FieldErrors<T>
   fieldType: FieldType
+  validationFields?: string[]
 }
 
-export const DynamicMetadataField: React.FC<DynamicMetadataFieldProps> =
-  React.memo(({ fieldKey, taxonomyField, control, errors, fieldType }) => {
-    const allowedValues = taxonomyField.allowed_values || []
-    const isAllowAny = taxonomyField.allow_any
-    const isAllowBlanks = taxonomyField.allow_blanks
+export const DynamicMetadataFields = <T extends Record<string, any>>({
+  fieldKey,
+  taxonomyField,
+  control,
+  errors,
+  fieldType,
+  validationFields = [],
+}: DynamicMetadataFieldProps<T>): React.ReactElement => {
+  const {
+    allowed_values = [],
+    allow_any = false,
+    allow_blanks = true,
+  } = taxonomyField
 
-    const renderFieldByType = () => {
-      if (isAllowAny) {
-        return renderTextField()
-      }
-
-      switch (fieldType) {
-        case FieldType.MULTI_SELECT:
-        case FieldType.SINGLE_SELECT:
-          return renderSelectField()
-        case FieldType.TEXT:
-          return renderTextField()
-        case FieldType.NUMBER:
-          return renderNumberField()
-        default:
-          return renderTextField()
-      }
+  const renderField = () => {
+    if (allow_any) {
+      return <TextField<T> name={fieldKey} control={control} />
     }
 
-    // Utility function to generate select options
-    const generateOptions = (values: string[]) =>
-      values.map((value) => ({ value, label: value }))
-
-    const renderSelectField = () => (
-      <Controller
-        name={fieldKey}
-        control={control}
-        render={({ field }) => (
-          <CRSelect
-            chakraStyles={chakraStylesSelect}
-            isClearable={false}
+    switch (fieldType) {
+      case FieldType.MULTI_SELECT:
+      case FieldType.SINGLE_SELECT:
+        return (
+          <SelectField<T>
+            name={fieldKey}
+            control={control}
+            options={allowed_values}
             isMulti={fieldType === FieldType.MULTI_SELECT}
-            isSearchable={true}
-            options={generateOptions(allowedValues)}
-            {...field}
           />
-        )}
-      />
-    )
-
-    const renderTextField = () => (
-      <Controller
-        name={fieldKey}
-        control={control}
-        render={({ field }) => (
-          <Input {...field} bg='white' placeholder={`Enter ${fieldKey}`} />
-        )}
-      />
-    )
-
-    const renderNumberField = () => (
-      <Controller
-        name={fieldKey}
-        control={control}
-        render={({ field }) => (
-          <Input
-            {...field}
-            bg='white'
-            type='number'
-            placeholder={`Enter ${fieldKey}`}
-          />
-        )}
-      />
-    )
-
-    // Utility function to format field labels
-    const formatFieldLabel = (key: string): string => {
-      return key
-        .split('_')
-        .map(
-          (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
         )
-        .join(' ')
+      case FieldType.NUMBER:
+        return <TextField<T> name={fieldKey} control={control} type='number' />
+      case FieldType.TEXT:
+      default:
+        return <TextField<T> name={fieldKey} control={control} />
     }
+  }
 
-    return (
-      <FormControl
-        isInvalid={!!errors[fieldKey]}
-        mb={4}
-        isRequired={!isAllowBlanks}
-      >
-        <FormLabel>{formatFieldLabel(fieldKey)}</FormLabel>
-        {fieldType === FieldType.MULTI_SELECT && (
-          <FormHelperText mb={2}>
-            You are able to search and can select multiple options
-          </FormHelperText>
-        )}
-        {renderFieldByType()}
-        <FormErrorMessage>
-          {errors[fieldKey] && `${fieldKey} is required`}
-        </FormErrorMessage>
-      </FormControl>
-    )
-  })
+  return (
+    <FormControl
+      isInvalid={!!errors[fieldKey]}
+      mb={4}
+      isRequired={
+        // Only mark as required if the field is in validationFields and allow_blanks is false
+        validationFields.includes(fieldKey) &&
+        taxonomyField.allow_blanks === false
+      }
+    >
+      <FormLabel>{formatFieldLabel(fieldKey)}</FormLabel>
+      {fieldType === FieldType.MULTI_SELECT && (
+        <FormHelperText mb={2}>
+          You are able to search and can select multiple options
+        </FormHelperText>
+      )}
+      {renderField()}
+      <FormErrorMessage>
+        {errors[fieldKey] && `${fieldKey} is required`}
+      </FormErrorMessage>
+    </FormControl>
+  )
+}
