@@ -7,9 +7,7 @@ import {
 } from '@/interfaces/Metadata'
 import { TTaxonomy } from '@/interfaces'
 
-export const generateDynamicValidationSchema = <
-  T extends TTaxonomy,
->(
+export const generateDynamicValidationSchema = <T extends TTaxonomy>(
   taxonomy: Taxonomy | null,
   corpusInfo: CorpusInfo | null,
 ): yup.ObjectSchema<T> => {
