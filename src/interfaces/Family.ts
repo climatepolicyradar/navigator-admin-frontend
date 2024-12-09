@@ -66,7 +66,7 @@ export interface IInternationalAgreementsFamilyFormPost
   metadata: IInternationalAgreementsMetadata
 }
 
-export type TFamilyFormPostMetadata =
+export type TFamilyMetadata =
   | IInternationalAgreementsMetadata
   | ILawsAndPoliciesMetadata
 

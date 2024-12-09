@@ -8,7 +8,7 @@ import {
   IInternationalAgreementsMetadata,
   ILawsAndPoliciesMetadata,
   TFamilyFormPost,
-  TFamilyFormPostMetadata,
+  TFamilyMetadata,
 } from '../../../interfaces/Family'
 import {
   IInternationalAgreementsFamilyFormPost,
@@ -16,7 +16,7 @@ import {
 } from '../../../interfaces/Family'
 
 // Type-safe metadata handler type
-export type MetadataHandler<T extends TFamilyFormPostMetadata> = {
+export type MetadataHandler<T extends TFamilyMetadata> = {
   extractMetadata: (formData: TFamilyFormSubmit) => T
   createSubmissionData: (
     baseData: IFamilyFormPostBase,
@@ -27,7 +27,7 @@ export type MetadataHandler<T extends TFamilyFormPostMetadata> = {
 // Mapping of corpus types to their specific metadata handlers
 export const corpusMetadataHandlers: Record<
   string,
-  MetadataHandler<TFamilyFormPostMetadata>
+  MetadataHandler<TFamilyMetadata>
 > = {
   'Intl. agreements': {
     extractMetadata: (formData: TFamilyFormSubmit) => {
@@ -70,7 +70,7 @@ export const corpusMetadataHandlers: Record<
 // Utility function to get metadata handler for a specific corpus type
 export const getMetadataHandler = (
   corpusType: string,
-): MetadataHandler<TFamilyFormPostMetadata> => {
+): MetadataHandler<TFamilyMetadata> => {
   const handler = corpusMetadataHandlers[corpusType]
   if (!handler) {
     throw new Error(`Unsupported corpus type: ${corpusType}`)

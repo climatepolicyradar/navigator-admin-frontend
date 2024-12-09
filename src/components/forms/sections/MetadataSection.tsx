@@ -2,7 +2,11 @@ import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { Box, Divider, AbsoluteCenter } from '@chakra-ui/react'
 import { DynamicMetadataFields } from '../DynamicMetadataFields'
-import { CORPUS_METADATA_CONFIG, FieldType } from '@/interfaces/Metadata'
+import {
+  CORPUS_METADATA_CONFIG,
+  FieldType,
+  IMetadata,
+} from '@/interfaces/Metadata'
 import { IConfigCorpora, TFamily, TTaxonomy } from '@/interfaces'
 
 type TProps = {
@@ -25,8 +29,8 @@ export const MetadataSection = ({
   useEffect(() => {
     if (loadedFamily?.metadata && corpusInfo) {
       const metadataValues = Object.entries(
-        loadedFamily.metadata as Record<string, string[]>,
-      ).reduce<Record<string, any>>((acc, [fieldKey, value]) => {
+        loadedFamily.metadata as IMetadata,
+      ).reduce<IMetadata>((acc, [fieldKey, value]) => {
         const fieldConfig =
           CORPUS_METADATA_CONFIG[corpusInfo.corpus_type]?.renderFields?.[
             fieldKey
