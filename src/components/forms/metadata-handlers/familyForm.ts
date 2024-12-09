@@ -9,11 +9,11 @@ import {
   ILawsAndPoliciesMetadata,
   TFamilyFormPost,
   TFamilyFormPostMetadata,
-} from '../../interfaces/Family'
+} from '../../../interfaces/Family'
 import {
   IInternationalAgreementsFamilyFormPost,
   ILawsAndPoliciesFamilyFormPost,
-} from '../../interfaces/Family'
+} from '../../../interfaces/Family'
 
 // Type-safe metadata handler type
 export type MetadataHandler<T extends TFamilyFormPostMetadata> = {

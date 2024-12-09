@@ -41,7 +41,7 @@ import { IDocument } from '@/interfaces/Document'
 import { IEvent } from '@/interfaces/Event'
 import { IError } from '@/interfaces/Auth'
 import { IChakraSelect, IConfigCorpora, TTaxonomy } from '@/interfaces'
-import { getMetadataHandler } from '../../generics/metadata/familyFormMetadataHandlers'
+import { getMetadataHandler } from './metadata-handlers/familyForm'
 
 interface IFamilyFormBase {
   title: string
