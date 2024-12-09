@@ -1,63 +1,62 @@
-import React, { useEffect } from 'react'
-import { Control, FieldErrors, UseFormReset } from 'react-hook-form'
+import { useEffect } from 'react'
+import { useForm } from 'react-hook-form'
 import { Box, Divider, AbsoluteCenter } from '@chakra-ui/react'
 import { DynamicMetadataFields } from '../DynamicMetadataFields'
 import { CORPUS_METADATA_CONFIG, FieldType } from '@/interfaces/Metadata'
 import { IConfigCorpora, TFamily, TTaxonomy } from '@/interfaces'
 
-interface MetadataSectionProps<T extends Record<string, any>> {
+type TProps = {
   corpusInfo?: IConfigCorpora
   taxonomy?: TTaxonomy
-  control: Control<T>
-  errors: FieldErrors<T>
   loadedFamily?: TFamily
-  reset: UseFormReset<T>
 }
 
-export const MetadataSection: React.FC<MetadataSectionProps<T>> = ({
+export const MetadataSection = ({
   corpusInfo,
   taxonomy,
-  control,
-  errors,
   loadedFamily,
-  reset,
-}) => {
+}: TProps) => {
+  const {
+    control,
+    reset,
+    formState: { errors },
+  } = useForm()
+
   useEffect(() => {
     if (loadedFamily?.metadata && corpusInfo) {
-      const metadataValues = Object.entries(loadedFamily.metadata).reduce<
-        Record<string, any>
-      >((acc, [key, value]) => {
+      const metadataValues = Object.entries(
+        loadedFamily.metadata as Record<string, string[]>,
+      ).reduce<Record<string, any>>((acc, [fieldKey, value]) => {
         const fieldConfig =
-          CORPUS_METADATA_CONFIG[corpusInfo.corpus_type]?.renderFields?.[key]
+          CORPUS_METADATA_CONFIG[corpusInfo.corpus_type]?.renderFields?.[
+            fieldKey
+          ]
         if (!fieldConfig) return acc
 
         if (fieldConfig.type === FieldType.SINGLE_SELECT) {
-          acc[key] = value?.[0]
+          acc[fieldKey] = value?.[0]
             ? {
                 value: value[0],
                 label: value[0],
               }
             : undefined
         } else if (fieldConfig.type === FieldType.MULTI_SELECT) {
-          acc[key] = value?.map((v) => ({
+          acc[fieldKey] = value?.map((v: string) => ({
             value: v,
             label: v,
           }))
         } else {
-          acc[key] = value
+          acc[fieldKey] = value
         }
 
         return acc
       }, {})
 
-      reset((formValues) => ({
-        ...formValues,
-        ...metadataValues,
-      }))
+      reset(metadataValues)
     }
   }, [loadedFamily, corpusInfo, reset])
 
-  if (!corpusInfo || !taxonomy) return null
+  if (!corpusInfo || !taxonomy) return <></>
 
   return (
     <>
