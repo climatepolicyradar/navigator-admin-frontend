@@ -1,4 +1,4 @@
-import { Controller, Control } from 'react-hook-form'
+import { Controller, Control, FieldValues } from 'react-hook-form'
 import {
   Input,
   FormControl,
@@ -6,7 +6,7 @@ import {
   FormErrorMessage,
 } from '@chakra-ui/react'
 
-interface TextFieldProps<T extends Record<string, any>> {
+type TProps<T extends FieldValues> = {
   name: string
   control: Control<T>
   type?: 'text' | 'number'
@@ -15,14 +15,14 @@ interface TextFieldProps<T extends Record<string, any>> {
   isRequired?: boolean
 }
 
-export const TextField = <T extends Record<string, any>>({
+export const TextField = <T extends FieldValues>({
   name,
   control,
   type = 'text',
   placeholder,
   label,
   isRequired,
-}: TextFieldProps<T>) => {
+}: TProps<T>) => {
   return (
     <Controller
       name={name}

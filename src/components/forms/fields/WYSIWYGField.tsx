@@ -3,7 +3,7 @@ import { FormControl, FormLabel, FormErrorMessage } from '@chakra-ui/react'
 import { WYSIWYG } from '@/components/form-components/WYSIWYG'
 import { FieldError } from 'react-hook-form'
 
-interface WYSIWYGFieldProps<T extends FieldValues> {
+type TProps<T extends FieldValues> = {
   name: Path<T>
   label: string
   control: Control<T>
@@ -21,7 +21,7 @@ export const WYSIWYGField = <T extends FieldValues>({
   onChange,
   error,
   isRequired = false,
-}: WYSIWYGFieldProps<T>) => {
+}: TProps<T>) => {
   return (
     <Controller
       control={control}

@@ -1,11 +1,16 @@
-import { Controller, Control, RegisterOptions } from 'react-hook-form'
+import {
+  Controller,
+  Control,
+  RegisterOptions,
+  FieldValues,
+} from 'react-hook-form'
 import { Select as CRSelect } from 'chakra-react-select'
 import { chakraStylesSelect } from '@/styles/chakra'
 import { generateSelectOptions } from '@/utils/metadataUtils'
 import { FormControl, FormLabel, FormErrorMessage } from '@chakra-ui/react'
 import { IChakraSelect } from '@/interfaces'
 
-interface SelectFieldProps<T extends Record<string, any>> {
+type TProps<T extends FieldValues> = {
   name: string
   label?: string
   control: Control<T>
@@ -15,7 +20,7 @@ interface SelectFieldProps<T extends Record<string, any>> {
   isRequired?: boolean
 }
 
-export const SelectField = <T extends Record<string, any>>({
+export const SelectField = <T extends FieldValues>({
   name,
   label,
   control,
@@ -23,7 +28,7 @@ export const SelectField = <T extends Record<string, any>>({
   isMulti = false,
   rules,
   isRequired,
-}: SelectFieldProps<T>) => {
+}: TProps<T>) => {
   // Determine if options are already in IChakraSelect format
   const selectOptions = options
     ? Array.isArray(options) &&

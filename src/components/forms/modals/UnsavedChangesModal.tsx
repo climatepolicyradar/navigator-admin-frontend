@@ -9,17 +9,13 @@ import {
   ModalCloseButton,
 } from '@chakra-ui/react'
 
-interface UnsavedChangesModalProps {
+type TProps = {
   isOpen: boolean
   onClose: () => void
   onConfirm: () => void
 }
 
-export const UnsavedChangesModal = ({
-  isOpen,
-  onClose,
-  onConfirm,
-}: UnsavedChangesModalProps) => {
+export const UnsavedChangesModal = ({ isOpen, onClose, onConfirm }: TProps) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />

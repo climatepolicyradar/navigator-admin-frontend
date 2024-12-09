@@ -15,7 +15,7 @@ import {
 } from '@chakra-ui/react'
 import { IChakraSelect } from '@/interfaces'
 
-interface RadioGroupFieldProps<T extends FieldValues> {
+type TProps<T extends FieldValues> = {
   name: Path<T>
   label: string
   control: Control<T>
@@ -29,7 +29,7 @@ export const RadioGroupField = <T extends FieldValues>({
   control,
   options,
   rules,
-}: RadioGroupFieldProps<T>) => {
+}: TProps<T>) => {
   return (
     <Controller
       control={control}

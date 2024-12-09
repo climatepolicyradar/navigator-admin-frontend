@@ -9,7 +9,7 @@ import { IEvent, TTaxonomy } from '@/interfaces'
 import { EventForm } from '../forms/EventForm'
 import { formatDate } from '@/utils/formatDate'
 
-interface EventEditDrawerProps {
+type TProps = {
   event?: IEvent
   familyId?: string
   onClose: () => void
@@ -27,7 +27,7 @@ export const EventEditDrawer = ({
   onSuccess,
   canModify,
   taxonomy,
-}: EventEditDrawerProps) => {
+}: TProps) => {
   return (
     <Drawer placement='right' onClose={onClose} isOpen={isOpen} size='lg'>
       <DrawerOverlay />

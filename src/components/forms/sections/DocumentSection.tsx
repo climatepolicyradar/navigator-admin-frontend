@@ -10,7 +10,7 @@ import { WarningIcon } from '@chakra-ui/icons'
 import { FamilyDocument } from '@/components/family/FamilyDocument'
 import { IDocument } from '@/interfaces'
 
-interface DocumentSectionProps {
+type TProps = {
   familyDocuments: string[]
   userCanModify: boolean
   onAddNew: (type: 'document') => void
@@ -30,7 +30,7 @@ export const DocumentSection = ({
   updatedDocument,
   setUpdatedDocument,
   isNewFamily,
-}: DocumentSectionProps) => {
+}: TProps) => {
   return (
     <>
       <Box position='relative' padding='10'>

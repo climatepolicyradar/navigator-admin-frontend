@@ -10,7 +10,7 @@ import { WarningIcon } from '@chakra-ui/icons'
 import { FamilyEvent } from '@/components/family/FamilyEvent'
 import { IEvent } from '@/interfaces'
 
-interface EventSectionProps {
+type TProps = {
   familyEvents: string[]
   userCanModify: boolean
   onAddNew: (type: 'event') => void
@@ -30,7 +30,7 @@ export const EventSection = ({
   updatedEvent,
   setUpdatedEvent,
   isNewFamily,
-}: EventSectionProps) => {
+}: TProps) => {
   return (
     <>
       <Box position='relative' padding='10'>

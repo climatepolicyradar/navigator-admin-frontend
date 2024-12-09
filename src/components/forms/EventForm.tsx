@@ -6,8 +6,7 @@ import {
   IEventFormPost,
   IError,
   IEventFormPut,
-  IConfigTaxonomyCCLW,
-  IConfigTaxonomyUNFCCC,
+  TTaxonomy,
 } from '@/interfaces'
 import { eventSchema } from '@/schemas/eventSchema'
 import { createEvent, updateEvent } from '@/api/Events'
@@ -26,16 +25,11 @@ import {
 import { formatDateISO } from '@/utils/formatDate'
 import { ApiError } from '../feedback/ApiError'
 
-// type TaxonomyEventType =
-//   | { event_type: string[] }
-//   | { event_type: { allowed_values: string[] } }
-//   | undefined
-
 type TProps = {
   familyId?: string
   canModify?: boolean
   event?: IEvent
-  taxonomy?: IConfigTaxonomyCCLW | IConfigTaxonomyUNFCCC // | TaxonomyEventType
+  taxonomy?: TTaxonomy
   onSuccess?: (eventId: string) => void
 }
 

@@ -2,7 +2,7 @@ import { DocumentEditDrawer } from './DocumentEditDrawer'
 import { EventEditDrawer } from './EventEditDrawer'
 import { IDocument, IEvent, TTaxonomy } from '@/interfaces'
 
-interface EntityEditDrawerProps {
+type TProps = {
   isOpen: boolean
   onClose: () => void
   entity: 'document' | 'event'
@@ -26,7 +26,7 @@ export const EntityEditDrawer = ({
   familyId,
   taxonomy,
   canModify,
-}: EntityEditDrawerProps) => {
+}: TProps) => {
   if (entity === 'document') {
     return (
       <DocumentEditDrawer

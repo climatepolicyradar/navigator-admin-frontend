@@ -8,7 +8,7 @@ import {
 import { IDocument, TTaxonomy } from '@/interfaces'
 import { DocumentForm } from '../forms/DocumentForm'
 
-interface DocumentEditDrawerProps {
+type TProps = {
   document?: IDocument
   familyId?: string
   onClose: () => void
@@ -26,7 +26,7 @@ export const DocumentEditDrawer = ({
   onSuccess,
   canModify,
   taxonomy,
-}: DocumentEditDrawerProps) => {
+}: TProps) => {
   return (
     <Drawer placement='right' onClose={onClose} isOpen={isOpen} size='lg'>
       <DrawerOverlay />

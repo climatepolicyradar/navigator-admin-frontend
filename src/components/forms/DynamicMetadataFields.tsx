@@ -4,14 +4,13 @@ import {
   FormErrorMessage,
   FormHelperText,
 } from '@chakra-ui/react'
-import { Control, FieldErrors } from 'react-hook-form'
+import { Control, FieldErrors, FieldValues } from 'react-hook-form'
 import { FieldType } from '@/interfaces/Metadata'
 import { formatFieldLabel } from '@/utils/metadataUtils'
 import { SelectField } from './fields/SelectField'
 import { TextField } from './fields/TextField'
 
-// Interface for rendering dynamic metadata fields
-export interface DynamicMetadataFieldProps<T extends Record<string, any>> {
+type TProps<T extends FieldValues> = {
   fieldKey: string
   taxonomyField: {
     allowed_values?: string[]
@@ -23,13 +22,13 @@ export interface DynamicMetadataFieldProps<T extends Record<string, any>> {
   fieldType: FieldType
 }
 
-export const DynamicMetadataFields = <T extends Record<string, any>>({
+export const DynamicMetadataFields = <T extends FieldValues>({
   fieldKey,
   taxonomyField,
   control,
   errors,
   fieldType,
-}: DynamicMetadataFieldProps<T>) => {
+}: TProps<T>) => {
   const {
     allowed_values = [],
     allow_any = false,
