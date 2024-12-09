@@ -1,67 +1,63 @@
-import { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
+import React, { useEffect } from 'react'
+import { Control, FieldErrors, UseFormReset } from 'react-hook-form'
 import { Box, Divider, AbsoluteCenter } from '@chakra-ui/react'
 import { DynamicMetadataFields } from '../DynamicMetadataFields'
-import {
-  CORPUS_METADATA_CONFIG,
-  FieldType,
-  IFormMetadata,
-  IMetadata,
-} from '@/interfaces/Metadata'
+import { CORPUS_METADATA_CONFIG, FieldType } from '@/interfaces/Metadata'
 import { IConfigCorpora, TFamily, TTaxonomy } from '@/interfaces'
 
-type TProps = {
+type TProps<T extends Record<string, any>> = {
   corpusInfo?: IConfigCorpora
   taxonomy?: TTaxonomy
+  control: Control<T>
+  errors: FieldErrors<T>
   loadedFamily?: TFamily
+  reset: UseFormReset<T>
 }
 
 export const MetadataSection = ({
   corpusInfo,
   taxonomy,
+  control,
+  errors,
   loadedFamily,
-}: TProps) => {
-  const {
-    control,
-    reset,
-    formState: { errors },
-  } = useForm()
-
+  reset,
+}: TProps<T>) => {
   useEffect(() => {
     if (loadedFamily?.metadata && corpusInfo) {
-      const metadataValues = Object.entries(
-        loadedFamily.metadata as IMetadata,
-      ).reduce<IFormMetadata>((transformedMetadata, [fieldKey, value]) => {
+      const metadataValues = Object.entries(loadedFamily.metadata).reduce<
+        Record<string, any>
+      >((acc, [key, value]) => {
         const fieldConfig =
-          CORPUS_METADATA_CONFIG[corpusInfo.corpus_type]?.renderFields?.[
-            fieldKey
-          ]
-        if (!fieldConfig || !value) return transformedMetadata
+          CORPUS_METADATA_CONFIG[corpusInfo.corpus_type]?.renderFields?.[key]
+        if (!fieldConfig) return acc
 
         if (fieldConfig.type === FieldType.SINGLE_SELECT) {
-          transformedMetadata[fieldKey] = value?.[0]
+          acc[key] = value?.[0]
             ? {
                 value: value[0],
                 label: value[0],
               }
             : undefined
         } else if (fieldConfig.type === FieldType.MULTI_SELECT) {
-          transformedMetadata[fieldKey] = value?.map((v: string) => ({
+          acc[key] = value?.map((v) => ({
             value: v,
             label: v,
           }))
         } else {
-          transformedMetadata[fieldKey] = value
+          acc[key] = value
         }
 
-        return transformedMetadata
+        return acc
       }, {})
 
-      reset(metadataValues)
+      reset((formValues) => ({
+        ...formValues,
+        ...metadataValues,
+      }))
     }
   }, [loadedFamily, corpusInfo, reset])
 
-  if (!corpusInfo || !taxonomy) return <></>
+  if (!corpusInfo || !taxonomy) return null
 
   return (
     <>
