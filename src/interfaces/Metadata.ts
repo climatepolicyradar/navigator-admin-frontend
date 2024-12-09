@@ -1,12 +1,13 @@
-import { Control, FieldErrors } from 'react-hook-form'
-import { ITaxonomyField } from './Config'
-
 export enum FieldType {
   TEXT = 'text',
   MULTI_SELECT = 'multi_select',
   SINGLE_SELECT = 'single_select',
   NUMBER = 'number',
   DATE = 'date',
+}
+
+export interface IMetadata {
+  [key: string]: string[]
 }
 
 export interface MetadataFieldConfig {
@@ -26,14 +27,6 @@ export interface CorpusMetadataConfig {
     renderFields: Record<string, MetadataFieldConfig>
     validationFields: string[]
   }
-}
-
-export interface DynamicMetadataFieldProps<T extends Record<string, any>> {
-  fieldKey: string
-  taxonomyField: ITaxonomyField
-  control: Control<T>
-  errors: FieldErrors<T>
-  fieldType: FieldType
 }
 
 // Centralised configuration for corpus metadata

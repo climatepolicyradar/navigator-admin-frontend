@@ -1,4 +1,4 @@
-import { OptionBase } from 'chakra-react-select'
+import { IChakraSelect } from '.'
 
 export interface IConfigGeographyNode {
   id: number
@@ -14,14 +14,7 @@ export interface IConfigGeography {
   children: IConfigGeography[]
 }
 
-export interface IChakraSelect extends OptionBase {
-  value: string
-  label: string
-}
-
 export interface IConfigLanguageSorted extends IChakraSelect {}
-
-export interface IConfigCorpus extends IChakraSelect {}
 
 // Types for taxonomy and corpus info
 export interface ITaxonomyField {

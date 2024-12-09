@@ -5,8 +5,8 @@ import {
   CORPUS_METADATA_CONFIG,
   MetadataFieldConfig,
 } from '@/interfaces/Metadata'
-import { TTaxonomy } from '@/interfaces'
-import { IChakraSelect, ITaxonomyField } from '@/interfaces/Config'
+import { IChakraSelect, TTaxonomy } from '@/interfaces'
+import { ITaxonomyField } from '@/interfaces/Config'
 
 // Strongly typed validation schema creator
 type ValidationSchema<T> = yup.Schema<T>

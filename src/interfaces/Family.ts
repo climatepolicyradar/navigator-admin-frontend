@@ -1,10 +1,12 @@
+import { IMetadata } from './Metadata'
+
 // Corpus type metadata (aka taxonomy).
-export interface IInternationalAgreementsMetadata {
+export interface IInternationalAgreementsMetadata extends IMetadata {
   author: string[]
   author_type: string[]
 }
 
-export interface ILawsAndPoliciesMetadata {
+export interface ILawsAndPoliciesMetadata extends IMetadata {
   topic: string[]
   hazard: string[]
   sector: string[]
