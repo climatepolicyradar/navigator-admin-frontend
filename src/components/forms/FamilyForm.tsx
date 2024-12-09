@@ -23,7 +23,7 @@ import { MetadataSection } from './sections/MetadataSection'
 import { DocumentSection } from './sections/DocumentSection'
 import { EventSection } from './sections/EventSection'
 import { UnsavedChangesModal } from './modals/UnsavedChangesModal'
-import { ReadOnlyFields } from './ReadOnlyFields'
+import { ReadOnlyFields } from '../family/ReadOnlyFields'
 import { EntityEditDrawer } from '../drawers/EntityEditDrawer'
 
 import {
@@ -51,6 +51,7 @@ import { IDocument } from '@/interfaces/Document'
 import { IEvent } from '@/interfaces/Event'
 import { IError } from '@/interfaces/Auth'
 import { IChakraSelect, IConfigCorpora, TTaxonomy } from '@/interfaces'
+import { getMetadataHandler } from '../../generics/metadata/familyFormMetadataHandlers'
 
 interface FamilyFormProps {
   family?: TFamily
@@ -65,13 +66,13 @@ interface IFamilyFormBase {
   collections?: IChakraSelect[]
 }
 
-interface IFamilyFormIntlAgreements extends IFamilyFormBase {
+export interface IFamilyFormIntlAgreements extends IFamilyFormBase {
   // Intl. agreements
   author?: string
   author_type?: string
 }
 
-interface IFamilyFormLawsAndPolicies extends IFamilyFormBase {
+export interface IFamilyFormLawsAndPolicies extends IFamilyFormBase {
   // Laws and Policies
   topic?: IChakraSelect[]
   hazard?: IChakraSelect[]
@@ -81,7 +82,9 @@ interface IFamilyFormLawsAndPolicies extends IFamilyFormBase {
   instrument?: IChakraSelect[]
 }
 
-type TFamilyFormSubmit = IFamilyFormIntlAgreements | IFamilyFormLawsAndPolicies
+export type TFamilyFormSubmit =
+  | IFamilyFormIntlAgreements
+  | IFamilyFormLawsAndPolicies
 
 type TChildEntity = 'event' | 'document'
 
@@ -140,7 +143,6 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
     setValue,
     watch,
     formState: { errors, isSubmitting, dirtyFields },
-    trigger,
   } = useForm<IFamilyFormBase>({
     resolver: yupResolver(validationSchema),
   })
@@ -153,13 +155,6 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
     getCorpusImportId(loadedFamily, watchCorpus),
   )
   const taxonomy = corpusInfo?.taxonomy
-
-  // Update validation schema when corpus/taxonomy changes
-  useEffect(() => {
-    createValidationSchema(taxonomy, corpusInfo)
-    // Re-trigger form validation with new schema
-    trigger()
-  }, [taxonomy, corpusInfo, createValidationSchema, trigger])
 
   // Determine if the corpus is an MCF type
   const isMCFCorpus = useMemo(() => {
@@ -195,59 +190,6 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
     }
   }, [loadedFamily])
 
-  // Type-safe metadata handler type
-  type MetadataHandler<T extends TFamilyFormPostMetadata> = {
-    extractMetadata: (formData: TFamilyFormSubmit) => T
-    createSubmissionData: (
-      baseData: IFamilyFormPostBase,
-      metadata: T,
-    ) => TFamilyFormPost
-  }
-
-  // Mapping of corpus types to their specific metadata handlers
-  const corpusMetadataHandlers: Record<
-    string,
-    MetadataHandler<TFamilyFormPostMetadata>
-  > = {
-    'Intl. agreements': {
-      extractMetadata: (formData: TFamilyFormSubmit) => {
-        const intlData = formData as IFamilyFormIntlAgreements
-        return {
-          author: intlData.author ? [intlData.author] : [],
-          author_type: intlData.author_type ? [intlData.author_type] : [],
-        } as IInternationalAgreementsMetadata
-      },
-      createSubmissionData: (baseData, metadata) =>
-        ({
-          ...baseData,
-          metadata,
-        }) as IInternationalAgreementsFamilyFormPost,
-    },
-    'Laws and Policies': {
-      extractMetadata: (formData: TFamilyFormSubmit) => {
-        const lawsPolicyData = formData as IFamilyFormLawsAndPolicies
-        return {
-          topic: lawsPolicyData.topic?.map((topic) => topic.value) || [],
-          hazard: lawsPolicyData.hazard?.map((hazard) => hazard.value) || [],
-          sector: lawsPolicyData.sector?.map((sector) => sector.value) || [],
-          keyword:
-            lawsPolicyData.keyword?.map((keyword) => keyword.value) || [],
-          framework:
-            lawsPolicyData.framework?.map((framework) => framework.value) || [],
-          instrument:
-            lawsPolicyData.instrument?.map((instrument) => instrument.value) ||
-            [],
-        } as ILawsAndPoliciesMetadata
-      },
-      createSubmissionData: (baseData, metadata) =>
-        ({
-          ...baseData,
-          metadata,
-        }) as ILawsAndPoliciesFamilyFormPost,
-    },
-    // Add other corpus types here with their specific metadata extraction logic
-  }
-
   const handleFormSubmission = async (formData: TFamilyFormSubmit) => {
     setIsFormSubmitting(true)
     setFormError(null)
@@ -258,10 +200,7 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
     }
 
     // Get the appropriate metadata handler
-    const metadataHandler = corpusMetadataHandlers[corpusInfo.corpus_type]
-    if (!metadataHandler) {
-      throw new Error(`Unsupported corpus type: ${corpusInfo.corpus_type}`)
-    }
+    const metadataHandler = getMetadataHandler(corpusInfo.corpus_type)
 
     // Prepare base family data common to all types
     const baseData: IFamilyFormPostBase = {
@@ -315,12 +254,42 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
       await handleFormSubmission(data)
     } catch (error) {
       console.log('onSubmitErrorHandler', error)
+      // Handle any submission errors
+      setFormError(error as IError)
+      toast({
+        title: 'Submission Error',
+        description: (error as IError).message,
+        status: 'error',
+      })
     }
   }
 
-  const onSubmitErrorHandler = (error: object) => {
-    console.log('onSubmitErrorHandler', error)
-  }
+  useEffect(() => {
+    if (loadedFamily) {
+      reset({
+        title: loadedFamily.title,
+        summary: loadedFamily.summary,
+        geography: {
+          value: loadedFamily.geography,
+          label:
+            getCountries()?.find(
+              (country) => country.value === loadedFamily.geography,
+            )?.display_value || loadedFamily.geography,
+        },
+        corpus: loadedFamily.corpus_import_id
+          ? {
+              label: loadedFamily.corpus_import_id,
+              value: loadedFamily.corpus_import_id,
+            }
+          : undefined,
+        category: loadedFamily.category,
+        collections: loadedFamily.collections?.map((collection) => ({
+          value: collection,
+          label: collection,
+        })),
+      })
+    }
+  }, [loadedFamily, reset])
 
   const onAddNewEntityClick = (entityType: TChildEntity) => {
     setEditingEntity(entityType)
@@ -504,7 +473,7 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
       )}
 
       {canLoadForm && (
-        <form onSubmit={handleSubmit(onSubmit, onSubmitErrorHandler)}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <VStack gap='4' mb={12} mt={4} align={'stretch'}>
             {formError && <ApiError error={formError} />}
 
