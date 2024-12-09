@@ -261,6 +261,13 @@ const mockCCLWConfig: IConfig = {
             allowed_values: ['Type One', 'Type Two'],
           },
         },
+        _event: {
+          event_type: {
+            allow_any: false,
+            allow_blanks: false,
+            allowed_values: ['Event One', 'Event Two'],
+          },
+        },
       },
     },
   ],
@@ -305,6 +312,13 @@ const mockUNFCCCConfig: IConfig = {
             allow_any: false,
             allow_blanks: false,
             allowed_values: ['Type One', 'Type Two'],
+          },
+        },
+        _event: {
+          event_type: {
+            allow_any: false,
+            allow_blanks: false,
+            allowed_values: ['Event One', 'Event Two'],
           },
         },
       },

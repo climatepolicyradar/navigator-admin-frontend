@@ -77,6 +77,12 @@ describe('modifyConfig', () => {
                 allowed_values: ['type1', 'type2'],
               },
             },
+            _event: {
+              event_type: {
+                allow_blanks: false,
+                allowed_values: ['eventType1', 'eventType2'],
+              },
+            },
           },
         },
         {
@@ -110,6 +116,12 @@ describe('modifyConfig', () => {
               type: {
                 allow_blanks: false,
                 allowed_values: ['type1', 'type2'],
+              },
+            },
+            _event: {
+              event_type: {
+                allow_blanks: false,
+                allowed_values: ['eventType1', 'eventType2'],
               },
             },
           },
