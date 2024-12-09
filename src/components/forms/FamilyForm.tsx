@@ -47,10 +47,6 @@ import { IError } from '@/interfaces/Auth'
 import { IChakraSelect, IConfigCorpora, TTaxonomy } from '@/interfaces'
 import { getMetadataHandler } from '../../generics/metadata/familyFormMetadataHandlers'
 
-interface FamilyFormProps {
-  family?: TFamily
-}
-
 interface IFamilyFormBase {
   title: string
   summary: string
@@ -82,9 +78,11 @@ export type TFamilyFormSubmit =
 
 type TChildEntity = 'event' | 'document'
 
-export const FamilyForm: React.FC<FamilyFormProps> = ({
-  family: loadedFamily,
-}) => {
+type TProps = {
+  family?: TFamily
+}
+
+export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   const [isLeavingModalOpen, setIsLeavingModalOpen] = useState(false)
   const [isFormSubmitting, setIsFormSubmitting] = useState(false)
   const { isOpen, onOpen, onClose } = useDisclosure()

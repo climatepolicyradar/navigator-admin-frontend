@@ -26,16 +26,16 @@ import {
 import { formatDateISO } from '@/utils/formatDate'
 import { ApiError } from '../feedback/ApiError'
 
-type TaxonomyEventType =
-  | { event_type: string[] }
-  | { event_type: { allowed_values: string[] } }
-  | undefined
+// type TaxonomyEventType =
+//   | { event_type: string[] }
+//   | { event_type: { allowed_values: string[] } }
+//   | undefined
 
 type TProps = {
   familyId?: string
   canModify?: boolean
   event?: IEvent
-  taxonomy?: IConfigTaxonomyCCLW | IConfigTaxonomyUNFCCC | TaxonomyEventType
+  taxonomy?: IConfigTaxonomyCCLW | IConfigTaxonomyUNFCCC // | TaxonomyEventType
   onSuccess?: (eventId: string) => void
 }
 
