@@ -28,13 +28,8 @@ import { EntityEditDrawer } from '../drawers/EntityEditDrawer'
 
 import {
   TFamilyFormPost,
-  IInternationalAgreementsMetadata,
-  ILawsAndPoliciesMetadata,
-  TFamilyFormPostMetadata,
   TFamily,
   IFamilyFormPostBase,
-  IInternationalAgreementsFamilyFormPost,
-  ILawsAndPoliciesFamilyFormPost,
 } from '@/interfaces/Family'
 import { canModify } from '@/utils/canModify'
 import { getCountries } from '@/utils/extractNestedGeographyData'
@@ -46,7 +41,6 @@ import { deleteDocument } from '@/api/Documents'
 import { deleteEvent } from '@/api/Events'
 import { createFamilySchema } from '@/schemas/familySchema'
 import { ApiError } from '../feedback/ApiError'
-// import { IChakraSelect } from '@/interfaces/Config'
 import { IDocument } from '@/interfaces/Document'
 import { IEvent } from '@/interfaces/Event'
 import { IError } from '@/interfaces/Auth'
