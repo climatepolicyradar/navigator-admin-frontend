@@ -13,10 +13,12 @@ export const baseFamilySchema = yup
       })
       .required('Geography is required'),
     category: yup.string().required('Category is required'),
-    corpus: yup.object({
-      label: yup.string().required(),
-      value: yup.string().required(),
-    }).required('Corpus is required'),
+    corpus: yup
+      .object({
+        label: yup.string().required(),
+        value: yup.string().required(),
+      })
+      .required('Corpus is required'),
     collections: yup.array().optional(),
   })
   .required()

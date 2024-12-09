@@ -1,3 +1,5 @@
+import { IChakraSelect } from '.'
+
 export enum FieldType {
   TEXT = 'text',
   MULTI_SELECT = 'multi_select',
@@ -10,7 +12,7 @@ export interface IMetadata {
   [key: string]: string[]
 }
 export interface IFormMetadata {
-  [key: string]: { value: string; label: string }[] | { value: string; label: string } | string | undefined
+  [key: string]: IChakraSelect[] | IChakraSelect | string | number | undefined
 }
 
 export interface MetadataFieldConfig {

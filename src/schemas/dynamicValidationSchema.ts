@@ -4,52 +4,48 @@ import {
   CorpusInfo,
   CORPUS_METADATA_CONFIG,
   MetadataFieldConfig,
+  IFormMetadata,
 } from '@/interfaces/Metadata'
 import { IChakraSelect, TTaxonomy } from '@/interfaces'
 import { ITaxonomyField } from '@/interfaces/Config'
 
-// Strongly typed validation schema creator
-type ValidationSchema<T> = yup.Schema<T>
-
 // Type-safe field validation function
-const getFieldValidation = <T extends Record<string, unknown>>(
+const getFieldValidation = (
   fieldConfig: MetadataFieldConfig,
   fieldKey: string,
   isRequired: boolean,
   taxonomyField?: ITaxonomyField,
-): ValidationSchema<T[keyof T]> => {
-  let fieldValidation: ValidationSchema<T[keyof T]>
+): yup.Schema<IFormMetadata[string]> => {
+  let fieldValidation: yup.Schema<IFormMetadata[string]>
 
   switch (fieldConfig.type) {
     case FieldType.MULTI_SELECT:
       fieldValidation = yup.array().of(
-        yup.object<IChakraSelect>({
-          value: yup.string(),
-          label: yup.string(),
+        yup.object({
+          value: yup.string().required(),
+          label: yup.string().required(),
         }),
-      ) as ValidationSchema<T[keyof T]>
+      )
       break
     case FieldType.SINGLE_SELECT:
-      fieldValidation = yup.string() as ValidationSchema<T[keyof T]>
+      fieldValidation = yup.object({
+        value: yup.string().required(),
+        label: yup.string().required(),
+      })
       break
     case FieldType.TEXT:
-      fieldValidation = yup.string() as ValidationSchema<T[keyof T]>
+      fieldValidation = yup.string()
       break
     case FieldType.NUMBER:
-      fieldValidation = yup.number() as ValidationSchema<T[keyof T]>
-      break
-    case FieldType.DATE:
-      fieldValidation = yup.date() as ValidationSchema<T[keyof T]>
+      fieldValidation = yup.number()
       break
     default:
-      fieldValidation = yup.mixed() as ValidationSchema<T[keyof T]>
+      fieldValidation = yup.mixed()
   }
 
   // Add required validation if needed
   if (isRequired) {
-    fieldValidation = fieldValidation.required(
-      `${fieldKey} is required`,
-    ) as ValidationSchema<T[keyof T]>
+    fieldValidation = fieldValidation.required(`${fieldKey} is required`)
   }
 
   // Add allowed values validation if specified in taxonomy
@@ -66,12 +62,15 @@ const getFieldValidation = <T extends Record<string, unknown>>(
         },
       )
     } else {
-      // Convert allowed_values to a type that Yup's oneOf can accept
-      const allowedValues = (taxonomyField.allowed_values || []) as T[keyof T][]
-
-      fieldValidation = fieldValidation.oneOf(
-        allowedValues,
+      const allowedValues = taxonomyField.allowed_values || []
+      fieldValidation = fieldValidation.test(
+        'allowed-values',
         `${fieldKey} must be one of the allowed values`,
+        (value: IChakraSelect | string) => {
+          if (!value) return true
+          const valueToCheck = typeof value === 'string' ? value : value.value
+          return allowedValues.includes(valueToCheck)
+        },
       )
     }
   }
@@ -80,13 +79,13 @@ const getFieldValidation = <T extends Record<string, unknown>>(
 }
 
 // Strongly typed dynamic validation schema generator
-export const generateDynamicValidationSchema = <T extends TTaxonomy>(
+export const generateDynamicValidationSchema = (
   taxonomy?: TTaxonomy,
   corpusInfo?: CorpusInfo,
-): yup.ObjectSchema<T> => {
+): yup.ObjectSchema<Partial<IFormMetadata>> => {
   // Early return if no taxonomy or corpus info
   if (!taxonomy || !corpusInfo) {
-    return yup.object({}).required() as yup.ObjectSchema<T>
+    return yup.object({}).required() as yup.ObjectSchema<Partial<IFormMetadata>>
   }
 
   // Get metadata fields and validation fields for the specific corpus type
@@ -108,7 +107,7 @@ export const generateDynamicValidationSchema = <T extends TTaxonomy>(
         (!taxonomyField || taxonomyField.allow_blanks === false)
 
       // Generate field validation
-      const fieldValidation = getFieldValidation<T>(
+      const fieldValidation = getFieldValidation(
         fieldConfig,
         fieldKey,
         isRequired,
@@ -120,9 +119,11 @@ export const generateDynamicValidationSchema = <T extends TTaxonomy>(
         [fieldKey]: fieldValidation,
       }
     },
-    {} as Partial<T>,
+    {} as Partial<IFormMetadata>,
   )
 
   // Create and return the final schema
-  return yup.object(schemaShape).required() as yup.ObjectSchema<T>
+  return yup.object(schemaShape).required() as yup.ObjectSchema<
+    Partial<IFormMetadata>
+  >
 }
