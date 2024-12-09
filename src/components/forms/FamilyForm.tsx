@@ -26,11 +26,7 @@ import { UnsavedChangesModal } from './modals/UnsavedChangesModal'
 import { ReadOnlyFields } from '../family/ReadOnlyFields'
 import { EntityEditDrawer } from '../drawers/EntityEditDrawer'
 
-import {
-  TFamilyFormPost,
-  TFamily,
-  IFamilyFormPostBase,
-} from '@/interfaces/Family'
+import { TFamily, IFamilyFormPostBase } from '@/interfaces/Family'
 import { canModify } from '@/utils/canModify'
 import { getCountries } from '@/utils/extractNestedGeographyData'
 import { decodeToken } from '@/utils/decodeToken'
@@ -191,9 +187,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       throw new Error('No corpus type specified')
     }
 
-    // Get the appropriate metadata handler
-    const metadataHandler = getMetadataHandler(corpusInfo.corpus_type)
-
     // Prepare base family data common to all types
     const baseData: IFamilyFormPostBase = {
       title: formData.title,
@@ -205,7 +198,8 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
         formData.collections?.map((collection) => collection.value) || [],
     }
 
-    // Extract metadata
+    // Get the appropriate metadata handler & extract metadata
+    const metadataHandler = getMetadataHandler(corpusInfo.corpus_type)
     const metadata = metadataHandler.extractMetadata(formData)
 
     // Create submission data using the specific handler
@@ -258,6 +252,10 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
 
   useEffect(() => {
     if (loadedFamily) {
+      setFamilyDocuments(loadedFamily.documents || [])
+      setFamilyEvents(loadedFamily.events || [])
+
+      // Pre-set the form values to that of the loaded family
       reset({
         title: loadedFamily.title,
         summary: loadedFamily.summary,
@@ -274,14 +272,14 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               value: loadedFamily.corpus_import_id,
             }
           : undefined,
-        category: loadedFamily.category,
+        category: isMCFCorpus ? 'MCF' : loadedFamily.category,
         collections: loadedFamily.collections?.map((collection) => ({
           value: collection,
           label: collection,
         })),
       })
     }
-  }, [loadedFamily, reset])
+  }, [loadedFamily, reset, isMCFCorpus])
 
   const onAddNewEntityClick = (entityType: TChildEntity) => {
     setEditingEntity(entityType)
@@ -380,55 +378,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   const canLoadForm =
     !configLoading && !collectionsLoading && !configError && !collectionsError
 
-  useEffect(() => {
-    if (loadedFamily && collections) {
-      setFamilyDocuments(loadedFamily.documents || [])
-      setFamilyEvents(loadedFamily.events || [])
-
-      const resetValues: Partial<TFamilyFormPost> = {
-        title: loadedFamily.title,
-        summary: loadedFamily.summary,
-        collections:
-          loadedFamily.collections
-            ?.map((collectionId) => {
-              const collection = collections.find(
-                (c) => c.import_id === collectionId,
-              )
-              return collection
-                ? {
-                    value: collection.import_id,
-                    label: collection.title,
-                  }
-                : null
-            })
-            .filter(Boolean) || [],
-        geography: loadedFamily.geography
-          ? {
-              value: loadedFamily.geography,
-              label:
-                getCountries(config?.geographies).find(
-                  (country) => country.value === loadedFamily.geography,
-                )?.display_value || loadedFamily.geography,
-            }
-          : undefined,
-        corpus: loadedFamily.corpus_import_id
-          ? {
-              label: loadedFamily.corpus_import_id,
-              value: loadedFamily.corpus_import_id,
-            }
-          : undefined,
-      }
-
-      // Set category to MCF for MCF corpora
-      if (isMCFCorpus) {
-        resetValues.category = 'MCF'
-      } else {
-        resetValues.category = loadedFamily.category
-      }
-
-      reset(resetValues)
-    }
-  }, [loadedFamily, collections, reset, isMCFCorpus])
+  // }, [loadedFamily, collections, reset, isMCFCorpus])
 
   const blocker = useBlocker(
     ({ currentLocation, nextLocation }) =>
