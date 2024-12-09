@@ -188,12 +188,12 @@ export const EventForm = ({
               {/* Add event type options from taxonomy if available */}
               {taxonomy?.event_type &&
                 (Array.isArray(taxonomy.event_type)
-                  ? taxonomy.event_type.map((type) => (
+                  ? taxonomy.event_type.map((type: string) => (
                       <option key={type} value={type}>
                         {type}
                       </option>
                     ))
-                  : taxonomy.event_type.allowed_values?.map((type) => (
+                  : taxonomy.event_type.allowed_values?.map((type: string) => (
                       <option key={type} value={type}>
                         {type}
                       </option>
