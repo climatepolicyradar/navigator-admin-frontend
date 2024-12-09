@@ -98,11 +98,10 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
   // Create validation schema
   const createValidationSchema = useCallback(
     (currentTaxonomy?: TTaxonomy, currentCorpusInfo?: IConfigCorpora) => {
-      const metadataSchema =
-        generateDynamicValidationSchema<TFamilyFormPostMetadata>(
-          currentTaxonomy,
-          currentCorpusInfo,
-        )
+      const metadataSchema = generateDynamicValidationSchema<TTaxonomy>(
+        currentTaxonomy,
+        currentCorpusInfo,
+      )
       return createFamilySchema(metadataSchema)
     },
     [],
@@ -537,7 +536,6 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
                   loadedFamily={loadedFamily}
                   reset={reset}
                 />
-                <Divider />
               </>
             )}
 

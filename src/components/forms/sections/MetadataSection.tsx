@@ -6,8 +6,8 @@ import { CORPUS_METADATA_CONFIG, FieldType } from '@/interfaces/Metadata'
 import { IConfigCorpora, TFamily, TTaxonomy } from '@/interfaces'
 
 interface MetadataSectionProps {
-  corpusInfo: IConfigCorpora
-  taxonomy: TTaxonomy
+  corpusInfo?: IConfigCorpora
+  taxonomy?: TTaxonomy
   control: Control<any>
   errors: FieldErrors<any>
   loadedFamily?: TFamily
@@ -44,7 +44,7 @@ export const MetadataSection: React.FC<MetadataSectionProps> = ({
             label: v,
           }))
         } else {
-          acc[key] = value?.[0]
+          acc[key] = value
         }
 
         return acc

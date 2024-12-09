@@ -5,9 +5,10 @@ import {
   CorpusInfo,
   CORPUS_METADATA_CONFIG,
 } from '@/interfaces/Metadata'
+import { TTaxonomy } from '@/interfaces'
 
 export const generateDynamicValidationSchema = <
-  T extends Record<string, unknown>,
+  T extends TTaxonomy,
 >(
   taxonomy: Taxonomy | null,
   corpusInfo: CorpusInfo | null,
