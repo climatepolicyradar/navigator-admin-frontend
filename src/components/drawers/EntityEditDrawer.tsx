@@ -8,8 +8,8 @@ type TProps = {
   entity: 'document' | 'event'
   document?: IDocument
   event?: IEvent
-  onDocumentSuccess?: (document: IDocument) => void
-  onEventSuccess?: (event: IEvent) => void
+  onDocumentSuccess?: (documentId: string) => void
+  onEventSuccess?: (eventId: string) => void
   familyId?: string
   taxonomy?: TTaxonomy
   canModify?: boolean
