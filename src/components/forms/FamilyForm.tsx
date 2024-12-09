@@ -32,6 +32,9 @@ import {
   ILawsAndPoliciesMetadata,
   TFamilyFormPostMetadata,
   TFamily,
+  IFamilyFormPostBase,
+  IInternationalAgreementsFamilyFormPost,
+  ILawsAndPoliciesFamilyFormPost,
 } from '@/interfaces/Family'
 import { canModify } from '@/utils/canModify'
 import { getCountries } from '@/utils/extractNestedGeographyData'
@@ -61,6 +64,24 @@ interface IFamilyFormBase {
   corpus: IChakraSelect
   collections?: IChakraSelect[]
 }
+
+interface IFamilyFormIntlAgreements extends IFamilyFormBase {
+  // Intl. agreements
+  author?: string
+  author_type?: string
+}
+
+interface IFamilyFormLawsAndPolicies extends IFamilyFormBase {
+  // Laws and Policies
+  topic?: IChakraSelect[]
+  hazard?: IChakraSelect[]
+  sector?: IChakraSelect[]
+  keyword?: IChakraSelect[]
+  framework?: IChakraSelect[]
+  instrument?: IChakraSelect[]
+}
+
+type TFamilyFormSubmit = IFamilyFormIntlAgreements | IFamilyFormLawsAndPolicies
 
 type TChildEntity = 'event' | 'document'
 
@@ -174,43 +195,76 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
     }
   }, [loadedFamily])
 
-  const handleFormSubmission = async (formData: IFamilyFormBase) => {
+  // Type-safe metadata handler type
+  type MetadataHandler<T extends TFamilyFormPostMetadata> = {
+    extractMetadata: (formData: TFamilyFormSubmit) => T
+    createSubmissionData: (
+      baseData: IFamilyFormPostBase,
+      metadata: T,
+    ) => TFamilyFormPost
+  }
+
+  // Mapping of corpus types to their specific metadata handlers
+  const corpusMetadataHandlers: Record<
+    string,
+    MetadataHandler<TFamilyFormPostMetadata>
+  > = {
+    'Intl. agreements': {
+      extractMetadata: (formData: TFamilyFormSubmit) => {
+        const intlData = formData as IFamilyFormIntlAgreements
+        return {
+          author: intlData.author ? [intlData.author] : [],
+          author_type: intlData.author_type ? [intlData.author_type] : [],
+        } as IInternationalAgreementsMetadata
+      },
+      createSubmissionData: (baseData, metadata) =>
+        ({
+          ...baseData,
+          metadata,
+        }) as IInternationalAgreementsFamilyFormPost,
+    },
+    'Laws and Policies': {
+      extractMetadata: (formData: TFamilyFormSubmit) => {
+        const lawsPolicyData = formData as IFamilyFormLawsAndPolicies
+        return {
+          topic: lawsPolicyData.topic?.map((topic) => topic.value) || [],
+          hazard: lawsPolicyData.hazard?.map((hazard) => hazard.value) || [],
+          sector: lawsPolicyData.sector?.map((sector) => sector.value) || [],
+          keyword:
+            lawsPolicyData.keyword?.map((keyword) => keyword.value) || [],
+          framework:
+            lawsPolicyData.framework?.map((framework) => framework.value) || [],
+          instrument:
+            lawsPolicyData.instrument?.map((instrument) => instrument.value) ||
+            [],
+        } as ILawsAndPoliciesMetadata
+      },
+      createSubmissionData: (baseData, metadata) =>
+        ({
+          ...baseData,
+          metadata,
+        }) as ILawsAndPoliciesFamilyFormPost,
+    },
+    // Add other corpus types here with their specific metadata extraction logic
+  }
+
+  const handleFormSubmission = async (formData: TFamilyFormSubmit) => {
     setIsFormSubmitting(true)
     setFormError(null)
 
-    // Dynamically generate metadata based on corpus type
-    const familyMetadata = {} as TFamilyFormPostMetadata
-
-    // Handle International Agreements metadata
-    if (corpusInfo?.corpus_type === 'Intl. agreements') {
-      const intlAgreementsMetadata: IInternationalAgreementsMetadata = {
-        author: formData.author ? [formData.author] : [],
-        author_type: formData.author_type ? [formData.author_type] : [],
-      }
-      Object.assign(familyMetadata, intlAgreementsMetadata)
+    // Validate corpus type
+    if (!corpusInfo?.corpus_type) {
+      throw new Error('No corpus type specified')
     }
 
-    // Handle Laws and Policies metadata
-    else if (corpusInfo?.corpus_type === 'Laws and Policies') {
-      const lawsPoliciesMetadata: ILawsAndPoliciesMetadata = {
-        topic: formData.topic?.map((topic) => topic.value as string) || [],
-        hazard: formData.hazard?.map((hazard) => hazard.value as string) || [],
-        sector: formData.sector?.map((sector) => sector.value as string) || [],
-        keyword:
-          formData.keyword?.map((keyword) => keyword.value as string) || [],
-        framework:
-          formData.framework?.map((framework) => framework.value as string) ||
-          [],
-        instrument:
-          formData.instrument?.map(
-            (instrument) => instrument.value as string,
-          ) || [],
-      }
-      Object.assign(familyMetadata, lawsPoliciesMetadata)
+    // Get the appropriate metadata handler
+    const metadataHandler = corpusMetadataHandlers[corpusInfo.corpus_type]
+    if (!metadataHandler) {
+      throw new Error(`Unsupported corpus type: ${corpusInfo.corpus_type}`)
     }
 
-    // Prepare submission data
-    const submissionData: TFamilyFormPost = {
+    // Prepare base family data common to all types
+    const baseData: IFamilyFormPostBase = {
       title: formData.title,
       summary: formData.summary,
       geography: formData.geography?.value || '',
@@ -218,8 +272,16 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
       corpus_import_id: formData.corpus?.value || '',
       collections:
         formData.collections?.map((collection) => collection.value) || [],
-      metadata: familyMetadata,
     }
+
+    // Extract metadata
+    const metadata = metadataHandler.extractMetadata(formData)
+
+    // Create submission data using the specific handler
+    const submissionData = metadataHandler.createSubmissionData(
+      baseData,
+      metadata,
+    )
 
     try {
       if (loadedFamily) {

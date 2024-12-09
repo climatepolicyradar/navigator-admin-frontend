@@ -46,7 +46,7 @@ export interface ILawsAndPoliciesFamily extends IFamilyBase {
 export type TFamily = IInternationalAgreementsFamily | ILawsAndPoliciesFamily
 
 // DTO for Create and Write.
-interface IFamilyFormPostBase {
+export interface IFamilyFormPostBase {
   title: string
   summary: string
   geography: string
@@ -68,4 +68,6 @@ export type TFamilyFormPostMetadata =
   | IInternationalAgreementsMetadata
   | ILawsAndPoliciesMetadata
 
-export type TFamilyFormPost = IFamilyFormPostBase
+export type TFamilyFormPost =
+  | ILawsAndPoliciesFamilyFormPost
+  | IInternationalAgreementsFamilyFormPost
