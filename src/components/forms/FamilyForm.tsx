@@ -310,7 +310,7 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
     }
   }
 
-  const onSubmit: SubmitHandler<TFamilyFormPost> = async (data) => {
+  const onSubmit: SubmitHandler<TFamilyFormSubmit> = async (data) => {
     try {
       await handleFormSubmission(data)
     } catch (error) {
