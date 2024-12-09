@@ -5,6 +5,7 @@ import { DynamicMetadataFields } from '../DynamicMetadataFields'
 import {
   CORPUS_METADATA_CONFIG,
   FieldType,
+  IFormMetadata,
   IMetadata,
 } from '@/interfaces/Metadata'
 import { IConfigCorpora, TFamily, TTaxonomy } from '@/interfaces'
@@ -30,30 +31,30 @@ export const MetadataSection = ({
     if (loadedFamily?.metadata && corpusInfo) {
       const metadataValues = Object.entries(
         loadedFamily.metadata as IMetadata,
-      ).reduce<IMetadata>((acc, [fieldKey, value]) => {
+      ).reduce<IFormMetadata>((transformedMetadata, [fieldKey, value]) => {
         const fieldConfig =
           CORPUS_METADATA_CONFIG[corpusInfo.corpus_type]?.renderFields?.[
             fieldKey
           ]
-        if (!fieldConfig) return acc
+        if (!fieldConfig || !value) return transformedMetadata
 
         if (fieldConfig.type === FieldType.SINGLE_SELECT) {
-          acc[fieldKey] = value?.[0]
+          transformedMetadata[fieldKey] = value?.[0]
             ? {
                 value: value[0],
                 label: value[0],
               }
             : undefined
         } else if (fieldConfig.type === FieldType.MULTI_SELECT) {
-          acc[fieldKey] = value?.map((v: string) => ({
+          transformedMetadata[fieldKey] = value?.map((v: string) => ({
             value: v,
             label: v,
           }))
         } else {
-          acc[fieldKey] = value
+          transformedMetadata[fieldKey] = value
         }
 
-        return acc
+        return transformedMetadata
       }, {})
 
       reset(metadataValues)

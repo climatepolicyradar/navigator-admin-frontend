@@ -9,6 +9,9 @@ export enum FieldType {
 export interface IMetadata {
   [key: string]: string[]
 }
+export interface IFormMetadata {
+  [key: string]: { value: string; label: string }[] | { value: string; label: string } | string | undefined
+}
 
 export interface MetadataFieldConfig {
   type: FieldType
