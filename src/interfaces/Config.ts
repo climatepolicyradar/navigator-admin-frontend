@@ -23,11 +23,6 @@ export interface IConfigLanguageSorted extends IChakraSelect {}
 
 export interface IConfigCorpus extends IChakraSelect {}
 
-export interface IConfigLanguageSorted extends OptionBase {
-  value: string
-  label: string
-}
-
 // Types for taxonomy and corpus info
 export interface ITaxonomyField {
   allowed_values?: string[]

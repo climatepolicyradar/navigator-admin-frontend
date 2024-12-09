@@ -14,17 +14,13 @@ import {
   Radio,
   HStack,
 } from '@chakra-ui/react'
-
-interface Option {
-  value: string
-  label: string
-}
+import { IChakraSelect } from '@/interfaces'
 
 interface RadioGroupFieldProps<T extends FieldValues> {
   name: Path<T>
   label: string
   control: Control<T>
-  options: Option[]
+  options: IChakraSelect[]
   rules?: RegisterOptions
 }
 

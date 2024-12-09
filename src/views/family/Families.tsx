@@ -26,6 +26,7 @@ import { SearchIcon } from '@chakra-ui/icons'
 import useConfig from '@/hooks/useConfig'
 import { getCountries } from '@/utils/extractNestedGeographyData'
 import { chakraStylesSelect } from '@/styles/chakra'
+import { IChakraSelect } from '@/interfaces'
 
 export default function Families() {
   const navigation = useNavigation()
@@ -39,7 +40,7 @@ export default function Families() {
   })
 
   const handleChangeGeo = (newValue: unknown) => {
-    const selectedItem = newValue as { value: string; label: string }
+    const selectedItem = newValue as IChakraSelect
     setSearchParams({
       geography: selectedItem?.value ?? '',
       q: searchParams.get('q') ?? '',

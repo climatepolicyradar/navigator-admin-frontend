@@ -1,4 +1,4 @@
-import { SelectOption } from '@/interfaces/Metadata'
+import { IChakraSelect } from '@/interfaces'
 
 export const formatFieldLabel = (key: string): string => {
   return key
@@ -7,7 +7,7 @@ export const formatFieldLabel = (key: string): string => {
     .join(' ')
 }
 
-export const generateSelectOptions = (values?: string[]): SelectOption[] => {
+export const generateSelectOptions = (values?: string[]): IChakraSelect[] => {
   if (!values) return []
   return values.map((value) => ({ value, label: value }))
 }

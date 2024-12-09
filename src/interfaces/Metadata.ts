@@ -28,11 +28,6 @@ export interface CorpusMetadataConfig {
   }
 }
 
-export interface SelectOption {
-  value: string
-  label: string
-}
-
 export interface DynamicMetadataFieldProps<T extends Record<string, any>> {
   fieldKey: string
   taxonomyField: ITaxonomyField

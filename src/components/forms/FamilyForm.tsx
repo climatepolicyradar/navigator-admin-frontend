@@ -262,7 +262,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
         geography: {
           value: loadedFamily.geography,
           label:
-            getCountries()?.find(
+            getCountries(config?.geographies)?.find(
               (country) => country.value === loadedFamily.geography,
             )?.display_value || loadedFamily.geography,
         },
@@ -279,7 +279,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
         })),
       })
     }
-  }, [loadedFamily, reset, isMCFCorpus])
+  }, [config, loadedFamily, reset, isMCFCorpus])
 
   const onAddNewEntityClick = (entityType: TChildEntity) => {
     setEditingEntity(entityType)
