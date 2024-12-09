@@ -1,4 +1,5 @@
 import { Control, FieldErrors } from 'react-hook-form'
+import { ITaxonomyField } from './Config'
 
 export enum FieldType {
   TEXT = 'text',
@@ -8,30 +9,15 @@ export enum FieldType {
   DATE = 'date',
 }
 
-// Types for taxonomy and corpus info
-export interface TaxonomyField {
-  allowed_values?: string[]
-  allow_any?: boolean
-  allow_blanks?: boolean
-}
-
-export interface Taxonomy {
-  [key: string]: TaxonomyField
-}
-
-export interface SubTaxonomy {
-  [key: string]: Taxonomy
+export interface MetadataFieldConfig {
+  type: FieldType
+  label?: string
+  allowedValues?: string[]
 }
 
 export interface CorpusInfo {
   corpus_type: string
   title?: string // TODO Do we need this?
-}
-
-export interface MetadataFieldConfig {
-  type: FieldType
-  label?: string
-  allowedValues?: string[]
 }
 
 // Enhanced configuration type for corpus metadata
@@ -49,7 +35,7 @@ export interface SelectOption {
 
 export interface DynamicMetadataFieldProps<T extends Record<string, any>> {
   fieldKey: string
-  taxonomyField: TaxonomyField
+  taxonomyField: ITaxonomyField
   control: Control<T>
   errors: FieldErrors<T>
   fieldType: FieldType

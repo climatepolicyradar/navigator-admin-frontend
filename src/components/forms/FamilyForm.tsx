@@ -55,15 +55,6 @@ interface FamilyFormProps {
 
 type TChildEntity = 'event' | 'document'
 
-// interface IFamilyFormBase {
-//   title: string
-//   summary: string
-//   geography: IChakraSelect
-//   category: string
-//   corpus: IChakraSelect
-//   collections?: IChakraSelect[]
-// }
-
 export const FamilyForm: React.FC<FamilyFormProps> = ({
   family: loadedFamily,
 }) => {
@@ -92,7 +83,7 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
     getCorpusImportId(loadedFamily),
     getCorpusImportId(loadedFamily),
   )
-  const initialTaxonomy = initialCorpusInfo?.taxonomy
+  const initialTaxonomy = initialCorpusInfo ? initialCorpusInfo?.taxonomy : null
 
   // Create validation schema
   const createValidationSchema = useCallback(
@@ -135,7 +126,7 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
 
   // Update validation schema when corpus/taxonomy changes
   useEffect(() => {
-    const newSchema = createValidationSchema(taxonomy, corpusInfo)
+    createValidationSchema(taxonomy, corpusInfo)
     // Re-trigger form validation with new schema
     trigger()
   }, [taxonomy, corpusInfo, createValidationSchema, trigger])

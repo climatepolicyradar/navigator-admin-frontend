@@ -13,6 +13,7 @@ export interface IConfigGeography {
   node: IConfigGeographyNode
   children: IConfigGeography[]
 }
+
 export interface IChakraSelect extends OptionBase {
   value: string
   label: string
@@ -27,42 +28,55 @@ export interface IConfigLanguageSorted extends OptionBase {
   label: string
 }
 
-interface IConfigMeta {
+// Types for taxonomy and corpus info
+export interface ITaxonomyField {
+  allowed_values?: string[]
   allow_any?: boolean
-  allow_blanks: boolean
-  allowed_values: string[]
+  allow_blanks?: boolean
 }
 
-export interface IConfigTaxonomyCCLW {
-  topic: IConfigMeta
-  hazard: IConfigMeta
-  sector: IConfigMeta
-  keyword: IConfigMeta
-  framework: IConfigMeta
-  instrument: IConfigMeta
-  event_type: IConfigMeta
-  _document: IConfigDocumentMetadata
-  _event: IConfigEventMetadata
+interface ISubTaxonomy {
+  [key: string]: ITaxonomyField
 }
 
-export interface IConfigTaxonomyUNFCCC {
-  author: IConfigMeta
-  author_type: IConfigMeta
-  event_type: IConfigMeta
-  _document: IConfigDocumentMetadata
-  _event: IConfigEventMetadata
+export interface IDocumentSubTaxonomy extends ISubTaxonomy {
+  role: ITaxonomyField
+  type: ITaxonomyField
+}
+
+export interface IEventSubTaxonomy extends ISubTaxonomy {
+  event_type: ITaxonomyField
+}
+
+export type TSubTaxonomy = IEventSubTaxonomy | IDocumentSubTaxonomy
+
+export interface ITaxonomy {
+  [key: string]: ITaxonomyField | TSubTaxonomy
+}
+
+export interface IConfigTaxonomyCCLW extends ITaxonomy {
+  topic: ITaxonomyField
+  hazard: ITaxonomyField
+  sector: ITaxonomyField
+  keyword: ITaxonomyField
+  framework: ITaxonomyField
+  instrument: ITaxonomyField
+  event_type: ITaxonomyField
+  _document: IDocumentSubTaxonomy
+  _event: IEventSubTaxonomy
+}
+
+export interface IConfigTaxonomyUNFCCC extends ITaxonomy {
+  author: ITaxonomyField
+  author_type: ITaxonomyField
+  event_type: ITaxonomyField
+  _document: IDocumentSubTaxonomy
+  _event: IEventSubTaxonomy
 }
 
 export type TTaxonomy = IConfigTaxonomyCCLW | IConfigTaxonomyUNFCCC
 
-export interface IConfigEventMetadata {
-  event_type: IConfigMeta
-}
-export interface IConfigDocumentMetadata {
-  role: IConfigMeta
-  type: IConfigMeta
-}
-export interface IConfigOrganisationMetadata {
+export interface IConfigOrganisationInfo {
   name: string
   id: number
 }
@@ -73,7 +87,7 @@ export interface IConfigCorpora {
   description: string
   corpus_type: string
   corpus_type_description: string
-  organisation: IConfigOrganisationMetadata
+  organisation: IConfigOrganisationInfo
   taxonomy: TTaxonomy
 }
 

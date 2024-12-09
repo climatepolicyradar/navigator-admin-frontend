@@ -1,4 +1,28 @@
+import { IChakraSelect } from '@/interfaces'
 import * as yup from 'yup'
+
+// interface IFamilyFormBase {
+//   title: string
+//   summary: string
+//   geography: IChakraSelect
+//   category: string
+//   corpus: IChakraSelect
+//   collections?: IChakraSelect[]
+// }
+
+interface IFamilyFormMetadata {
+  // Intl. agreements
+  author?: string
+  author_type?: string
+
+  // Laws and Policies
+  topic?: IChakraSelect[]
+  hazard?: IChakraSelect[]
+  sector?: IChakraSelect[]
+  keyword?: IChakraSelect[]
+  framework?: IChakraSelect[]
+  instrument?: IChakraSelect[]
+}
 
 // Base schema for core family fields (non-metadata)
 export const baseFamilySchema = yup
@@ -21,6 +45,8 @@ export const baseFamilySchema = yup
   .required()
 
 // Function to merge base schema with dynamic metadata schema
-export const createFamilySchema = (metadataSchema: yup.ObjectSchema<any>) => {
+export const createFamilySchema = (
+  metadataSchema: yup.ObjectSchema<IFamilyFormMetadata>,
+) => {
   return baseFamilySchema.concat(metadataSchema)
 }

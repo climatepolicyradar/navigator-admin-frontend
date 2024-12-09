@@ -11,8 +11,7 @@ import {
   IDocumentFormPostModified,
   IDocumentMetadata,
   IError,
-  IConfigTaxonomyCCLW,
-  IConfigTaxonomyUNFCCC,
+  TTaxonomy,
 } from '@/interfaces'
 import { createDocument, updateDocument } from '@/api/Documents'
 import { documentSchema } from '@/schemas/documentSchema'
@@ -41,7 +40,7 @@ type TProps = {
   document?: IDocument
   familyId?: string
   canModify?: boolean
-  taxonomy?: IConfigTaxonomyCCLW | IConfigTaxonomyUNFCCC
+  taxonomy?: TTaxonomy
   onSuccess?: (documentId: string) => void
 }
 
@@ -70,7 +69,9 @@ export const DocumentForm = ({
   // Ensure family_import_id is always set
   useEffect(() => {
     if (familyId || loadedDocument?.family_import_id) {
-      setValue('family_import_id', familyId || loadedDocument?.family_import_id)
+      if (familyId) setValue('family_import_id', familyId)
+      else if (loadedDocument)
+        setValue('family_import_id', loadedDocument?.family_import_id)
     }
   }, [familyId, loadedDocument, setValue])
 
@@ -229,11 +230,13 @@ export const DocumentForm = ({
                   <FormLabel as='legend'>Role</FormLabel>
                   <Select background='white' {...field}>
                     <option value=''>Please select</option>
-                    {taxonomy?._document?.role?.allowed_values.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
+                    {(taxonomy?._document?.role?.allowed_values ?? []).map(
+                      (option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ),
+                    )}
                   </Select>
                   <FormErrorMessage>Please select a role</FormErrorMessage>
                 </FormControl>

@@ -5,16 +5,16 @@ import { DynamicMetadataFields } from '../DynamicMetadataFields'
 import { CORPUS_METADATA_CONFIG, FieldType } from '@/interfaces/Metadata'
 import { IConfigCorpora, TFamily, TTaxonomy } from '@/interfaces'
 
-interface MetadataSectionProps {
+interface MetadataSectionProps<T extends Record<string, any>> {
   corpusInfo?: IConfigCorpora
   taxonomy?: TTaxonomy
-  control: Control<any>
-  errors: FieldErrors<any>
+  control: Control<T>
+  errors: FieldErrors<T>
   loadedFamily?: TFamily
-  reset: UseFormReset<any>
+  reset: UseFormReset<T>
 }
 
-export const MetadataSection: React.FC<MetadataSectionProps> = ({
+export const MetadataSection: React.FC<MetadataSectionProps<T>> = ({
   corpusInfo,
   taxonomy,
   control,

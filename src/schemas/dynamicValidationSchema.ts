@@ -1,18 +1,17 @@
 import * as yup from 'yup'
 import {
   FieldType,
-  Taxonomy,
   CorpusInfo,
   CORPUS_METADATA_CONFIG,
 } from '@/interfaces/Metadata'
 import { TTaxonomy } from '@/interfaces'
 
 export const generateDynamicValidationSchema = <T extends TTaxonomy>(
-  taxonomy: Taxonomy | null,
-  corpusInfo: CorpusInfo | null,
+  taxonomy?: TTaxonomy,
+  corpusInfo?: CorpusInfo,
 ): yup.ObjectSchema<T> => {
   if (!taxonomy || !corpusInfo) {
-    return yup.object({}).required()
+    return yup.object({}).required() as yup.ObjectSchema<T>
   }
 
   const metadataFields =
