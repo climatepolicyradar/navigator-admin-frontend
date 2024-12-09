@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   Box,
   Button,
@@ -22,7 +21,7 @@ interface DocumentSectionProps {
   isNewFamily: boolean
 }
 
-export const DocumentSection: React.FC<DocumentSectionProps> = ({
+export const DocumentSection = ({
   familyDocuments,
   userCanModify,
   onAddNew,
@@ -31,7 +30,7 @@ export const DocumentSection: React.FC<DocumentSectionProps> = ({
   updatedDocument,
   setUpdatedDocument,
   isNewFamily,
-}) => {
+}: DocumentSectionProps) => {
   return (
     <>
       <Box position='relative' padding='10'>

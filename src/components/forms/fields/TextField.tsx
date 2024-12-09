@@ -1,4 +1,3 @@
-import React from 'react'
 import { Controller, Control } from 'react-hook-form'
 import {
   Input,
@@ -23,7 +22,7 @@ export const TextField = <T extends Record<string, any>>({
   placeholder,
   label,
   isRequired,
-}: TextFieldProps<T>): React.ReactElement => {
+}: TextFieldProps<T>) => {
   return (
     <Controller
       name={name}

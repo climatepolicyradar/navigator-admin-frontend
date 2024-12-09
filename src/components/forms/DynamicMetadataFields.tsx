@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   FormControl,
   FormLabel,
@@ -30,7 +29,7 @@ export const DynamicMetadataFields = <T extends Record<string, any>>({
   control,
   errors,
   fieldType,
-}: DynamicMetadataFieldProps<T>): React.ReactElement => {
+}: DynamicMetadataFieldProps<T>) => {
   const {
     allowed_values = [],
     allow_any = false,

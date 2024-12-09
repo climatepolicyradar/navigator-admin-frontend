@@ -1,4 +1,3 @@
-import React from 'react'
 import { Box, Text, VStack, Divider } from '@chakra-ui/react'
 import { TFamily } from '@/interfaces'
 
@@ -6,7 +5,7 @@ interface ReadOnlyFieldsProps {
   family: TFamily
 }
 
-export const ReadOnlyFields: React.FC<ReadOnlyFieldsProps> = ({ family }) => {
+export const ReadOnlyFields = ({ family }: ReadOnlyFieldsProps) => {
   return (
     <>
       <Box borderWidth='1px' borderRadius='lg' p={4} bg='gray.50'>

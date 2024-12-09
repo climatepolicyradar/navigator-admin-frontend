@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   Modal,
   ModalOverlay,
@@ -16,11 +15,11 @@ interface UnsavedChangesModalProps {
   onConfirm: () => void
 }
 
-export const UnsavedChangesModal: React.FC<UnsavedChangesModalProps> = ({
+export const UnsavedChangesModal = ({
   isOpen,
   onClose,
   onConfirm,
-}) => {
+}: UnsavedChangesModalProps) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />

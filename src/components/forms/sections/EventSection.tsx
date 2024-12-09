@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   Box,
   Button,
@@ -22,7 +21,7 @@ interface EventSectionProps {
   isNewFamily: boolean
 }
 
-export const EventSection: React.FC<EventSectionProps> = ({
+export const EventSection = ({
   familyEvents,
   userCanModify,
   onAddNew,
@@ -31,7 +30,7 @@ export const EventSection: React.FC<EventSectionProps> = ({
   updatedEvent,
   setUpdatedEvent,
   isNewFamily,
-}) => {
+}: EventSectionProps) => {
   return (
     <>
       <Box position='relative' padding='10'>

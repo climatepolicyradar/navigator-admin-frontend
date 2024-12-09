@@ -1,4 +1,3 @@
-import React from 'react'
 import { Controller, Control, RegisterOptions } from 'react-hook-form'
 import { Select as CRSelect } from 'chakra-react-select'
 import { chakraStylesSelect } from '@/styles/chakra'
@@ -24,7 +23,7 @@ export const SelectField = <T extends Record<string, any>>({
   isMulti = false,
   rules,
   isRequired,
-}: SelectFieldProps<T>): React.ReactElement => {
+}: SelectFieldProps<T>) => {
   // Determine if options are already in IChakraSelect format
   const selectOptions = options
     ? Array.isArray(options) &&

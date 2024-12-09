@@ -1,4 +1,3 @@
-import React from 'react'
 import { DocumentEditDrawer } from './DocumentEditDrawer'
 import { EventEditDrawer } from './EventEditDrawer'
 import { IDocument, IEvent, TTaxonomy } from '@/interfaces'
@@ -16,7 +15,7 @@ interface EntityEditDrawerProps {
   canModify?: boolean
 }
 
-export const EntityEditDrawer: React.FC<EntityEditDrawerProps> = ({
+export const EntityEditDrawer = ({
   isOpen,
   onClose,
   entity,
@@ -27,7 +26,7 @@ export const EntityEditDrawer: React.FC<EntityEditDrawerProps> = ({
   familyId,
   taxonomy,
   canModify,
-}) => {
+}: EntityEditDrawerProps) => {
   if (entity === 'document') {
     return (
       <DocumentEditDrawer

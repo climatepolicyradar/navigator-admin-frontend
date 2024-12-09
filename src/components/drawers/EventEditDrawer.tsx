@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   Drawer,
   DrawerBody,
@@ -20,7 +19,7 @@ interface EventEditDrawerProps {
   taxonomy?: TTaxonomy
 }
 
-export const EventEditDrawer: React.FC<EventEditDrawerProps> = ({
+export const EventEditDrawer = ({
   event: loadedEvent,
   familyId,
   onClose,
@@ -28,7 +27,7 @@ export const EventEditDrawer: React.FC<EventEditDrawerProps> = ({
   onSuccess,
   canModify,
   taxonomy,
-}) => {
+}: EventEditDrawerProps) => {
   return (
     <Drawer placement='right' onClose={onClose} isOpen={isOpen} size='lg'>
       <DrawerOverlay />
