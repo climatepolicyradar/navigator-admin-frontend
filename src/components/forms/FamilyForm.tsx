@@ -47,10 +47,19 @@ import { ApiError } from '../feedback/ApiError'
 import { IDocument } from '@/interfaces/Document'
 import { IEvent } from '@/interfaces/Event'
 import { IError } from '@/interfaces/Auth'
-import { IConfigCorpora, TTaxonomy } from '@/interfaces'
+import { IChakraSelect, IConfigCorpora, TTaxonomy } from '@/interfaces'
 
 interface FamilyFormProps {
   family?: TFamily
+}
+
+interface IFamilyFormBase {
+  title: string
+  summary: string
+  geography: IChakraSelect
+  category: string
+  corpus: IChakraSelect
+  collections?: IChakraSelect[]
 }
 
 type TChildEntity = 'event' | 'document'
@@ -111,12 +120,12 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
     watch,
     formState: { errors, isSubmitting, dirtyFields },
     trigger,
-  } = useForm<TFamilyFormPost>({
+  } = useForm<IFamilyFormBase>({
     resolver: yupResolver(validationSchema),
   })
 
-  // Watch for corpus changes and update schema
-  const watchCorpus = watch('corpus')
+  // Watch for corpus changes and update schema only when creating a new family
+  const watchCorpus = !loadedFamily ? watch('corpus') : undefined
   const corpusInfo = useCorpusFromConfig(
     config?.corpora,
     getCorpusImportId(loadedFamily),
@@ -165,7 +174,7 @@ export const FamilyForm: React.FC<FamilyFormProps> = ({
     }
   }, [loadedFamily])
 
-  const handleFormSubmission = async (formData: TFamilyFormPost) => {
+  const handleFormSubmission = async (formData: IFamilyFormBase) => {
     setIsFormSubmitting(true)
     setFormError(null)
 

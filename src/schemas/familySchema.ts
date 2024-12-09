@@ -1,15 +1,6 @@
 import { IChakraSelect } from '@/interfaces'
 import * as yup from 'yup'
 
-// interface IFamilyFormBase {
-//   title: string
-//   summary: string
-//   geography: IChakraSelect
-//   category: string
-//   corpus: IChakraSelect
-//   collections?: IChakraSelect[]
-// }
-
 interface IFamilyFormMetadata {
   // Intl. agreements
   author?: string
