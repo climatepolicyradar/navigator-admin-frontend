@@ -6,15 +6,13 @@ import {
   MetadataFieldConfig,
   IFormMetadata,
 } from '@/interfaces/Metadata'
-import { IChakraSelect, TTaxonomy } from '@/interfaces'
-import { ITaxonomyField } from '@/interfaces/Config'
+import { TFamilyMetadata, TTaxonomy } from '@/interfaces'
 
 // Type-safe field validation function
 const getFieldValidation = (
   fieldConfig: MetadataFieldConfig,
   fieldKey: string,
   isRequired: boolean,
-  taxonomyField?: ITaxonomyField,
 ): yup.Schema<IFormMetadata[string]> => {
   let fieldValidation: yup.Schema<IFormMetadata[string]>
 
@@ -55,10 +53,10 @@ const getFieldValidation = (
 export const generateDynamicValidationSchema = (
   taxonomy?: TTaxonomy,
   corpusInfo?: CorpusInfo,
-): yup.ObjectSchema<Partial<IFormMetadata>> => {
+): yup.ObjectSchema<TFamilyMetadata> => {
   // Early return if no taxonomy or corpus info
   if (!taxonomy || !corpusInfo) {
-    return yup.object({}).required() as yup.ObjectSchema<Partial<IFormMetadata>>
+    return yup.object({}).required() as yup.ObjectSchema<TFamilyMetadata>
   }
 
   // Get metadata fields and validation fields for the specific corpus type
@@ -84,7 +82,6 @@ export const generateDynamicValidationSchema = (
         fieldConfig,
         fieldKey,
         isRequired,
-        taxonomyField,
       )
 
       return {
@@ -92,11 +89,9 @@ export const generateDynamicValidationSchema = (
         [fieldKey]: fieldValidation,
       }
     },
-    {} as Partial<IFormMetadata>,
+    {} as TFamilyMetadata,
   )
 
   // Create and return the final schema
-  return yup.object(schemaShape).required() as yup.ObjectSchema<
-    Partial<IFormMetadata>
-  >
+  return yup.object(schemaShape).required() as yup.ObjectSchema<TFamilyMetadata>
 }

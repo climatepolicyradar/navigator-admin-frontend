@@ -52,25 +52,7 @@ interface IFamilyFormBase {
   collections?: IChakraSelect[]
 }
 
-export interface IFamilyFormIntlAgreements extends IFamilyFormBase {
-  // Intl. agreements
-  author?: string
-  author_type?: IChakraSelect
-}
-
-export interface IFamilyFormLawsAndPolicies extends IFamilyFormBase {
-  // Laws and Policies
-  topic?: IChakraSelect[]
-  hazard?: IChakraSelect[]
-  sector?: IChakraSelect[]
-  keyword?: IChakraSelect[]
-  framework?: IChakraSelect[]
-  instrument?: IChakraSelect[]
-}
-
-export type TFamilyFormSubmit =
-  | IFamilyFormIntlAgreements
-  | IFamilyFormLawsAndPolicies
+export type TFamilyFormSubmit = IFamilyFormBase
 
 type TChildEntity = 'event' | 'document'
 
@@ -111,7 +93,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   // Create validation schema
   const createValidationSchema = useCallback(
     (currentTaxonomy?: TTaxonomy, currentCorpusInfo?: IConfigCorpora) => {
-      const metadataSchema = generateDynamicValidationSchema<TTaxonomy>(
+      const metadataSchema = generateDynamicValidationSchema(
         currentTaxonomy,
         currentCorpusInfo,
       )
