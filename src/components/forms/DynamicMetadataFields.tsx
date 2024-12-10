@@ -26,18 +26,16 @@ export const DynamicMetadataFields = <T extends FieldValues>({
   errors,
   fieldType,
 }: TProps<T>) => {
-  let allowed_values: string[] = []
-  let allow_any = false
-  let allow_blanks = true
+  // Wrong typing escape hatch -- TODO extend for sub-taxonomies
   if (typeof taxonomyField.allowed_values === 'undefined') {
-    // Wrong typing escape hatch
     return null
-  } else {
-    const tx = taxonomyField as ITaxonomyField
-    allowed_values = tx.allowed_values || []
-    allow_any = tx.allow_any || false
-    allow_blanks = tx.allow_blanks || true
   }
+
+  const {
+    allowed_values = [],
+    allow_any = false,
+    allow_blanks = true,
+  } = taxonomyField as ITaxonomyField
 
   const renderField = () => {
     if (allow_any) {
