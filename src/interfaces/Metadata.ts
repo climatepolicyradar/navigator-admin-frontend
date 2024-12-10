@@ -11,8 +11,15 @@ export enum FieldType {
 export interface IMetadata {
   [key: string]: string[]
 }
+
 export interface IFormMetadata {
-  [key: string]: IChakraSelect[] | IChakraSelect | string | number | undefined
+  [key: string]:
+    | string
+    | IChakraSelect[]
+    | IChakraSelect
+    | string[]
+    | number
+    | undefined
 }
 
 export interface MetadataFieldConfig {
