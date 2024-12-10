@@ -6,13 +6,13 @@ import { CORPUS_METADATA_CONFIG, FieldType } from '@/interfaces/Metadata'
 import { IConfigCorpora, TFamily, TTaxonomy } from '@/interfaces'
 import { IFamilyFormBase } from '../FamilyForm'
 
-type TProps<T extends Record<string, any>> = {
+type TProps = {
   corpusInfo?: IConfigCorpora
   taxonomy?: TTaxonomy
-  control: Control<T>
-  errors: FieldErrors<T>
+  control: Control<IFamilyFormBase>
+  errors: FieldErrors<IFamilyFormBase>
   loadedFamily?: TFamily
-  reset: UseFormReset<T>
+  reset: UseFormReset<IFamilyFormBase>
 }
 
 export const MetadataSection = ({
@@ -22,7 +22,7 @@ export const MetadataSection = ({
   errors,
   loadedFamily,
   reset,
-}: TProps<T>) => {
+}: TProps) => {
   useEffect(() => {
     if (loadedFamily?.metadata && corpusInfo) {
       const metadataValues = Object.entries(loadedFamily.metadata).reduce<

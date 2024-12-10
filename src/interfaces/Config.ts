@@ -23,7 +23,7 @@ export interface ITaxonomyField {
   allow_blanks?: boolean
 }
 
-interface ISubTaxonomy {
+export interface ISubTaxonomy {
   [key: string]: ITaxonomyField
 }
 
@@ -38,7 +38,7 @@ export interface IEventSubTaxonomy extends ISubTaxonomy {
 
 export type TSubTaxonomy = IEventSubTaxonomy | IDocumentSubTaxonomy
 
-export interface ITaxonomy {
+interface ITaxonomy {
   [key: string]: ITaxonomyField | TSubTaxonomy
 }
 
