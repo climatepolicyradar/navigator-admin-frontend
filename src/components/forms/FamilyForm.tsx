@@ -237,21 +237,9 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     // Handle any submission errors
     setFormError(error as IError)
     toast({
-      title: 'Submission Error',
+      title: 'Form submission error',
       description: (error as IError).message,
       status: 'error',
-    })
-
-    const submitHandlerErrors = error as {
-      [key: string]: { message: string; type: string }
-    }
-    // Set form errors manually
-    Object.keys(submitHandlerErrors).forEach((key) => {
-      if (key === 'summary')
-        setError('summary', {
-          type: 'required',
-          message: 'Summary is required',
-        })
     })
   }
 
