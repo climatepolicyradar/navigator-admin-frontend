@@ -23,7 +23,6 @@ import { createFamily, updateFamily } from '@/api/Families'
 import { deleteDocument } from '@/api/Documents'
 
 import useConfig from '@/hooks/useConfig'
-import useCorpus from '@/hooks/useCorpus'
 import useTaxonomy from '@/hooks/useTaxonomy'
 import useCollections from '@/hooks/useCollections'
 
@@ -76,6 +75,7 @@ import { generateOptions } from '@/utils/generateOptions'
 import { stripHtml } from '@/utils/stripHtml'
 
 import { familySchema } from '@/schemas/familySchema'
+import useCorpusFromConfig from '@/hooks/useCorpusFromConfig'
 
 type TMultiSelect = {
   value: string
@@ -146,7 +146,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   const [updatedDocument, setUpdatedDocument] = useState<string>('')
 
   const watchCorpus = watch('corpus')
-  const corpusInfo = useCorpus(
+  const corpusInfo = useCorpusFromConfig(
     config?.corpora,
     loadedFamily?.corpus_import_id,
     watchCorpus?.value,
