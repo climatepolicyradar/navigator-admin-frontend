@@ -4,7 +4,7 @@ import {
   FormErrorMessage,
   FormHelperText,
 } from '@chakra-ui/react'
-import { Control, FieldErrors, FieldValues } from 'react-hook-form'
+import { Control, FieldErrors, FieldValues, Path } from 'react-hook-form'
 import { FieldType } from '@/interfaces/Metadata'
 import { formatFieldLabel } from '@/utils/metadataUtils'
 import { SelectField } from './fields/SelectField'
@@ -34,7 +34,7 @@ export const DynamicMetadataFields = <T extends FieldValues>({
 
   const renderField = () => {
     if (allow_any) {
-      return <TextField<T> name={fieldKey} control={control} />
+      return <TextField<T> name={fieldKey as Path<T>} control={control} />
     }
 
     switch (fieldType) {
@@ -42,17 +42,23 @@ export const DynamicMetadataFields = <T extends FieldValues>({
       case FieldType.SINGLE_SELECT:
         return (
           <SelectField<T>
-            name={fieldKey}
+            name={fieldKey as Path<T>}
             control={control}
             options={allowed_values}
             isMulti={fieldType === FieldType.MULTI_SELECT}
           />
         )
       case FieldType.NUMBER:
-        return <TextField<T> name={fieldKey} control={control} type='number' />
+        return (
+          <TextField<T>
+            name={fieldKey as Path<T>}
+            control={control}
+            type='number'
+          />
+        )
       case FieldType.TEXT:
       default:
-        return <TextField<T> name={fieldKey} control={control} />
+        return <TextField<T> name={fieldKey as Path<T>} control={control} />
     }
   }
 
