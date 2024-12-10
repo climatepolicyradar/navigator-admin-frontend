@@ -1,9 +1,16 @@
-import { IConfigTaxonomyCCLW, IConfigTaxonomyUNFCCC } from '@/interfaces/Config'
+import {
+  IConfigTaxonomyCCLW,
+  IConfigTaxonomyMCF,
+  IConfigTaxonomyUNFCCC,
+} from '@/interfaces/Config'
 import { useMemo } from 'react'
 
 const useTaxonomy = (
   corpus_type?: string,
-  corpus_taxonomy?: IConfigTaxonomyCCLW | IConfigTaxonomyUNFCCC,
+  corpus_taxonomy?:
+    | IConfigTaxonomyCCLW
+    | IConfigTaxonomyUNFCCC
+    | IConfigTaxonomyMCF,
 ) => {
   return useMemo(() => {
     if (corpus_type === 'Law and Policies')

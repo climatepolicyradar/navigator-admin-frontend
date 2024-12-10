@@ -12,6 +12,7 @@ import {
   IEventFormPut,
   IConfigTaxonomyCCLW,
   IConfigTaxonomyUNFCCC,
+  IConfigTaxonomyMCF,
 } from '@/interfaces'
 import { eventSchema } from '@/schemas/eventSchema'
 import { createEvent, updateEvent } from '@/api/Events'
@@ -34,7 +35,7 @@ type TProps = {
   familyId: string
   canModify: boolean
   event?: IEvent
-  taxonomy?: IConfigTaxonomyCCLW | IConfigTaxonomyUNFCCC
+  taxonomy?: IConfigTaxonomyCCLW | IConfigTaxonomyUNFCCC | IConfigTaxonomyMCF
   onSuccess?: (eventId: string) => void
 }
 
