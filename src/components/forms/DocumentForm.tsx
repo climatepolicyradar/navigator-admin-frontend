@@ -13,6 +13,7 @@ import {
   IError,
   IConfigTaxonomyCCLW,
   IConfigTaxonomyUNFCCC,
+  IConfigTaxonomyMCF,
 } from '@/interfaces'
 import { createDocument, updateDocument } from '@/api/Documents'
 import { documentSchema } from '@/schemas/documentSchema'
@@ -41,7 +42,7 @@ type TProps = {
   document?: IDocument
   familyId?: string
   canModify?: boolean
-  taxonomy?: IConfigTaxonomyCCLW | IConfigTaxonomyUNFCCC
+  taxonomy?: IConfigTaxonomyCCLW | IConfigTaxonomyUNFCCC | IConfigTaxonomyMCF
   onSuccess?: (documentId: string) => void
 }
 
@@ -147,8 +148,8 @@ export const DocumentForm = ({
       reset({
         family_import_id: loadedDocument.family_import_id,
         variant_name: loadedDocument.variant_name ?? '',
-        role: loadedDocument?.metadata?.role[0] ?? '',
-        type: loadedDocument?.metadata?.type[0] ?? '',
+        role: loadedDocument?.metadata?.role?.[0] ?? '',
+        type: loadedDocument?.metadata?.type?.[0] ?? '',
         title: loadedDocument.title,
         source_url: loadedDocument.source_url ?? '',
         user_language_name: loadedDocument.user_language_name
@@ -164,6 +165,8 @@ export const DocumentForm = ({
       })
     }
   }, [loadedDocument, familyId, reset])
+
+  console.log(taxonomy)
 
   return (
     <>
@@ -202,46 +205,62 @@ export const DocumentForm = ({
               {errors.source_url && errors.source_url.message}
             </FormErrorMessage>
           </FormControl>
-          <Controller
-            control={control}
-            name='role'
-            render={({ field }) => {
-              return (
-                <FormControl isRequired as='fieldset' isInvalid={!!errors.role}>
-                  <FormLabel as='legend'>Role</FormLabel>
-                  <Select background='white' {...field}>
-                    <option value=''>Please select</option>
-                    {taxonomy?._document?.role?.allowed_values.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </Select>
-                  <FormErrorMessage>Please select a role</FormErrorMessage>
-                </FormControl>
-              )
-            }}
-          />
-          <Controller
-            control={control}
-            name='type'
-            render={({ field }) => {
-              return (
-                <FormControl isRequired as='fieldset' isInvalid={!!errors.type}>
-                  <FormLabel as='legend'>Type</FormLabel>
-                  <Select background='white' {...field}>
-                    <option value=''>Please select</option>
-                    {taxonomy?._document?.type?.allowed_values.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </Select>
-                  <FormErrorMessage>Please select a type</FormErrorMessage>
-                </FormControl>
-              )
-            }}
-          />
+          {taxonomy?._document?.role && (
+            <Controller
+              control={control}
+              name='role'
+              render={({ field }) => {
+                return (
+                  <FormControl
+                    isRequired={!!taxonomy?._document?.role}
+                    as='fieldset'
+                    isInvalid={!!errors.role}
+                  >
+                    <FormLabel as='legend'>Role</FormLabel>
+                    <Select background='white' {...field}>
+                      <option value=''>Please select</option>
+                      {taxonomy?._document?.role?.allowed_values.map(
+                        (option) => (
+                          <option key={option} value={option}>
+                            {option}
+                          </option>
+                        ),
+                      )}
+                    </Select>
+                    <FormErrorMessage>Please select a role</FormErrorMessage>
+                  </FormControl>
+                )
+              }}
+            />
+          )}
+          {taxonomy?._document?.type && (
+            <Controller
+              control={control}
+              name='type'
+              render={({ field }) => {
+                return (
+                  <FormControl
+                    isRequired={!!taxonomy?._document?.type}
+                    as='fieldset'
+                    isInvalid={!!errors.type}
+                  >
+                    <FormLabel as='legend'>Type</FormLabel>
+                    <Select background='white' {...field}>
+                      <option value=''>Please select</option>
+                      {taxonomy?._document?.type?.allowed_values.map(
+                        (option) => (
+                          <option key={option} value={option}>
+                            {option}
+                          </option>
+                        ),
+                      )}
+                    </Select>
+                    <FormErrorMessage>Please select a type</FormErrorMessage>
+                  </FormControl>
+                )
+              }}
+            />
+          )}
           <Controller
             control={control}
             name='variant_name'
