@@ -9,11 +9,11 @@ import { FieldType } from '@/interfaces/Metadata'
 import { formatFieldLabel } from '@/utils/metadataUtils'
 import { SelectField } from './fields/SelectField'
 import { TextField } from './fields/TextField'
-import { ITaxonomyField } from '@/interfaces'
+import { ITaxonomyField, TSubTaxonomy } from '@/interfaces'
 
 type TProps<T extends FieldValues> = {
   fieldKey: string
-  taxonomyField: ITaxonomyField
+  taxonomyField: ITaxonomyField | TSubTaxonomy
   control: Control<T>
   errors: FieldErrors<T>
   fieldType: FieldType
@@ -26,11 +26,18 @@ export const DynamicMetadataFields = <T extends FieldValues>({
   errors,
   fieldType,
 }: TProps<T>) => {
-  const {
-    allowed_values = [],
-    allow_any = false,
-    allow_blanks = true,
-  } = taxonomyField
+  let allowed_values: string[] = []
+  let allow_any = false
+  let allow_blanks = true
+  if (typeof taxonomyField.allowed_values === 'undefined') {
+    // Wrong typing escape hatch
+    return null
+  } else {
+    const tx = taxonomyField as ITaxonomyField
+    allowed_values = tx.allowed_values || []
+    allow_any = tx.allow_any || false
+    allow_blanks = tx.allow_blanks || true
+  }
 
   const renderField = () => {
     if (allow_any) {

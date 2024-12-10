@@ -36,7 +36,10 @@ export interface CorpusInfo {
 // Enhanced configuration type for corpus metadata
 export interface CorpusMetadataConfig {
   [corpusType: string]: {
-    renderFields: Record<string, MetadataFieldConfig>
+    renderFields: Record<
+      string,
+      MetadataFieldConfig | Record<string, MetadataFieldConfig>
+    >
     validationFields: string[]
   }
 }
@@ -47,6 +50,10 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
     renderFields: {
       author: { type: FieldType.TEXT },
       author_type: { type: FieldType.SINGLE_SELECT },
+      _document: {
+        role: { type: FieldType.SINGLE_SELECT },
+        type: { type: FieldType.SINGLE_SELECT },
+      },
     },
     validationFields: ['author', 'author_type'],
   },
