@@ -43,7 +43,7 @@ const getFieldValidation = (
 
   // Add required validation if needed
   if (isRequired) {
-    fieldValidation = fieldValidation.required(`${fieldKey} is required`)
+    fieldValidation = fieldValidation.required(`${fieldKey} is required`) // ESLint TODO
   }
 
   return fieldValidation
@@ -69,8 +69,8 @@ export const generateDynamicValidationSchema = (
     CORPUS_METADATA_CONFIG.default.validationFields
 
   // Build schema shape dynamically
-  const schemaShape = Object.entries(metadataFields).reduce(
-    (acc, [fieldKey, fieldConfig]) => {
+  const schemaShape: yup.ObjectShape = Object.entries(metadataFields).reduce(
+    (transformedMetadata, [fieldKey, fieldConfig]) => {
       // Get the field's taxonomy configuration
       const taxonomyField = taxonomy[fieldKey]
       const isRequired =
@@ -84,12 +84,12 @@ export const generateDynamicValidationSchema = (
         isRequired,
       )
 
-      return {
-        ...acc,
-        [fieldKey]: fieldValidation,
-      }
+      // Ensure fieldValidation is a Yup schema
+      transformedMetadata[fieldKey] = fieldValidation
+
+      return transformedMetadata
     },
-    {} as TFamilyMetadata,
+    {} as yup.ObjectShape, // Initialise as an empty ObjectShape
   )
 
   // Create and return the final schema

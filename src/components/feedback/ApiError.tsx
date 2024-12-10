@@ -3,7 +3,7 @@ import { Box, Text } from '@chakra-ui/react'
 import { IDetailedError, IError } from '@/interfaces'
 
 type TProps = {
-  error?: IError
+  error?: IError | null
   message?: string
   detail?: string
 }
