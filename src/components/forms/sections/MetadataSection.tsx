@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { Control, FieldErrors, UseFormReset } from 'react-hook-form'
 import { Box, Divider, AbsoluteCenter } from '@chakra-ui/react'
 import { DynamicMetadataFields } from '../DynamicMetadataFields'
 import { CORPUS_METADATA_CONFIG, FieldType } from '@/interfaces/Metadata'
 import { IConfigCorpora, TFamily, TTaxonomy } from '@/interfaces'
+import { IFamilyFormBase } from '../FamilyForm'
 
 type TProps<T extends Record<string, any>> = {
   corpusInfo?: IConfigCorpora
@@ -50,7 +51,7 @@ export const MetadataSection = ({
         return acc
       }, {})
 
-      reset((formValues) => ({
+      reset((formValues: IFamilyFormBase) => ({
         ...formValues,
         ...metadataValues,
       }))
