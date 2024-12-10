@@ -1,6 +1,6 @@
 import { screen, waitFor, fireEvent, within } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import { unfcccConfigMock } from '../../utilsTest/mocks'
+import { mcfConfigMock, unfcccConfigMock } from '../../utilsTest/mocks'
 import { customRender } from '@/tests/utilsTest/render'
 import { DocumentForm } from '@/components/forms/DocumentForm'
 import { IDocument } from '@/interfaces'
@@ -33,7 +33,8 @@ const mockDocument: IDocument = {
   last_modified: '4/1/2021',
 }
 
-const mockTaxonomy = unfcccConfigMock.corpora[0].taxonomy
+const mockUNFCCCTaxonomy = unfcccConfigMock.corpora[0].taxonomy
+const mockMCFTaxonomy = mcfConfigMock.corpora[0].taxonomy
 
 describe('DocumentForm', () => {
   const onDocumentFormSuccess = vi.fn()
@@ -48,7 +49,7 @@ describe('DocumentForm', () => {
         familyId={'test'}
         onSuccess={onDocumentFormSuccess}
         document={mockDocument}
-        taxonomy={mockTaxonomy}
+        taxonomy={mockUNFCCCTaxonomy}
       />,
     )
 
@@ -73,7 +74,7 @@ describe('DocumentForm', () => {
         familyId={'test'}
         onSuccess={onDocumentFormSuccess}
         document={mockDocument}
-        taxonomy={mockTaxonomy}
+        taxonomy={mockUNFCCCTaxonomy}
       />,
     )
 
@@ -197,5 +198,45 @@ describe('DocumentForm', () => {
     await waitFor(() => {
       expect(onDocumentFormSuccess).toHaveBeenCalled()
     })
+  })
+
+  it('does not render document role controller if property does not exist on taxonomy', () => {
+    customRender(
+      <DocumentForm
+        familyId={'test'}
+        onSuccess={onDocumentFormSuccess}
+        document={mockDocument}
+        taxonomy={mockMCFTaxonomy}
+      />,
+    )
+
+    expect(screen.queryByText('Role')).not.toBeInTheDocument()
+  })
+
+  it('does not render document type controller if property does not exist on taxonomy', () => {
+    customRender(
+      <DocumentForm
+        familyId={'test'}
+        onSuccess={onDocumentFormSuccess}
+        document={mockDocument}
+        taxonomy={mockMCFTaxonomy}
+      />,
+    )
+
+    expect(screen.queryByText('Role')).not.toBeInTheDocument()
+  })
+
+  it('renders role and type controller if properties exist on taxonomy', () => {
+    customRender(
+      <DocumentForm
+        familyId={'test'}
+        onSuccess={onDocumentFormSuccess}
+        document={mockDocument}
+        taxonomy={mockUNFCCCTaxonomy}
+      />,
+    )
+
+    expect(screen.getByText('Role')).toBeInTheDocument()
+    expect(screen.getByText('Type')).toBeInTheDocument()
   })
 })
