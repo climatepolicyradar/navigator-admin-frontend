@@ -166,8 +166,6 @@ export const DocumentForm = ({
     }
   }, [loadedDocument, familyId, reset])
 
-  console.log(taxonomy)
-
   return (
     <>
       {invalidDocumentCreation && (
