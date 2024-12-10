@@ -1,6 +1,5 @@
 import {
-  IFamilyFormIntlAgreements,
-  IFamilyFormLawsAndPolicies,
+  IFamilyFormBase,
   TFamilyFormSubmit,
 } from '@/components/forms/FamilyForm'
 import {
@@ -14,6 +13,7 @@ import {
   IInternationalAgreementsFamilyFormPost,
   ILawsAndPoliciesFamilyFormPost,
 } from '../../../interfaces/Family'
+import { IChakraSelect } from '@/interfaces'
 
 // Type-safe metadata handler type
 export type MetadataHandler<T extends TFamilyMetadata> = {
@@ -22,6 +22,22 @@ export type MetadataHandler<T extends TFamilyMetadata> = {
     baseData: IFamilyFormPostBase,
     metadata: T,
   ) => TFamilyFormPost
+}
+
+export interface IFamilyFormIntlAgreements extends IFamilyFormBase {
+  // Intl. agreements
+  author?: string
+  author_type?: IChakraSelect
+}
+
+export interface IFamilyFormLawsAndPolicies extends IFamilyFormBase {
+  // Laws and Policies
+  topic?: IChakraSelect[]
+  hazard?: IChakraSelect[]
+  sector?: IChakraSelect[]
+  keyword?: IChakraSelect[]
+  framework?: IChakraSelect[]
+  instrument?: IChakraSelect[]
 }
 
 // Mapping of corpus types to their specific metadata handlers

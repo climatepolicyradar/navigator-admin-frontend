@@ -43,7 +43,7 @@ import { IError } from '@/interfaces/Auth'
 import { IChakraSelect, IConfigCorpora, TTaxonomy } from '@/interfaces'
 import { getMetadataHandler } from './metadata-handlers/familyForm'
 
-interface IFamilyFormBase {
+export interface IFamilyFormBase {
   title: string
   summary: string
   geography: IChakraSelect
