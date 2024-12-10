@@ -55,7 +55,7 @@ interface IFamilyFormBase {
 export interface IFamilyFormIntlAgreements extends IFamilyFormBase {
   // Intl. agreements
   author?: string
-  author_type?: string
+  author_type?: IChakraSelect
 }
 
 export interface IFamilyFormLawsAndPolicies extends IFamilyFormBase {
@@ -104,7 +104,9 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     getCorpusImportId(loadedFamily),
     getCorpusImportId(loadedFamily),
   )
-  const initialTaxonomy = initialCorpusInfo ? initialCorpusInfo?.taxonomy : null
+  const initialTaxonomy = initialCorpusInfo
+    ? initialCorpusInfo?.taxonomy
+    : undefined
 
   // Create validation schema
   const createValidationSchema = useCallback(
@@ -131,12 +133,14 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     setValue,
     watch,
     formState: { errors, isSubmitting, dirtyFields },
-  } = useForm<IFamilyFormBase>({
+  } = useForm<TFamilyFormSubmit>({
     resolver: yupResolver(validationSchema),
   })
 
   // Watch for corpus changes and update schema only when creating a new family
-  const watchCorpus = !loadedFamily ? watch('corpus') : undefined
+  const watchCorpus = !loadedFamily
+    ? watch('corpus')
+    : loadedFamily.corpus_import_id
   const corpusInfo = useCorpusFromConfig(
     config?.corpora,
     getCorpusImportId(loadedFamily),
@@ -201,6 +205,8 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     // Get the appropriate metadata handler & extract metadata
     const metadataHandler = getMetadataHandler(corpusInfo.corpus_type)
     const metadata = metadataHandler.extractMetadata(formData)
+    console.log('Form Data:', formData)
+    console.log('Extracted Metadata:', metadata)
 
     // Create submission data using the specific handler
     const submissionData = metadataHandler.createSubmissionData(
@@ -236,18 +242,37 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   }
 
   const onSubmit: SubmitHandler<TFamilyFormSubmit> = async (data) => {
+    console.log('Form Data Before Submission:', data)
     try {
       await handleFormSubmission(data)
     } catch (error) {
       console.log('onSubmitErrorHandler', error)
-      // Handle any submission errors
-      setFormError(error as IError)
-      toast({
-        title: 'Submission Error',
-        description: (error as IError).message,
-        status: 'error',
-      })
     }
+  }
+
+  // object type is workaround for SubmitErrorHandler<FieldErrors> throwing a tsc error.
+  const onSubmitErrorHandler = (error: object) => {
+    console.log('onSubmitErrorHandler', error)
+
+    // Handle any submission errors
+    setFormError(error as IError)
+    toast({
+      title: 'Submission Error',
+      description: (error as IError).message,
+      status: 'error',
+    })
+
+    const submitHandlerErrors = error as {
+      [key: string]: { message: string; type: string }
+    }
+    // Set form errors manually
+    Object.keys(submitHandlerErrors).forEach((key) => {
+      if (key === 'summary')
+        setError('summary', {
+          type: 'required',
+          message: 'Summary is required',
+        })
+    })
   }
 
   useEffect(() => {
@@ -378,8 +403,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   const canLoadForm =
     !configLoading && !collectionsLoading && !configError && !collectionsError
 
-  // }, [loadedFamily, collections, reset, isMCFCorpus])
-
   const blocker = useBlocker(
     ({ currentLocation, nextLocation }) =>
       !isFormSubmitting &&
@@ -415,7 +438,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       )}
 
       {canLoadForm && (
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit, onSubmitErrorHandler)}>
           <VStack gap='4' mb={12} mt={4} align={'stretch'}>
             {formError && <ApiError error={formError} />}
 
@@ -457,7 +480,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               label='Geography'
               control={control}
               options={getCountries(config?.geographies).map((country) => ({
-                value: country.id,
+                value: country.value,
                 label: country.display_value,
               }))}
               isMulti={false}
@@ -490,7 +513,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                   [
                     { value: 'Executive', label: 'Executive' },
                     { value: 'Legislative', label: 'Legislative' },
-                    { value: 'Litigation', label: 'Litigation' },
                     { value: 'UNFCCC', label: 'UNFCCC' },
                   ]
                 }

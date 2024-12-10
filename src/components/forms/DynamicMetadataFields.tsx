@@ -9,14 +9,11 @@ import { FieldType } from '@/interfaces/Metadata'
 import { formatFieldLabel } from '@/utils/metadataUtils'
 import { SelectField } from './fields/SelectField'
 import { TextField } from './fields/TextField'
+import { ITaxonomyField } from '@/interfaces'
 
 type TProps<T extends FieldValues> = {
   fieldKey: string
-  taxonomyField: {
-    allowed_values?: string[]
-    allow_any?: boolean
-    allow_blanks?: boolean
-  }
+  taxonomyField: ITaxonomyField
   control: Control<T>
   errors: FieldErrors<T>
   fieldType: FieldType

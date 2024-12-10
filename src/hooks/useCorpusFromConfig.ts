@@ -11,7 +11,7 @@ const useCorpusFromConfig = (
       const corp = corpora?.find(
         (corpus) => corpus.corpus_import_id === corpusId,
       )
-      return corp ? corp : null
+      return corp ? corp : undefined
     }
 
     return getCorpusFromId(corpus_id ? corpus_id : watchCorpusValue)

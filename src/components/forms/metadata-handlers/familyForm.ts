@@ -34,7 +34,7 @@ export const corpusMetadataHandlers: Record<
       const intlData = formData as IFamilyFormIntlAgreements
       return {
         author: intlData.author ? [intlData.author] : [],
-        author_type: intlData.author_type ? [intlData.author_type] : [],
+        author_type: intlData.author_type ? [intlData.author_type?.value] : [],
       } as IInternationalAgreementsMetadata
     },
     createSubmissionData: (baseData, metadata) =>

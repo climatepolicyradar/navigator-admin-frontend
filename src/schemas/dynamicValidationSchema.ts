@@ -48,33 +48,6 @@ const getFieldValidation = (
     fieldValidation = fieldValidation.required(`${fieldKey} is required`)
   }
 
-  // Add allowed values validation if specified in taxonomy
-  if (taxonomyField?.allowed_values && !taxonomyField.allow_any) {
-    if (fieldConfig.type === FieldType.MULTI_SELECT) {
-      fieldValidation = fieldValidation.test(
-        'allowed-values',
-        `${fieldKey} contains invalid values`,
-        (value: IChakraSelect[]) => {
-          if (!value) return true
-          return value.every((item) =>
-            taxonomyField.allowed_values?.includes(item.value),
-          )
-        },
-      )
-    } else {
-      const allowedValues = taxonomyField.allowed_values || []
-      fieldValidation = fieldValidation.test(
-        'allowed-values',
-        `${fieldKey} must be one of the allowed values`,
-        (value: IChakraSelect | string) => {
-          if (!value) return true
-          const valueToCheck = typeof value === 'string' ? value : value.value
-          return allowedValues.includes(valueToCheck)
-        },
-      )
-    }
-  }
-
   return fieldValidation
 }
 
