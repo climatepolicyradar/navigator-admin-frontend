@@ -229,6 +229,7 @@ export const DocumentForm = ({
                 <FormControl isRequired as='fieldset' isInvalid={!!errors.role}>
                   <FormLabel as='legend'>Role</FormLabel>
                   <Select background='white' {...field}>
+                    <option value=''>Please select</option>
                     {(taxonomy?._document?.role?.allowed_values ?? []).map(
                       (option) => (
                         <option key={option} value={option}>
@@ -251,6 +252,7 @@ export const DocumentForm = ({
                 <FormControl isRequired as='fieldset' isInvalid={!!errors.type}>
                   <FormLabel as='legend'>Type</FormLabel>
                   <Select background='white' {...field}>
+                    <option value=''>Please select</option>
                     {(taxonomy?._document?.type?.allowed_values ?? []).map(
                       (option) => (
                         <option key={option} value={option}>
@@ -273,6 +275,7 @@ export const DocumentForm = ({
                 <FormControl as='fieldset' isInvalid={!!errors.variant_name}>
                   <FormLabel as='legend'>Variant</FormLabel>
                   <Select background='white' {...field}>
+                    <option value=''>Please select</option>
                     {config?.document?.variants.map((option) => (
                       <option key={option} value={option}>
                         {option}
