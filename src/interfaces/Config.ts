@@ -51,23 +51,44 @@ export interface IConfigTaxonomyUNFCCC {
   _document: IConfigDocumentMetadata
 }
 
-export interface IConfigTaxonomyMCF {
-  approved_ref?: IConfigMeta
+export type IConfigTaxonomyMCF =
+  | IConfigTaxonomyGCF
+  | IConfigTaxonomyAF
+  | IConfigTaxonomyGEF
+  | IConfigTaxonomyCIF
+
+type IConfigMCFBaseTaxonomy = {
   event_type: IConfigMeta
-  focal_area?: IConfigMeta
   implementing_agency: IConfigMeta
   project_id: IConfigMeta
   project_url: IConfigMeta
   project_value_co_financing: IConfigMeta
   project_value_fund_spend: IConfigMeta
   region: IConfigMeta
-  result_area?: IConfigMeta
-  result_type?: IConfigMeta
-  sector?: IConfigMeta
   status: IConfigMeta
-  theme?: IConfigMeta
   _document: IConfigDocumentMetadata
   _event: IConfigEventMetadata
+}
+
+// Extend base type for specific taxonomies
+type IConfigTaxonomyGCF = IConfigMCFBaseTaxonomy & {
+  approved_ref: IConfigMeta
+  result_area: IConfigMeta
+  result_type: IConfigMeta
+  sector: IConfigMeta
+  theme: IConfigMeta
+}
+
+type IConfigTaxonomyCIF = IConfigMCFBaseTaxonomy & {
+  sector: IConfigMeta
+}
+
+type IConfigTaxonomyGEF = IConfigMCFBaseTaxonomy & {
+  focal_area: IConfigMeta
+}
+
+type IConfigTaxonomyAF = IConfigMCFBaseTaxonomy & {
+  sector: IConfigMeta
 }
 
 export interface IConfigDocumentMetadata {
