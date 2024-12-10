@@ -56,6 +56,8 @@ export const DocumentForm = ({
   const { config, loading: configLoading, error: configError } = useConfig()
   const toast = useToast()
   const [formError, setFormError] = useState<IError | null | undefined>()
+  const renderRoleSelector = Boolean(taxonomy?._document?.role)
+  const renderTypeSelector = Boolean(taxonomy?._document?.type)
   const {
     control,
     register,
@@ -64,6 +66,10 @@ export const DocumentForm = ({
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: yupResolver(documentSchema),
+    context: {
+      isTypeRequired: renderTypeSelector,
+      isRoleRequired: renderRoleSelector,
+    },
   })
   const handleFormSubmission = async (formData: IDocumentFormPost) => {
     setFormError(null)
@@ -71,7 +77,8 @@ export const DocumentForm = ({
     const convertToModified = (
       data: IDocumentFormPost,
     ): IDocumentFormPostModified => {
-      const metadata: IDocumentMetadata = { role: [], type: [] }
+      const metadata: IDocumentMetadata = {}
+
       if (data.role) {
         metadata.role = [data.role]
       }
@@ -203,14 +210,14 @@ export const DocumentForm = ({
               {errors.source_url && errors.source_url.message}
             </FormErrorMessage>
           </FormControl>
-          {taxonomy?._document?.role && (
+          {renderRoleSelector && (
             <Controller
               control={control}
               name='role'
               render={({ field }) => {
                 return (
                   <FormControl
-                    isRequired={!!taxonomy?._document?.role}
+                    isRequired={!!renderRoleSelector}
                     as='fieldset'
                     isInvalid={!!errors.role}
                   >
@@ -231,14 +238,14 @@ export const DocumentForm = ({
               }}
             />
           )}
-          {taxonomy?._document?.type && (
+          {renderTypeSelector && (
             <Controller
               control={control}
               name='type'
               render={({ field }) => {
                 return (
                   <FormControl
-                    isRequired={!!taxonomy?._document?.type}
+                    isRequired={!!renderTypeSelector}
                     as='fieldset'
                     isInvalid={!!errors.type}
                   >
