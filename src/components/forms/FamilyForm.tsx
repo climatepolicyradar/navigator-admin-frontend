@@ -120,9 +120,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   })
 
   // Watch for corpus changes and update schema only when creating a new family
-  const watchCorpus = !loadedFamily
-    ? watch('corpus')
-    : loadedFamily.corpus_import_id
+  const watchCorpus = !loadedFamily ? watch('corpus') : undefined
   const corpusInfo = useCorpusFromConfig(
     config?.corpora,
     getCorpusImportId(loadedFamily),
