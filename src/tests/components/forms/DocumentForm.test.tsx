@@ -223,7 +223,7 @@ describe('DocumentForm', () => {
       />,
     )
 
-    expect(screen.queryByText('Role')).not.toBeInTheDocument()
+    expect(screen.queryByText('Type')).not.toBeInTheDocument()
   })
 
   it('renders role and type controller if properties exist on taxonomy', () => {
