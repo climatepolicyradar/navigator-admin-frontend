@@ -18,6 +18,7 @@ type TProps<T extends FieldValues> = {
   isMulti?: boolean
   rules?: RegisterOptions
   isRequired?: boolean
+  isClearable?: boolean
 }
 
 export const SelectField = <T extends FieldValues>({
@@ -28,6 +29,7 @@ export const SelectField = <T extends FieldValues>({
   isMulti = false,
   rules,
   isRequired,
+  isClearable,
 }: TProps<T>) => {
   // Determine if options are already in IChakraSelect format
   const selectOptions = options
@@ -61,7 +63,7 @@ export const SelectField = <T extends FieldValues>({
           {label && <FormLabel>{label}</FormLabel>}
           <CRSelect
             chakraStyles={chakraStylesSelect}
-            isClearable={false}
+            isClearable={isClearable}
             isMulti={isMulti}
             isSearchable={true}
             options={selectOptions}

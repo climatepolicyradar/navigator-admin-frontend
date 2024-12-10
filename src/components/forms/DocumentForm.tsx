@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useForm, SubmitHandler, Controller } from 'react-hook-form'
+import { useForm, SubmitHandler } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import {
   BACK_TO_FAMILIES_ERROR_DETAIL,
@@ -15,7 +15,6 @@ import {
 } from '@/interfaces'
 import { createDocument, updateDocument } from '@/api/Documents'
 import { documentSchema } from '@/schemas/documentSchema'
-import { Select as CRSelect } from 'chakra-react-select'
 
 import {
   Box,
@@ -28,13 +27,12 @@ import {
   ButtonGroup,
   useToast,
   FormHelperText,
-  Select,
   FormErrorMessage,
 } from '@chakra-ui/react'
 import useConfig from '@/hooks/useConfig'
 import { FormLoader } from '../feedback/FormLoader'
 import { ApiError } from '../feedback/ApiError'
-import { chakraStylesSelect } from '@/styles/chakra'
+import { SelectField } from './fields/SelectField'
 
 type TProps = {
   document?: IDocument
@@ -80,13 +78,24 @@ export const DocumentForm = ({
     if (loadedDocument) {
       reset({
         family_import_id: loadedDocument.family_import_id || familyId,
-        variant_name: loadedDocument.variant_name ?? '',
+        variant_name: loadedDocument.variant_name
+          ? {
+              label: loadedDocument.variant_name,
+              value: loadedDocument.variant_name,
+            }
+          : undefined,
         role: loadedDocument?.metadata?.role
-          ? loadedDocument?.metadata?.role[0]
-          : '',
+          ? {
+              label: loadedDocument?.metadata?.role[0],
+              value: loadedDocument?.metadata?.role[0],
+            }
+          : undefined,
         type: loadedDocument?.metadata?.type
-          ? loadedDocument?.metadata?.type[0]
-          : '',
+          ? {
+              label: loadedDocument?.metadata?.type[0],
+              value: loadedDocument?.metadata?.type[0],
+            }
+          : undefined,
         title: loadedDocument.title,
         source_url: loadedDocument.source_url ?? '',
         user_language_name: loadedDocument.user_language_name
@@ -120,10 +129,10 @@ export const DocumentForm = ({
     ): IDocumentFormPostModified => {
       const metadata: IDocumentMetadata = { role: [], type: [] }
       if (data.role) {
-        metadata.role = [data.role]
+        metadata.role = [data.role?.value]
       }
       if (data.type) {
-        metadata.type = [data.type]
+        metadata.type = [data.type?.value]
       }
 
       return {
@@ -131,8 +140,8 @@ export const DocumentForm = ({
         title: data.title,
         metadata: metadata,
         source_url: data.source_url || null,
-        variant_name: data.variant_name || null,
-        user_language_name: data.user_language_name?.label || null,
+        variant_name: data.variant_name?.value || null,
+        user_language_name: data.user_language_name?.value || null,
       }
     }
 
@@ -221,99 +230,49 @@ export const DocumentForm = ({
             </FormErrorMessage>
           </FormControl>
 
-          <Controller
-            control={control}
+          <SelectField
             name='role'
-            render={({ field }) => {
-              return (
-                <FormControl isRequired as='fieldset' isInvalid={!!errors.role}>
-                  <FormLabel as='legend'>Role</FormLabel>
-                  <Select background='white' {...field}>
-                    <option value=''>Please select</option>
-                    {(taxonomy?._document?.role?.allowed_values ?? []).map(
-                      (option) => (
-                        <option key={option} value={option}>
-                          {option}
-                        </option>
-                      ),
-                    )}
-                  </Select>
-                  <FormErrorMessage>Please select a role</FormErrorMessage>
-                </FormControl>
-              )
-            }}
+            label='Role'
+            control={control}
+            options={taxonomy?._document?.role?.allowed_values || []}
+            isMulti={false}
+            isRequired={true}
+            isClearable={false}
           />
 
-          <Controller
-            control={control}
+          <SelectField
             name='type'
-            render={({ field }) => {
-              return (
-                <FormControl isRequired as='fieldset' isInvalid={!!errors.type}>
-                  <FormLabel as='legend'>Type</FormLabel>
-                  <Select background='white' {...field}>
-                    <option value=''>Please select</option>
-                    {(taxonomy?._document?.type?.allowed_values ?? []).map(
-                      (option) => (
-                        <option key={option} value={option}>
-                          {option}
-                        </option>
-                      ),
-                    )}
-                  </Select>
-                  <FormErrorMessage>Please select a type</FormErrorMessage>
-                </FormControl>
-              )
-            }}
+            label='Type'
+            control={control}
+            options={taxonomy?._document?.type?.allowed_values || []}
+            isMulti={false}
+            isRequired={true}
+            isClearable={false}
           />
 
-          <Controller
-            control={control}
+          <SelectField
             name='variant_name'
-            render={({ field }) => {
-              return (
-                <FormControl as='fieldset' isInvalid={!!errors.variant_name}>
-                  <FormLabel as='legend'>Variant</FormLabel>
-                  <Select background='white' {...field}>
-                    <option value=''>Please select</option>
-                    {config?.document?.variants.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </Select>
-                  <FormErrorMessage>Please select a variant</FormErrorMessage>
-                </FormControl>
-              )
-            }}
+            label='Variant'
+            control={control}
+            options={
+              config?.document?.variants?.map((option) => ({
+                value: option,
+                label: option,
+              })) || []
+            }
+            isMulti={false}
+            isRequired={false}
+            isClearable={true}
           />
 
-          <Controller
-            control={control}
+          <SelectField
             name='user_language_name'
-            render={({ field }) => {
-              return (
-                <FormControl
-                  as='fieldset'
-                  isInvalid={!!errors.user_language_name}
-                >
-                  <FormLabel as='legend'>Language</FormLabel>
-                  <div data-testid='language-select'>
-                    <CRSelect
-                      chakraStyles={chakraStylesSelect}
-                      isClearable={true}
-                      isMulti={false}
-                      isSearchable={true}
-                      options={config?.languagesSorted}
-                      {...field}
-                    />
-                  </div>
-                  <FormErrorMessage>
-                    {errors.user_language_name?.message}
-                  </FormErrorMessage>
-                </FormControl>
-              )
-            }}
+            label='Language'
+            control={control}
+            options={config?.languagesSorted || []}
+            isMulti={false}
+            isRequired={false}
+            isClearable={true}
           />
 
           <ButtonGroup isDisabled={!canModify}>

@@ -14,8 +14,6 @@ export interface IConfigGeography {
   children: IConfigGeography[]
 }
 
-export interface IConfigLanguageSorted extends IChakraSelect {}
-
 // Types for taxonomy and corpus info
 export interface ITaxonomyField {
   allowed_values?: string[]
@@ -84,7 +82,7 @@ export interface IConfig {
   languages: {
     [key: string]: string
   }
-  languagesSorted: IConfigLanguageSorted[]
+  languagesSorted: IChakraSelect[]
   corpora: IConfigCorpora[]
   document: {
     roles: string[]
