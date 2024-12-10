@@ -20,12 +20,12 @@ export interface IDocument {
 
 export interface IDocumentFormPost {
   family_import_id: string
-  variant_name?: IChakraSelect | null
+  variant_name: IChakraSelect | null
   role: IChakraSelect
   type: IChakraSelect
   title: string
   source_url?: string | null
-  user_language_name?: IChakraSelect | null
+  user_language_name: IChakraSelect | null
 }
 
 export interface IDocumentFormPostModified {

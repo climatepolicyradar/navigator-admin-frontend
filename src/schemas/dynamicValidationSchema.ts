@@ -69,7 +69,7 @@ export const generateDynamicValidationSchema = (
     CORPUS_METADATA_CONFIG.default.validationFields
 
   // Build schema shape dynamically
-  const schemaShape: yup.ObjectShape = Object.entries(metadataFields).reduce(
+  const schemaShape = Object.entries(metadataFields).reduce(
     (transformedMetadata, [fieldKey, fieldConfig]) => {
       // Get the field's taxonomy configuration
       const taxonomyField = taxonomy[fieldKey]
