@@ -51,10 +51,35 @@ export interface IConfigTaxonomyUNFCCC {
   _document: IConfigDocumentMetadata
 }
 
-export interface IConfigDocumentMetadata {
-  role: IConfigMeta
-  type: IConfigMeta
+export interface IConfigTaxonomyMCF {
+  approved_ref?: IConfigMeta
+  event_type: IConfigMeta
+  focal_area?: IConfigMeta
+  implementing_agency: IConfigMeta
+  project_id: IConfigMeta
+  project_url: IConfigMeta
+  project_value_co_financing: IConfigMeta
+  project_value_fund_spend: IConfigMeta
+  region: IConfigMeta
+  result_area?: IConfigMeta
+  result_type?: IConfigMeta
+  sector?: IConfigMeta
+  status: IConfigMeta
+  theme?: IConfigMeta
+  _document: IConfigDocumentMetadata
+  _event: IConfigEventMetadata
 }
+
+export interface IConfigDocumentMetadata {
+  role?: IConfigMeta
+  type?: IConfigMeta
+}
+
+export interface IConfigEventMetadata {
+  datetime_event_name: IConfigMeta
+  event_type: IConfigMeta
+}
+
 export interface IConfigOrganisationMetadata {
   name: string
   id: number
@@ -67,7 +92,7 @@ export interface IConfigCorpora {
   corpus_type: string
   corpus_type_description: string
   organisation: IConfigOrganisationMetadata
-  taxonomy: IConfigTaxonomyCCLW | IConfigTaxonomyUNFCCC
+  taxonomy: IConfigTaxonomyCCLW | IConfigTaxonomyUNFCCC | IConfigTaxonomyMCF
 }
 
 export interface IConfig {

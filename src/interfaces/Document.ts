@@ -21,8 +21,8 @@ export interface IDocument {
 export interface IDocumentFormPost {
   family_import_id: string
   variant_name?: string | null
-  role: string
-  type: string
+  role?: string
+  type?: string
   title: string
   source_url?: string | null
   user_language_name?: IConfigLanguageSorted | null
