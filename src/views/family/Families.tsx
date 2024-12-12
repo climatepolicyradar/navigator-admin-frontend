@@ -103,25 +103,6 @@ export default function Families() {
                   <Spinner />
                 </>
               )}
-              {!configLoading && !configError && (
-                <>
-                  <Text>Geography</Text>
-                  <CRSelect
-                    chakraStyles={chakraStylesSelect}
-                    isClearable={true}
-                    isMulti={false}
-                    isSearchable={true}
-                    options={countries}
-                    onChange={handleChangeGeo}
-                    defaultValue={
-                      qGeography && {
-                        value: qGeography,
-                        label: qGeography,
-                      }
-                    }
-                  />
-                </>
-              )}
             </Box>
           </Flex>
         </Form>

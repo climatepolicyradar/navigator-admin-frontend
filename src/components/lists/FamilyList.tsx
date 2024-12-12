@@ -91,7 +91,7 @@ export default function FamilyList() {
   const {
     response: { data: families },
   } = useLoaderData() as { response: { data: TFamily[] } }
-  const { config, loading: configLoading } = useConfig()
+  const { config, loading: configLoading, error: configError } = useConfig()
   const toast = useToast()
   const [familyError, setFamilyError] = useState<string | null | undefined>()
   const [formError, setFormError] = useState<IError | null | undefined>()
@@ -233,37 +233,39 @@ export default function FamilyList() {
               <Th>
                 <Flex gap={2} align='center'>
                   <span>Geographies</span>
-                  <Popover>
-                    <PopoverTrigger>
-                      <IconButton
-                        aria-label='Filter geographies'
-                        icon={<FiFilter />}
-                        size='xs'
-                        variant='ghost'
-                        colorScheme={
-                          selectedGeographies.length > 0 ? 'blue' : 'gray'
-                        }
-                      />
-                    </PopoverTrigger>
-                    <PopoverContent>
-                      <PopoverBody>
-                        {configLoading ? (
-                          <Spinner size='sm' />
-                        ) : (
-                          <Select
-                            isMulti
-                            isClearable
-                            options={geographyOptions}
-                            value={selectedGeographies}
-                            onChange={handleGeographyChange}
-                            placeholder='Select geographies...'
-                            closeMenuOnSelect={false}
-                            size='sm'
-                          />
-                        )}
-                      </PopoverBody>
-                    </PopoverContent>
-                  </Popover>
+                  {!configError && (
+                    <Popover>
+                      <PopoverTrigger>
+                        <IconButton
+                          aria-label='Filter geographies'
+                          icon={<FiFilter />}
+                          size='xs'
+                          variant='ghost'
+                          colorScheme={
+                            selectedGeographies.length > 0 ? 'blue' : 'gray'
+                          }
+                        />
+                      </PopoverTrigger>
+                      <PopoverContent>
+                        <PopoverBody>
+                          {configLoading ? (
+                            <Spinner size='sm' />
+                          ) : (
+                            <Select
+                              isMulti
+                              isClearable
+                              options={geographyOptions}
+                              value={selectedGeographies}
+                              onChange={handleGeographyChange}
+                              placeholder='Select geographies...'
+                              closeMenuOnSelect={false}
+                              size='sm'
+                            />
+                          )}
+                        </PopoverBody>
+                      </PopoverContent>
+                    </Popover>
+                  )}
                 </Flex>
               </Th>
               <Th
@@ -312,47 +314,57 @@ export default function FamilyList() {
               <Th>
                 <Flex gap={2} align='center'>
                   <span>Status</span>
-                  <Menu>
-                    <MenuButton
-                      as={IconButton}
-                      aria-label='Filter status'
-                      icon={<FiFilter />}
-                      size='xs'
-                      variant='ghost'
-                      colorScheme={searchParams.get('status') ? 'blue' : 'gray'}
-                    />
-                    <MenuList>
-                      <MenuItem
-                        onClick={() => {
-                          const newParams = new URLSearchParams(searchParams)
-                          newParams.delete('status')
-                          setSearchParams(newParams)
-                        }}
-                        fontWeight={
-                          !searchParams.get('status') ? 'bold' : 'normal'
+                  {!configError && (
+                    <Menu>
+                      <MenuButton
+                        as={IconButton}
+                        aria-label='Filter status'
+                        icon={<FiFilter />}
+                        size='xs'
+                        variant='ghost'
+                        colorScheme={
+                          searchParams.get('status') ? 'blue' : 'gray'
                         }
-                      >
-                        All
-                      </MenuItem>
-                      {STATUSES.map((status) => (
-                        <MenuItem
-                          key={status.value}
-                          onClick={() => {
-                            const newParams = new URLSearchParams(searchParams)
-                            newParams.set('status', status.value)
-                            setSearchParams(newParams)
-                          }}
-                          fontWeight={
-                            searchParams.get('status') === status.value
-                              ? 'bold'
-                              : 'normal'
-                          }
-                        >
-                          {status.label}
-                        </MenuItem>
-                      ))}
-                    </MenuList>
-                  </Menu>
+                      />
+                      {!configLoading && (
+                        <MenuList>
+                          <MenuItem
+                            onClick={() => {
+                              const newParams = new URLSearchParams(
+                                searchParams,
+                              )
+                              newParams.delete('status')
+                              setSearchParams(newParams)
+                            }}
+                            fontWeight={
+                              !searchParams.get('status') ? 'bold' : 'normal'
+                            }
+                          >
+                            All
+                          </MenuItem>
+                          {STATUSES.map((status) => (
+                            <MenuItem
+                              key={status.value}
+                              onClick={() => {
+                                const newParams = new URLSearchParams(
+                                  searchParams,
+                                )
+                                newParams.set('status', status.value)
+                                setSearchParams(newParams)
+                              }}
+                              fontWeight={
+                                searchParams.get('status') === status.value
+                                  ? 'bold'
+                                  : 'normal'
+                              }
+                            >
+                              {status.label}
+                            </MenuItem>
+                          ))}
+                        </MenuList>
+                      )}
+                    </Menu>
+                  )}
                 </Flex>
               </Th>
               <Th></Th>
