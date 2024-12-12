@@ -23,11 +23,14 @@ import {
   PopoverContent,
   PopoverBody,
   Spinner,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
 } from '@chakra-ui/react'
 import { GoPencil } from 'react-icons/go'
 import { FiFilter } from 'react-icons/fi'
 import { Select } from 'chakra-react-select'
-
 import { DeleteButton } from '../buttons/Delete'
 import { sortBy } from '@/utils/sortBy'
 import {
@@ -69,15 +72,22 @@ export async function loader({ request }: ILoaderProps) {
   return response
 }
 
+const STATUSES = [
+  { value: 'Created', label: 'Created' },
+  { value: 'Published', label: 'Published' },
+  { value: 'Deleted', label: 'Deleted' },
+]
+
 export default function FamilyList() {
-  const [filteredItems, setFilteredItems] = useState<TFamily[]>()
   const [selectedGeographies, setSelectedGeographies] = useState<
     Array<{ value: string; label: string }>
   >([])
   const [sortControls, setSortControls] = useState<{
     key: keyof TFamily
     reverse: boolean
-  }>({ key: 'title', reverse: false })
+  }>({ key: 'last_modified', reverse: true })
+  const [filteredItems, setFilteredItems] = useState<TFamily[]>()
+  const [searchParams, setSearchParams] = useSearchParams()
   const {
     response: { data: families },
   } = useLoaderData() as { response: { data: TFamily[] } }
@@ -85,7 +95,6 @@ export default function FamilyList() {
   const toast = useToast()
   const [familyError, setFamilyError] = useState<string | null | undefined>()
   const [formError, setFormError] = useState<IError | null | undefined>()
-  const [searchParams, setSearchParams] = useSearchParams()
   const qGeography = searchParams.get('geography')
 
   const userToken = useMemo(() => {
@@ -155,12 +164,20 @@ export default function FamilyList() {
             (selected) => selected.value === item.geography,
           ),
     )
-    // Then sort the filtered results
-    const sortedAndFiltered = geographyFiltered
+
+    // Then filter by status from URL
+    const statusParam = searchParams.get('status')
+    const statusFiltered = statusParam
+      ? geographyFiltered.filter((item) => item.status === statusParam)
+      : geographyFiltered
+
+    // Finally, sort the filtered results
+    const sortedItems = statusFiltered
       .slice()
       .sort(sortBy(sortControls.key, sortControls.reverse))
-    setFilteredItems(sortedAndFiltered)
-  }, [families, selectedGeographies, sortControls])
+
+    setFilteredItems(sortedItems)
+  }, [families, selectedGeographies, sortControls, searchParams])
 
   useEffect(() => {
     if (qGeography) {
@@ -187,7 +204,7 @@ export default function FamilyList() {
     const countries = getCountries(config.geographies)
     return countries
       .map((country) => ({
-        value: country.display_value,
+        value: country.value,
         label: country.display_value,
       }))
       .sort((a, b) => a.label.localeCompare(b.label))
@@ -292,9 +309,50 @@ export default function FamilyList() {
                   </Flex>
                 </Tooltip>
               </Th>
-              <Th onClick={() => handleHeaderClick('status')} cursor='pointer'>
+              <Th>
                 <Flex gap={2} align='center'>
-                  Status {renderSortIcon('status')}
+                  <span>Status</span>
+                  <Menu>
+                    <MenuButton
+                      as={IconButton}
+                      aria-label='Filter status'
+                      icon={<FiFilter />}
+                      size='xs'
+                      variant='ghost'
+                      colorScheme={searchParams.get('status') ? 'blue' : 'gray'}
+                    />
+                    <MenuList>
+                      <MenuItem
+                        onClick={() => {
+                          const newParams = new URLSearchParams(searchParams)
+                          newParams.delete('status')
+                          setSearchParams(newParams)
+                        }}
+                        fontWeight={
+                          !searchParams.get('status') ? 'bold' : 'normal'
+                        }
+                      >
+                        All
+                      </MenuItem>
+                      {STATUSES.map((status) => (
+                        <MenuItem
+                          key={status.value}
+                          onClick={() => {
+                            const newParams = new URLSearchParams(searchParams)
+                            newParams.set('status', status.value)
+                            setSearchParams(newParams)
+                          }}
+                          fontWeight={
+                            searchParams.get('status') === status.value
+                              ? 'bold'
+                              : 'normal'
+                          }
+                        >
+                          {status.label}
+                        </MenuItem>
+                      ))}
+                    </MenuList>
+                  </Menu>
                 </Flex>
               </Th>
               <Th></Th>

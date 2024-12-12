@@ -27,12 +27,6 @@ import useConfig from '@/hooks/useConfig'
 import { getCountries } from '@/utils/extractNestedGeographyData'
 import { chakraStylesSelect } from '@/styles/chakra'
 
-const STATUSES = [
-  { value: 'Created', label: 'Created' },
-  { value: 'Published', label: 'Published' },
-  { value: 'Deleted', label: 'Deleted' },
-]
-
 export default function Families() {
   const navigation = useNavigation()
   const { config, error: configError, loading: configLoading } = useConfig()
@@ -51,15 +45,6 @@ export default function Families() {
       geography: selectedItem?.value ?? '',
       q: searchParams.get('q') ?? '',
       status: qStatus ?? '',
-    })
-  }
-
-  const handleChangeStatus = (newValue: unknown) => {
-    const selectedItem = newValue as { value: string; label: string }
-    setSearchParams({
-      geography: qGeography ?? '',
-      q: searchParams.get('q') ?? '',
-      status: selectedItem?.value ?? '',
     })
   }
 
@@ -137,18 +122,6 @@ export default function Families() {
                   />
                 </>
               )}
-            </Box>
-            <Box minW={200}>
-              <Text>Status</Text>
-              <CRSelect
-                chakraStyles={chakraStylesSelect}
-                isClearable={true}
-                isMulti={false}
-                isSearchable={true}
-                options={STATUSES}
-                onChange={handleChangeStatus}
-                defaultValue={qStatus && { value: qStatus, label: qStatus }}
-              />
             </Box>
           </Flex>
         </Form>
