@@ -355,7 +355,13 @@ const mockMCFConfig: IConfig = {
           allow_blanks: false,
           allowed_values: ['Status 1', 'Status 2'],
         },
-        _document: {},
+        _document: {
+          type: {
+            allow_any: false,
+            allow_blanks: false,
+            allowed_values: ['Type One', 'Type Two'],
+          },
+        },
         _event: {
           datetime_event_name: {
             allow_any: false,
