@@ -36,28 +36,28 @@ export const MetadataSection = ({
     if (loadedFamily?.metadata && corpusInfo) {
       const metadataValues = Object.entries(
         loadedFamily.metadata as TFamilyMetadata,
-      ).reduce<IFormMetadata>((acc, [key, value]) => {
+      ).reduce<IFormMetadata>((loadedMetadata, [key, value]) => {
         const fieldConfig =
           CORPUS_METADATA_CONFIG[corpusInfo.corpus_type]?.renderFields?.[key]
-        if (!fieldConfig) return acc
+        if (!fieldConfig) return loadedMetadata
 
         if (fieldConfig.type === FieldType.SINGLE_SELECT) {
-          acc[key] = value?.[0]
+          loadedMetadata[key] = value?.[0]
             ? {
                 value: value[0],
                 label: value[0],
               }
             : undefined
         } else if (fieldConfig.type === FieldType.MULTI_SELECT) {
-          acc[key] = value?.map((v) => ({
+          loadedMetadata[key] = value?.map((v) => ({
             value: v,
             label: v,
           }))
         } else {
-          acc[key] = value
+          loadedMetadata[key] = value
         }
 
-        return acc
+        return loadedMetadata
       }, {})
 
       reset((formValues: IFamilyFormBase) => ({
