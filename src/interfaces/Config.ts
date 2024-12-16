@@ -13,7 +13,7 @@ export interface IConfigGeography {
   node: IConfigGeographyNode
   children: IConfigGeography[]
 }
-interface IChakraSelect extends OptionBase {
+export interface IChakraSelect extends OptionBase {
   value: string
   label: string
 }

@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from 'react'
 import { Link, useLoaderData, useSearchParams } from 'react-router-dom'
 import { deleteFamily, getFamilies, TFamilySearchQuery } from '@/api/Families'
-import { IError, TFamily } from '@/interfaces'
+import { IChakraSelect, IError, TFamily } from '@/interfaces'
 import { formatDate, formatDateTime } from '@/utils/formatDate'
 import {
   Table,
@@ -18,6 +18,11 @@ import {
   Tooltip,
   useToast,
   Flex,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverBody,
+  Spinner,
   Menu,
   MenuButton,
   MenuList,
@@ -25,7 +30,7 @@ import {
 } from '@chakra-ui/react'
 import { GoPencil } from 'react-icons/go'
 import { FiFilter } from 'react-icons/fi'
-
+import { Select } from 'chakra-react-select'
 import { DeleteButton } from '../buttons/Delete'
 import { sortBy } from '@/utils/sortBy'
 import {
@@ -39,6 +44,8 @@ import { getStatusAlias } from '@/utils/getStatusAlias'
 import { ApiError } from '../feedback/ApiError'
 import { canModify } from '@/utils/canModify'
 import { decodeToken } from '@/utils/decodeToken'
+import useConfig from '@/hooks/useConfig'
+import { getCountries } from '@/utils/extractNestedGeographyData'
 
 interface ILoaderProps {
   request: {
@@ -72,18 +79,22 @@ const STATUSES = [
 ]
 
 export default function FamilyList() {
+  const [selectedGeography, setSelectedGeography] =
+    useState<IChakraSelect | null>(null) // TODO Change to IChakraSelect[] PDCT-1775
   const [sortControls, setSortControls] = useState<{
     key: keyof TFamily
     reverse: boolean
-  }>({ key: 'slug', reverse: false })
+  }>({ key: 'last_modified', reverse: true })
   const [filteredItems, setFilteredItems] = useState<TFamily[]>()
   const [searchParams, setSearchParams] = useSearchParams()
   const {
     response: { data: families },
   } = useLoaderData() as { response: { data: TFamily[] } }
+  const { config, loading: configLoading, error: configError } = useConfig()
   const toast = useToast()
   const [familyError, setFamilyError] = useState<string | null | undefined>()
   const [formError, setFormError] = useState<IError | null | undefined>()
+  const qGeography = searchParams.get('geography')
 
   const userToken = useMemo(() => {
     const token = localStorage.getItem('token')
@@ -94,17 +105,6 @@ export default function FamilyList() {
 
   const userAccess = !userToken ? null : userToken.authorisation
   const isSuperuser = !userToken ? false : userToken.is_superuser
-
-  const renderSortIcon = (key: keyof TFamily) => {
-    if (sortControls.key !== key) {
-      return <ArrowUpDownIcon />
-    }
-    if (sortControls.reverse) {
-      return <ArrowDownIcon />
-    } else {
-      return <ArrowUpIcon />
-    }
-  }
 
   const handleDeleteClick = async (id: string) => {
     setFormError(null)
@@ -135,6 +135,17 @@ export default function FamilyList() {
       })
   }
 
+  const renderSortIcon = (key: keyof TFamily) => {
+    if (sortControls.key !== key) {
+      return <ArrowUpDownIcon />
+    }
+    if (sortControls.reverse) {
+      return <ArrowDownIcon />
+    } else {
+      return <ArrowUpIcon />
+    }
+  }
+
   const handleHeaderClick = (key: keyof TFamily) => {
     if (sortControls.key === key) {
       setSortControls({ key, reverse: !sortControls.reverse })
@@ -144,22 +155,64 @@ export default function FamilyList() {
   }
 
   useEffect(() => {
-    // First filter by status from URL
+    // First filter by geography
+    const geographyFiltered = families.filter((family) =>
+      selectedGeography ? selectedGeography.value === family.geography : true,
+    ) // TODO PDCT-1775 See ticket
+
+    // Then filter by status from URL
     const statusParam = searchParams.get('status')
     const statusFiltered = statusParam
-      ? families.filter((item) => item.status === statusParam)
-      : families
+      ? geographyFiltered.filter((family) => family.status === statusParam)
+      : geographyFiltered
 
-    // Then sort the filtered results
+    // Finally, sort the filtered results
     const sortedItems = statusFiltered
       .slice()
       .sort(sortBy(sortControls.key, sortControls.reverse))
+
     setFilteredItems(sortedItems)
-  }, [sortControls, families, searchParams])
+  }, [families, selectedGeography, sortControls, searchParams])
+
+  const handleGeographyChange = (newValue: unknown) => {
+    const selectedItems = newValue as IChakraSelect // TODO PDCT-1775 IChakraSelect[]
+    // Update the URL params
+    setSearchParams({
+      q: searchParams.get('q') ?? '',
+      status: searchParams.get('status') ?? '',
+      geography: selectedItems === null ? '' : selectedItems.value, // TODO support multi geo PDCT-1775
+    })
+  }
+
+  // Get all available geographies from config
+  const geographyOptions = useMemo(() => {
+    if (!config) return []
+
+    const countries = getCountries(config.geographies)
+    return countries
+      .map((country) => ({
+        value: country.value, // ISO code
+        label: country.display_value, // Long geography name
+      }))
+      .sort((a, b) => a.label.localeCompare(b.label))
+  }, [config])
 
   useEffect(() => {
-    setFilteredItems(families)
-  }, [families])
+    if (qGeography) {
+      const matchedGeography = geographyOptions.find(
+        (geo) => geo.value === qGeography || geo.label === qGeography,
+      )
+
+      // TODO Update this block to take arrays PDCT-1775
+      if (matchedGeography) {
+        setSelectedGeography(matchedGeography)
+      } else {
+        setSelectedGeography({ value: qGeography, label: qGeography })
+      }
+    } else {
+      setSelectedGeography(null)
+    }
+  }, [qGeography, geographyOptions])
 
   return (
     <Box flex={1}>
@@ -181,12 +234,43 @@ export default function FamilyList() {
                   Category {renderSortIcon('category')}
                 </Flex>
               </Th>
-              <Th
-                onClick={() => handleHeaderClick('geography')}
-                cursor='pointer'
-              >
+              <Th>
                 <Flex gap={2} align='center'>
-                  Geography {renderSortIcon('geography')}
+                  <span>Geography</span>
+                  {!configError && (
+                    <Popover>
+                      <PopoverTrigger>
+                        <IconButton
+                          aria-label='Filter by geography' // TODO Change to geographies PDCT-1775
+                          icon={<FiFilter />}
+                          size='xs'
+                          variant='ghost'
+                          colorScheme={
+                            selectedGeography === null ? 'gray' : 'blue'
+                            // TODO PDCT-1775 selectedGeography.length > 0 ? 'blue' : 'gray'
+                          }
+                        />
+                      </PopoverTrigger>
+                      <PopoverContent>
+                        <PopoverBody>
+                          {configLoading ? (
+                            <Spinner size='sm' />
+                          ) : (
+                            <Select
+                              isMulti={false} // TODO Change to true PDCT-1775
+                              isClearable={true}
+                              options={geographyOptions}
+                              value={selectedGeography} // TODO Change to geographies PDCT-1775
+                              onChange={handleGeographyChange}
+                              placeholder='Select geography...' // TODO Change to geographies PDCT-1775
+                              closeMenuOnSelect={true} // TODO Change to false PDCT-1775
+                              size='sm'
+                            />
+                          )}
+                        </PopoverBody>
+                      </PopoverContent>
+                    </Popover>
+                  )}
                 </Flex>
               </Th>
               <Th
@@ -235,47 +319,57 @@ export default function FamilyList() {
               <Th>
                 <Flex gap={2} align='center'>
                   <span>Status</span>
-                  <Menu>
-                    <MenuButton
-                      as={IconButton}
-                      aria-label='Filter status'
-                      icon={<FiFilter />}
-                      size='xs'
-                      variant='ghost'
-                      colorScheme={searchParams.get('status') ? 'blue' : 'gray'}
-                    />
-                    <MenuList>
-                      <MenuItem
-                        onClick={() => {
-                          const newParams = new URLSearchParams(searchParams)
-                          newParams.delete('status')
-                          setSearchParams(newParams)
-                        }}
-                        fontWeight={
-                          !searchParams.get('status') ? 'bold' : 'normal'
+                  {!configError && (
+                    <Menu>
+                      <MenuButton
+                        as={IconButton}
+                        aria-label='Filter status'
+                        icon={<FiFilter />}
+                        size='xs'
+                        variant='ghost'
+                        colorScheme={
+                          searchParams.get('status') ? 'blue' : 'gray'
                         }
-                      >
-                        All
-                      </MenuItem>
-                      {STATUSES.map((status) => (
-                        <MenuItem
-                          key={status.value}
-                          onClick={() => {
-                            const newParams = new URLSearchParams(searchParams)
-                            newParams.set('status', status.value)
-                            setSearchParams(newParams)
-                          }}
-                          fontWeight={
-                            searchParams.get('status') === status.value
-                              ? 'bold'
-                              : 'normal'
-                          }
-                        >
-                          {status.label}
-                        </MenuItem>
-                      ))}
-                    </MenuList>
-                  </Menu>
+                      />
+                      {!configLoading && (
+                        <MenuList>
+                          <MenuItem
+                            onClick={() => {
+                              const newParams = new URLSearchParams(
+                                searchParams,
+                              )
+                              newParams.delete('status')
+                              setSearchParams(newParams)
+                            }}
+                            fontWeight={
+                              !searchParams.get('status') ? 'bold' : 'normal'
+                            }
+                          >
+                            All
+                          </MenuItem>
+                          {STATUSES.map((status) => (
+                            <MenuItem
+                              key={status.value}
+                              onClick={() => {
+                                const newParams = new URLSearchParams(
+                                  searchParams,
+                                )
+                                newParams.set('status', status.value)
+                                setSearchParams(newParams)
+                              }}
+                              fontWeight={
+                                searchParams.get('status') === status.value
+                                  ? 'bold'
+                                  : 'normal'
+                              }
+                            >
+                              {status.label}
+                            </MenuItem>
+                          ))}
+                        </MenuList>
+                      )}
+                    </Menu>
+                  )}
                 </Flex>
               </Th>
               <Th></Th>
@@ -307,7 +401,15 @@ export default function FamilyList() {
                   </Flex>
                 </Td>
                 <Td>{family.category}</Td>
-                <Td>{family.geography}</Td>
+                <Td>
+                  <Flex gap={1} wrap='wrap'>
+                    {family.geography && (
+                      <Badge colorScheme='gray' variant='subtle'>
+                        {family.geography}
+                      </Badge>
+                    )}
+                  </Flex>
+                </Td>
                 <Td>{formatDate(family.published_date)}</Td>
                 <Td>{formatDate(family.last_updated_date)}</Td>
                 <Td>
