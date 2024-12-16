@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from 'react'
 import { Link, useLoaderData, useSearchParams } from 'react-router-dom'
 import { deleteFamily, getFamilies, TFamilySearchQuery } from '@/api/Families'
-import { IError, TFamily } from '@/interfaces'
+import { IChakraSelect, IError, TFamily } from '@/interfaces'
 import { formatDate, formatDateTime } from '@/utils/formatDate'
 import {
   Table,
@@ -80,7 +80,7 @@ const STATUSES = [
 
 export default function FamilyList() {
   const [selectedGeographies, setSelectedGeographies] = useState<
-    Array<{ value: string; label: string }>
+    IChakraSelect[]
   >([])
   const [sortControls, setSortControls] = useState<{
     key: keyof TFamily
@@ -157,18 +157,18 @@ export default function FamilyList() {
 
   useEffect(() => {
     // First filter by geography
-    const geographyFiltered = families.filter((item) =>
+    const geographyFiltered = families.filter((family) =>
       selectedGeographies.length === 0
         ? true
         : selectedGeographies.some(
-            (selected) => selected.value === item.geography,
+            (selected) => selected.value === family.geography, // Filter by ISO code
           ),
     )
 
     // Then filter by status from URL
     const statusParam = searchParams.get('status')
     const statusFiltered = statusParam
-      ? geographyFiltered.filter((item) => item.status === statusParam)
+      ? geographyFiltered.filter((family) => family.status === statusParam)
       : geographyFiltered
 
     // Finally, sort the filtered results
@@ -179,21 +179,14 @@ export default function FamilyList() {
     setFilteredItems(sortedItems)
   }, [families, selectedGeographies, sortControls, searchParams])
 
-  useEffect(() => {
-    if (qGeography) {
-      setSelectedGeographies([{ value: qGeography, label: qGeography }])
-    } else {
-      setSelectedGeographies([])
-    }
-  }, [qGeography])
-
   const handleGeographyChange = (newValue: unknown) => {
-    const selectedItems = newValue as Array<{ value: string; label: string }>
+    const selectedItems = newValue as IChakraSelect[]
     // Update the URL params
     setSearchParams({
       q: searchParams.get('q') ?? '',
       status: searchParams.get('status') ?? '',
       geography: selectedItems.length > 0 ? selectedItems[0].value : '',
+      // geography: selectedItems.map((item) => item.value), // Use ISO codes for filtering
     })
   }
 
@@ -204,11 +197,26 @@ export default function FamilyList() {
     const countries = getCountries(config.geographies)
     return countries
       .map((country) => ({
-        value: country.value,
-        label: country.display_value,
+        value: country.value, // ISO code
+        label: country.display_value, // Long geography name
       }))
       .sort((a, b) => a.label.localeCompare(b.label))
   }, [config])
+
+  useEffect(() => {
+    if (qGeography) {
+      const matchedGeography = geographyOptions.find(
+        (geo) => geo.value === qGeography || geo.label === qGeography,
+      )
+      if (matchedGeography) {
+        setSelectedGeographies([matchedGeography])
+      } else {
+        setSelectedGeographies([{ value: qGeography, label: qGeography }])
+      }
+    } else {
+      setSelectedGeographies([])
+    }
+  }, [qGeography, geographyOptions])
 
   return (
     <Box flex={1}>
@@ -232,12 +240,12 @@ export default function FamilyList() {
               </Th>
               <Th>
                 <Flex gap={2} align='center'>
-                  <span>Geographies</span>
+                  <span>Geography</span>
                   {!configError && (
                     <Popover>
                       <PopoverTrigger>
                         <IconButton
-                          aria-label='Filter geographies'
+                          aria-label='Filter by geography'
                           icon={<FiFilter />}
                           size='xs'
                           variant='ghost'
@@ -257,7 +265,7 @@ export default function FamilyList() {
                               options={geographyOptions}
                               value={selectedGeographies}
                               onChange={handleGeographyChange}
-                              placeholder='Select geographies...'
+                              placeholder='Select geography...'
                               closeMenuOnSelect={false}
                               size='sm'
                             />
