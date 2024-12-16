@@ -79,9 +79,8 @@ const STATUSES = [
 ]
 
 export default function FamilyList() {
-  const [selectedGeographies, setSelectedGeographies] = useState<
-    IChakraSelect[]
-  >([])
+  const [selectedGeography, setSelectedGeography] =
+    useState<IChakraSelect | null>(null) // TODO Change to IChakraSelect[] PDCT-1775
   const [sortControls, setSortControls] = useState<{
     key: keyof TFamily
     reverse: boolean
@@ -158,12 +157,8 @@ export default function FamilyList() {
   useEffect(() => {
     // First filter by geography
     const geographyFiltered = families.filter((family) =>
-      selectedGeographies.length === 0
-        ? true
-        : selectedGeographies.some(
-            (selected) => selected.value === family.geography, // Filter by ISO code
-          ),
-    )
+      selectedGeography ? selectedGeography.value === family.geography : true,
+    ) // TODO PDCT-1775 See ticket
 
     // Then filter by status from URL
     const statusParam = searchParams.get('status')
@@ -177,16 +172,15 @@ export default function FamilyList() {
       .sort(sortBy(sortControls.key, sortControls.reverse))
 
     setFilteredItems(sortedItems)
-  }, [families, selectedGeographies, sortControls, searchParams])
+  }, [families, selectedGeography, sortControls, searchParams])
 
   const handleGeographyChange = (newValue: unknown) => {
-    const selectedItems = newValue as IChakraSelect[]
+    const selectedItems = newValue as IChakraSelect // TODO PDCT-1775 IChakraSelect[]
     // Update the URL params
     setSearchParams({
       q: searchParams.get('q') ?? '',
       status: searchParams.get('status') ?? '',
-      geography: selectedItems.length > 0 ? selectedItems[0].value : '',
-      // geography: selectedItems.map((item) => item.value), // Use ISO codes for filtering
+      geography: selectedItems === null ? '' : selectedItems.value, // TODO support multi geo PDCT-1775
     })
   }
 
@@ -208,13 +202,15 @@ export default function FamilyList() {
       const matchedGeography = geographyOptions.find(
         (geo) => geo.value === qGeography || geo.label === qGeography,
       )
+
+      // TODO Update this block to take arrays PDCT-1775
       if (matchedGeography) {
-        setSelectedGeographies([matchedGeography])
+        setSelectedGeography(matchedGeography)
       } else {
-        setSelectedGeographies([{ value: qGeography, label: qGeography }])
+        setSelectedGeography({ value: qGeography, label: qGeography })
       }
     } else {
-      setSelectedGeographies([])
+      setSelectedGeography(null)
     }
   }, [qGeography, geographyOptions])
 
@@ -245,12 +241,13 @@ export default function FamilyList() {
                     <Popover>
                       <PopoverTrigger>
                         <IconButton
-                          aria-label='Filter by geography'
+                          aria-label='Filter by geography' // TODO Change to geographies PDCT-1775
                           icon={<FiFilter />}
                           size='xs'
                           variant='ghost'
                           colorScheme={
-                            selectedGeographies.length > 0 ? 'blue' : 'gray'
+                            selectedGeography === null ? 'gray' : 'blue'
+                            // TODO PDCT-1775 selectedGeography.length > 0 ? 'blue' : 'gray'
                           }
                         />
                       </PopoverTrigger>
@@ -260,13 +257,13 @@ export default function FamilyList() {
                             <Spinner size='sm' />
                           ) : (
                             <Select
-                              isMulti
-                              isClearable
+                              isMulti={false} // TODO Change to true PDCT-1775
+                              isClearable={true}
                               options={geographyOptions}
-                              value={selectedGeographies}
+                              value={selectedGeography} // TODO Change to geographies PDCT-1775
                               onChange={handleGeographyChange}
-                              placeholder='Select geography...'
-                              closeMenuOnSelect={false}
+                              placeholder='Select geography...' // TODO Change to geographies PDCT-1775
+                              closeMenuOnSelect={true} // TODO Change to false PDCT-1775
                               size='sm'
                             />
                           )}
