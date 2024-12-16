@@ -69,14 +69,8 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
   }
 
   const logout = (returnTo?: string | null) => {
-    // Clear token first
-    delete API.defaults.headers.common['Authorization']
-    localStorage.removeItem('token')
-    // Then update state
     setToken()
     setReturnTo(returnTo ?? null)
-    // Dispatch event immediately
-    window.dispatchEvent(new Event('tokenChange'))
   }
 
   const contextValue = useMemo(
