@@ -43,9 +43,13 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
     if (token) {
       API.defaults.headers.common['Authorization'] = 'Bearer ' + token
       localStorage.setItem('token', token)
+      // Dispatch custom event for token change
+      window.dispatchEvent(new Event('tokenChange'))
     } else {
       delete API.defaults.headers.common['Authorization']
       localStorage.removeItem('token')
+      // Dispatch custom event for token removal
+      window.dispatchEvent(new Event('tokenChange'))
     }
   }, [token])
 
