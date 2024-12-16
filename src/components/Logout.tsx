@@ -7,8 +7,10 @@ export default function Logout() {
 
   const handleLogout = () => {
     logout()
-    navigate('/', { replace: true })
-    navigate(0)
+    // Wait for next tick to ensure token cleanup has completed
+    setTimeout(() => {
+      navigate('/', { replace: true })
+    }, 0)
   }
 
   return (
