@@ -15,13 +15,21 @@ export const documentSchema = yup
         label: yup.string().required(),
         value: yup.string().required(),
       })
-      .required(),
+      .when('$isRoleRequired', {
+        is: true,
+        then: (schema) => schema.required(),
+        otherwise: (schema) => schema.notRequired(),
+      }),
     type: yup
       .object({
         label: yup.string().required(),
         value: yup.string().required(),
       })
-      .required(),
+      .when('$isTypeRequired', {
+        is: true,
+        then: (schema) => schema.required(),
+        otherwise: (schema) => schema.notRequired(),
+      }),
     title: yup.string().required(),
     source_url: yup.string().url().nullable(),
     user_language_name: yup

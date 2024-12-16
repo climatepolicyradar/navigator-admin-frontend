@@ -52,7 +52,8 @@ export const DocumentForm = ({
   const { config, loading: configLoading, error: configError } = useConfig()
   const toast = useToast()
   const [formError, setFormError] = useState<IError | null | undefined>()
-
+  const renderRoleSelector = Boolean(taxonomy?._document?.role)
+  const renderTypeSelector = Boolean(taxonomy?._document?.type)
   const {
     control,
     register,
@@ -62,6 +63,10 @@ export const DocumentForm = ({
     formState: { errors, isSubmitting },
   } = useForm<IDocumentFormPost>({
     resolver: yupResolver(documentSchema),
+    context: {
+      isTypeRequired: renderTypeSelector,
+      isRoleRequired: renderRoleSelector,
+    },
   })
 
   // Ensure family_import_id is always set
@@ -230,25 +235,29 @@ export const DocumentForm = ({
             </FormErrorMessage>
           </FormControl>
 
-          <SelectField
-            name='role'
-            label='Role'
-            control={control}
-            options={taxonomy?._document?.role?.allowed_values || []}
-            isMulti={false}
-            isRequired={true}
-            isClearable={false}
-          />
+          {renderRoleSelector && (
+            <SelectField
+              name='role'
+              label='Role'
+              control={control}
+              options={taxonomy?._document?.role?.allowed_values || []}
+              isMulti={false}
+              isRequired={true}
+              isClearable={false}
+            />
+          )}
 
-          <SelectField
-            name='type'
-            label='Type'
-            control={control}
-            options={taxonomy?._document?.type?.allowed_values || []}
-            isMulti={false}
-            isRequired={true}
-            isClearable={false}
-          />
+          {renderTypeSelector && (
+            <SelectField
+              name='type'
+              label='Type'
+              control={control}
+              options={taxonomy?._document?.type?.allowed_values || []}
+              isMulti={false}
+              isRequired={true}
+              isClearable={false}
+            />
+          )}
 
           <SelectField
             name='variant_name'

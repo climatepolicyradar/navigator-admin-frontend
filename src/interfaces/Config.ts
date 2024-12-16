@@ -30,11 +30,16 @@ export interface IDocumentSubTaxonomy extends ISubTaxonomy {
   type: ITaxonomyField
 }
 
+export interface IMcfDocumentSubTaxonomy extends ISubTaxonomy {
+  type: ITaxonomyField
+}
+
 export interface IEventSubTaxonomy extends ISubTaxonomy {
+  // datetime_event_name: ITaxonomyField
   event_type: ITaxonomyField
 }
 
-export type TSubTaxonomy = IEventSubTaxonomy | IDocumentSubTaxonomy
+export type TSubTaxonomy = IEventSubTaxonomy | IDocumentSubTaxonomy | IMcfDocumentSubTaxonomy
 
 interface ITaxonomy {
   [key: string]: ITaxonomyField | TSubTaxonomy
@@ -60,7 +65,50 @@ export interface IConfigTaxonomyUNFCCC extends ITaxonomy {
   _event: IEventSubTaxonomy
 }
 
-export type TTaxonomy = IConfigTaxonomyCCLW | IConfigTaxonomyUNFCCC
+export type TTaxonomy =
+  | IConfigTaxonomyCCLW
+  | IConfigTaxonomyUNFCCC
+  | IConfigTaxonomyMCF
+
+export type IConfigTaxonomyMCF =
+  | IConfigTaxonomyGCF
+  | IConfigTaxonomyAF
+  | IConfigTaxonomyGEF
+  | IConfigTaxonomyCIF
+
+interface IConfigMCFBaseTaxonomy extends ITaxonomy {
+  event_type: ITaxonomyField
+  implementing_agency: ITaxonomyField
+  project_id: ITaxonomyField
+  project_url: ITaxonomyField
+  project_value_co_financing: ITaxonomyField
+  project_value_fund_spend: ITaxonomyField
+  region: ITaxonomyField
+  status: ITaxonomyField
+  _document: IMcfDocumentSubTaxonomy
+  _event: IEventSubTaxonomy
+}
+
+// Extend MCFbase type for specific taxonomies
+type IConfigTaxonomyGCF = IConfigMCFBaseTaxonomy & {
+  approved_ref: ITaxonomyField
+  result_area: ITaxonomyField
+  result_type: ITaxonomyField
+  sector: ITaxonomyField
+  theme: ITaxonomyField
+}
+
+type IConfigTaxonomyCIF = IConfigMCFBaseTaxonomy & {
+  sector: ITaxonomyField
+}
+
+type IConfigTaxonomyGEF = IConfigMCFBaseTaxonomy & {
+  focal_area: ITaxonomyField
+}
+
+type IConfigTaxonomyAF = IConfigMCFBaseTaxonomy & {
+  sector: ITaxonomyField
+}
 
 export interface IConfigOrganisationInfo {
   name: string

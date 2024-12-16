@@ -9,10 +9,8 @@ import {
   Input,
   SkeletonText,
   Spacer,
-  Spinner,
   Text,
 } from '@chakra-ui/react'
-import { Select as CRSelect } from 'chakra-react-select'
 import {
   Link,
   Form,
@@ -23,30 +21,10 @@ import {
 
 import { Loader } from '@/components/Loader'
 import { SearchIcon } from '@chakra-ui/icons'
-import useConfig from '@/hooks/useConfig'
-import { getCountries } from '@/utils/extractNestedGeographyData'
-import { chakraStylesSelect } from '@/styles/chakra'
-import { IChakraSelect } from '@/interfaces'
 
 export default function Families() {
   const navigation = useNavigation()
-  const { config, error: configError, loading: configLoading } = useConfig()
   const [searchParams, setSearchParams] = useSearchParams()
-  const qGeography = searchParams.get('geography')
-  const qStatus = searchParams.get('status')
-
-  const countries = getCountries(config?.geographies).map((country) => {
-    return { value: country.display_value, label: country.display_value }
-  })
-
-  const handleChangeGeo = (newValue: unknown) => {
-    const selectedItem = newValue as IChakraSelect
-    setSearchParams({
-      geography: selectedItem?.value ?? '',
-      q: searchParams.get('q') ?? '',
-      status: qStatus ?? '',
-    })
-  }
 
   const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -54,8 +32,6 @@ export default function Families() {
     const q = formData.get('q') as string
     setSearchParams({
       q,
-      status: qStatus ?? '',
-      geography: qGeography ?? '',
     })
   }
 
@@ -95,33 +71,6 @@ export default function Families() {
                   roundedLeft={0}
                 />
               </HStack>
-            </Box>
-            <Box minW={300}>
-              {configLoading && (
-                <>
-                  <Text>Loading geographies</Text>
-                  <Spinner />
-                </>
-              )}
-              {!configLoading && !configError && (
-                <>
-                  <Text>Geography</Text>
-                  <CRSelect
-                    chakraStyles={chakraStylesSelect}
-                    isClearable={true}
-                    isMulti={false}
-                    isSearchable={true}
-                    options={countries}
-                    onChange={handleChangeGeo}
-                    defaultValue={
-                      qGeography && {
-                        value: qGeography,
-                        label: qGeography,
-                      }
-                    }
-                  />
-                </>
-              )}
             </Box>
           </Flex>
         </Form>
