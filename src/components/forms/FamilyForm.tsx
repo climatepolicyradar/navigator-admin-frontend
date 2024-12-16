@@ -41,7 +41,11 @@ import { IDocument } from '@/interfaces/Document'
 import { IEvent } from '@/interfaces/Event'
 import { IError } from '@/interfaces/Auth'
 import { IChakraSelect, IConfigCorpora, TTaxonomy } from '@/interfaces'
-import { getMetadataHandler } from './metadata-handlers/familyForm'
+import {
+  getMetadataHandler,
+  IFamilyFormIntlAgreements,
+  IFamilyFormLawsAndPolicies,
+} from './metadata-handlers/familyForm'
 
 export interface IFamilyFormBase {
   title: string
@@ -50,20 +54,6 @@ export interface IFamilyFormBase {
   category: string
   corpus: IChakraSelect
   collections?: IChakraSelect[]
-}
-
-interface IFamilyFormLawsAndPolicies extends IFamilyFormBase {
-  topic?: IChakraSelect[]
-  hazard?: IChakraSelect[]
-  sector?: IChakraSelect[]
-  keyword?: IChakraSelect[]
-  framework?: IChakraSelect[]
-  instrument?: IChakraSelect[]
-}
-
-interface IFamilyFormIntlAgreements extends IFamilyFormBase {
-  author?: string
-  author_type?: IChakraSelect
 }
 
 export type TFamilyFormSubmit =

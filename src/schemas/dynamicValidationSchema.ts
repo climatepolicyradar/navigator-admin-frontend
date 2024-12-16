@@ -4,7 +4,6 @@ import {
   CorpusInfo,
   CORPUS_METADATA_CONFIG,
   MetadataFieldConfig,
-  IFormMetadata,
 } from '@/interfaces/Metadata'
 import { TFamilyMetadata, TTaxonomy } from '@/interfaces'
 
@@ -13,8 +12,8 @@ const getFieldValidation = (
   fieldConfig: MetadataFieldConfig,
   fieldKey: string,
   isRequired: boolean,
-): yup.Schema<IFormMetadata[string]> => {
-  let fieldValidation: yup.Schema<IFormMetadata[string]>
+) => {
+  let fieldValidation
 
   switch (fieldConfig.type) {
     case FieldType.MULTI_SELECT:
@@ -43,7 +42,7 @@ const getFieldValidation = (
 
   // Add required validation if needed
   if (isRequired) {
-    fieldValidation = fieldValidation.required(`${fieldKey} is required`) // ESLint TODO
+    fieldValidation = fieldValidation.required(`${fieldKey} is required`)
   }
 
   return fieldValidation
