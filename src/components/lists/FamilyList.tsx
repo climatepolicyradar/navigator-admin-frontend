@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react'
-import { Link, useLoaderData } from 'react-router-dom'
+import { Link, useLoaderData, useSearchParams } from 'react-router-dom'
 import { deleteFamily, getFamilies, TFamilySearchQuery } from '@/api/Families'
 import { IError, TFamily } from '@/interfaces'
 import { formatDate, formatDateTime } from '@/utils/formatDate'
@@ -18,8 +18,13 @@ import {
   Tooltip,
   useToast,
   Flex,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
 } from '@chakra-ui/react'
 import { GoPencil } from 'react-icons/go'
+import { FiFilter } from 'react-icons/fi'
 
 import { DeleteButton } from '../buttons/Delete'
 import { sortBy } from '@/utils/sortBy'
@@ -60,12 +65,19 @@ export async function loader({ request }: ILoaderProps) {
   return response
 }
 
+const STATUSES = [
+  { value: 'Created', label: 'Created' },
+  { value: 'Published', label: 'Published' },
+  { value: 'Deleted', label: 'Deleted' },
+]
+
 export default function FamilyList() {
   const [sortControls, setSortControls] = useState<{
     key: keyof TFamily
     reverse: boolean
   }>({ key: 'slug', reverse: false })
   const [filteredItems, setFilteredItems] = useState<TFamily[]>()
+  const [searchParams, setSearchParams] = useSearchParams()
   const {
     response: { data: families },
   } = useLoaderData() as { response: { data: TFamily[] } }
@@ -132,11 +144,18 @@ export default function FamilyList() {
   }
 
   useEffect(() => {
-    const sortedItems = families
+    // First filter by status from URL
+    const statusParam = searchParams.get('status')
+    const statusFiltered = statusParam
+      ? families.filter((item) => item.status === statusParam)
+      : families
+
+    // Then sort the filtered results
+    const sortedItems = statusFiltered
       .slice()
       .sort(sortBy(sortControls.key, sortControls.reverse))
     setFilteredItems(sortedItems)
-  }, [sortControls, families])
+  }, [sortControls, families, searchParams])
 
   useEffect(() => {
     setFilteredItems(families)
@@ -213,8 +232,51 @@ export default function FamilyList() {
                   </Flex>
                 </Tooltip>
               </Th>
-              <Th onClick={() => handleHeaderClick('status')} cursor='pointer'>
-                Status {renderSortIcon('status')}
+              <Th>
+                <Flex gap={2} align='center'>
+                  <span>Status</span>
+                  <Menu>
+                    <MenuButton
+                      as={IconButton}
+                      aria-label='Filter status'
+                      icon={<FiFilter />}
+                      size='xs'
+                      variant='ghost'
+                      colorScheme={searchParams.get('status') ? 'blue' : 'gray'}
+                    />
+                    <MenuList>
+                      <MenuItem
+                        onClick={() => {
+                          const newParams = new URLSearchParams(searchParams)
+                          newParams.delete('status')
+                          setSearchParams(newParams)
+                        }}
+                        fontWeight={
+                          !searchParams.get('status') ? 'bold' : 'normal'
+                        }
+                      >
+                        All
+                      </MenuItem>
+                      {STATUSES.map((status) => (
+                        <MenuItem
+                          key={status.value}
+                          onClick={() => {
+                            const newParams = new URLSearchParams(searchParams)
+                            newParams.set('status', status.value)
+                            setSearchParams(newParams)
+                          }}
+                          fontWeight={
+                            searchParams.get('status') === status.value
+                              ? 'bold'
+                              : 'normal'
+                          }
+                        >
+                          {status.label}
+                        </MenuItem>
+                      ))}
+                    </MenuList>
+                  </Menu>
+                </Flex>
               </Th>
               <Th></Th>
             </Tr>

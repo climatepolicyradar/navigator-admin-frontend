@@ -309,6 +309,83 @@ const mockUNFCCCConfig: IConfig = {
   ],
 }
 
+const mockMCFConfig: IConfig = {
+  ...mockConfig,
+  corpora: [
+    {
+      corpus_import_id: 'MCF.corpus.i00000001.n0000',
+      title: 'MCF Title',
+      description: 'Multilateral Climate Funds',
+      corpus_type: 'GEF',
+      corpus_type_description: 'GEF',
+      organisation: {
+        name: 'GEF',
+        id: 4,
+      },
+      taxonomy: {
+        region: {
+          allow_any: false,
+          allow_blanks: false,
+          allowed_values: ['Region 1', 'Region 2'],
+        },
+        sector: {
+          allow_any: false,
+          allow_blanks: false,
+          allowed_values: ['Sector 1', 'Sector 2'],
+        },
+        status: {
+          allow_any: false,
+          allow_blanks: false,
+          allowed_values: ['Status 1', 'Status 2'],
+        },
+        _document: {},
+        _event: {
+          datetime_event_name: {
+            allow_any: false,
+            allow_blanks: false,
+            allowed_values: ['Event 1'],
+          },
+          event_type: {
+            allow_any: false,
+            allow_blanks: false,
+            allowed_values: ['Event 1'],
+          },
+        },
+        event_type: {
+          allow_any: false,
+          allow_blanks: false,
+          allowed_values: ['Event 1', 'Event 2'],
+        },
+        project_id: {
+          allow_any: true,
+          allow_blanks: false,
+          allowed_values: ['Project ID 1', 'Project ID 2'],
+        },
+        project_url: {
+          allow_any: true,
+          allow_blanks: false,
+          allowed_values: ['Project URL', 'Project URL 2'],
+        },
+        implementing_agency: {
+          allow_any: false,
+          allow_blanks: false,
+          allowed_values: ['Agency 1', 'Agency 2'],
+        },
+        project_value_fund_spend: {
+          allow_any: true,
+          allow_blanks: false,
+          allowed_values: ['1000', '5000'],
+        },
+        project_value_co_financing: {
+          allow_any: true,
+          allow_blanks: false,
+          allowed_values: ['1000', '5000'],
+        },
+      },
+    },
+  ],
+}
+
 // Exports
 export const mockFamiliesData = [
   mockUNFCCCFamily,
@@ -320,6 +397,7 @@ export const mockFamiliesData = [
 export { mockConfig as configMock }
 export { mockCCLWConfig as cclwConfigMock }
 export { mockUNFCCCConfig as unfcccConfigMock }
+export { mockMCFConfig as mcfConfigMock }
 export { mockDocument }
 export { mockDocument2 }
 export { mockEvent }
