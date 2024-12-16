@@ -10,7 +10,7 @@ import {
   SkeletonText,
   useDisclosure,
 } from '@chakra-ui/react'
-
+import * as yup from 'yup'
 import useCorpusFromConfig from '@/hooks/useCorpusFromConfig'
 import useConfig from '@/hooks/useConfig'
 import useCollections from '@/hooks/useCollections'
@@ -52,7 +52,23 @@ export interface IFamilyFormBase {
   collections?: IChakraSelect[]
 }
 
-export type TFamilyFormSubmit = IFamilyFormBase
+interface IFamilyFormLawsAndPolicies extends IFamilyFormBase {
+  topic?: IChakraSelect[]
+  hazard?: IChakraSelect[]
+  sector?: IChakraSelect[]
+  keyword?: IChakraSelect[]
+  framework?: IChakraSelect[]
+  instrument?: IChakraSelect[]
+}
+
+interface IFamilyFormIntlAgreements extends IFamilyFormBase {
+  author?: string
+  author_type?: IChakraSelect
+}
+
+export type TFamilyFormSubmit =
+  | IFamilyFormLawsAndPolicies
+  | IFamilyFormIntlAgreements
 
 type TChildEntity = 'event' | 'document'
 
@@ -104,7 +120,11 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
 
   // Initial validation schema
   const validationSchema = useMemo(
-    () => createValidationSchema(initialTaxonomy, initialCorpusInfo),
+    () =>
+      createValidationSchema(
+        initialTaxonomy,
+        initialCorpusInfo,
+      ) as unknown as yup.ObjectSchema<TFamilyFormSubmit>,
     [initialTaxonomy, initialCorpusInfo, createValidationSchema],
   )
 
@@ -116,7 +136,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     watch,
     formState: { errors, isSubmitting, dirtyFields },
   } = useForm<TFamilyFormSubmit>({
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver<TFamilyFormSubmit>(validationSchema),
   })
 
   // Watch for corpus changes and update schema only when creating a new family
@@ -185,8 +205,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     // Get the appropriate metadata handler & extract metadata
     const metadataHandler = getMetadataHandler(corpusInfo.corpus_type)
     const metadata = metadataHandler.extractMetadata(formData)
-    console.log('Form Data:', formData)
-    console.log('Extracted Metadata:', metadata)
 
     // Create submission data using the specific handler
     const submissionData = metadataHandler.createSubmissionData(

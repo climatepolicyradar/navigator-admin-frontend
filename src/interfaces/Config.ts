@@ -39,7 +39,10 @@ export interface IEventSubTaxonomy extends ISubTaxonomy {
   event_type: ITaxonomyField
 }
 
-export type TSubTaxonomy = IEventSubTaxonomy | IDocumentSubTaxonomy | IMcfDocumentSubTaxonomy
+export type TSubTaxonomy =
+  | IEventSubTaxonomy
+  | IDocumentSubTaxonomy
+  | IMcfDocumentSubTaxonomy
 
 interface ITaxonomy {
   [key: string]: ITaxonomyField | TSubTaxonomy
