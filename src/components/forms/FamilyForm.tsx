@@ -184,7 +184,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     // Prepare base family data common to all types
     const baseData: IFamilyFormPostBase = {
       title: formData.title,
-      summary: formData.summary,
+      summary: stripHtml(formData.summary),
       geography: formData.geography?.value || '',
       category: isMCFCorpus ? 'MCF' : formData.category,
       corpus_import_id: formData.corpus?.value || '',
