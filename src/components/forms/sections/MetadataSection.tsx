@@ -54,7 +54,7 @@ export const MetadataSection = ({
             label: v,
           }))
         } else {
-          loadedMetadata[key] = value
+          loadedMetadata[key] = value?.[0]
         }
 
         return loadedMetadata
