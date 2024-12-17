@@ -11,6 +11,7 @@ import {
   IDocumentFormPostModified,
   IDocumentMetadata,
   IError,
+  TDocumentSubTaxonomy,
   TTaxonomy,
 } from '@/interfaces'
 import { createDocument, updateDocument } from '@/api/Documents'
@@ -52,8 +53,19 @@ export const DocumentForm = ({
   const { config, loading: configLoading, error: configError } = useConfig()
   const toast = useToast()
   const [formError, setFormError] = useState<IError | null | undefined>()
-  const renderRoleSelector = Boolean(taxonomy?._document?.role)
-  const renderTypeSelector = Boolean(taxonomy?._document?.type)
+
+  const docTaxonomy = taxonomy?._document as TDocumentSubTaxonomy
+
+  const renderRoleSelector = docTaxonomy && 'role' in docTaxonomy
+  const documentRoles = renderRoleSelector
+    ? docTaxonomy?.role?.allowed_values || []
+    : []
+
+  const renderTypeSelector = docTaxonomy && 'type' in docTaxonomy
+  const documentTypes = renderTypeSelector
+    ? docTaxonomy?.type?.allowed_values || []
+    : []
+
   const {
     control,
     register,
@@ -240,7 +252,7 @@ export const DocumentForm = ({
               name='role'
               label='Role'
               control={control}
-              options={taxonomy?._document?.role?.allowed_values || []}
+              options={documentRoles}
               isMulti={false}
               isRequired={true}
               isClearable={false}
@@ -252,7 +264,7 @@ export const DocumentForm = ({
               name='type'
               label='Type'
               control={control}
-              options={taxonomy?._document?.type?.allowed_values || []}
+              options={documentTypes}
               isMulti={false}
               isRequired={true}
               isClearable={false}

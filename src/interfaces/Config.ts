@@ -36,6 +36,10 @@ export interface IGcfDocSubTaxonomy extends ISubTaxonomy {
 
 export interface IEmptyDocumentSubTaxonomy {}
 
+export type TDocumentSubTaxonomy =
+  | IDefaultDocSubTaxonomy
+  | TMcfDocumentSubTaxonomy
+
 export type TMcfDocumentSubTaxonomy =
   | IEmptyDocumentSubTaxonomy
   | IGcfDocSubTaxonomy
@@ -45,10 +49,7 @@ export interface IEventSubTaxonomy extends ISubTaxonomy {
   event_type: ITaxonomyField
 }
 
-export type TSubTaxonomy =
-  | IEventSubTaxonomy
-  | IDefaultDocSubTaxonomy
-  | TMcfDocumentSubTaxonomy
+export type TSubTaxonomy = IEventSubTaxonomy | TDocumentSubTaxonomy
 
 interface ITaxonomy {
   [key: string]: ITaxonomyField | TSubTaxonomy
