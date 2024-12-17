@@ -32,7 +32,7 @@ interface IFamilyBase {
   organisation: string
   corpus_import_id: string
   corpus_title: string
-  corpus_type: string // TODO TConfigType
+  corpus_type: string
   created: string
   last_modified: string
 }

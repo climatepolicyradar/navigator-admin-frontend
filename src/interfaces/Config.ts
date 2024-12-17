@@ -25,24 +25,30 @@ export interface ISubTaxonomy {
   [key: string]: ITaxonomyField
 }
 
-export interface IDocumentSubTaxonomy extends ISubTaxonomy {
+export interface IDefaultDocSubTaxonomy extends ISubTaxonomy {
   role: ITaxonomyField
   type: ITaxonomyField
 }
 
-export interface IMcfDocumentSubTaxonomy extends ISubTaxonomy {
+export interface IGcfDocSubTaxonomy extends ISubTaxonomy {
   type: ITaxonomyField
 }
 
+export interface IEmptyDocumentSubTaxonomy {}
+
+export type TMcfDocumentSubTaxonomy =
+  | IEmptyDocumentSubTaxonomy
+  | IGcfDocSubTaxonomy
+
 export interface IEventSubTaxonomy extends ISubTaxonomy {
-  // datetime_event_name: ITaxonomyField
+  datetime_event_name: ITaxonomyField
   event_type: ITaxonomyField
 }
 
 export type TSubTaxonomy =
   | IEventSubTaxonomy
-  | IDocumentSubTaxonomy
-  | IMcfDocumentSubTaxonomy
+  | IDefaultDocSubTaxonomy
+  | TMcfDocumentSubTaxonomy
 
 interface ITaxonomy {
   [key: string]: ITaxonomyField | TSubTaxonomy
@@ -56,7 +62,7 @@ export interface IConfigTaxonomyCCLW extends ITaxonomy {
   framework: ITaxonomyField
   instrument: ITaxonomyField
   event_type: ITaxonomyField
-  _document: IDocumentSubTaxonomy
+  _document: IDefaultDocSubTaxonomy
   _event: IEventSubTaxonomy
 }
 
@@ -64,7 +70,7 @@ export interface IConfigTaxonomyUNFCCC extends ITaxonomy {
   author: ITaxonomyField
   author_type: ITaxonomyField
   event_type: ITaxonomyField
-  _document: IDocumentSubTaxonomy
+  _document: IDefaultDocSubTaxonomy
   _event: IEventSubTaxonomy
 }
 
@@ -88,11 +94,11 @@ interface IConfigMCFBaseTaxonomy extends ITaxonomy {
   project_value_fund_spend: ITaxonomyField
   region: ITaxonomyField
   status: ITaxonomyField
-  _document: IMcfDocumentSubTaxonomy
+  _document: TMcfDocumentSubTaxonomy
   _event: IEventSubTaxonomy
 }
 
-// Extend MCFbase type for specific taxonomies
+// Extend MCF base type for specific taxonomies
 type IConfigTaxonomyGCF = IConfigMCFBaseTaxonomy & {
   approved_ref: ITaxonomyField
   result_area: ITaxonomyField
