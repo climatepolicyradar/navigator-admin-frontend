@@ -405,7 +405,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       )}
       {!userAccess.canModify && (
         <ApiError
-          message={`You do not have permission to edit document families in ${corpusInfo?.title} `}
+          message={`You do not have permission to edit document families in ${loadedFamily?.corpus_title || corpusInfo?.title} `}
           detail='Please go back to the "Families" page, if you think there has been a mistake please contact the administrator.'
         />
       )}

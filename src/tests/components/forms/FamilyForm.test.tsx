@@ -79,11 +79,11 @@ describe('FamilyForm', () => {
 
   afterEach(cleanup)
 
-  it('warns when no access', async () => {
-    localStorage.clear()
+  it('warns when no access', () => {
+    // Remove the token in local storage to simulate a logged-in user without modification permissions
+    localStorage.removeItem('token')
     const testFamily = mockFamiliesData[1]
     renderComponent(testFamily)
-    await flushPromises()
 
     expect(
       screen.getByText(
@@ -93,15 +93,29 @@ describe('FamilyForm', () => {
   })
 
   it('renders FamilyReadDTO data on edit', async () => {
+    expect(
+      screen.getByText(
+        'You do not have permission to edit document families in CCLW national policies',
+      ),
+    ).not.toBeInTheDocument()
+
     const testFamily = mockFamiliesData[1]
-    const { getByTestId, getAllByText } = renderComponent(testFamily)
+    const { getAllByText } = renderComponent(testFamily)
     await flushPromises()
     const expectedEvents = getAllByText('Test event title')
 
-    expect(getByTestId('input-id')).toHaveValue(testFamily.import_id)
-    expect(getByTestId('corpus-id')).toHaveValue(testFamily.corpus_import_id)
-    expect(getByTestId('corpus-title')).toHaveValue(testFamily.corpus_title)
-    expect(getByTestId('corpus-type')).toHaveValue(testFamily.corpus_type)
+    expect(screen.getByLabelText('family-import-id')).toHaveTextContent(
+      testFamily.import_id,
+    )
+    expect(screen.getByLabelText('corpus-import-id')).toHaveTextContent(
+      testFamily.corpus_import_id,
+    )
+    expect(screen.getByLabelText('corpus-title')).toHaveTextContent(
+      testFamily.corpus_title,
+    )
+    expect(screen.getByLabelText('corpus-type')).toHaveTextContent(
+      testFamily.corpus_type,
+    )
 
     expect(expectedEvents).toHaveLength(2)
     expect(expectedEvents[0]).toHaveTextContent('Test event title')

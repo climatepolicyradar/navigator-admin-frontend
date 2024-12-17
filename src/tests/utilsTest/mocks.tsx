@@ -333,11 +333,11 @@ const mockMCFConfig: IConfig = {
       corpus_import_id: 'MCF.corpus.i00000001.n0000',
       title: 'MCF Title',
       description: 'Multilateral Climate Funds',
-      corpus_type: 'GEF',
-      corpus_type_description: 'GEF',
+      corpus_type: 'CIF',
+      corpus_type_description: 'Multilateral Climate Funds',
       organisation: {
-        name: 'GEF',
-        id: 4,
+        name: 'MCF',
+        id: 999,
       },
       taxonomy: {
         region: {
@@ -355,13 +355,7 @@ const mockMCFConfig: IConfig = {
           allow_blanks: false,
           allowed_values: ['Status 1', 'Status 2'],
         },
-        _document: {
-          type: {
-            allow_any: false,
-            allow_blanks: false,
-            allowed_values: ['Type One', 'Type Two'],
-          },
-        },
+        _document: {},
         _event: {
           datetime_event_name: {
             allow_any: false,

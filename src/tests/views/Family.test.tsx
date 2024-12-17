@@ -1,4 +1,4 @@
-import { screen, waitForElementToBeRemoved } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import { renderRoute } from '../utilsTest/renderRoute'
 import { mockEvent } from '@/tests/utilsTest/mocks'
 import { formatDate } from '@/utils/formatDate'
@@ -33,7 +33,7 @@ describe('FamilyForm edit', () => {
       }),
     ).toBeInTheDocument()
 
-    const eventTitle = screen.getByRole('textbox', { name: 'Title' })
+    const eventTitle = screen.getByRole('textbox', { name: 'Event Title' })
 
     expect(eventTitle).toHaveValue('Test event title')
 
@@ -43,11 +43,11 @@ describe('FamilyForm edit', () => {
 
     await user.click(screen.getByRole('button', { name: 'Update Event' }))
 
-    await waitForElementToBeRemoved(() =>
+    expect(
       screen.queryByRole('dialog', {
         name: `Edit: Test event title, on ${formattedEventDate}`,
       }),
-    )
+    ).not.toBeInTheDocument()
 
     expect(
       await screen.findByText('Event has been successfully updated'),
@@ -83,11 +83,11 @@ describe('FamilyForm edit', () => {
 
     await user.click(screen.getByRole('button', { name: 'Update Document' }))
 
-    await waitForElementToBeRemoved(() =>
+    expect(
       screen.queryByRole('dialog', {
         name: 'Edit: Test document title',
       }),
-    )
+    ).not.toBeInTheDocument()
 
     expect(
       await screen.findByText('Document has been successfully updated'),
