@@ -1,6 +1,6 @@
 import { IMetadata } from './Metadata'
 
-// Corpus type metadata (aka taxonomy).
+// Metadata as stored on ReadDTO.
 export interface IInternationalAgreementsMetadata extends IMetadata {
   author: string[]
   author_type: string[]
@@ -14,6 +14,10 @@ export interface ILawsAndPoliciesMetadata extends IMetadata {
   framework: string[]
   instrument: string[]
 }
+
+export type TFamilyMetadata =
+  | IInternationalAgreementsMetadata
+  | ILawsAndPoliciesMetadata
 
 // Read DTOs.
 interface IFamilyBase {
@@ -65,10 +69,6 @@ export interface IInternationalAgreementsFamilyFormPost
   extends IFamilyFormPostBase {
   metadata: IInternationalAgreementsMetadata
 }
-
-export type TFamilyMetadata =
-  | IInternationalAgreementsMetadata
-  | ILawsAndPoliciesMetadata
 
 export type TFamilyFormPost =
   | ILawsAndPoliciesFamilyFormPost

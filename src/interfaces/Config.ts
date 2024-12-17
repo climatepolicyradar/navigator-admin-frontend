@@ -1,20 +1,6 @@
 import { IChakraSelect } from '.'
 
-export interface IConfigGeographyNode {
-  id: number
-  display_value: string
-  slug: string
-  value: string
-  type: string
-  parent_id: number
-}
-
-export interface IConfigGeography {
-  node: IConfigGeographyNode
-  children: IConfigGeography[]
-}
-
-// Types for taxonomy and corpus info
+// Base types for taxonomies.
 export interface ITaxonomyField {
   allowed_values?: string[]
   allow_any?: boolean
@@ -25,6 +11,7 @@ export interface ISubTaxonomy {
   [key: string]: ITaxonomyField
 }
 
+// Document sub-taxonomies.
 export interface IDefaultDocSubTaxonomy extends ISubTaxonomy {
   role: ITaxonomyField
   type: ITaxonomyField
@@ -36,24 +23,27 @@ export interface IGcfDocSubTaxonomy extends ISubTaxonomy {
 
 export interface IEmptyDocumentSubTaxonomy {}
 
-export type TDocumentSubTaxonomy =
-  | IDefaultDocSubTaxonomy
-  | TMcfDocumentSubTaxonomy
-
 export type TMcfDocumentSubTaxonomy =
   | IEmptyDocumentSubTaxonomy
   | IGcfDocSubTaxonomy
 
+export type TDocumentSubTaxonomy =
+  | IDefaultDocSubTaxonomy
+  | TMcfDocumentSubTaxonomy
+
+// Event sub-taxonomies.
 export interface IEventSubTaxonomy extends ISubTaxonomy {
   event_type: ITaxonomyField
 }
 
+// Taxonomy builder.
 export type TSubTaxonomy = IEventSubTaxonomy | TDocumentSubTaxonomy
 
 interface ITaxonomy {
   [key: string]: ITaxonomyField | TSubTaxonomy
 }
 
+// Corpus type specific taxonomies.
 export interface IConfigTaxonomyCCLW extends ITaxonomy {
   topic: ITaxonomyField
   hazard: ITaxonomyField
@@ -73,17 +63,6 @@ export interface IConfigTaxonomyUNFCCC extends ITaxonomy {
   _document: IDefaultDocSubTaxonomy
   _event: IEventSubTaxonomy
 }
-
-export type TTaxonomy =
-  | IConfigTaxonomyCCLW
-  | IConfigTaxonomyUNFCCC
-  | IConfigTaxonomyMCF
-
-export type IConfigTaxonomyMCF =
-  | IConfigTaxonomyGCF
-  | IConfigTaxonomyAF
-  | IConfigTaxonomyGEF
-  | IConfigTaxonomyCIF
 
 interface IConfigMCFBaseTaxonomy extends ITaxonomy {
   event_type: ITaxonomyField
@@ -117,6 +96,32 @@ type IConfigTaxonomyGEF = IConfigMCFBaseTaxonomy & {
 
 type IConfigTaxonomyAF = IConfigMCFBaseTaxonomy & {
   sector: ITaxonomyField
+}
+
+export type IConfigTaxonomyMCF =
+  | IConfigTaxonomyGCF
+  | IConfigTaxonomyAF
+  | IConfigTaxonomyGEF
+  | IConfigTaxonomyCIF
+
+export type TTaxonomy =
+  | IConfigTaxonomyCCLW
+  | IConfigTaxonomyUNFCCC
+  | IConfigTaxonomyMCF
+
+// Config endpoint types.
+export interface IConfigGeographyNode {
+  id: number
+  display_value: string
+  slug: string
+  value: string
+  type: string
+  parent_id: number
+}
+
+export interface IConfigGeography {
+  node: IConfigGeographyNode
+  children: IConfigGeography[]
 }
 
 export interface IConfigOrganisationInfo {

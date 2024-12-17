@@ -41,7 +41,7 @@ export interface CorpusMetadataConfig {
   }
 }
 
-// Centralised configuration for corpus metadata
+// Centralised configuration for corpus type metadata.
 export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
   'Intl. agreements': {
     renderFields: {
@@ -72,9 +72,4 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
     renderFields: {},
     validationFields: [],
   },
-}
-
-export interface ITaxonomyField {
-  // ... existing properties ...
-  allow_blanks?: boolean
 }
