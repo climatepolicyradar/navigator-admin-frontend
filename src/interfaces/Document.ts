@@ -1,4 +1,4 @@
-import { IConfigLanguageSorted } from '.'
+import { IChakraSelect } from '.'
 
 export interface IDocument {
   import_id: string
@@ -20,12 +20,12 @@ export interface IDocument {
 
 export interface IDocumentFormPost {
   family_import_id: string
-  variant_name?: string | null
-  role?: string
-  type?: string
+  variant_name: IChakraSelect | null
+  role: IChakraSelect
+  type: IChakraSelect
   title: string
   source_url?: string | null
-  user_language_name?: IConfigLanguageSorted | null
+  user_language_name: IChakraSelect | null
 }
 
 export interface IDocumentFormPostModified {

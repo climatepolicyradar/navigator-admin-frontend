@@ -45,6 +45,7 @@ import { InfoOutlineIcon } from '@chakra-ui/icons'
 import { WYSIWYG } from '../form-components/WYSIWYG'
 import * as yup from 'yup'
 import { stripHtml } from '@/utils/stripHtml'
+import { convertEmptyToNull } from '@/utils/convertEmptyToNull'
 
 interface CorpusType {
   name: string
@@ -100,12 +101,6 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
       ) {
         setIsModalOpen(true)
         return
-      }
-
-      const convertEmptyToNull = (
-        value: string | undefined | null,
-      ): string | null => {
-        return !value || value.trim() === '' ? null : value
       }
 
       if (loadedCorpus) {
