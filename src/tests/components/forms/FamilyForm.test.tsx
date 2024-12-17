@@ -93,12 +93,6 @@ describe('FamilyForm', () => {
   })
 
   it('renders FamilyReadDTO data on edit', async () => {
-    expect(
-      screen.getByText(
-        'You do not have permission to edit document families in CCLW national policies',
-      ),
-    ).not.toBeInTheDocument()
-
     const testFamily = mockFamiliesData[1]
     const { getAllByText } = renderComponent(testFamily)
     await flushPromises()

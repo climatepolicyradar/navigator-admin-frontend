@@ -68,6 +68,7 @@ export const SelectField = <T extends FieldValues>({
             isMulti={isMulti}
             isSearchable={true}
             options={selectOptions}
+            aria-label={label}
             {...field}
           />
           {error && <FormErrorMessage>{error.message}</FormErrorMessage>}

@@ -1,4 +1,4 @@
-import { screen, waitFor, fireEvent, within } from '@testing-library/react'
+import { screen, waitFor, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { mcfConfigMock, unfcccConfigMock } from '../../utilsTest/mocks'
 import { customRender } from '@/tests/utilsTest/render'
@@ -66,9 +66,14 @@ describe('DocumentForm', () => {
     const roleDropdown = screen.getByRole('combobox', { name: 'Role' })
     expect(roleDropdown).toBeInTheDocument()
 
-    expect(
-      within(screen.getByRole('combobox', { name: 'Role' })),
-    ).toBeInTheDocument()
+    // Simulate opening the dropdown
+    await userEvent.click(roleDropdown)
+
+    const options = screen.getAllByRole('option', { hidden: true })
+    const selectedOption = options.find(
+      (option) => option.textContent === mockDocument.metadata?.role?.[0],
+    )
+    expect(selectedOption).toBeInTheDocument()
   })
 
   it('shows allowed values when clicking on role dropdown', async () => {
@@ -195,19 +200,16 @@ describe('DocumentForm', () => {
       expect(screen.getByText('Default language')).toBeInTheDocument()
     })
 
-    // Click the dropdown to open it
+    // Simulate opening the dropdown
     await userEvent.click(languageDropdown)
 
-    // Wait for options to be rendered
-    const options = await screen.findAllByRole('option')
+    // Find and select 'English' from the dropdown
+    const englishOption = await screen.findByText('English')
+    await userEvent.click(englishOption)
 
-    // Ensure 'Spanish' is one of the options
-    const spanishOption = options.find(option => option.textContent === 'Spanish')
-    expect(spanishOption).toBeInTheDocument()
-
-    // Select a language option
-    await userEvent.selectOptions(languageDropdown, 'Spanish')
-    expect(languageDropdown).toHaveValue('Spanish')
+    // Verify 'English' is selected by checking the hidden input value
+    const hiddenInput = screen.getByDisplayValue('en')
+    expect(hiddenInput).toBeInTheDocument()
 
     // Check no errors at submit
     fireEvent.submit(submitButton)
