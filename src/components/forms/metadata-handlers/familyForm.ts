@@ -1,7 +1,4 @@
-import {
-  IFamilyFormBase,
-  TFamilyFormSubmit,
-} from '@/components/forms/FamilyForm'
+import { IFamilyFormBase } from '@/components/forms/FamilyForm'
 import {
   IAFProjectsFamilyFormPost,
   IAFProjectsMetadata,
