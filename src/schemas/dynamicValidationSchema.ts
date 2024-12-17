@@ -74,7 +74,9 @@ export const generateDynamicValidationSchema = (
       const taxonomyField = taxonomy[fieldKey]
       const isRequired =
         validationFields.includes(fieldKey) &&
-        (!taxonomyField || taxonomyField.allow_blanks === false)
+        (taxonomyField && 'allow_blanks' in taxonomyField
+          ? taxonomyField.allow_blanks === false
+          : true)
 
       // Generate field validation
       const fieldValidation = getFieldValidation(

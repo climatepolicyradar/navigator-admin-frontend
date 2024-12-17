@@ -19,6 +19,12 @@ type TProps<T extends FieldValues> = {
   fieldType: FieldType
 }
 
+function hasAllowedValues(
+  field: ITaxonomyField | TSubTaxonomy,
+): field is ITaxonomyField {
+  return 'allowed_values' in field
+}
+
 export const DynamicMetadataFields = <T extends FieldValues>({
   fieldKey,
   taxonomyField,
@@ -27,7 +33,8 @@ export const DynamicMetadataFields = <T extends FieldValues>({
   fieldType,
 }: TProps<T>) => {
   // Wrong typing escape hatch -- TODO extend for sub-taxonomies
-  if (typeof taxonomyField.allowed_values === 'undefined') {
+  if (!taxonomyField) return null
+  if (!hasAllowedValues(taxonomyField)) {
     return null
   }
 
@@ -35,7 +42,7 @@ export const DynamicMetadataFields = <T extends FieldValues>({
     allowed_values = [],
     allow_any = false,
     allow_blanks = true,
-  } = taxonomyField as ITaxonomyField
+  } = taxonomyField
 
   const renderField = () => {
     if (allow_any) {

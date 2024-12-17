@@ -45,7 +45,6 @@ export type TMcfDocumentSubTaxonomy =
   | IGcfDocSubTaxonomy
 
 export interface IEventSubTaxonomy extends ISubTaxonomy {
-  datetime_event_name: ITaxonomyField
   event_type: ITaxonomyField
 }
 

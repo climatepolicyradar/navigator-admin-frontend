@@ -73,3 +73,8 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
     validationFields: [],
   },
 }
+
+export interface ITaxonomyField {
+  // ... existing properties ...
+  allow_blanks?: boolean
+}
