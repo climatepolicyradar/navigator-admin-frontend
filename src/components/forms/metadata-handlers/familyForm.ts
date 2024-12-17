@@ -3,6 +3,8 @@ import {
   TFamilyFormSubmit,
 } from '@/components/forms/FamilyForm'
 import {
+  IAFProjectsFamilyFormPost,
+  IAFProjectsMetadata,
   IFamilyFormPostBase,
   IInternationalAgreementsMetadata,
   ILawsAndPoliciesMetadata,
@@ -39,6 +41,22 @@ export interface IFamilyFormLawsAndPolicies extends IFamilyFormBase {
   framework?: IChakraSelect[]
   instrument?: IChakraSelect[]
 }
+export interface IFamilyFormAFProjects extends IFamilyFormBase {
+  // AF Projects
+  region?: IChakraSelect[]
+  sector?: IChakraSelect[]
+  implementing_agency?: IChakraSelect[]
+  status?: IChakraSelect[]
+  project_id?: IChakraSelect[]
+  project_url?: IChakraSelect[]
+  project_value_co_financing?: IChakraSelect[]
+  project_value_fund_spend?: IChakraSelect[]
+}
+
+export type TFamilyFormSubmit =
+  | IFamilyFormLawsAndPolicies
+  | IFamilyFormIntlAgreements
+  | IFamilyFormAFProjects
 
 // Mapping of corpus types to their specific metadata handlers
 export const corpusMetadataHandlers: Record<
@@ -79,6 +97,29 @@ export const corpusMetadataHandlers: Record<
         ...baseData,
         metadata,
       }) as ILawsAndPoliciesFamilyFormPost,
+  },
+  'AF Projects': {
+    extractMetadata: (formData: TFamilyFormSubmit) => {
+      const afData = formData as IFamilyFormAFProjects
+      return {
+        region: afData.region?.map((region) => region.value) || [],
+        sector: afData.sector?.map((sector) => sector.value) || [],
+        implementing_agency:
+          afData.implementing_agency?.map((agency) => agency.value) || [],
+        status: afData.status?.map((status) => status.value) || [],
+        project_id: afData.project_id?.map((id) => id.value) || [],
+        project_url: afData.project_url?.map((url) => url.value) || [],
+        project_value_co_financing:
+          afData.project_value_co_financing?.map((value) => value.value) || [],
+        project_value_fund_spend:
+          afData.project_value_fund_spend?.map((value) => value.value) || [],
+      } as IAFProjectsMetadata
+    },
+    createSubmissionData: (baseData, metadata) =>
+      ({
+        ...baseData,
+        metadata,
+      }) as IAFProjectsFamilyFormPost,
   },
   // Add other corpus types here with their specific metadata extraction logic
 }

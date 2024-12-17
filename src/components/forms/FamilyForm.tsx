@@ -43,8 +43,7 @@ import { IError } from '@/interfaces/Auth'
 import { IChakraSelect, IConfigCorpora, TTaxonomy } from '@/interfaces'
 import {
   getMetadataHandler,
-  IFamilyFormIntlAgreements,
-  IFamilyFormLawsAndPolicies,
+  TFamilyFormSubmit,
 } from './metadata-handlers/familyForm'
 
 export interface IFamilyFormBase {
@@ -55,10 +54,6 @@ export interface IFamilyFormBase {
   corpus: IChakraSelect
   collections?: IChakraSelect[]
 }
-
-export type TFamilyFormSubmit =
-  | IFamilyFormLawsAndPolicies
-  | IFamilyFormIntlAgreements
 
 type TChildEntity = 'event' | 'document'
 
