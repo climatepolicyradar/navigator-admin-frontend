@@ -229,20 +229,13 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       await handleFormSubmission(data)
     } catch (error) {
       console.log('onSubmitErrorHandler', error)
+      setFormError(error as IError)
+      toast({
+        title: 'Form submission error',
+        description: (error as IError).message,
+        status: 'error',
+      })
     }
-  }
-
-  // object type is workaround for SubmitErrorHandler<FieldErrors> throwing a tsc error.
-  const onSubmitErrorHandler = (error: object) => {
-    console.log('onSubmitErrorHandler', error)
-
-    // Handle any submission errors
-    setFormError(error as IError)
-    toast({
-      title: 'Form submission error',
-      description: (error as IError).message,
-      status: 'error',
-    })
   }
 
   useEffect(() => {
@@ -408,7 +401,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       )}
 
       {canLoadForm && (
-        <form onSubmit={handleSubmit(onSubmit, onSubmitErrorHandler)}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <VStack gap='4' mb={12} mt={4} align={'stretch'}>
             {formError && <ApiError error={formError} />}
 

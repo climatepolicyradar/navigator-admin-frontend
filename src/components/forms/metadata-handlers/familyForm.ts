@@ -46,11 +46,11 @@ export interface IFamilyFormAFProjects extends IFamilyFormBase {
   region?: IChakraSelect[]
   sector?: IChakraSelect[]
   implementing_agency?: IChakraSelect[]
-  status?: IChakraSelect[]
-  project_id?: IChakraSelect[]
-  project_url?: IChakraSelect[]
-  project_value_co_financing?: IChakraSelect[]
-  project_value_fund_spend?: IChakraSelect[]
+  status?: IChakraSelect
+  project_id?: string
+  project_url?: string
+  project_value_co_financing?: string
+  project_value_fund_spend?: string
 }
 
 export type TFamilyFormSubmit =
@@ -98,7 +98,7 @@ export const corpusMetadataHandlers: Record<
         metadata,
       }) as ILawsAndPoliciesFamilyFormPost,
   },
-  'AF Projects': {
+  AF: {
     extractMetadata: (formData: TFamilyFormSubmit) => {
       const afData = formData as IFamilyFormAFProjects
       return {
@@ -106,13 +106,15 @@ export const corpusMetadataHandlers: Record<
         sector: afData.sector?.map((sector) => sector.value) || [],
         implementing_agency:
           afData.implementing_agency?.map((agency) => agency.value) || [],
-        status: afData.status?.map((status) => status.value) || [],
-        project_id: afData.project_id?.map((id) => id.value) || [],
-        project_url: afData.project_url?.map((url) => url.value) || [],
-        project_value_co_financing:
-          afData.project_value_co_financing?.map((value) => value.value) || [],
-        project_value_fund_spend:
-          afData.project_value_fund_spend?.map((value) => value.value) || [],
+        status: afData.status ? [afData.status?.value] : [],
+        project_id: afData.project_id ? [afData.project_id] : [],
+        project_url: afData.project_url ? [afData.project_url] : [],
+        project_value_co_financing: afData.project_value_co_financing
+          ? [afData.project_value_co_financing]
+          : [0],
+        project_value_fund_spend: afData.project_value_fund_spend
+          ? [afData.project_value_fund_spend]
+          : [0],
       } as IAFProjectsMetadata
     },
     createSubmissionData: (baseData, metadata) =>
