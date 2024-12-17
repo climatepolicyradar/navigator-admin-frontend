@@ -230,7 +230,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   }
 
   const onSubmit: SubmitHandler<TFamilyFormSubmit> = async (data) => {
-    console.log('Form Data Before Submission:', data)
     try {
       await handleFormSubmission(data)
     } catch (error) {
