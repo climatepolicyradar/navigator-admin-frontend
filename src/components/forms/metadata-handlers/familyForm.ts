@@ -3,6 +3,8 @@ import {
   IAFProjectsFamilyFormPost,
   IAFProjectsMetadata,
   IFamilyFormPostBase,
+  IGefProjectsFamilyFormPost,
+  IGefProjectsMetadata,
   IInternationalAgreementsMetadata,
   ILawsAndPoliciesMetadata,
   TFamilyFormPost,
@@ -23,13 +25,13 @@ export type MetadataHandler<T extends TFamilyMetadata> = {
   ) => TFamilyFormPost
 }
 
-export interface IFamilyFormIntlAgreements extends IFamilyFormBase {
+interface IFamilyFormIntlAgreements extends IFamilyFormBase {
   // Intl. agreements
   author?: string
   author_type?: IChakraSelect
 }
 
-export interface IFamilyFormLawsAndPolicies extends IFamilyFormBase {
+interface IFamilyFormLawsAndPolicies extends IFamilyFormBase {
   // Laws and Policies
   topic?: IChakraSelect[]
   hazard?: IChakraSelect[]
@@ -38,10 +40,9 @@ export interface IFamilyFormLawsAndPolicies extends IFamilyFormBase {
   framework?: IChakraSelect[]
   instrument?: IChakraSelect[]
 }
-export interface IFamilyFormAFProjects extends IFamilyFormBase {
-  // AF Projects
+
+interface IFamilyFormMcfProjects extends IFamilyFormBase {
   region?: IChakraSelect[]
-  sector?: IChakraSelect[]
   implementing_agency?: IChakraSelect[]
   status?: IChakraSelect
   project_id?: string
@@ -50,10 +51,20 @@ export interface IFamilyFormAFProjects extends IFamilyFormBase {
   project_value_fund_spend?: string
 }
 
+interface IFamilyFormAFProjects extends IFamilyFormMcfProjects {
+  sector?: IChakraSelect[]
+}
+
+interface IFamilyFormGefProjects extends IFamilyFormMcfProjects {
+  focal_area?: IChakraSelect[]
+}
+
+type TFamilyFormMcfProjects = IFamilyFormAFProjects | IFamilyFormGefProjects
+
 export type TFamilyFormSubmit =
   | IFamilyFormLawsAndPolicies
   | IFamilyFormIntlAgreements
-  | IFamilyFormAFProjects
+  | TFamilyFormMcfProjects
 
 // Mapping of corpus types to their specific metadata handlers
 export const corpusMetadataHandlers: Record<
@@ -119,6 +130,32 @@ export const corpusMetadataHandlers: Record<
         ...baseData,
         metadata,
       }) as IAFProjectsFamilyFormPost,
+  },
+  GEF: {
+    extractMetadata: (formData: TFamilyFormSubmit) => {
+      const gefData = formData as IFamilyFormGefProjects
+      return {
+        region: gefData.region?.map((region) => region.value) || [],
+        focal_area:
+          gefData.focal_area?.map((focal_area) => focal_area.value) || [],
+        implementing_agency:
+          gefData.implementing_agency?.map((agency) => agency.value) || [],
+        status: gefData.status ? [gefData.status?.value] : [],
+        project_id: gefData.project_id ? [gefData.project_id] : [],
+        project_url: gefData.project_url ? [gefData.project_url] : [],
+        project_value_co_financing: gefData.project_value_co_financing
+          ? [gefData.project_value_co_financing]
+          : [0],
+        project_value_fund_spend: gefData.project_value_fund_spend
+          ? [gefData.project_value_fund_spend]
+          : [0],
+      } as IGefProjectsMetadata
+    },
+    createSubmissionData: (baseData, metadata) =>
+      ({
+        ...baseData,
+        metadata,
+      }) as IGefProjectsFamilyFormPost,
   },
   // Add other corpus types here with their specific metadata extraction logic
 }

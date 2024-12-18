@@ -90,6 +90,28 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
       'project_value_fund_spend',
     ],
   },
+  GEF: {
+    renderFields: {
+      region: { type: FieldType.MULTI_SELECT },
+      focal_area: { type: FieldType.MULTI_SELECT },
+      implementing_agency: { type: FieldType.MULTI_SELECT },
+      status: { type: FieldType.SINGLE_SELECT },
+      project_id: { type: FieldType.TEXT },
+      project_url: { type: FieldType.TEXT },
+      project_value_co_financing: { type: FieldType.NUMBER },
+      project_value_fund_spend: { type: FieldType.NUMBER },
+    },
+    validationFields: [
+      'project_id',
+      'project_url',
+      'region',
+      'focal_area',
+      'status',
+      'implementing_agency',
+      'project_value_co_financing',
+      'project_value_fund_spend',
+    ],
+  },
   default: {
     renderFields: {},
     validationFields: [],
