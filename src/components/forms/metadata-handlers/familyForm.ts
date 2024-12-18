@@ -133,12 +133,14 @@ export const corpusMetadataHandlers: Record<
         status: afData.status ? [afData.status?.value] : [],
         project_id: afData.project_id ? [afData.project_id] : [],
         project_url: afData.project_url ? [afData.project_url] : [],
-        project_value_co_financing: afData.project_value_co_financing
-          ? [afData.project_value_co_financing]
-          : [0],
-        project_value_fund_spend: afData.project_value_fund_spend
-          ? [afData.project_value_fund_spend]
-          : [0],
+        project_value_co_financing:
+          afData.project_value_co_financing !== undefined
+            ? [`${afData.project_value_co_financing}`]
+            : [],
+        project_value_fund_spend:
+          afData.project_value_fund_spend !== undefined
+            ? [`${afData.project_value_fund_spend}`]
+            : [],
       } as IAfProjectsMetadata
     },
     createSubmissionData: (baseData, metadata) =>
@@ -158,12 +160,14 @@ export const corpusMetadataHandlers: Record<
         status: cifData.status ? [cifData.status?.value] : [],
         project_id: cifData.project_id ? [cifData.project_id] : [],
         project_url: cifData.project_url ? [cifData.project_url] : [],
-        project_value_co_financing: cifData.project_value_co_financing
-          ? [cifData.project_value_co_financing]
-          : [0],
-        project_value_fund_spend: cifData.project_value_fund_spend
-          ? [cifData.project_value_fund_spend]
-          : [0],
+        project_value_co_financing:
+          cifData.project_value_co_financing !== undefined
+            ? [`${cifData.project_value_co_financing}`]
+            : [],
+        project_value_fund_spend:
+          cifData.project_value_fund_spend !== undefined
+            ? [`${cifData.project_value_fund_spend}`]
+            : [],
       } as ICifProjectsMetadata
     },
     createSubmissionData: (baseData, metadata) =>
@@ -183,12 +187,14 @@ export const corpusMetadataHandlers: Record<
         status: gcfData.status ? [gcfData.status?.value] : [],
         project_id: gcfData.project_id ? [gcfData.project_id] : [],
         project_url: gcfData.project_url ? [gcfData.project_url] : [],
-        project_value_co_financing: gcfData.project_value_co_financing
-          ? [gcfData.project_value_co_financing]
-          : [0],
-        project_value_fund_spend: gcfData.project_value_fund_spend
-          ? [gcfData.project_value_fund_spend]
-          : [0],
+        project_value_co_financing:
+          gcfData.project_value_co_financing !== undefined
+            ? [`${gcfData.project_value_co_financing}`]
+            : [],
+        project_value_fund_spend:
+          gcfData.project_value_fund_spend !== undefined
+            ? [`${gcfData.project_value_fund_spend}`]
+            : [],
         approved_ref: gcfData.approved_ref ? [gcfData.approved_ref] : [],
         result_area:
           gcfData.result_area?.map((result_area) => result_area.value) || [],
@@ -215,12 +221,14 @@ export const corpusMetadataHandlers: Record<
         status: gefData.status ? [gefData.status?.value] : [],
         project_id: gefData.project_id ? [gefData.project_id] : [],
         project_url: gefData.project_url ? [gefData.project_url] : [],
-        project_value_co_financing: gefData.project_value_co_financing
-          ? [gefData.project_value_co_financing]
-          : [0],
-        project_value_fund_spend: gefData.project_value_fund_spend
-          ? [gefData.project_value_fund_spend]
-          : [0],
+        project_value_co_financing:
+          gefData.project_value_co_financing !== undefined
+            ? [`${gefData.project_value_co_financing}`]
+            : [],
+        project_value_fund_spend:
+          gefData.project_value_fund_spend !== undefined
+            ? [`${gefData.project_value_fund_spend}`]
+            : [],
       } as IGefProjectsMetadata
     },
     createSubmissionData: (baseData, metadata) =>
