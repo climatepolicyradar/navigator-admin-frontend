@@ -13,6 +13,8 @@ import {
   ILawsAndPoliciesFamilyFormPost,
   IGcfProjectsMetadata,
   IGcfProjectsFamilyFormPost,
+  ICifProjectsMetadata,
+  ICifProjectsFamilyFormPost,
 } from '../../../interfaces/Family'
 import { IChakraSelect } from '@/interfaces'
 
@@ -55,6 +57,10 @@ interface IFamilyFormAFProjects extends IFamilyFormMcfProjects {
   sector?: IChakraSelect[]
 }
 
+interface IFamilyFormCifProjects extends IFamilyFormMcfProjects {
+  sector?: IChakraSelect[]
+}
+
 interface IFamilyFormGcfProjects extends IFamilyFormMcfProjects {
   sector?: IChakraSelect[]
   result_area?: IChakraSelect[]
@@ -71,6 +77,7 @@ type TFamilyFormMcfProjects =
   | IFamilyFormAFProjects
   | IFamilyFormGcfProjects
   | IFamilyFormGefProjects
+  | IFamilyFormCifProjects
 
 export type TFamilyFormSubmit =
   | IFamilyFormLawsAndPolicies
@@ -141,6 +148,31 @@ export const corpusMetadataHandlers: Record<
         ...baseData,
         metadata,
       }) as IAFProjectsFamilyFormPost,
+  },
+  CIF: {
+    extractMetadata: (formData: TFamilyFormSubmit) => {
+      const cifData = formData as IFamilyFormCifProjects
+      return {
+        region: cifData.region?.map((region) => region.value) || [],
+        sector: cifData.sector?.map((sector) => sector.value) || [],
+        implementing_agency:
+          cifData.implementing_agency?.map((agency) => agency.value) || [],
+        status: cifData.status ? [cifData.status?.value] : [],
+        project_id: cifData.project_id ? [cifData.project_id] : [],
+        project_url: cifData.project_url ? [cifData.project_url] : [],
+        project_value_co_financing: cifData.project_value_co_financing
+          ? [cifData.project_value_co_financing]
+          : [0],
+        project_value_fund_spend: cifData.project_value_fund_spend
+          ? [cifData.project_value_fund_spend]
+          : [0],
+      } as ICifProjectsMetadata
+    },
+    createSubmissionData: (baseData, metadata) =>
+      ({
+        ...baseData,
+        metadata,
+      }) as ICifProjectsFamilyFormPost,
   },
   GCF: {
     extractMetadata: (formData: TFamilyFormSubmit) => {
