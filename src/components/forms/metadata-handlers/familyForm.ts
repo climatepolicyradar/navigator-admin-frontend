@@ -1,7 +1,7 @@
 import { IFamilyFormBase } from '@/components/forms/FamilyForm'
 import {
-  IAFProjectsFamilyFormPost,
-  IAFProjectsMetadata,
+  IAfProjectsFamilyFormPost,
+  IAfProjectsMetadata as IAfProjectsMetadata,
   IFamilyFormPostBase,
   IGefProjectsFamilyFormPost,
   IGefProjectsMetadata,
@@ -28,13 +28,11 @@ export type MetadataHandler<T extends TFamilyMetadata> = {
 }
 
 interface IFamilyFormIntlAgreements extends IFamilyFormBase {
-  // Intl. agreements
   author?: string
   author_type?: IChakraSelect
 }
 
 interface IFamilyFormLawsAndPolicies extends IFamilyFormBase {
-  // Laws and Policies
   topic?: IChakraSelect[]
   hazard?: IChakraSelect[]
   sector?: IChakraSelect[]
@@ -53,7 +51,7 @@ interface IFamilyFormMcfProjects extends IFamilyFormBase {
   project_value_fund_spend?: string
 }
 
-interface IFamilyFormAFProjects extends IFamilyFormMcfProjects {
+interface IFamilyFormAfProjects extends IFamilyFormMcfProjects {
   sector?: IChakraSelect[]
 }
 
@@ -74,7 +72,7 @@ interface IFamilyFormGefProjects extends IFamilyFormMcfProjects {
 }
 
 type TFamilyFormMcfProjects =
-  | IFamilyFormAFProjects
+  | IFamilyFormAfProjects
   | IFamilyFormGcfProjects
   | IFamilyFormGefProjects
   | IFamilyFormCifProjects
@@ -126,7 +124,7 @@ export const corpusMetadataHandlers: Record<
   },
   AF: {
     extractMetadata: (formData: TFamilyFormSubmit) => {
-      const afData = formData as IFamilyFormAFProjects
+      const afData = formData as IFamilyFormAfProjects
       return {
         region: afData.region?.map((region) => region.value) || [],
         sector: afData.sector?.map((sector) => sector.value) || [],
@@ -141,13 +139,13 @@ export const corpusMetadataHandlers: Record<
         project_value_fund_spend: afData.project_value_fund_spend
           ? [afData.project_value_fund_spend]
           : [0],
-      } as IAFProjectsMetadata
+      } as IAfProjectsMetadata
     },
     createSubmissionData: (baseData, metadata) =>
       ({
         ...baseData,
         metadata,
-      }) as IAFProjectsFamilyFormPost,
+      }) as IAfProjectsFamilyFormPost,
   },
   CIF: {
     extractMetadata: (formData: TFamilyFormSubmit) => {

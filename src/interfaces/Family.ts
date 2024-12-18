@@ -25,7 +25,7 @@ interface IMcfProjectsBaseMetadata extends IMetadata {
   project_value_fund_spend: string[]
 }
 
-export interface IAFProjectsMetadata extends IMcfProjectsBaseMetadata {
+export interface IAfProjectsMetadata extends IMcfProjectsBaseMetadata {
   sector: string[]
 }
 
@@ -46,7 +46,7 @@ export interface IGcfProjectsMetadata extends IMcfProjectsBaseMetadata {
 }
 
 type TMcfProjectsMetadata =
-  | IAFProjectsMetadata
+  | IAfProjectsMetadata
   | IGefProjectsMetadata
   | IGcfProjectsMetadata
   | ICifProjectsMetadata
@@ -86,8 +86,8 @@ export interface ILawsAndPoliciesFamily extends IFamilyBase {
   metadata: ILawsAndPoliciesMetadata
 }
 
-interface IAFProjectsFamily extends IFamilyBase {
-  metadata: IAFProjectsMetadata
+interface IAfProjectsFamily extends IFamilyBase {
+  metadata: IAfProjectsMetadata
 }
 
 interface ICifProjectsFamily extends IFamilyBase {
@@ -103,7 +103,7 @@ interface IGcfProjectsFamily extends IFamilyBase {
 }
 
 type TMcfFamily =
-  | IAFProjectsFamily
+  | IAfProjectsFamily
   | IGefProjectsFamily
   | IGcfProjectsFamily
   | ICifProjectsFamily
@@ -131,8 +131,8 @@ export interface IInternationalAgreementsFamilyFormPost
   extends IFamilyFormPostBase {
   metadata: IInternationalAgreementsMetadata
 }
-export interface IAFProjectsFamilyFormPost extends IFamilyFormPostBase {
-  metadata: IAFProjectsMetadata
+export interface IAfProjectsFamilyFormPost extends IFamilyFormPostBase {
+  metadata: IAfProjectsMetadata
 }
 
 export interface ICifProjectsFamilyFormPost extends IFamilyFormPostBase {
@@ -148,7 +148,7 @@ export interface IGcfProjectsFamilyFormPost extends IFamilyFormPostBase {
 }
 
 type TMcfFamilyFormPost =
-  | IAFProjectsFamilyFormPost
+  | IAfProjectsFamilyFormPost
   | IGefProjectsFamilyFormPost
   | IGcfProjectsFamilyFormPost
   | ICifProjectsFamilyFormPost
