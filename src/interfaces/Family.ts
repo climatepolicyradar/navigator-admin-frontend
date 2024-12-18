@@ -26,10 +26,22 @@ export interface IAFProjectsMetadata extends IMetadata {
   project_value_fund_spend: string[]
 }
 
+export interface ICIFProjectsMetadata extends IMetadata {
+  region: string[]
+  sector: string[]
+  implementing_agency: string[]
+  status: string[]
+  project_id: string[]
+  project_url: string[]
+  project_value_co_financing: string[]
+  project_value_fund_spend: string[]
+}
+
 export type TFamilyMetadata =
   | IInternationalAgreementsMetadata
   | ILawsAndPoliciesMetadata
   | IAFProjectsMetadata
+  | ICIFProjectsMetadata
 
 // Read DTOs.
 interface IFamilyBase {
@@ -85,7 +97,12 @@ export interface IAFProjectsFamilyFormPost extends IFamilyFormPostBase {
   metadata: IAFProjectsMetadata
 }
 
+export interface ICIFProjectsFamilyFormPost extends IFamilyFormPostBase {
+  metadata: ICIFProjectsMetadata
+}
+
 export type TFamilyFormPost =
   | ILawsAndPoliciesFamilyFormPost
   | IInternationalAgreementsFamilyFormPost
   | IAFProjectsFamilyFormPost
+  | ICIFProjectsFamilyFormPost

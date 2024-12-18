@@ -2,6 +2,8 @@ import { IFamilyFormBase } from '@/components/forms/FamilyForm'
 import {
   IAFProjectsFamilyFormPost,
   IAFProjectsMetadata,
+  ICIFProjectsFamilyFormPost,
+  ICIFProjectsMetadata,
   IFamilyFormPostBase,
   IInternationalAgreementsMetadata,
   ILawsAndPoliciesMetadata,
@@ -49,11 +51,23 @@ export interface IFamilyFormAFProjects extends IFamilyFormBase {
   project_value_co_financing?: string
   project_value_fund_spend?: string
 }
+export interface IFamilyFormCIFProjects extends IFamilyFormBase {
+  // CIF Projects
+  region?: IChakraSelect[]
+  sector?: IChakraSelect[]
+  implementing_agency?: IChakraSelect[]
+  status?: IChakraSelect
+  project_id?: string
+  project_url?: string
+  project_value_co_financing?: string
+  project_value_fund_spend?: string
+}
 
 export type TFamilyFormSubmit =
   | IFamilyFormLawsAndPolicies
   | IFamilyFormIntlAgreements
   | IFamilyFormAFProjects
+  | IFamilyFormCIFProjects
 
 // Mapping of corpus types to their specific metadata handlers
 export const corpusMetadataHandlers: Record<
@@ -119,6 +133,31 @@ export const corpusMetadataHandlers: Record<
         ...baseData,
         metadata,
       }) as IAFProjectsFamilyFormPost,
+  },
+  CIF: {
+    extractMetadata: (formData: TFamilyFormSubmit) => {
+      const cifData = formData as IFamilyFormCIFProjects
+      return {
+        region: cifData.region?.map((region) => region.value) || [],
+        sector: cifData.sector?.map((sector) => sector.value) || [],
+        implementing_agency:
+          cifData.implementing_agency?.map((agency) => agency.value) || [],
+        status: cifData.status ? [cifData.status?.value] : [],
+        project_id: cifData.project_id ? [cifData.project_id] : [],
+        project_url: cifData.project_url ? [cifData.project_url] : [],
+        project_value_co_financing: cifData.project_value_co_financing
+          ? [cifData.project_value_co_financing]
+          : [0],
+        project_value_fund_spend: cifData.project_value_fund_spend
+          ? [cifData.project_value_fund_spend]
+          : [0],
+      } as ICIFProjectsMetadata
+    },
+    createSubmissionData: (baseData, metadata) =>
+      ({
+        ...baseData,
+        metadata,
+      }) as ICIFProjectsFamilyFormPost,
   },
   // Add other corpus types here with their specific metadata extraction logic
 }
