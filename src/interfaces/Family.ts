@@ -15,9 +15,8 @@ export interface ILawsAndPoliciesMetadata extends IMetadata {
   instrument: string[]
 }
 
-export interface IAFProjectsMetadata extends IMetadata {
+interface IMcfProjectsBaseMetadata extends IMetadata {
   region: string[]
-  sector: string[]
   implementing_agency: string[]
   status: string[]
   project_id: string[]
@@ -26,10 +25,20 @@ export interface IAFProjectsMetadata extends IMetadata {
   project_value_fund_spend: string[]
 }
 
+export interface IAFProjectsMetadata extends IMcfProjectsBaseMetadata {
+  sector: string[]
+}
+
+export interface IGefProjectsMetadata extends IMcfProjectsBaseMetadata {
+  focal_area: string[]
+}
+
+type TMcfProjectsMetadata = IAFProjectsMetadata | IGefProjectsMetadata
+
 export type TFamilyMetadata =
   | IInternationalAgreementsMetadata
   | ILawsAndPoliciesMetadata
-  | IAFProjectsMetadata
+  | TMcfProjectsMetadata
 
 // Read DTOs.
 interface IFamilyBase {
@@ -61,7 +70,20 @@ export interface ILawsAndPoliciesFamily extends IFamilyBase {
   metadata: ILawsAndPoliciesMetadata
 }
 
-export type TFamily = IInternationalAgreementsFamily | ILawsAndPoliciesFamily
+interface IAFProjectsFamily extends IFamilyBase {
+  metadata: IAFProjectsMetadata
+}
+
+interface IGefProjectsFamily extends IFamilyBase {
+  metadata: IGefProjectsMetadata
+}
+
+type TMcfFamily = IAFProjectsFamily | IGefProjectsFamily
+
+export type TFamily =
+  | IInternationalAgreementsFamily
+  | ILawsAndPoliciesFamily
+  | TMcfFamily
 
 // DTO for Create and Write.
 export interface IFamilyFormPostBase {
@@ -85,7 +107,12 @@ export interface IAFProjectsFamilyFormPost extends IFamilyFormPostBase {
   metadata: IAFProjectsMetadata
 }
 
+export interface IGefProjectsFamilyFormPost extends IFamilyFormPostBase {
+  metadata: IGefProjectsMetadata
+}
+
 export type TFamilyFormPost =
   | ILawsAndPoliciesFamilyFormPost
   | IInternationalAgreementsFamilyFormPost
   | IAFProjectsFamilyFormPost
+  | IGefProjectsFamilyFormPost
