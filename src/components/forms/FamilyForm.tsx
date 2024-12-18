@@ -40,11 +40,15 @@ import { ApiError } from '../feedback/ApiError'
 import { IDocument } from '@/interfaces/Document'
 import { IEvent } from '@/interfaces/Event'
 import { IError } from '@/interfaces/Auth'
-import { IChakraSelect, IConfigCorpora, TTaxonomy } from '@/interfaces'
+import {
+  IChakraSelect,
+  ICollection,
+  IConfigCorpora,
+  TTaxonomy,
+} from '@/interfaces'
 import {
   getMetadataHandler,
-  IFamilyFormIntlAgreements,
-  IFamilyFormLawsAndPolicies,
+  TFamilyFormSubmit,
 } from './metadata-handlers/familyForm'
 
 export interface IFamilyFormBase {
@@ -56,14 +60,14 @@ export interface IFamilyFormBase {
   collections?: IChakraSelect[]
 }
 
-export type TFamilyFormSubmit =
-  | IFamilyFormLawsAndPolicies
-  | IFamilyFormIntlAgreements
-
 type TChildEntity = 'event' | 'document'
 
 type TProps = {
   family?: TFamily
+}
+
+const getCollection = (collectionId: string, collections: ICollection[]) => {
+  return collections.find((collection) => collection.import_id === collectionId)
 }
 
 export const FamilyForm = ({ family: loadedFamily }: TProps) => {
@@ -234,20 +238,13 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       await handleFormSubmission(data)
     } catch (error) {
       console.log('onSubmitErrorHandler', error)
+      setFormError(error as IError)
+      toast({
+        title: 'Form submission error',
+        description: (error as IError).message,
+        status: 'error',
+      })
     }
-  }
-
-  // object type is workaround for SubmitErrorHandler<FieldErrors> throwing a tsc error.
-  const onSubmitErrorHandler = (error: object) => {
-    console.log('onSubmitErrorHandler', error)
-
-    // Handle any submission errors
-    setFormError(error as IError)
-    toast({
-      title: 'Form submission error',
-      description: (error as IError).message,
-      status: 'error',
-    })
   }
 
   useEffect(() => {
@@ -273,13 +270,21 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
             }
           : undefined,
         category: isMCFCorpus ? 'MCF' : loadedFamily.category,
-        collections: loadedFamily.collections?.map((collection) => ({
-          value: collection,
-          label: collection,
-        })),
+        collections: loadedFamily.collections
+          ?.map((collectionId) => {
+            const collection = getCollection(collectionId, collections)
+            if (!collection) return null
+            return {
+              value: collection.import_id,
+              label: collection.title,
+            }
+          })
+          .filter(
+            (collection): collection is IChakraSelect => collection !== null,
+          ),
       })
     }
-  }, [config, loadedFamily, reset, isMCFCorpus])
+  }, [config, loadedFamily, reset, isMCFCorpus, collections])
 
   const onAddNewEntityClick = (entityType: TChildEntity) => {
     setEditingEntity(entityType)
@@ -413,7 +418,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       )}
 
       {canLoadForm && (
-        <form onSubmit={handleSubmit(onSubmit, onSubmitErrorHandler)}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <VStack gap='4' mb={12} mt={4} align={'stretch'}>
             {formError && <ApiError error={formError} />}
 
