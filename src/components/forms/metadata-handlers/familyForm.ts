@@ -1,7 +1,7 @@
 import { IFamilyFormBase } from '@/components/forms/FamilyForm'
 import {
   IAfProjectsFamilyFormPost,
-  IAfProjectsMetadata as IAfProjectsMetadata,
+  IAfProjectsMetadata,
   IFamilyFormPostBase,
   IGefProjectsFamilyFormPost,
   IGefProjectsMetadata,
