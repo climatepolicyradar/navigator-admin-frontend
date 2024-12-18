@@ -9,10 +9,10 @@ import {
   ILawsAndPoliciesMetadata,
   TFamilyFormPost,
   TFamilyMetadata,
-} from '../../../interfaces/Family'
-import {
   IInternationalAgreementsFamilyFormPost,
   ILawsAndPoliciesFamilyFormPost,
+  IGcfProjectsMetadata,
+  IGcfProjectsFamilyFormPost,
 } from '../../../interfaces/Family'
 import { IChakraSelect } from '@/interfaces'
 
@@ -55,11 +55,22 @@ interface IFamilyFormAFProjects extends IFamilyFormMcfProjects {
   sector?: IChakraSelect[]
 }
 
+interface IFamilyFormGcfProjects extends IFamilyFormMcfProjects {
+  sector?: IChakraSelect[]
+  result_area?: IChakraSelect[]
+  result_type?: IChakraSelect[]
+  theme?: IChakraSelect[]
+  approved_ref?: string
+}
+
 interface IFamilyFormGefProjects extends IFamilyFormMcfProjects {
   focal_area?: IChakraSelect[]
 }
 
-type TFamilyFormMcfProjects = IFamilyFormAFProjects | IFamilyFormGefProjects
+type TFamilyFormMcfProjects =
+  | IFamilyFormAFProjects
+  | IFamilyFormGcfProjects
+  | IFamilyFormGefProjects
 
 export type TFamilyFormSubmit =
   | IFamilyFormLawsAndPolicies
@@ -130,6 +141,37 @@ export const corpusMetadataHandlers: Record<
         ...baseData,
         metadata,
       }) as IAFProjectsFamilyFormPost,
+  },
+  GCF: {
+    extractMetadata: (formData: TFamilyFormSubmit) => {
+      const gcfData = formData as IFamilyFormGcfProjects
+      return {
+        region: gcfData.region?.map((region) => region.value) || [],
+        sector: gcfData.sector?.map((sector) => sector.value) || [],
+        implementing_agency:
+          gcfData.implementing_agency?.map((agency) => agency.value) || [],
+        status: gcfData.status ? [gcfData.status?.value] : [],
+        project_id: gcfData.project_id ? [gcfData.project_id] : [],
+        project_url: gcfData.project_url ? [gcfData.project_url] : [],
+        project_value_co_financing: gcfData.project_value_co_financing
+          ? [gcfData.project_value_co_financing]
+          : [0],
+        project_value_fund_spend: gcfData.project_value_fund_spend
+          ? [gcfData.project_value_fund_spend]
+          : [0],
+        approved_ref: gcfData.approved_ref ? [gcfData.approved_ref] : [],
+        result_area:
+          gcfData.result_area?.map((result_area) => result_area.value) || [],
+        result_type:
+          gcfData.result_type?.map((result_type) => result_type.value) || [],
+        theme: gcfData.theme?.map((theme) => theme.value) || [],
+      } as IGcfProjectsMetadata
+    },
+    createSubmissionData: (baseData, metadata) =>
+      ({
+        ...baseData,
+        metadata,
+      }) as IGcfProjectsFamilyFormPost,
   },
   GEF: {
     extractMetadata: (formData: TFamilyFormSubmit) => {
