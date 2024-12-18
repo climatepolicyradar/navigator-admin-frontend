@@ -1,8 +1,8 @@
 import { IFamilyFormBase } from '@/components/forms/FamilyForm'
 import {
-  IAFProjectsFamilyFormPost,
-  IAFProjectsMetadata,
-  ICIFProjectsFamilyFormPost,
+  IAFProjectsFamilyFormPost as IAfProjectsFamilyFormPost,
+  IAFProjectsMetadata as IAfProjectsMetadata,
+  ICIFProjectsFamilyFormPost as ICifProjectsFamilyFormPost,
   ICIFProjectsMetadata,
   IFamilyFormPostBase,
   IInternationalAgreementsMetadata,
@@ -41,7 +41,7 @@ interface IFamilyFormLawsAndPolicies extends IFamilyFormBase {
   instrument?: IChakraSelect[]
 }
 
-interface IFamilyFormAFProjects extends IFamilyFormBase {
+interface IFamilyFormAfProjects extends IFamilyFormBase {
   // AF Projects
   region?: IChakraSelect[]
   sector?: IChakraSelect[]
@@ -53,7 +53,7 @@ interface IFamilyFormAFProjects extends IFamilyFormBase {
   project_value_fund_spend?: string
 }
 
-interface IFamilyFormCIFProjects extends IFamilyFormBase {
+interface IFamilyFormCifProjects extends IFamilyFormBase {
   // CIF Projects
   region?: IChakraSelect[]
   sector?: IChakraSelect[]
@@ -65,7 +65,7 @@ interface IFamilyFormCIFProjects extends IFamilyFormBase {
   project_value_fund_spend?: string
 }
 
-type TFamilyFormMcfProjects = IFamilyFormAFProjects | IFamilyFormCIFProjects
+type TFamilyFormMcfProjects = IFamilyFormAfProjects | IFamilyFormCifProjects
 
 export type TFamilyFormSubmit =
   | IFamilyFormLawsAndPolicies
@@ -114,7 +114,7 @@ export const corpusMetadataHandlers: Record<
   },
   AF: {
     extractMetadata: (formData: TFamilyFormSubmit) => {
-      const afData = formData as IFamilyFormAFProjects
+      const afData = formData as IFamilyFormAfProjects
       return {
         region: afData.region?.map((region) => region.value) || [],
         sector: afData.sector?.map((sector) => sector.value) || [],
@@ -129,17 +129,17 @@ export const corpusMetadataHandlers: Record<
         project_value_fund_spend: afData.project_value_fund_spend
           ? [afData.project_value_fund_spend]
           : [0],
-      } as IAFProjectsMetadata
+      } as IAfProjectsMetadata
     },
     createSubmissionData: (baseData, metadata) =>
       ({
         ...baseData,
         metadata,
-      }) as IAFProjectsFamilyFormPost,
+      }) as IAfProjectsFamilyFormPost,
   },
   CIF: {
     extractMetadata: (formData: TFamilyFormSubmit) => {
-      const cifData = formData as IFamilyFormCIFProjects
+      const cifData = formData as IFamilyFormCifProjects
       return {
         region: cifData.region?.map((region) => region.value) || [],
         sector: cifData.sector?.map((sector) => sector.value) || [],
@@ -160,7 +160,7 @@ export const corpusMetadataHandlers: Record<
       ({
         ...baseData,
         metadata,
-      }) as ICIFProjectsFamilyFormPost,
+      }) as ICifProjectsFamilyFormPost,
   },
   // Add other corpus types here with their specific metadata extraction logic
 }
