@@ -40,7 +40,12 @@ import { ApiError } from '../feedback/ApiError'
 import { IDocument } from '@/interfaces/Document'
 import { IEvent } from '@/interfaces/Event'
 import { IError } from '@/interfaces/Auth'
-import { IChakraSelect, IConfigCorpora, TTaxonomy } from '@/interfaces'
+import {
+  IChakraSelect,
+  ICollection,
+  IConfigCorpora,
+  TTaxonomy,
+} from '@/interfaces'
 import {
   getMetadataHandler,
   TFamilyFormSubmit,
@@ -59,6 +64,10 @@ type TChildEntity = 'event' | 'document'
 
 type TProps = {
   family?: TFamily
+}
+
+const getCollection = (collectionId: string, collections: ICollection[]) => {
+  return collections.find((collection) => collection.import_id === collectionId)
 }
 
 export const FamilyForm = ({ family: loadedFamily }: TProps) => {
@@ -261,13 +270,21 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
             }
           : undefined,
         category: isMCFCorpus ? 'MCF' : loadedFamily.category,
-        collections: loadedFamily.collections?.map((collection) => ({
-          value: collection,
-          label: collection,
-        })),
+        collections: loadedFamily.collections
+          ?.map((collectionId) => {
+            const collection = getCollection(collectionId, collections)
+            if (!collection) return null
+            return {
+              value: collection.import_id,
+              label: collection.title,
+            }
+          })
+          .filter(
+            (collection): collection is IChakraSelect => collection !== null,
+          ),
       })
     }
-  }, [config, loadedFamily, reset, isMCFCorpus])
+  }, [config, loadedFamily, reset, isMCFCorpus, collections])
 
   const onAddNewEntityClick = (entityType: TChildEntity) => {
     setEditingEntity(entityType)
