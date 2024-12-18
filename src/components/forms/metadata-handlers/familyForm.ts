@@ -1,7 +1,7 @@
 import { IFamilyFormBase } from '@/components/forms/FamilyForm'
 import {
-  IAFProjectsFamilyFormPost,
-  IAFProjectsMetadata,
+  IAfProjectsFamilyFormPost,
+  IAfProjectsMetadata,
   IFamilyFormPostBase,
   IGefProjectsFamilyFormPost,
   IGefProjectsMetadata,
@@ -13,6 +13,8 @@ import {
   ILawsAndPoliciesFamilyFormPost,
   IGcfProjectsMetadata,
   IGcfProjectsFamilyFormPost,
+  ICifProjectsMetadata,
+  ICifProjectsFamilyFormPost,
 } from '../../../interfaces/Family'
 import { IChakraSelect } from '@/interfaces'
 
@@ -26,13 +28,11 @@ export type MetadataHandler<T extends TFamilyMetadata> = {
 }
 
 interface IFamilyFormIntlAgreements extends IFamilyFormBase {
-  // Intl. agreements
   author?: string
   author_type?: IChakraSelect
 }
 
 interface IFamilyFormLawsAndPolicies extends IFamilyFormBase {
-  // Laws and Policies
   topic?: IChakraSelect[]
   hazard?: IChakraSelect[]
   sector?: IChakraSelect[]
@@ -51,7 +51,11 @@ interface IFamilyFormMcfProjects extends IFamilyFormBase {
   project_value_fund_spend?: string
 }
 
-interface IFamilyFormAFProjects extends IFamilyFormMcfProjects {
+interface IFamilyFormAfProjects extends IFamilyFormMcfProjects {
+  sector?: IChakraSelect[]
+}
+
+interface IFamilyFormCifProjects extends IFamilyFormMcfProjects {
   sector?: IChakraSelect[]
 }
 
@@ -68,9 +72,10 @@ interface IFamilyFormGefProjects extends IFamilyFormMcfProjects {
 }
 
 type TFamilyFormMcfProjects =
-  | IFamilyFormAFProjects
+  | IFamilyFormAfProjects
   | IFamilyFormGcfProjects
   | IFamilyFormGefProjects
+  | IFamilyFormCifProjects
 
 export type TFamilyFormSubmit =
   | IFamilyFormLawsAndPolicies
@@ -119,7 +124,7 @@ export const corpusMetadataHandlers: Record<
   },
   AF: {
     extractMetadata: (formData: TFamilyFormSubmit) => {
-      const afData = formData as IFamilyFormAFProjects
+      const afData = formData as IFamilyFormAfProjects
       return {
         region: afData.region?.map((region) => region.value) || [],
         sector: afData.sector?.map((sector) => sector.value) || [],
@@ -134,13 +139,38 @@ export const corpusMetadataHandlers: Record<
         project_value_fund_spend: afData.project_value_fund_spend
           ? [afData.project_value_fund_spend]
           : [0],
-      } as IAFProjectsMetadata
+      } as IAfProjectsMetadata
     },
     createSubmissionData: (baseData, metadata) =>
       ({
         ...baseData,
         metadata,
-      }) as IAFProjectsFamilyFormPost,
+      }) as IAfProjectsFamilyFormPost,
+  },
+  CIF: {
+    extractMetadata: (formData: TFamilyFormSubmit) => {
+      const cifData = formData as IFamilyFormCifProjects
+      return {
+        region: cifData.region?.map((region) => region.value) || [],
+        sector: cifData.sector?.map((sector) => sector.value) || [],
+        implementing_agency:
+          cifData.implementing_agency?.map((agency) => agency.value) || [],
+        status: cifData.status ? [cifData.status?.value] : [],
+        project_id: cifData.project_id ? [cifData.project_id] : [],
+        project_url: cifData.project_url ? [cifData.project_url] : [],
+        project_value_co_financing: cifData.project_value_co_financing
+          ? [cifData.project_value_co_financing]
+          : [0],
+        project_value_fund_spend: cifData.project_value_fund_spend
+          ? [cifData.project_value_fund_spend]
+          : [0],
+      } as ICifProjectsMetadata
+    },
+    createSubmissionData: (baseData, metadata) =>
+      ({
+        ...baseData,
+        metadata,
+      }) as ICifProjectsFamilyFormPost,
   },
   GCF: {
     extractMetadata: (formData: TFamilyFormSubmit) => {

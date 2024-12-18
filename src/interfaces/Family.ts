@@ -25,7 +25,11 @@ interface IMcfProjectsBaseMetadata extends IMetadata {
   project_value_fund_spend: string[]
 }
 
-export interface IAFProjectsMetadata extends IMcfProjectsBaseMetadata {
+export interface IAfProjectsMetadata extends IMcfProjectsBaseMetadata {
+  sector: string[]
+}
+
+export interface ICifProjectsMetadata extends IMcfProjectsBaseMetadata {
   sector: string[]
 }
 
@@ -42,9 +46,10 @@ export interface IGcfProjectsMetadata extends IMcfProjectsBaseMetadata {
 }
 
 type TMcfProjectsMetadata =
-  | IAFProjectsMetadata
+  | IAfProjectsMetadata
   | IGefProjectsMetadata
   | IGcfProjectsMetadata
+  | ICifProjectsMetadata
 
 export type TFamilyMetadata =
   | IInternationalAgreementsMetadata
@@ -81,8 +86,12 @@ export interface ILawsAndPoliciesFamily extends IFamilyBase {
   metadata: ILawsAndPoliciesMetadata
 }
 
-interface IAFProjectsFamily extends IFamilyBase {
-  metadata: IAFProjectsMetadata
+interface IAfProjectsFamily extends IFamilyBase {
+  metadata: IAfProjectsMetadata
+}
+
+interface ICifProjectsFamily extends IFamilyBase {
+  metadata: ICifProjectsMetadata
 }
 
 interface IGefProjectsFamily extends IFamilyBase {
@@ -93,7 +102,11 @@ interface IGcfProjectsFamily extends IFamilyBase {
   metadata: IGcfProjectsMetadata
 }
 
-type TMcfFamily = IAFProjectsFamily | IGefProjectsFamily | IGcfProjectsFamily
+type TMcfFamily =
+  | IAfProjectsFamily
+  | IGefProjectsFamily
+  | IGcfProjectsFamily
+  | ICifProjectsFamily
 
 export type TFamily =
   | IInternationalAgreementsFamily
@@ -118,8 +131,12 @@ export interface IInternationalAgreementsFamilyFormPost
   extends IFamilyFormPostBase {
   metadata: IInternationalAgreementsMetadata
 }
-export interface IAFProjectsFamilyFormPost extends IFamilyFormPostBase {
-  metadata: IAFProjectsMetadata
+export interface IAfProjectsFamilyFormPost extends IFamilyFormPostBase {
+  metadata: IAfProjectsMetadata
+}
+
+export interface ICifProjectsFamilyFormPost extends IFamilyFormPostBase {
+  metadata: ICifProjectsMetadata
 }
 
 export interface IGefProjectsFamilyFormPost extends IFamilyFormPostBase {
@@ -131,9 +148,10 @@ export interface IGcfProjectsFamilyFormPost extends IFamilyFormPostBase {
 }
 
 type TMcfFamilyFormPost =
-  | IAFProjectsFamilyFormPost
+  | IAfProjectsFamilyFormPost
   | IGefProjectsFamilyFormPost
   | IGcfProjectsFamilyFormPost
+  | ICifProjectsFamilyFormPost
 
 export type TFamilyFormPost =
   | ILawsAndPoliciesFamilyFormPost
