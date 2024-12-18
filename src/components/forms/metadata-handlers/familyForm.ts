@@ -25,13 +25,13 @@ export type MetadataHandler<T extends TFamilyMetadata> = {
   ) => TFamilyFormPost
 }
 
-export interface IFamilyFormIntlAgreements extends IFamilyFormBase {
+interface IFamilyFormIntlAgreements extends IFamilyFormBase {
   // Intl. agreements
   author?: string
   author_type?: IChakraSelect
 }
 
-export interface IFamilyFormLawsAndPolicies extends IFamilyFormBase {
+interface IFamilyFormLawsAndPolicies extends IFamilyFormBase {
   // Laws and Policies
   topic?: IChakraSelect[]
   hazard?: IChakraSelect[]
@@ -40,7 +40,8 @@ export interface IFamilyFormLawsAndPolicies extends IFamilyFormBase {
   framework?: IChakraSelect[]
   instrument?: IChakraSelect[]
 }
-export interface IFamilyFormAFProjects extends IFamilyFormBase {
+
+interface IFamilyFormAFProjects extends IFamilyFormBase {
   // AF Projects
   region?: IChakraSelect[]
   sector?: IChakraSelect[]
@@ -51,7 +52,8 @@ export interface IFamilyFormAFProjects extends IFamilyFormBase {
   project_value_co_financing?: string
   project_value_fund_spend?: string
 }
-export interface IFamilyFormCIFProjects extends IFamilyFormBase {
+
+interface IFamilyFormCIFProjects extends IFamilyFormBase {
   // CIF Projects
   region?: IChakraSelect[]
   sector?: IChakraSelect[]
@@ -63,11 +65,12 @@ export interface IFamilyFormCIFProjects extends IFamilyFormBase {
   project_value_fund_spend?: string
 }
 
+type TFamilyFormMcfProjects = IFamilyFormAFProjects | IFamilyFormCIFProjects
+
 export type TFamilyFormSubmit =
   | IFamilyFormLawsAndPolicies
   | IFamilyFormIntlAgreements
-  | IFamilyFormAFProjects
-  | IFamilyFormCIFProjects
+  | TFamilyFormMcfProjects
 
 // Mapping of corpus types to their specific metadata handlers
 export const corpusMetadataHandlers: Record<
