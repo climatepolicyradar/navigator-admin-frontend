@@ -23,23 +23,26 @@ export const TextField = <T extends FieldValues>({
   label,
   isRequired,
 }: TProps<T>) => {
-  console.log('TextField:', name, placeholder, label, isRequired)
+  // console.log('TextField:', name, placeholder, label, isRequired)
   return (
     <Controller
       name={name}
       control={control}
-      render={({ field, fieldState: { error } }) => (
-        <FormControl isInvalid={!!error} isRequired={isRequired}>
-          {label && <FormLabel>{label}</FormLabel>}
-          <Input
-            {...field} // This destructured object contains the value
-            bg='white'
-            type={type}
-            placeholder={placeholder ?? `Enter ${name}`}
-          />
-          {error && <FormErrorMessage>{error.message}</FormErrorMessage>}
-        </FormControl>
-      )}
+      render={({ field, fieldState: { error } }) => {
+        console.log(field)
+        return (
+          <FormControl isInvalid={!!error} isRequired={isRequired}>
+            {label && <FormLabel>{label}</FormLabel>}
+            <Input
+              {...field} // This destructured object contains the value
+              bg='white'
+              type={type}
+              placeholder={placeholder ?? `Enter ${name}`}
+            />
+            {error && <FormErrorMessage>{error.message}</FormErrorMessage>}
+          </FormControl>
+        )
+      }}
     />
   )
 }

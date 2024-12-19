@@ -1,16 +1,16 @@
-import { useEffect } from 'react'
+// import { useEffect, useState } from 'react'
 import { Control, FieldErrors, UseFormReset } from 'react-hook-form'
 import { Box, Divider, AbsoluteCenter } from '@chakra-ui/react'
 import { DynamicMetadataFields } from '../DynamicMetadataFields'
 import {
   CORPUS_METADATA_CONFIG,
   FieldType,
-  IFormMetadata,
+  // IFormMetadata,
 } from '@/interfaces/Metadata'
 import {
   IConfigCorpora,
   TFamily,
-  TFamilyMetadata,
+  // TFamilyMetadata,
   TTaxonomy,
 } from '@/interfaces'
 import { IFamilyFormBase } from '../FamilyForm'
@@ -29,51 +29,53 @@ export const MetadataSection = ({
   taxonomy,
   control,
   errors,
-  loadedFamily,
-  reset,
+  // loadedFamily,
+  // reset,
 }: TProps) => {
-  useEffect(() => {
-    if (loadedFamily?.metadata && corpusInfo) {
-      console.log('Populating the form fields')
+  // PATRICK: I don't think we needed to wait until here to do this work, so I've moved it to the reset in the parent FamilyForm
+  // useEffect(() => {
+  //   if (loadedFamily?.metadata && corpusInfo) {
+  //     console.log('Populating the form fields')
 
-      // This is populating the metadata form fields by transforming the metadata from the loaded family
-      // into the format that the form expects.
-      const metadataValues = Object.entries(
-        loadedFamily.metadata as TFamilyMetadata,
-      ).reduce<IFormMetadata>((loadedMetadata, [key, value]) => {
-        const fieldConfig =
-          CORPUS_METADATA_CONFIG[corpusInfo.corpus_type]?.renderFields?.[key]
-        if (!fieldConfig) return loadedMetadata
+  //     // This is populating the metadata form fields by transforming the metadata from the loaded family
+  //     // into the format that the form expects.
+  //     const metadataValues = Object.entries(
+  //       loadedFamily.metadata as TFamilyMetadata,
+  //     ).reduce<IFormMetadata>((loadedMetadata, [key, value]) => {
+  //       const fieldConfig =
+  //         CORPUS_METADATA_CONFIG[corpusInfo.corpus_type]?.renderFields?.[key]
+  //       if (!fieldConfig) return loadedMetadata
 
-        if (fieldConfig.type === FieldType.SINGLE_SELECT) {
-          loadedMetadata[key] = value?.[0]
-            ? {
-                value: value[0],
-                label: value[0],
-              }
-            : undefined
-        } else if (fieldConfig.type === FieldType.MULTI_SELECT) {
-          loadedMetadata[key] = value?.map((v) => ({
-            value: v,
-            label: v,
-          }))
-        } else {
-          loadedMetadata[key] = value?.[0]
-        }
+  //       if (fieldConfig.type === FieldType.SINGLE_SELECT) {
+  //         loadedMetadata[key] = value?.[0]
+  //           ? {
+  //               value: value[0],
+  //               label: value[0],
+  //             }
+  //           : undefined
+  //       } else if (fieldConfig.type === FieldType.MULTI_SELECT) {
+  //         loadedMetadata[key] = value?.map((v) => ({
+  //           value: v,
+  //           label: v,
+  //         }))
+  //       } else {
+  //         loadedMetadata[key] = value?.[0]
+  //       }
 
-        return loadedMetadata
-      }, {})
+  //       return loadedMetadata
+  //     }, {})
 
-      reset((formValues: IFamilyFormBase) => ({
-        ...formValues,
-        ...metadataValues,
-      }))
-    }
-  }, [loadedFamily, corpusInfo, reset])
+  //     reset((formValues: IFamilyFormBase) => ({
+  //       ...formValues,
+  //       ...metadataValues,
+  //     }))
+
+  //     setIsMetaDataReady(true)
+  //     console.log('metadataValues:', metadataValues)
+  //   }
+  // }, [loadedFamily, corpusInfo, reset])
 
   if (!corpusInfo || !taxonomy) return null
-
-  if (!loadedFamily?.metadata) return null // TODO Remove
 
   return (
     <>
