@@ -23,13 +23,11 @@ export const TextField = <T extends FieldValues>({
   label,
   isRequired,
 }: TProps<T>) => {
-  // console.log('TextField:', name, placeholder, label, isRequired)
   return (
     <Controller
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => {
-        console.log(field)
         return (
           <FormControl isInvalid={!!error} isRequired={isRequired}>
             {label && <FormLabel>{label}</FormLabel>}
