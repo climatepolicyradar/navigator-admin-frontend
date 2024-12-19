@@ -8,7 +8,12 @@ import {
 import { Select as CRSelect } from 'chakra-react-select'
 import { chakraStylesSelect } from '@/styles/chakra'
 import { generateSelectOptions } from '@/utils/metadataUtils'
-import { FormControl, FormLabel, FormErrorMessage } from '@chakra-ui/react'
+import {
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  FormHelperText,
+} from '@chakra-ui/react'
 import { IChakraSelect } from '@/interfaces'
 
 type TProps<T extends FieldValues> = {
@@ -62,6 +67,11 @@ export const SelectField = <T extends FieldValues>({
       render={({ field, fieldState: { error } }) => (
         <FormControl isInvalid={!!error} isRequired={isRequired}>
           {label && <FormLabel>{label}</FormLabel>}
+          {isMulti && (
+            <FormHelperText mb={2}>
+              You are able to search and can select multiple options
+            </FormHelperText>
+          )}
           <CRSelect
             chakraStyles={chakraStylesSelect}
             isClearable={isClearable}
