@@ -1,4 +1,4 @@
-import { FormControl, FormErrorMessage, FormHelperText } from '@chakra-ui/react'
+import { FormControl, FormErrorMessage } from '@chakra-ui/react'
 import { Control, FieldErrors, FieldValues, Path } from 'react-hook-form'
 import { FieldType } from '@/interfaces/Metadata'
 import { formatFieldLabel } from '@/utils/metadataUtils'
@@ -92,11 +92,6 @@ export const DynamicMetadataFields = <T extends FieldValues>({
 
   return (
     <FormControl isInvalid={!!errors[fieldKey]} mb={4} isRequired={isRequired}>
-      {fieldType === FieldType.MULTI_SELECT && (
-        <FormHelperText mb={2}>
-          You are able to search and can select multiple options
-        </FormHelperText>
-      )}
       {renderField()}
       <FormErrorMessage>
         {errors[fieldKey] && `${fieldKey} is required`}
