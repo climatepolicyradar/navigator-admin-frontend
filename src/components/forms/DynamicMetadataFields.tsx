@@ -1,9 +1,4 @@
-import {
-  FormControl,
-  FormLabel,
-  FormErrorMessage,
-  FormHelperText,
-} from '@chakra-ui/react'
+import { FormControl, FormErrorMessage, FormHelperText } from '@chakra-ui/react'
 import { Control, FieldErrors, FieldValues, Path } from 'react-hook-form'
 import { FieldType } from '@/interfaces/Metadata'
 import { formatFieldLabel } from '@/utils/metadataUtils'
@@ -44,19 +39,17 @@ export const DynamicMetadataFields = <T extends FieldValues>({
     allow_blanks = true,
   } = taxonomyField
 
-  const renderField = (isRequired: boolean) => {
+  // Explicitly log the requirement logic
+  const isRequired = !allow_blanks
+
+  const renderField = () => {
     if (allow_any) {
-      console.log(
-        'Rendering the form fields, allow_any True:',
-        fieldKey,
-        fieldType,
-        taxonomyField,
-      )
       return (
         <TextField<T>
           name={fieldKey as Path<T>}
           control={control}
           isRequired={isRequired}
+          label={formatFieldLabel(fieldKey)}
         />
       )
     }
@@ -71,6 +64,7 @@ export const DynamicMetadataFields = <T extends FieldValues>({
             options={allowed_values}
             isMulti={fieldType === FieldType.MULTI_SELECT}
             isRequired={isRequired}
+            label={formatFieldLabel(fieldKey)}
           />
         )
       case FieldType.NUMBER:
@@ -80,6 +74,7 @@ export const DynamicMetadataFields = <T extends FieldValues>({
             control={control}
             type='number'
             isRequired={isRequired}
+            label={formatFieldLabel(fieldKey)}
           />
         )
       case FieldType.TEXT:
@@ -89,23 +84,20 @@ export const DynamicMetadataFields = <T extends FieldValues>({
             name={fieldKey as Path<T>}
             control={control}
             isRequired={isRequired}
+            label={formatFieldLabel(fieldKey)}
           />
         )
     }
   }
 
-  // Explicitly log the requirement logic
-  const isRequired = !allow_blanks
-
   return (
     <FormControl isInvalid={!!errors[fieldKey]} mb={4} isRequired={isRequired}>
-      <FormLabel>{formatFieldLabel(fieldKey)}</FormLabel>
       {fieldType === FieldType.MULTI_SELECT && (
         <FormHelperText mb={2}>
           You are able to search and can select multiple options
         </FormHelperText>
       )}
-      {renderField(isRequired)}
+      {renderField()}
       <FormErrorMessage>
         {errors[fieldKey] && `${fieldKey} is required`}
       </FormErrorMessage>
