@@ -27,18 +27,20 @@ export const TextField = <T extends FieldValues>({
     <Controller
       name={name}
       control={control}
-      render={({ field, fieldState: { error } }) => (
-        <FormControl isInvalid={!!error} isRequired={isRequired}>
-          {label && <FormLabel>{label}</FormLabel>}
-          <Input
-            {...field}
-            bg='white'
-            type={type}
-            placeholder={placeholder ?? `Enter ${name}`}
-          />
-          {error && <FormErrorMessage>{error.message}</FormErrorMessage>}
-        </FormControl>
-      )}
+      render={({ field, fieldState: { error } }) => {
+        return (
+          <FormControl isInvalid={!!error} isRequired={isRequired}>
+            {label && <FormLabel>{label}</FormLabel>}
+            <Input
+              {...field} // This destructured object contains the value
+              bg='white'
+              type={type}
+              placeholder={placeholder ?? `Enter ${name}`}
+            />
+            {error && <FormErrorMessage>{error.message}</FormErrorMessage>}
+          </FormControl>
+        )
+      }}
     />
   )
 }
