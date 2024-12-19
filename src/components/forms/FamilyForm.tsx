@@ -26,7 +26,11 @@ import { UnsavedChangesModal } from './modals/UnsavedChangesModal'
 import { ReadOnlyFields } from '../family/ReadOnlyFields'
 import { EntityEditDrawer } from '../drawers/EntityEditDrawer'
 
-import { TFamily, IFamilyFormPostBase } from '@/interfaces/Family'
+import {
+  TFamily,
+  IFamilyFormPostBase,
+  TFamilyMetadata,
+} from '@/interfaces/Family'
 import { canModify } from '@/utils/canModify'
 import { getCountries } from '@/utils/extractNestedGeographyData'
 import { decodeToken } from '@/utils/decodeToken'
@@ -50,6 +54,11 @@ import {
   getMetadataHandler,
   TFamilyFormSubmit,
 } from './metadata-handlers/familyForm'
+import {
+  CORPUS_METADATA_CONFIG,
+  FieldType,
+  IFormMetadata,
+} from '@/interfaces/Metadata'
 
 export interface IFamilyFormBase {
   title: string
@@ -73,6 +82,7 @@ const getCollection = (collectionId: string, collections: ICollection[]) => {
 export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   const [isLeavingModalOpen, setIsLeavingModalOpen] = useState(false)
   const [isFormSubmitting, setIsFormSubmitting] = useState(false)
+  const [loadedAndReset, setLoadedAndReset] = useState(false)
   const { isOpen, onOpen, onClose } = useDisclosure()
   const navigate = useNavigate()
   const { config, error: configError, loading: configLoading } = useConfig()
@@ -252,7 +262,38 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       setFamilyDocuments(loadedFamily.documents || [])
       setFamilyEvents(loadedFamily.events || [])
 
-      // Pre-set the form values to that of the loaded family
+      // TODO: move to utils function
+      let metadataValues: IFormMetadata = {}
+
+      if (loadedFamily?.metadata && corpusInfo) {
+        metadataValues = Object.entries(
+          loadedFamily.metadata as TFamilyMetadata,
+        ).reduce<IFormMetadata>((loadedMetadata, [key, value]) => {
+          const fieldConfig =
+            CORPUS_METADATA_CONFIG[corpusInfo.corpus_type]?.renderFields?.[key]
+          if (!fieldConfig) return loadedMetadata
+
+          if (fieldConfig.type === FieldType.SINGLE_SELECT) {
+            loadedMetadata[key] = value?.[0]
+              ? {
+                  value: value[0],
+                  label: value[0],
+                }
+              : undefined
+          } else if (fieldConfig.type === FieldType.MULTI_SELECT) {
+            loadedMetadata[key] = value?.map((v) => ({
+              value: v,
+              label: v,
+            }))
+          } else {
+            loadedMetadata[key] = value?.[0]
+          }
+
+          return loadedMetadata
+        }, {})
+      }
+
+      // Pre-set the form values of the base family form (IFamilyFormBase) to that of the loaded family
       reset({
         title: loadedFamily.title,
         summary: loadedFamily.summary,
@@ -282,9 +323,12 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
           .filter(
             (collection): collection is IChakraSelect => collection !== null,
           ),
+        ...metadataValues, // add the values for any metadata fields for the given family corpora type
       })
+
+      setLoadedAndReset(true)
     }
-  }, [config, loadedFamily, reset, isMCFCorpus, collections])
+  }, [config, loadedFamily, reset, isMCFCorpus, collections, corpusInfo])
 
   const onAddNewEntityClick = (entityType: TChildEntity) => {
     setEditingEntity(entityType)
@@ -500,7 +544,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               />
             ) : null}
 
-            {corpusInfo && (
+            {loadedFamily && corpusInfo && loadedAndReset && (
               <>
                 <MetadataSection
                   corpusInfo={corpusInfo}

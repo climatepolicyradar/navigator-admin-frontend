@@ -1,18 +1,8 @@
-import { useEffect } from 'react'
 import { Control, FieldErrors, UseFormReset } from 'react-hook-form'
 import { Box, Divider, AbsoluteCenter } from '@chakra-ui/react'
 import { DynamicMetadataFields } from '../DynamicMetadataFields'
-import {
-  CORPUS_METADATA_CONFIG,
-  FieldType,
-  IFormMetadata,
-} from '@/interfaces/Metadata'
-import {
-  IConfigCorpora,
-  TFamily,
-  TFamilyMetadata,
-  TTaxonomy,
-} from '@/interfaces'
+import { CORPUS_METADATA_CONFIG, FieldType } from '@/interfaces/Metadata'
+import { IConfigCorpora, TFamily, TTaxonomy } from '@/interfaces'
 import { IFamilyFormBase } from '../FamilyForm'
 
 type TProps = {
@@ -29,44 +19,7 @@ export const MetadataSection = ({
   taxonomy,
   control,
   errors,
-  loadedFamily,
-  reset,
 }: TProps) => {
-  useEffect(() => {
-    if (loadedFamily?.metadata && corpusInfo) {
-      const metadataValues = Object.entries(
-        loadedFamily.metadata as TFamilyMetadata,
-      ).reduce<IFormMetadata>((loadedMetadata, [key, value]) => {
-        const fieldConfig =
-          CORPUS_METADATA_CONFIG[corpusInfo.corpus_type]?.renderFields?.[key]
-        if (!fieldConfig) return loadedMetadata
-
-        if (fieldConfig.type === FieldType.SINGLE_SELECT) {
-          loadedMetadata[key] = value?.[0]
-            ? {
-                value: value[0],
-                label: value[0],
-              }
-            : undefined
-        } else if (fieldConfig.type === FieldType.MULTI_SELECT) {
-          loadedMetadata[key] = value?.map((v) => ({
-            value: v,
-            label: v,
-          }))
-        } else {
-          loadedMetadata[key] = value?.[0]
-        }
-
-        return loadedMetadata
-      }, {})
-
-      reset((formValues: IFamilyFormBase) => ({
-        ...formValues,
-        ...metadataValues,
-      }))
-    }
-  }, [loadedFamily, corpusInfo, reset])
-
   if (!corpusInfo || !taxonomy) return null
 
   return (
