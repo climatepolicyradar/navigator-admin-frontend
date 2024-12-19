@@ -252,7 +252,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       setFamilyDocuments(loadedFamily.documents || [])
       setFamilyEvents(loadedFamily.events || [])
 
-      // Pre-set the form values to that of the loaded family
+      // Pre-set the form values of the base family form (IFamilyFormBase) to that of the loaded family
       reset({
         title: loadedFamily.title,
         summary: loadedFamily.summary,

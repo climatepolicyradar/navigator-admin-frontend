@@ -34,6 +34,10 @@ export const MetadataSection = ({
 }: TProps) => {
   useEffect(() => {
     if (loadedFamily?.metadata && corpusInfo) {
+      console.log('Populating the form fields')
+
+      // This is populating the metadata form fields by transforming the metadata from the loaded family
+      // into the format that the form expects.
       const metadataValues = Object.entries(
         loadedFamily.metadata as TFamilyMetadata,
       ).reduce<IFormMetadata>((loadedMetadata, [key, value]) => {
@@ -69,6 +73,8 @@ export const MetadataSection = ({
 
   if (!corpusInfo || !taxonomy) return null
 
+  if (!loadedFamily?.metadata) return null // TODO Remove
+
   return (
     <>
       <Box position='relative' padding='10'>
@@ -81,6 +87,7 @@ export const MetadataSection = ({
         (CORPUS_METADATA_CONFIG[corpusInfo.corpus_type]?.renderFields ||
           {}) as Record<string, { type: FieldType }>,
       ).map(([fieldKey, fieldConfig]) => (
+        // TODO Check here if undefined is being passed in at any point before the real value is plugged in
         <DynamicMetadataFields
           key={fieldKey}
           fieldKey={fieldKey}

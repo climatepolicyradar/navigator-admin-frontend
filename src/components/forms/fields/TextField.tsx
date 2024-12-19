@@ -23,6 +23,7 @@ export const TextField = <T extends FieldValues>({
   label,
   isRequired,
 }: TProps<T>) => {
+  console.log('TextField:', name, placeholder, label, isRequired)
   return (
     <Controller
       name={name}
@@ -31,7 +32,7 @@ export const TextField = <T extends FieldValues>({
         <FormControl isInvalid={!!error} isRequired={isRequired}>
           {label && <FormLabel>{label}</FormLabel>}
           <Input
-            {...field}
+            {...field} // This destructured object contains the value
             bg='white'
             type={type}
             placeholder={placeholder ?? `Enter ${name}`}

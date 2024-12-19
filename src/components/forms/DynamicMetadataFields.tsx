@@ -44,9 +44,21 @@ export const DynamicMetadataFields = <T extends FieldValues>({
     allow_blanks = true,
   } = taxonomyField
 
-  const renderField = () => {
+  const renderField = (isRequired: boolean) => {
     if (allow_any) {
-      return <TextField<T> name={fieldKey as Path<T>} control={control} />
+      console.log(
+        'Rendering the form fields, allow_any True:',
+        fieldKey,
+        fieldType,
+        taxonomyField,
+      )
+      return (
+        <TextField<T>
+          name={fieldKey as Path<T>}
+          control={control}
+          isRequired={isRequired}
+        />
+      )
     }
 
     switch (fieldType) {
@@ -58,6 +70,7 @@ export const DynamicMetadataFields = <T extends FieldValues>({
             control={control}
             options={allowed_values}
             isMulti={fieldType === FieldType.MULTI_SELECT}
+            isRequired={isRequired}
           />
         )
       case FieldType.NUMBER:
@@ -66,11 +79,18 @@ export const DynamicMetadataFields = <T extends FieldValues>({
             name={fieldKey as Path<T>}
             control={control}
             type='number'
+            isRequired={isRequired}
           />
         )
       case FieldType.TEXT:
       default:
-        return <TextField<T> name={fieldKey as Path<T>} control={control} />
+        return (
+          <TextField<T>
+            name={fieldKey as Path<T>}
+            control={control}
+            isRequired={isRequired}
+          />
+        )
     }
   }
 
@@ -85,7 +105,7 @@ export const DynamicMetadataFields = <T extends FieldValues>({
           You are able to search and can select multiple options
         </FormHelperText>
       )}
-      {renderField()}
+      {renderField(isRequired)}
       <FormErrorMessage>
         {errors[fieldKey] && `${fieldKey} is required`}
       </FormErrorMessage>
