@@ -262,8 +262,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       setFamilyDocuments(loadedFamily.documents || [])
       setFamilyEvents(loadedFamily.events || [])
 
-      // PATRICK
-      // TODO: you might want to make this more elegant? I think it's fine tbh
+      // TODO: move to utils function
       let metadataValues: IFormMetadata = {}
 
       if (loadedFamily?.metadata && corpusInfo) {
