@@ -6,19 +6,12 @@ import {
   Controller,
 } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import {
-  IConfigCorpora,
-  ICorpus,
-  ICorpusFormPost,
-  ICorpusFormPut,
-  IError,
-} from '@/interfaces'
+import { ICorpus, ICorpusFormPost, ICorpusFormPut, IError } from '@/interfaces'
 import { corpusSchema } from '@/schemas/corpusSchema'
 import { createCorpus, updateCorpus } from '@/api/Corpora'
 import {
   FormControl,
   FormLabel,
-  Input,
   Textarea,
   VStack,
   Button,
@@ -48,11 +41,7 @@ import { convertEmptyToNull } from '@/utils/convertEmptyToNull'
 import { TextField } from './fields/TextField'
 import { ImportIdSection } from './sections/ImportIdSection'
 import { FormLoader } from '../feedback/FormLoader'
-
-interface CorpusType {
-  name: string
-  description: string
-}
+import useCorpusTypes from '@/hooks/useCorpusTypes'
 
 type TProps = {
   corpus?: ICorpus
@@ -84,6 +73,11 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
     },
   })
   const { config, loading: configLoading, error: configError } = useConfig()
+  const {
+    corpusTypes,
+    error: corpusTypesError,
+    loading: corpusTypesLoading,
+  } = useCorpusTypes()
 
   const initialDescription = useRef<string | undefined>(
     loadedCorpus?.corpus_type_description,
@@ -221,31 +215,10 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
     }
   }, [isConfirmed, handleSubmit, onSubmit, onSubmitErrorHandler])
 
-  const getUniqueCorpusTypes = (corpora: IConfigCorpora[]): CorpusType[] => {
-    const seen = new Set<string>()
-    const uniqueCorpusTypes: CorpusType[] = []
-
-    corpora.forEach((c) => {
-      const uniqueKey = `${c.corpus_type}-${c.corpus_type_description}`
-      if (!seen.has(uniqueKey)) {
-        seen.add(uniqueKey)
-        uniqueCorpusTypes.push({
-          name: c.corpus_type,
-          description: c.corpus_type_description,
-        })
-      }
-    })
-
-    return uniqueCorpusTypes
-  }
-  const uniqueCorpusTypes = getUniqueCorpusTypes(config?.corpora || [])
-
   const updateCorpusTypeDescription = useCallback(
     (typeName: string | undefined) => {
       if (!isDescriptionManuallyEdited) {
-        const selectedType = uniqueCorpusTypes.find(
-          (ct) => ct.name === typeName,
-        )
+        const selectedType = corpusTypes.find((ct) => ct.name === typeName)
         void setValue(
           'corpus_type_description',
           selectedType?.description || '',
@@ -255,7 +228,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
         )
       }
     },
-    [uniqueCorpusTypes, setValue, isDescriptionManuallyEdited],
+    [corpusTypes, setValue, isDescriptionManuallyEdited],
   )
 
   const getOrganisationDisplayNameById = useCallback(
@@ -323,6 +296,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
     <>
       {configError && <ApiError error={configError} />}
       {configLoading && <FormLoader />}
+      {corpusTypesError && <ApiError error={corpusTypesError} />}
 
       <form onSubmit={handleSubmit(onSubmit, onSubmitErrorHandler)}>
         <VStack gap='4' mb={12} align={'stretch'}>
@@ -339,10 +313,13 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
             />
           )}
 
-          <FormControl isRequired>
-            <FormLabel>Title</FormLabel>
-            <Input bg='white' {...register('title')} />
-          </FormControl>
+          <TextField
+            name='title'
+            label='Title'
+            control={control}
+            isRequired={true}
+          />
+
           <FormControl isRequired>
             <FormLabel>
               Description
@@ -356,6 +333,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
               {...register('description')}
             />
           </FormControl>
+
           <FormControl>
             <FormLabel htmlFor='corpus-text-editor'>
               Corpus Text
@@ -369,42 +347,49 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
               onChange={corpusTextOnChange}
             />
           </FormControl>
-          <FormControl>
-            <FormLabel>Corpus Image URL</FormLabel>
-            <Input bg='white' {...register('corpus_image_url')} />
-          </FormControl>
-          <Controller
+
+          <TextField
+            name='corpus_image_url'
+            label='Corpus Image URL'
             control={control}
-            name='corpus_type_name'
-            render={({ field }) => (
-              <FormControl
-                as='fieldset'
-                isRequired
-                isInvalid={!!errors.corpus_type_name}
-              >
-                <FormLabel as='legend'>Corpus Type Name</FormLabel>
-                <div data-testid='corpus-type-select'>
-                  <CRSelect
-                    chakraStyles={chakraStylesSelect}
-                    isClearable={true}
-                    isMulti={false}
-                    isSearchable={true}
-                    options={
-                      uniqueCorpusTypes.map((ct) => ({
-                        label: ct.name,
-                        value: ct.name,
-                      })) || []
-                    }
-                    isDisabled={!!loadedCorpus}
-                    {...field}
-                  />
-                </div>
-                <FormErrorMessage>
-                  {errors.corpus_type_name?.message}
-                </FormErrorMessage>
-              </FormControl>
-            )}
+            isRequired={false}
           />
+
+          {!corpusTypesLoading && (
+            <Controller
+              control={control}
+              name='corpus_type_name'
+              render={({ field }) => (
+                <FormControl
+                  as='fieldset'
+                  isRequired
+                  isInvalid={!!errors.corpus_type_name}
+                >
+                  <FormLabel as='legend'>Corpus Type Name</FormLabel>
+                  <div data-testid='corpus-type-select'>
+                    <CRSelect
+                      chakraStyles={chakraStylesSelect}
+                      isClearable={true}
+                      isMulti={false}
+                      isSearchable={true}
+                      options={
+                        corpusTypes.map((ct) => ({
+                          label: ct.name,
+                          value: ct.name,
+                        })) || []
+                      }
+                      isDisabled={!!loadedCorpus}
+                      {...field}
+                    />
+                  </div>
+                  <FormErrorMessage>
+                    {errors.corpus_type_name?.message}
+                  </FormErrorMessage>
+                </FormControl>
+              )}
+            />
+          )}
+
           {loadedCorpus && (
             <FormControl
               isRequired
