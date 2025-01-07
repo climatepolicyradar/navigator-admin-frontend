@@ -11,6 +11,7 @@ export interface ICorpus {
 }
 
 export interface ICorpusFormPost {
+  import_id: string
   title: string
   description: string
   corpus_text: string | null

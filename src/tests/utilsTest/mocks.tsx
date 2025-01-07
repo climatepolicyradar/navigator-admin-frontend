@@ -212,6 +212,8 @@ const mockCCLWConfig: IConfig = {
       organisation: {
         name: 'CCLW',
         id: 1,
+        display_name: 'CCLW',
+        type: 'Academic',
       },
       taxonomy: {
         topic: {
@@ -285,6 +287,8 @@ const mockUNFCCCConfig: IConfig = {
       organisation: {
         name: 'UNFCCC',
         id: 3,
+        display_name: 'UNFCCC',
+        type: 'UN',
       },
       taxonomy: {
         author: {
@@ -338,6 +342,8 @@ const mockMCFConfig: IConfig = {
       organisation: {
         name: 'MCF',
         id: 999,
+        display_name: 'MCF',
+        type: 'MCF',
       },
       taxonomy: {
         region: {
