@@ -424,49 +424,51 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
             </FormControl>
           )}
 
-          <Controller
-            control={control}
-            name='organisation_id'
-            render={({ field }) => (
-              <FormControl
-                as='fieldset'
-                isRequired
-                isInvalid={!!errors.organisation_id}
-              >
-                <FormLabel as='legend'>Organisation</FormLabel>
-                <div data-testid='organisation-select'>
-                  <CRSelect
-                    chakraStyles={chakraStylesSelect}
-                    isClearable={true}
-                    isMulti={false}
-                    isSearchable={true}
-                    options={Array.from(
-                      new Set(
-                        config?.corpora?.map(
-                          (corpus) => corpus.organisation?.id,
+          {config && !configLoading && (
+            <Controller
+              control={control}
+              name='organisation_id'
+              render={({ field }) => (
+                <FormControl
+                  as='fieldset'
+                  isRequired
+                  isInvalid={!!errors.organisation_id}
+                >
+                  <FormLabel as='legend'>Organisation</FormLabel>
+                  <div data-testid='organisation-select'>
+                    <CRSelect
+                      chakraStyles={chakraStylesSelect}
+                      isClearable={true}
+                      isMulti={false}
+                      isSearchable={true}
+                      options={Array.from(
+                        new Set(
+                          config?.corpora?.map(
+                            (corpus) => corpus.organisation?.id,
+                          ),
                         ),
-                      ),
-                    ).map((id) => {
-                      const corpus = config?.corpora?.find(
-                        (corpus) => corpus.organisation?.id === id,
-                      )
-                      return {
-                        label: corpus?.organisation?.display_name,
-                        value: id,
-                      }
-                    })}
-                    isDisabled={!!loadedCorpus}
-                    {...field}
-                  />
-                </div>
-                <FormErrorMessage>
-                  {errors.organisation_id?.message}
-                </FormErrorMessage>
-              </FormControl>
-            )}
-          />
+                      ).map((id) => {
+                        const corpus = config?.corpora?.find(
+                          (corpus) => corpus.organisation?.id === id,
+                        )
+                        return {
+                          label: corpus?.organisation?.display_name,
+                          value: id,
+                        }
+                      })}
+                      isDisabled={!!loadedCorpus}
+                      {...field}
+                    />
+                  </div>
+                  <FormErrorMessage>
+                    {errors.organisation_id?.message}
+                  </FormErrorMessage>
+                </FormControl>
+              )}
+            />
+          )}
 
-          {!loadedCorpus && !configLoading && (
+          {!loadedCorpus && config && !configLoading && (
             <ImportIdSection
               corpora={config?.corpora || []}
               watchedOrganisation={watchedOrganisation}

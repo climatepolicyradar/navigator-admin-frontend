@@ -232,21 +232,19 @@ describe('CorpusForm', () => {
       expect(screen.queryByText('Part 4')).not.toBeInTheDocument()
     })
 
-    // it('displays error message when config fails to load', async () => {
-    //   vi.clearAllMocks()
-    //   mockUseConfig.mockReturnValue({
-    //     config: null,
-    //     loading: false,
-    //     error: { message: 'Failed to load config' },
-    //   })
+    it('displays error message when config fails to load', () => {
+      // Mock the return value of useConfig
+      mockUseConfig.mockReturnValue({
+        config: null,
+        loading: false,
+        error: { message: 'Failed to load config' },
+      })
 
-    //   renderCorpusForm()
+      renderCorpusForm()
 
-    //   // Use waitFor to wait for the error message to appear
-    //   await waitFor(() => {
-    //     expect(screen.getByText(/failed to load config/i)).toBeInTheDocument()
-    //   })
-    // })
+      // Wait for the error message to appear
+      expect(screen.getByText(/failed to load config/i)).toBeInTheDocument()
+    })
   })
 
   describe('Form Submission', () => {
