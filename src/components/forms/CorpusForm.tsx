@@ -25,7 +25,6 @@ import {
   ButtonGroup,
   FormErrorMessage,
   useToast,
-  FormHelperText,
   Tooltip,
   Icon,
   ModalOverlay,
@@ -46,6 +45,8 @@ import { WYSIWYG } from '../form-components/WYSIWYG'
 import * as yup from 'yup'
 import { stripHtml } from '@/utils/stripHtml'
 import { convertEmptyToNull } from '@/utils/convertEmptyToNull'
+import { TextField } from './fields/TextField'
+import { ImportIdSection } from './sections/ImportIdSection'
 
 interface CorpusType {
   name: string
@@ -56,7 +57,7 @@ type TProps = {
   corpus?: ICorpus
 }
 
-type CorpusFormData = yup.InferType<typeof corpusSchema>
+export type CorpusFormData = yup.InferType<typeof corpusSchema>
 
 export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
   const navigate = useNavigate()
@@ -73,6 +74,13 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
     watch,
   } = useForm<CorpusFormData>({
     resolver: yupResolver(corpusSchema),
+    context: {
+      isNewCorpus: loadedCorpus ? false : true,
+    },
+    defaultValues: {
+      import_id_part2: 'corpus',
+      import_id_part4: 'n0000',
+    },
   })
   const { config, loading: configLoading, error: configError } = useConfig()
 
@@ -137,6 +145,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
       }
 
       const formData: ICorpusFormPost = {
+        import_id: `${formValues.import_id_part1.value}.${formValues.import_id_part2}.${formValues.import_id_part3}.${formValues.import_id_part4}`,
         title: formValues.title,
         description: formValues.description,
         corpus_text: convertEmptyToNull(
@@ -273,6 +282,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
     if (loadedCorpus && !configLoading) {
       const orgName = getOrganisationNameById(loadedCorpus.organisation_id)
       reset({
+        import_id: loadedCorpus.import_id || '',
         title: loadedCorpus.title || '',
         description: loadedCorpus.description || '',
         corpus_text: loadedCorpus.corpus_text || '',
@@ -303,6 +313,9 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
     setValue('corpus_text', html, { shouldDirty: true })
   }
 
+  const watchedOrganisation = watch('organisation_id')
+  const watchedImportIdPart1 = watch('import_id_part1')
+
   return (
     <>
       {configError && <ApiError error={configError} />}
@@ -312,12 +325,16 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
           {formError && <ApiError error={formError} />}
 
           {loadedCorpus && (
-            <FormControl isRequired isReadOnly isDisabled>
-              <FormLabel>Import ID</FormLabel>
-              <Input bg='white' value={loadedCorpus?.import_id} />
-              <FormHelperText>You cannot edit this</FormHelperText>
-            </FormControl>
+            <TextField
+              name='import_id'
+              label='Import ID'
+              control={control}
+              isRequired={true}
+              showHelperText={true}
+              isDisabled={true}
+            />
           )}
+
           <FormControl isRequired>
             <FormLabel>Title</FormLabel>
             <Input bg='white' {...register('title')} />
@@ -421,15 +438,19 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
                     isSearchable={true}
                     options={Array.from(
                       new Set(
-                        config?.corpora?.map((corpus) => ({
-                          label: corpus.organisation?.name,
-                          value: corpus.organisation?.id,
-                        })),
+                        config?.corpora?.map(
+                          (corpus) => corpus.organisation?.id,
+                        ),
                       ),
-                    ).map((org) => ({
-                      label: org.label,
-                      value: org.value,
-                    }))}
+                    ).map((id) => {
+                      const corpus = config?.corpora?.find(
+                        (corpus) => corpus.organisation?.id === id,
+                      )
+                      return {
+                        label: corpus?.organisation?.display_name,
+                        value: id,
+                      }
+                    })}
                     isDisabled={!!loadedCorpus}
                     {...field}
                   />
@@ -440,6 +461,16 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
               </FormControl>
             )}
           />
+
+          {!loadedCorpus && (
+            <ImportIdSection
+              corpora={config?.corpora || []}
+              watchedOrganisation={watchedOrganisation}
+              watchedImportIdPart1={watchedImportIdPart1}
+              control={control}
+              setValue={setValue}
+            />
+          )}
 
           <Modal isOpen={isModalOpen} onClose={handleModalCancel}>
             <ModalOverlay />
