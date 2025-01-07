@@ -109,7 +109,6 @@ describe('CorpusForm', () => {
     })
 
     it('shows all corpus type options when clicking the select', async () => {
-      console.log(mockConfig.corpora)
       renderCorpusForm()
 
       const corpusTypeSelectGroup = screen.getByRole('group', {
