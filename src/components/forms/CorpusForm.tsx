@@ -47,6 +47,7 @@ import { stripHtml } from '@/utils/stripHtml'
 import { convertEmptyToNull } from '@/utils/convertEmptyToNull'
 import { TextField } from './fields/TextField'
 import { ImportIdSection } from './sections/ImportIdSection'
+import { FormLoader } from '../feedback/FormLoader'
 
 interface CorpusType {
   name: string
@@ -257,12 +258,12 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
     [uniqueCorpusTypes, setValue, isDescriptionManuallyEdited],
   )
 
-  const getOrganisationNameById = useCallback(
+  const getOrganisationDisplayNameById = useCallback(
     (organisationId: number): string | undefined => {
       const organisation = config?.corpora?.find(
         (corpus) => corpus.organisation?.id === organisationId,
       )
-      return organisation?.organisation?.name
+      return organisation?.organisation?.display_name
     },
     [config?.corpora],
   )
@@ -280,7 +281,9 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
 
   useEffect(() => {
     if (loadedCorpus && !configLoading) {
-      const orgName = getOrganisationNameById(loadedCorpus.organisation_id)
+      const orgName = getOrganisationDisplayNameById(
+        loadedCorpus.organisation_id,
+      )
       reset({
         import_id: loadedCorpus.import_id || '',
         title: loadedCorpus.title || '',
@@ -304,7 +307,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
       updateCorpusTypeDescription(loadedCorpus.corpus_type_name)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loadedCorpus, configLoading, getOrganisationNameById, reset])
+  }, [loadedCorpus, configLoading, getOrganisationDisplayNameById, reset])
 
   const corpusTextOnChange = (html: string) => {
     if (stripHtml(html) === '') {
@@ -319,6 +322,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
   return (
     <>
       {configError && <ApiError error={configError} />}
+      {configLoading && <FormLoader />}
 
       <form onSubmit={handleSubmit(onSubmit, onSubmitErrorHandler)}>
         <VStack gap='4' mb={12} align={'stretch'}>
