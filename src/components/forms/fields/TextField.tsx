@@ -4,6 +4,7 @@ import {
   FormControl,
   FormLabel,
   FormErrorMessage,
+  FormHelperText,
 } from '@chakra-ui/react'
 
 type TProps<T extends FieldValues> = {
@@ -13,6 +14,8 @@ type TProps<T extends FieldValues> = {
   placeholder?: string
   label?: string
   isRequired?: boolean
+  showHelperText?: boolean
+  isDisabled?: boolean
 }
 
 export const TextField = <T extends FieldValues>({
@@ -22,6 +25,8 @@ export const TextField = <T extends FieldValues>({
   placeholder,
   label,
   isRequired,
+  showHelperText,
+  isDisabled,
 }: TProps<T>) => {
   return (
     <Controller
@@ -29,7 +34,12 @@ export const TextField = <T extends FieldValues>({
       control={control}
       render={({ field, fieldState: { error } }) => {
         return (
-          <FormControl isInvalid={!!error} isRequired={isRequired}>
+          <FormControl
+            isInvalid={!!error}
+            isRequired={isRequired}
+            isReadOnly={isDisabled}
+            isDisabled={isDisabled}
+          >
             {label && <FormLabel>{label}</FormLabel>}
             <Input
               {...field} // This destructured object contains the value
@@ -37,6 +47,9 @@ export const TextField = <T extends FieldValues>({
               type={type}
               placeholder={placeholder ?? `Enter ${name}`}
             />
+            {showHelperText && isDisabled && (
+              <FormHelperText>You cannot edit this</FormHelperText>
+            )}
             {error && <FormErrorMessage>{error.message}</FormErrorMessage>}
           </FormControl>
         )

@@ -37,6 +37,8 @@ describe('modifyConfig', () => {
           organisation: {
             name: 'CCLW',
             id: 1,
+            display_name: 'CCLW',
+            type: 'Academic',
           },
           taxonomy: {
             topic: {
@@ -94,6 +96,8 @@ describe('modifyConfig', () => {
           organisation: {
             name: 'UNFCCC',
             id: 3,
+            display_name: 'UNFCCC',
+            type: 'UN',
           },
           taxonomy: {
             author: {
