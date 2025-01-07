@@ -46,6 +46,7 @@ export const TextField = <T extends FieldValues>({
               bg='white'
               type={type}
               placeholder={placeholder ?? `Enter ${name}`}
+              value={field.value ?? ''} // this prevents the component changing from a controlled to uncontrolled component
             />
             {showHelperText && isDisabled && (
               <FormHelperText>You cannot edit this</FormHelperText>
