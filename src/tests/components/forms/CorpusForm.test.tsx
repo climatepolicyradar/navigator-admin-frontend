@@ -35,7 +35,9 @@ const mockConfig = {
       corpus_type_description: 'Test Corpus Type Description 1',
       organisation: {
         id: 1,
-        name: 'Test Organisation 1',
+        name: 'TEST',
+        display_name: 'Test Organisation 1',
+        type: 'Test',
       },
     },
     {
@@ -43,7 +45,9 @@ const mockConfig = {
       corpus_type_description: 'Test Corpus Type Description 2',
       organisation: {
         id: 2,
-        name: 'Test Organisation 2',
+        name: 'CCLW',
+        display_name: 'Test Organisation 2',
+        type: 'Academic',
       },
     },
   ],
@@ -92,15 +96,17 @@ describe('CorpusForm', () => {
         screen.getByRole('group', { name: 'Organisation' }),
       ).toBeInTheDocument()
 
-      expect(screen.getByRole('group', { name: 'Part 1' })).toBeInTheDocument()
       expect(
-        screen.getByRole('textbox', { name: 'import_id_part2' }),
+        screen.getByRole('combobox', { name: 'Part 1' }),
       ).toBeInTheDocument()
       expect(
-        screen.getByRole('textbox', { name: 'import_id_part3' }),
+        screen.getByRole('textbox', { name: 'Part 2' }),
       ).toBeInTheDocument()
       expect(
-        screen.getByRole('textbox', { name: 'import_id_part4' }),
+        screen.getByRole('textbox', { name: 'Part 3' }),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('textbox', { name: 'Part 4' }),
       ).toBeInTheDocument()
 
       expect(
@@ -138,10 +144,8 @@ describe('CorpusForm', () => {
       expect(organisationSelectGroup).toBeInTheDocument()
 
       // Click the organisation select to open options
-      const organisationSelect = within(organisationSelectGroup).getByText(
-        'Select...',
-      )
-      await userEvent.click(organisationSelect)
+      const combobox = within(organisationSelectGroup).getByRole('combobox')
+      await userEvent.click(combobox)
 
       // Verify all options from mockConfig are shown with correct label and value
       const uniqueOrganisations = Array.from(
@@ -150,20 +154,35 @@ describe('CorpusForm', () => {
             .filter((corpus) => corpus.organisation)
             .map((corpus) => JSON.stringify(corpus.organisation)),
         ),
-      ).map((org) => JSON.parse(org) as { id: number; name: string })
+      ).map(
+        (org) =>
+          JSON.parse(org) as {
+            id: number
+            name: string
+            type: string
+            display_name: string
+          },
+      )
 
-      uniqueOrganisations.forEach((org: { id: number; name: string }) => {
-        // Find the option by its label text
-        const option = screen.getByText(org.name)
-        expect(option).toBeInTheDocument()
+      uniqueOrganisations.forEach(
+        (org: {
+          id: number
+          name: string
+          type: string
+          display_name: string
+        }) => {
+          // Find the option by its label text
+          const option = screen.getByText(org.display_name)
+          expect(option).toBeInTheDocument()
 
-        // The parent div contains the value information
-        const optionContainer = option.closest('[id^="react-select-"]')
-        expect(optionContainer).toHaveAttribute(
-          'id',
-          expect.stringContaining(`-option-${org.id - 1}`),
-        )
-      })
+          // The parent div contains the value information
+          const optionContainer = option.closest('[id^="react-select-"]')
+          expect(optionContainer).toHaveAttribute(
+            'id',
+            expect.stringContaining(`-option-${org.id - 1}`),
+          )
+        },
+      )
     })
 
     it('renders form fields with loaded corpus data', () => {
@@ -207,18 +226,10 @@ describe('CorpusForm', () => {
       ).toBeInTheDocument()
 
       // Don't show import ID builder section.
-      expect(
-        screen.getByRole('group', { name: 'Part 1' }),
-      ).not.toBeInTheDocument()
-      expect(
-        screen.getByRole('textbox', { name: 'import_id_part2' }),
-      ).not.toBeInTheDocument()
-      expect(
-        screen.getByRole('textbox', { name: 'import_id_part3' }),
-      ).not.toBeInTheDocument()
-      expect(
-        screen.getByRole('textbox', { name: 'import_id_part4' }),
-      ).not.toBeInTheDocument()
+      expect(screen.queryByText('Part 1')).not.toBeInTheDocument()
+      expect(screen.queryByText('Part 2')).not.toBeInTheDocument()
+      expect(screen.queryByText('Part 3')).not.toBeInTheDocument()
+      expect(screen.queryByText('Part 4')).not.toBeInTheDocument()
     })
 
     it('displays error message when config fails to load', () => {
@@ -234,8 +245,8 @@ describe('CorpusForm', () => {
   })
 
   describe('Form Submission', () => {
-    it('successfully creates a new corpus', async () => {
-      const mockCreateResponse = { response: 'new-id' }
+    it('successfully creates a new corpus using default import ID values', async () => {
+      const mockCreateResponse = { response: 'TEST.corpus.i00000001.n0000' }
       vi.mocked(createCorpus).mockResolvedValueOnce(mockCreateResponse)
 
       const user = userEvent.setup()
@@ -252,9 +263,13 @@ describe('CorpusForm', () => {
       )
 
       // Select corpus type
-      const corpusTypeSelect = within(
-        screen.getByTestId('corpus-type-select'),
-      ).getByRole('combobox')
+      const corpusTypeSelectGroup = screen.getByRole('group', {
+        name: 'Corpus Type Name',
+      })
+      expect(corpusTypeSelectGroup).toBeInTheDocument()
+      const corpusTypeSelect = within(corpusTypeSelectGroup).getByText(
+        'Select...',
+      )
       await user.click(corpusTypeSelect)
       await user.type(corpusTypeSelect, 'Test Corpus Type 1{enter}')
 
@@ -263,7 +278,15 @@ describe('CorpusForm', () => {
         screen.getByTestId('organisation-select'),
       ).getByRole('combobox')
       await user.click(orgSelect)
-      await user.type(orgSelect, 'Test Organisation 1{enter}')
+      await user.type(orgSelect, '1{enter}')
+
+      // Build import ID
+      const part1 = screen.getByRole('combobox', {
+        name: 'Part 1',
+      })
+      expect(part1).toBeInTheDocument()
+      await user.click(part1)
+      await user.type(part1, 'Test{enter}')
 
       // Submit the form
       await user.click(
@@ -273,12 +296,84 @@ describe('CorpusForm', () => {
       // Wait for form submission and verify API call
       await waitFor(() => {
         expect(createCorpus).toHaveBeenCalledWith({
+          import_id: 'TEST.corpus.i00000001.n0000',
           title: 'New Corpus',
           description: 'New Description',
           corpus_text: null,
           corpus_image_url: null,
           corpus_type_name: 'Test Corpus Type 1',
           organisation_id: 1,
+        })
+      })
+
+      // Verify navigation after success
+      expect(mockNavigate).toHaveBeenCalledWith('/corpora')
+    })
+
+    it('successfully creates a new corpus using non-default import ID values', async () => {
+      const mockCreateResponse = { response: 'Academic.corpus.CCLW.apples' }
+      vi.mocked(createCorpus).mockResolvedValueOnce(mockCreateResponse)
+
+      const user = userEvent.setup()
+      renderCorpusForm()
+
+      // Fill in text fields
+      await user.type(
+        screen.getByRole('textbox', { name: 'Title' }),
+        'New Corpus',
+      )
+      await user.type(
+        screen.getByRole('textbox', { name: 'Description' }),
+        'New Description',
+      )
+
+      // Select corpus type
+      const corpusTypeSelectGroup = screen.getByRole('group', {
+        name: 'Corpus Type Name',
+      })
+      expect(corpusTypeSelectGroup).toBeInTheDocument()
+      const corpusTypeSelect = within(corpusTypeSelectGroup).getByText(
+        'Select...',
+      )
+      await user.click(corpusTypeSelect)
+      await user.type(corpusTypeSelect, 'Test Corpus Type 1{enter}')
+
+      // Select organisation
+      const orgSelect = within(
+        screen.getByTestId('organisation-select'),
+      ).getByRole('combobox')
+      await user.click(orgSelect)
+      await user.type(orgSelect, '2{enter}')
+
+      // Build import ID
+      const part1 = screen.getByRole('combobox', {
+        name: 'Part 1',
+      })
+      expect(part1).toBeInTheDocument()
+      await user.click(part1)
+      await user.type(part1, 'Academic{enter}')
+
+      const part4 = screen.getByRole('textbox', {
+        name: 'Part 4',
+      })
+      await user.clear(part4)
+      await user.type(part4, 'apples{enter}')
+
+      // Submit the form
+      await user.click(
+        screen.getByRole('button', { name: /create new corpus/i }),
+      )
+
+      // Wait for form submission and verify API call
+      await waitFor(() => {
+        expect(createCorpus).toHaveBeenCalledWith({
+          import_id: 'Academic.corpus.CCLW.apples',
+          title: 'New Corpus',
+          description: 'New Description',
+          corpus_text: null,
+          corpus_image_url: null,
+          corpus_type_name: 'Test Corpus Type 1',
+          organisation_id: 2,
         })
       })
 
