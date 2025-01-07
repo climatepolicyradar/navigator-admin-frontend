@@ -462,7 +462,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
             )}
           />
 
-          {!loadedCorpus && (
+          {!loadedCorpus && !configLoading && (
             <ImportIdSection
               corpora={config?.corpora || []}
               watchedOrganisation={watchedOrganisation}
