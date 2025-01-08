@@ -45,7 +45,7 @@ export const TextField = <T extends FieldValues>({
               {...field} // This destructured object contains the value
               bg='white'
               type={type}
-              placeholder={placeholder ?? `Enter ${name}`}
+              placeholder={placeholder ?? `Enter ${label?.toLowerCase()}`}
               value={field.value ?? ''} // this prevents the component changing from a controlled to uncontrolled component
             />
             {showHelperText && isDisabled && (

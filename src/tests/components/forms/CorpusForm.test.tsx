@@ -4,9 +4,11 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { CorpusForm } from '@/components/forms/CorpusForm'
 import { createCorpus, updateCorpus } from '@/api/Corpora'
 import useConfig from '@/hooks/useConfig'
+import useCorpusTypes from '@/hooks/useCorpusTypes'
 import { BrowserRouter } from 'react-router-dom'
 import { ChakraProvider } from '@chakra-ui/react'
 import '../../setup'
+import { ICorpusType } from '@/interfaces/CorpusType'
 
 // Mock the API calls
 vi.mock('@/api/Corpora', () => ({
@@ -15,6 +17,10 @@ vi.mock('@/api/Corpora', () => ({
 }))
 
 vi.mock('@/hooks/useConfig', () => ({
+  default: vi.fn(),
+}))
+
+vi.mock('@/hooks/useCorpusTypes', () => ({
   default: vi.fn(),
 }))
 
@@ -53,13 +59,30 @@ const mockConfig = {
   ],
 }
 
+const mockCorpusTypes: ICorpusType[] = [
+  {
+    name: 'Test Corpus Type 1',
+    description: 'Test Corpus Type Description 1',
+  },
+  {
+    name: 'Test Corpus Type 2',
+    description: 'Test Corpus Type Description 2',
+  },
+]
+
 const mockUseConfig = useConfig as unknown as ReturnType<typeof vi.fn>
+const mockUseCorpusTypes = useCorpusTypes as unknown as ReturnType<typeof vi.fn>
 
 describe('CorpusForm', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockUseConfig.mockReturnValue({
       config: mockConfig,
+      loading: false,
+      error: null,
+    })
+    mockUseCorpusTypes.mockReturnValue({
+      corpusTypes: mockCorpusTypes,
       loading: false,
       error: null,
     })
