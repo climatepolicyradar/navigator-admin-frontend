@@ -6,26 +6,18 @@ import {
   Controller,
 } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import {
-  IConfigCorpora,
-  ICorpus,
-  ICorpusFormPost,
-  ICorpusFormPut,
-  IError,
-} from '@/interfaces'
+import { ICorpus, ICorpusFormPost, ICorpusFormPut, IError } from '@/interfaces'
 import { corpusSchema } from '@/schemas/corpusSchema'
 import { createCorpus, updateCorpus } from '@/api/Corpora'
 import {
   FormControl,
   FormLabel,
-  Input,
   Textarea,
   VStack,
   Button,
   ButtonGroup,
   FormErrorMessage,
   useToast,
-  FormHelperText,
   Tooltip,
   Icon,
   ModalOverlay,
@@ -43,20 +35,34 @@ import { Select as CRSelect } from 'chakra-react-select'
 import useConfig from '@/hooks/useConfig'
 import { InfoOutlineIcon } from '@chakra-ui/icons'
 import { WYSIWYG } from '../form-components/WYSIWYG'
-import * as yup from 'yup'
 import { stripHtml } from '@/utils/stripHtml'
 import { convertEmptyToNull } from '@/utils/convertEmptyToNull'
-
-interface CorpusType {
-  name: string
-  description: string
-}
+import { TextField } from './fields/TextField'
+import { ImportIdSection } from './sections/ImportIdSection'
+import { FormLoader } from '../feedback/FormLoader'
+import useCorpusTypes from '@/hooks/useCorpusTypes'
 
 type TProps = {
   corpus?: ICorpus
 }
 
-type CorpusFormData = yup.InferType<typeof corpusSchema>
+export interface ICorpusFormSubmit {
+  import_id?: string
+  import_id_part1: {
+    label?: string | undefined
+    value?: string | undefined
+  } | null
+  import_id_part2?: string
+  import_id_part3?: string
+  import_id_part4?: string
+  title: string
+  description: string
+  corpus_text?: string | null
+  corpus_image_url?: string | null
+  corpus_type_name: { label: string; value: string }
+  corpus_type_description: string
+  organisation_id: { label: string; value: number }
+}
 
 export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
   const navigate = useNavigate()
@@ -71,10 +77,22 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
     setValue,
     getValues,
     watch,
-  } = useForm<CorpusFormData>({
+  } = useForm<ICorpusFormSubmit>({
     resolver: yupResolver(corpusSchema),
+    context: {
+      isNewCorpus: loadedCorpus ? false : true,
+    },
+    defaultValues: {
+      import_id_part2: 'corpus',
+      import_id_part4: 'n0000',
+    },
   })
   const { config, loading: configLoading, error: configError } = useConfig()
+  const {
+    corpusTypes,
+    error: corpusTypesError,
+    loading: corpusTypesLoading,
+  } = useCorpusTypes()
 
   const initialDescription = useRef<string | undefined>(
     loadedCorpus?.corpus_type_description,
@@ -85,8 +103,18 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
     useState(false)
 
   const handleFormSubmission = useCallback(
-    async (formValues: CorpusFormData) => {
+    async (formValues: ICorpusFormSubmit) => {
       setFormError(null)
+
+      if (!loadedCorpus && !formValues.import_id_part1) {
+        const e: IError = {
+          status: 400,
+          detail: 'Import ID Part 1 is required',
+          message: 'Import ID Part 1 is required',
+          returnPage: '/corpora',
+        }
+        setFormError(e)
+      }
 
       // Check if description has actually changed from initial value
       if (formValues.corpus_type_description !== initialDescription.current) {
@@ -137,6 +165,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
       }
 
       const formData: ICorpusFormPost = {
+        import_id: `${formValues.import_id_part1?.value}.${formValues.import_id_part2}.${formValues.import_id_part3}.${formValues.import_id_part4}`,
         title: formValues.title,
         description: formValues.description,
         corpus_text: convertEmptyToNull(
@@ -178,7 +207,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
     ],
   )
 
-  const onSubmit: SubmitHandler<CorpusFormData> = useCallback(
+  const onSubmit: SubmitHandler<ICorpusFormSubmit> = useCallback(
     (data) => {
       handleFormSubmission(data).catch((error: IError) => {
         console.error(error)
@@ -187,12 +216,10 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
     [handleFormSubmission],
   )
 
-  const onSubmitErrorHandler: SubmitErrorHandler<CorpusFormData> = useCallback(
-    (errors) => {
+  const onSubmitErrorHandler: SubmitErrorHandler<ICorpusFormSubmit> =
+    useCallback((errors) => {
       console.error(errors)
-    },
-    [],
-  )
+    }, [])
 
   const handleModalConfirm = () => {
     setIsConfirmed(true)
@@ -211,31 +238,10 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
     }
   }, [isConfirmed, handleSubmit, onSubmit, onSubmitErrorHandler])
 
-  const getUniqueCorpusTypes = (corpora: IConfigCorpora[]): CorpusType[] => {
-    const seen = new Set<string>()
-    const uniqueCorpusTypes: CorpusType[] = []
-
-    corpora.forEach((c) => {
-      const uniqueKey = `${c.corpus_type}-${c.corpus_type_description}`
-      if (!seen.has(uniqueKey)) {
-        seen.add(uniqueKey)
-        uniqueCorpusTypes.push({
-          name: c.corpus_type,
-          description: c.corpus_type_description,
-        })
-      }
-    })
-
-    return uniqueCorpusTypes
-  }
-  const uniqueCorpusTypes = getUniqueCorpusTypes(config?.corpora || [])
-
   const updateCorpusTypeDescription = useCallback(
     (typeName: string | undefined) => {
       if (!isDescriptionManuallyEdited) {
-        const selectedType = uniqueCorpusTypes.find(
-          (ct) => ct.name === typeName,
-        )
+        const selectedType = corpusTypes.find((ct) => ct.name === typeName)
         void setValue(
           'corpus_type_description',
           selectedType?.description || '',
@@ -245,15 +251,15 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
         )
       }
     },
-    [uniqueCorpusTypes, setValue, isDescriptionManuallyEdited],
+    [corpusTypes, setValue, isDescriptionManuallyEdited],
   )
 
-  const getOrganisationNameById = useCallback(
+  const getOrganisationDisplayNameById = useCallback(
     (organisationId: number): string | undefined => {
       const organisation = config?.corpora?.find(
         (corpus) => corpus.organisation?.id === organisationId,
       )
-      return organisation?.organisation?.name
+      return organisation?.organisation?.display_name
     },
     [config?.corpora],
   )
@@ -271,8 +277,11 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
 
   useEffect(() => {
     if (loadedCorpus && !configLoading) {
-      const orgName = getOrganisationNameById(loadedCorpus.organisation_id)
+      const orgName = getOrganisationDisplayNameById(
+        loadedCorpus.organisation_id,
+      )
       reset({
+        import_id: loadedCorpus.import_id || '',
         title: loadedCorpus.title || '',
         description: loadedCorpus.description || '',
         corpus_text: loadedCorpus.corpus_text || '',
@@ -294,7 +303,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
       updateCorpusTypeDescription(loadedCorpus.corpus_type_name)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loadedCorpus, configLoading, getOrganisationNameById, reset])
+  }, [loadedCorpus, configLoading, getOrganisationDisplayNameById, reset])
 
   const corpusTextOnChange = (html: string) => {
     if (stripHtml(html) === '') {
@@ -303,25 +312,37 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
     setValue('corpus_text', html, { shouldDirty: true })
   }
 
+  const watchedOrganisation = watch('organisation_id')
+  const watchedImportIdPart1 = watch('import_id_part1')
+
   return (
     <>
       {configError && <ApiError error={configError} />}
+      {configLoading && <FormLoader />}
+      {corpusTypesError && <ApiError error={corpusTypesError} />}
 
       <form onSubmit={handleSubmit(onSubmit, onSubmitErrorHandler)}>
         <VStack gap='4' mb={12} align={'stretch'}>
           {formError && <ApiError error={formError} />}
 
           {loadedCorpus && (
-            <FormControl isRequired isReadOnly isDisabled>
-              <FormLabel>Import ID</FormLabel>
-              <Input bg='white' value={loadedCorpus?.import_id} />
-              <FormHelperText>You cannot edit this</FormHelperText>
-            </FormControl>
+            <TextField
+              name='import_id'
+              label='Import ID'
+              control={control}
+              isRequired={true}
+              showHelperText={true}
+              isDisabled={true}
+            />
           )}
-          <FormControl isRequired>
-            <FormLabel>Title</FormLabel>
-            <Input bg='white' {...register('title')} />
-          </FormControl>
+
+          <TextField
+            name='title'
+            label='Title'
+            control={control}
+            isRequired={true}
+          />
+
           <FormControl isRequired>
             <FormLabel>
               Description
@@ -335,6 +356,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
               {...register('description')}
             />
           </FormControl>
+
           <FormControl>
             <FormLabel htmlFor='corpus-text-editor'>
               Corpus Text
@@ -348,42 +370,49 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
               onChange={corpusTextOnChange}
             />
           </FormControl>
-          <FormControl>
-            <FormLabel>Corpus Image URL</FormLabel>
-            <Input bg='white' {...register('corpus_image_url')} />
-          </FormControl>
-          <Controller
+
+          <TextField
+            name='corpus_image_url'
+            label='Corpus Image URL'
             control={control}
-            name='corpus_type_name'
-            render={({ field }) => (
-              <FormControl
-                as='fieldset'
-                isRequired
-                isInvalid={!!errors.corpus_type_name}
-              >
-                <FormLabel as='legend'>Corpus Type Name</FormLabel>
-                <div data-testid='corpus-type-select'>
-                  <CRSelect
-                    chakraStyles={chakraStylesSelect}
-                    isClearable={true}
-                    isMulti={false}
-                    isSearchable={true}
-                    options={
-                      uniqueCorpusTypes.map((ct) => ({
-                        label: ct.name,
-                        value: ct.name,
-                      })) || []
-                    }
-                    isDisabled={!!loadedCorpus}
-                    {...field}
-                  />
-                </div>
-                <FormErrorMessage>
-                  {errors.corpus_type_name?.message}
-                </FormErrorMessage>
-              </FormControl>
-            )}
+            isRequired={false}
           />
+
+          {!corpusTypesLoading && (
+            <Controller
+              control={control}
+              name='corpus_type_name'
+              render={({ field }) => (
+                <FormControl
+                  as='fieldset'
+                  isRequired
+                  isInvalid={!!errors.corpus_type_name}
+                >
+                  <FormLabel as='legend'>Corpus Type Name</FormLabel>
+                  <div data-testid='corpus-type-select'>
+                    <CRSelect
+                      chakraStyles={chakraStylesSelect}
+                      isClearable={true}
+                      isMulti={false}
+                      isSearchable={true}
+                      options={
+                        corpusTypes.map((ct) => ({
+                          label: ct.name,
+                          value: ct.name,
+                        })) || []
+                      }
+                      isDisabled={!!loadedCorpus}
+                      {...field}
+                    />
+                  </div>
+                  <FormErrorMessage>
+                    {errors.corpus_type_name?.message}
+                  </FormErrorMessage>
+                </FormControl>
+              )}
+            />
+          )}
+
           {loadedCorpus && (
             <FormControl
               isRequired
@@ -403,43 +432,59 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
             </FormControl>
           )}
 
-          <Controller
-            control={control}
-            name='organisation_id'
-            render={({ field }) => (
-              <FormControl
-                as='fieldset'
-                isRequired
-                isInvalid={!!errors.organisation_id}
-              >
-                <FormLabel as='legend'>Organisation</FormLabel>
-                <div data-testid='organisation-select'>
-                  <CRSelect
-                    chakraStyles={chakraStylesSelect}
-                    isClearable={true}
-                    isMulti={false}
-                    isSearchable={true}
-                    options={Array.from(
-                      new Set(
-                        config?.corpora?.map((corpus) => ({
-                          label: corpus.organisation?.name,
-                          value: corpus.organisation?.id,
-                        })),
-                      ),
-                    ).map((org) => ({
-                      label: org.label,
-                      value: org.value,
-                    }))}
-                    isDisabled={!!loadedCorpus}
-                    {...field}
-                  />
-                </div>
-                <FormErrorMessage>
-                  {errors.organisation_id?.message}
-                </FormErrorMessage>
-              </FormControl>
-            )}
-          />
+          {config && !configLoading && (
+            <Controller
+              control={control}
+              name='organisation_id'
+              render={({ field }) => (
+                <FormControl
+                  as='fieldset'
+                  isRequired
+                  isInvalid={!!errors.organisation_id}
+                >
+                  <FormLabel as='legend'>Organisation</FormLabel>
+                  <div data-testid='organisation-select'>
+                    <CRSelect
+                      chakraStyles={chakraStylesSelect}
+                      isClearable={true}
+                      isMulti={false}
+                      isSearchable={true}
+                      options={Array.from(
+                        new Set(
+                          config?.corpora?.map(
+                            (corpus) => corpus.organisation?.id,
+                          ),
+                        ),
+                      ).map((id) => {
+                        const corpus = config?.corpora?.find(
+                          (corpus) => corpus.organisation?.id === id,
+                        )
+                        return {
+                          label: corpus?.organisation?.display_name,
+                          value: id,
+                        }
+                      })}
+                      isDisabled={!!loadedCorpus}
+                      {...field}
+                    />
+                  </div>
+                  <FormErrorMessage>
+                    {errors.organisation_id?.message}
+                  </FormErrorMessage>
+                </FormControl>
+              )}
+            />
+          )}
+
+          {!loadedCorpus && config && !configLoading && (
+            <ImportIdSection
+              corpora={config?.corpora || []}
+              watchedOrganisation={watchedOrganisation}
+              watchedImportIdPart1={watchedImportIdPart1}
+              control={control}
+              setValue={setValue}
+            />
+          )}
 
           <Modal isOpen={isModalOpen} onClose={handleModalCancel}>
             <ModalOverlay />

@@ -126,6 +126,8 @@ export interface IConfigGeography {
 
 export interface IConfigOrganisationInfo {
   name: string
+  display_name: string
+  type: string
   id: number
 }
 

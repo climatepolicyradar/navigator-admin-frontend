@@ -1,7 +1,5 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
-import { useAuth } from '@/hooks/useAuth'
-
 import { ProtectedRoute } from './ProtectedRoute'
 import Root from '@/Root'
 import Login from '@/views/auth/Login'
@@ -91,10 +89,8 @@ const unauthenticatedRoutes = [
 ]
 
 const Routes = () => {
-  const { token } = useAuth()
-
   const router = createBrowserRouter([
-    ...(!token ? unauthenticatedRoutes : []),
+    ...unauthenticatedRoutes,
     ...authenticatedRoutes,
   ])
 
