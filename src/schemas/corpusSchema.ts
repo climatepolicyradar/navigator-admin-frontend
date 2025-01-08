@@ -23,7 +23,6 @@ export const corpusSchema = yup
       then: (schema) => schema.required(),
       otherwise: (schema) => schema.notRequired(),
     }),
-    // .nullable(),
     import_id_part1: yup
       .object({
         label: yup.string().when('$isNewCorpus', {
