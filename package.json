@@ -14,8 +14,8 @@
     "type-check": "tsc"
   },
   "dependencies": {
-    "@chakra-ui/icons": "^2.0.19",
-    "@chakra-ui/react": "^2.8.1",
+    "@chakra-ui/icons": "^2.2.4",
+    "@chakra-ui/react": "2.10.4",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.13.0",
     "@hookform/resolvers": "^3.9.0",
