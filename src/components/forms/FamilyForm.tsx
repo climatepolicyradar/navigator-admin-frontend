@@ -327,6 +327,8 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       })
 
       setLoadedAndReset(true)
+    } else {
+      setLoadedAndReset(true)
     }
   }, [config, loadedFamily, reset, isMCFCorpus, collections, corpusInfo])
 
@@ -544,7 +546,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               />
             ) : null}
 
-            {loadedFamily && corpusInfo && loadedAndReset && (
+            {corpusInfo && loadedAndReset && (
               <>
                 <MetadataSection
                   corpusInfo={corpusInfo}
