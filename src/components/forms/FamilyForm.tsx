@@ -64,6 +64,7 @@ export interface IFamilyFormBase {
   title: string
   summary: string
   geography: IChakraSelect
+  geographies: IChakraSelect[]
   category: string
   corpus: IChakraSelect
   collections?: IChakraSelect[]
@@ -304,6 +305,13 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               (country) => country.value === loadedFamily.geography,
             )?.display_value || loadedFamily.geography,
         },
+        geographies: loadedFamily.geographies?.map((geography) => ({
+          value: geography,
+          label:
+            getCountries(config?.geographies)?.find(
+              (country) => country.value === geography,
+            )?.display_value || geography,
+        })),
         corpus: loadedFamily.corpus_import_id
           ? {
               label: loadedFamily.corpus_import_id,
@@ -510,6 +518,18 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 label: country.display_value,
               }))}
               isMulti={false}
+              isRequired={true}
+            />
+
+            <SelectField
+              name='geographies'
+              label='Geographies'
+              control={control}
+              options={getCountries(config?.geographies).map((country) => ({
+                value: country.value,
+                label: country.display_value,
+              }))}
+              isMulti={true}
               isRequired={true}
             />
 
