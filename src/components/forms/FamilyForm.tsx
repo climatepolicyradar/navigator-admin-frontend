@@ -201,7 +201,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       title: formData.title,
       summary: stripHtml(formData.summary),
       geography: formData.geography?.value || '',
-      // TODO - implement multiple geographies for post/create request
+      // TODO APP:100 - implement multiple geographies for post/create request
       geographies: loadedFamily
         ? formData.geographies?.map((geo) => geo.value) || []
         : [],
@@ -513,7 +513,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               isRequired={false}
             />
 
-            {isMCFCorpus ? (
+            {isMCFCorpus && loadedFamily ? (
               <SelectField
                 name='geographies'
                 label='Geographies'
