@@ -91,6 +91,16 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
     async (formValues: CorpusFormData) => {
       setFormError(null)
 
+      if (!loadedCorpus && !formValues.import_id_part1) {
+        const e: IError = {
+          status: 400,
+          detail: 'Import ID Part 1 is required',
+          message: 'Import ID Part 1 is required',
+          returnPage: '/corpora',
+        }
+        setFormError(e)
+      }
+
       // Check if description has actually changed from initial value
       if (formValues.corpus_type_description !== initialDescription.current) {
         setIsDescriptionManuallyEdited(true)
@@ -140,7 +150,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
       }
 
       const formData: ICorpusFormPost = {
-        import_id: `${formValues.import_id_part1.value}.${formValues.import_id_part2}.${formValues.import_id_part3}.${formValues.import_id_part4}`,
+        import_id: `${formValues.import_id_part1?.value}.${formValues.import_id_part2}.${formValues.import_id_part3}.${formValues.import_id_part4}`,
         title: formValues.title,
         description: formValues.description,
         corpus_text: convertEmptyToNull(

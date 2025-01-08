@@ -9,7 +9,7 @@ import { CorpusFormData } from '../CorpusForm'
 type TProps = {
   corpora: IConfigCorpora[]
   watchedOrganisation: { label?: string; value?: number }
-  watchedImportIdPart1: { label?: string; value?: string }
+  watchedImportIdPart1: { label?: string; value?: string } | null
   control: Control<CorpusFormData>
   setValue: UseFormSetValue<CorpusFormData>
 }
@@ -47,9 +47,9 @@ export const ImportIdSection = ({
       setSelectOptions(filteredOptions)
 
       // Clear the value of import_id_part1 when organisation changes
-      setValue('import_id_part1', {})
+      setValue('import_id_part1', null)
     } else {
-      setValue('import_id_part1', {})
+      setValue('import_id_part1', null)
       setSelectOptions([])
     }
   }, [watchedOrganisation, corpora, setValue])
@@ -90,6 +90,7 @@ export const ImportIdSection = ({
           control={control}
           options={selectOptions}
           isRequired={true}
+          isClearable={true}
         />
 
         <span style={{ margin: '0 8px' }}>·</span>
