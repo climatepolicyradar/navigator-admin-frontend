@@ -2,6 +2,7 @@ import * as yup from 'yup'
 
 interface CorpusValidation {
   isNewCorpus: boolean
+  import_id?: string
   import_id_part1?: { label?: string; value?: string | null }
   import_id_part2?: string
   import_id_part3?: string

@@ -35,7 +35,6 @@ import { Select as CRSelect } from 'chakra-react-select'
 import useConfig from '@/hooks/useConfig'
 import { InfoOutlineIcon } from '@chakra-ui/icons'
 import { WYSIWYG } from '../form-components/WYSIWYG'
-import * as yup from 'yup'
 import { stripHtml } from '@/utils/stripHtml'
 import { convertEmptyToNull } from '@/utils/convertEmptyToNull'
 import { TextField } from './fields/TextField'
@@ -47,7 +46,23 @@ type TProps = {
   corpus?: ICorpus
 }
 
-export type CorpusFormData = yup.InferType<typeof corpusSchema>
+export interface ICorpusFormSubmit {
+  import_id?: string
+  import_id_part1: {
+    label?: string | undefined
+    value?: string | undefined
+  } | null
+  import_id_part2?: string
+  import_id_part3?: string
+  import_id_part4?: string
+  title: string
+  description: string
+  corpus_text?: string | null
+  corpus_image_url?: string | null
+  corpus_type_name: { label: string; value: string }
+  corpus_type_description: string
+  organisation_id: { label: string; value: number }
+}
 
 export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
   const navigate = useNavigate()
@@ -62,7 +77,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
     setValue,
     getValues,
     watch,
-  } = useForm<CorpusFormData>({
+  } = useForm<ICorpusFormSubmit>({
     resolver: yupResolver(corpusSchema),
     context: {
       isNewCorpus: loadedCorpus ? false : true,
@@ -88,7 +103,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
     useState(false)
 
   const handleFormSubmission = useCallback(
-    async (formValues: CorpusFormData) => {
+    async (formValues: ICorpusFormSubmit) => {
       setFormError(null)
 
       if (!loadedCorpus && !formValues.import_id_part1) {
@@ -192,7 +207,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
     ],
   )
 
-  const onSubmit: SubmitHandler<CorpusFormData> = useCallback(
+  const onSubmit: SubmitHandler<ICorpusFormSubmit> = useCallback(
     (data) => {
       handleFormSubmission(data).catch((error: IError) => {
         console.error(error)
@@ -201,12 +216,10 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
     [handleFormSubmission],
   )
 
-  const onSubmitErrorHandler: SubmitErrorHandler<CorpusFormData> = useCallback(
-    (errors) => {
+  const onSubmitErrorHandler: SubmitErrorHandler<ICorpusFormSubmit> =
+    useCallback((errors) => {
       console.error(errors)
-    },
-    [],
-  )
+    }, [])
 
   const handleModalConfirm = () => {
     setIsConfirmed(true)
