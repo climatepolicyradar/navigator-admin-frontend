@@ -2636,12 +2636,12 @@ chai@^5.1.2:
     loupe "^3.1.0"
     pathval "^2.0.0"
 
-chakra-react-select@^4.7.3:
-  version "4.7.6"
-  resolved "https://registry.npmjs.org/chakra-react-select/-/chakra-react-select-4.7.6.tgz"
-  integrity sha512-ZL43hyXPnWf1g/HjsZDecbeJ4F2Q6tTPYJozlKWkrQ7lIX7ORP0aZYwmc5/Wly4UNzMimj2Vuosl6MmIXH+G2g==
+chakra-react-select@^5.0.2:
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/chakra-react-select/-/chakra-react-select-5.0.2.tgz#f82d594c2039d95c0fa68fc2a6fc681a2d14dd74"
+  integrity sha512-DI82ICGya/yu99Np8Uk8rW14o4NIt45i4qHDm/h0eRFVTHsRJqE+My99A9cPGJ72V5tM/WK1EeWxYUxWxhzxkA==
   dependencies:
-    react-select "5.7.7"
+    react-select "5.8.x"
 
 chalk@^2.4.2:
   version "2.4.2"
@@ -5010,10 +5010,10 @@ react-router@6.21.3:
   dependencies:
     "@remix-run/router" "1.14.2"
 
-react-select@5.7.7:
-  version "5.7.7"
-  resolved "https://registry.npmjs.org/react-select/-/react-select-5.7.7.tgz"
-  integrity sha512-HhashZZJDRlfF/AKj0a0Lnfs3sRdw/46VJIRd8IbB9/Ovr74+ZIwkAdSBjSPXsFMG+u72c5xShqwLSKIJllzqw==
+react-select@5.8.x:
+  version "5.8.2"
+  resolved "https://registry.yarnpkg.com/react-select/-/react-select-5.8.2.tgz#0d7ccb1895d61aafcd090fbf65aa9e506225a854"
+  integrity sha512-a/LkOckoI62710gGPQSQqUp7A10fGbH/ya3/IR49qaq3XoBvwymgD5mJgtiHxBDsutyEQfdKNycWVh8Cg8UCjw==
   dependencies:
     "@babel/runtime" "^7.12.0"
     "@emotion/cache" "^11.4.0"
