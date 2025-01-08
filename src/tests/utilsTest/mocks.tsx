@@ -1,5 +1,8 @@
 import { ICollection, IConfig, IDocument, IEvent } from '@/interfaces'
-import { ICCLWFamily, IUNFCCCFamily } from '@/interfaces/Family'
+import {
+  ILawsAndPoliciesFamily,
+  IInternationalAgreementsFamily,
+} from '@/interfaces/Family'
 
 const mockConfig = {
   geographies: [
@@ -36,7 +39,7 @@ const mockConfig = {
   },
 }
 
-const mockUNFCCCFamily: IUNFCCCFamily = {
+const mockUNFCCCFamily: IInternationalAgreementsFamily = {
   import_id: 'UNFCCC.family.1.0',
   title: 'UNFCCC Family One',
   summary: 'Summary for UNFCCC Family One',
@@ -61,7 +64,7 @@ const mockUNFCCCFamily: IUNFCCCFamily = {
   },
 }
 
-const mockCCLWFamily: ICCLWFamily = {
+const mockCCLWFamily: ILawsAndPoliciesFamily = {
   import_id: 'CCLW.family.2.0',
   title: 'CCLW Family Two',
   summary: 'Summary for CCLW Family Two',
@@ -90,7 +93,7 @@ const mockCCLWFamily: ICCLWFamily = {
   },
 }
 
-const mockUNFCCCFamilyNoDocumentsNoEvents: IUNFCCCFamily = {
+const mockUNFCCCFamilyNoDocumentsNoEvents: IInternationalAgreementsFamily = {
   ...mockUNFCCCFamily,
   import_id: 'UNFCCC.family.3.0',
   title: 'UNFCCC Family Three',
@@ -103,7 +106,7 @@ const mockUNFCCCFamilyNoDocumentsNoEvents: IUNFCCCFamily = {
   last_updated_date: null,
 }
 
-const mockCCLWFamilyNoDocuments: ICCLWFamily = {
+const mockCCLWFamilyNoDocuments: ILawsAndPoliciesFamily = {
   ...mockCCLWFamily,
   import_id: 'CCLW.family.4.0',
   title: 'CCLW Family Four',
@@ -113,7 +116,7 @@ const mockCCLWFamilyNoDocuments: ICCLWFamily = {
   last_modified: new Date(2021, 1, 5).toISOString(),
 }
 
-const mockCCLWFamilyNoEvents: ICCLWFamily = {
+const mockCCLWFamilyNoEvents: ILawsAndPoliciesFamily = {
   ...mockCCLWFamily,
   import_id: 'CCLW.family.5.0',
   title: 'CCLW Family Five',
@@ -125,7 +128,7 @@ const mockCCLWFamilyNoEvents: ICCLWFamily = {
   last_updated_date: null,
 }
 
-const mockCCLWFamilyWithOneEvent: ICCLWFamily = {
+const mockCCLWFamilyWithOneEvent: ILawsAndPoliciesFamily = {
   ...mockCCLWFamilyNoDocuments,
   import_id: 'CCLW.family.6.0',
   title: 'CCLW Family Six',
@@ -135,7 +138,7 @@ const mockCCLWFamilyWithOneEvent: ICCLWFamily = {
   last_modified: new Date(2021, 1, 8).toISOString(),
 }
 
-const mockCCLWFamilyOneDocument: ICCLWFamily = {
+const mockCCLWFamilyOneDocument: ILawsAndPoliciesFamily = {
   ...mockCCLWFamilyNoDocuments,
   import_id: 'CCLW.family.7.0',
   title: 'CCLW Family Seven',
@@ -209,6 +212,8 @@ const mockCCLWConfig: IConfig = {
       organisation: {
         name: 'CCLW',
         id: 1,
+        display_name: 'CCLW',
+        type: 'Academic',
       },
       taxonomy: {
         topic: {
@@ -258,6 +263,13 @@ const mockCCLWConfig: IConfig = {
             allowed_values: ['Type One', 'Type Two'],
           },
         },
+        _event: {
+          event_type: {
+            allow_any: false,
+            allow_blanks: false,
+            allowed_values: ['Event One', 'Event Two'],
+          },
+        },
       },
     },
   ],
@@ -275,6 +287,8 @@ const mockUNFCCCConfig: IConfig = {
       organisation: {
         name: 'UNFCCC',
         id: 3,
+        display_name: 'UNFCCC',
+        type: 'UN',
       },
       taxonomy: {
         author: {
@@ -304,6 +318,92 @@ const mockUNFCCCConfig: IConfig = {
             allowed_values: ['Type One', 'Type Two'],
           },
         },
+        _event: {
+          event_type: {
+            allow_any: false,
+            allow_blanks: false,
+            allowed_values: ['Event One', 'Event Two'],
+          },
+        },
+      },
+    },
+  ],
+}
+
+const mockMCFConfig: IConfig = {
+  ...mockConfig,
+  corpora: [
+    {
+      corpus_import_id: 'MCF.corpus.i00000001.n0000',
+      title: 'MCF Title',
+      description: 'Multilateral Climate Funds',
+      corpus_type: 'CIF',
+      corpus_type_description: 'Multilateral Climate Funds',
+      organisation: {
+        name: 'MCF',
+        id: 999,
+        display_name: 'MCF',
+        type: 'MCF',
+      },
+      taxonomy: {
+        region: {
+          allow_any: false,
+          allow_blanks: false,
+          allowed_values: ['Region 1', 'Region 2'],
+        },
+        sector: {
+          allow_any: false,
+          allow_blanks: false,
+          allowed_values: ['Sector 1', 'Sector 2'],
+        },
+        status: {
+          allow_any: false,
+          allow_blanks: false,
+          allowed_values: ['Status 1', 'Status 2'],
+        },
+        _document: {},
+        _event: {
+          datetime_event_name: {
+            allow_any: false,
+            allow_blanks: false,
+            allowed_values: ['Event 1'],
+          },
+          event_type: {
+            allow_any: false,
+            allow_blanks: false,
+            allowed_values: ['Event 1'],
+          },
+        },
+        event_type: {
+          allow_any: false,
+          allow_blanks: false,
+          allowed_values: ['Event 1', 'Event 2'],
+        },
+        project_id: {
+          allow_any: true,
+          allow_blanks: false,
+          allowed_values: ['Project ID 1', 'Project ID 2'],
+        },
+        project_url: {
+          allow_any: true,
+          allow_blanks: false,
+          allowed_values: ['Project URL', 'Project URL 2'],
+        },
+        implementing_agency: {
+          allow_any: false,
+          allow_blanks: false,
+          allowed_values: ['Agency 1', 'Agency 2'],
+        },
+        project_value_fund_spend: {
+          allow_any: true,
+          allow_blanks: false,
+          allowed_values: ['1000', '5000'],
+        },
+        project_value_co_financing: {
+          allow_any: true,
+          allow_blanks: false,
+          allowed_values: ['1000', '5000'],
+        },
       },
     },
   ],
@@ -320,6 +420,7 @@ export const mockFamiliesData = [
 export { mockConfig as configMock }
 export { mockCCLWConfig as cclwConfigMock }
 export { mockUNFCCCConfig as unfcccConfigMock }
+export { mockMCFConfig as mcfConfigMock }
 export { mockDocument }
 export { mockDocument2 }
 export { mockEvent }

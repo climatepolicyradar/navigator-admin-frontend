@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useForm, SubmitHandler, Controller } from 'react-hook-form'
+import { useForm, SubmitHandler } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import {
   BACK_TO_FAMILIES_ERROR_DETAIL,
@@ -11,12 +11,11 @@ import {
   IDocumentFormPostModified,
   IDocumentMetadata,
   IError,
-  IConfigTaxonomyCCLW,
-  IConfigTaxonomyUNFCCC,
+  TDocumentSubTaxonomy,
+  TTaxonomy,
 } from '@/interfaces'
 import { createDocument, updateDocument } from '@/api/Documents'
 import { documentSchema } from '@/schemas/documentSchema'
-import { Select as CRSelect } from 'chakra-react-select'
 
 import {
   Box,
@@ -29,126 +28,91 @@ import {
   ButtonGroup,
   useToast,
   FormHelperText,
-  Select,
   FormErrorMessage,
 } from '@chakra-ui/react'
 import useConfig from '@/hooks/useConfig'
 import { FormLoader } from '../feedback/FormLoader'
 import { ApiError } from '../feedback/ApiError'
-import { chakraStylesSelect } from '@/styles/chakra'
+import { SelectField } from './fields/SelectField'
 
 type TProps = {
   document?: IDocument
   familyId?: string
   canModify?: boolean
-  taxonomy?: IConfigTaxonomyCCLW | IConfigTaxonomyUNFCCC
+  taxonomy?: TTaxonomy
   onSuccess?: (documentId: string) => void
 }
 
 export const DocumentForm = ({
   document: loadedDocument,
   familyId,
-  canModify,
+  canModify = false,
   taxonomy,
   onSuccess,
 }: TProps) => {
   const { config, loading: configLoading, error: configError } = useConfig()
   const toast = useToast()
   const [formError, setFormError] = useState<IError | null | undefined>()
+
+  const docTaxonomy = taxonomy?._document as TDocumentSubTaxonomy
+
+  const renderRoleSelector = docTaxonomy && 'role' in docTaxonomy
+  const documentRoles = renderRoleSelector
+    ? docTaxonomy?.role?.allowed_values || []
+    : []
+
+  const renderTypeSelector = docTaxonomy && 'type' in docTaxonomy
+  const documentTypes = renderTypeSelector
+    ? docTaxonomy?.type?.allowed_values || []
+    : []
+
   const {
     control,
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors, isSubmitting },
-  } = useForm({
+  } = useForm<IDocumentFormPost>({
     resolver: yupResolver(documentSchema),
+    context: {
+      isTypeRequired: renderTypeSelector,
+      isRoleRequired: renderRoleSelector,
+    },
   })
-  const handleFormSubmission = async (formData: IDocumentFormPost) => {
-    setFormError(null)
 
-    const convertToModified = (
-      data: IDocumentFormPost,
-    ): IDocumentFormPostModified => {
-      const metadata: IDocumentMetadata = { role: [], type: [] }
-      if (data.role) {
-        metadata.role = [data.role]
-      }
-      if (data.type) {
-        metadata.type = [data.type]
-      }
-
-      return {
-        family_import_id: data.family_import_id,
-        title: data.title,
-        metadata: metadata,
-        source_url: data.source_url || null,
-        variant_name: data.variant_name || null,
-        user_language_name: data.user_language_name?.label || null,
-      }
-    }
-
-    const modifiedDocumentData = convertToModified(formData)
-
-    if (loadedDocument) {
-      return await updateDocument(
-        modifiedDocumentData,
-        loadedDocument.import_id,
-      )
-        .then((data) => {
-          toast.closeAll()
-          toast({
-            title: 'Document has been successfully updated',
-            status: 'success',
-            position: 'top',
-          })
-          onSuccess && onSuccess(data.response.import_id)
-        })
-        .catch((error: IError) => {
-          setFormError(error)
-          toast({
-            title: 'Document has not been updated',
-            description: error.message,
-            status: 'error',
-            position: 'top',
-          })
-        })
-    }
-
-    return await createDocument(modifiedDocumentData)
-      .then((data) => {
-        toast.closeAll()
-        toast({
-          title: 'Document has been successfully created',
-          status: 'success',
-          position: 'top',
-        })
-        onSuccess && onSuccess(data.response)
-      })
-      .catch((error: IError) => {
-        setFormError(error)
-        toast({
-          title: 'Document has not been created',
-          description: error.message,
-          status: 'error',
-          position: 'top',
-        })
-      })
-  } // end handleFormSubmission
-
-  const onSubmit: SubmitHandler<IDocumentFormPost> = (data) =>
-    handleFormSubmission(data)
-
-  const invalidDocumentCreation = !loadedDocument && !familyId
-
+  // Ensure family_import_id is always set
   useEffect(() => {
-    // Handle both loading an existing document and creating a new one (for a given family)
+    if (familyId || loadedDocument?.family_import_id) {
+      if (familyId) setValue('family_import_id', familyId)
+      else if (loadedDocument)
+        setValue('family_import_id', loadedDocument?.family_import_id)
+    }
+  }, [familyId, loadedDocument, setValue])
+
+  // Initialise form with existing document data
+  useEffect(() => {
     if (loadedDocument) {
       reset({
-        family_import_id: loadedDocument.family_import_id,
-        variant_name: loadedDocument.variant_name ?? '',
-        role: loadedDocument?.metadata?.role[0] ?? '',
-        type: loadedDocument?.metadata?.type[0] ?? '',
+        family_import_id: loadedDocument.family_import_id || familyId,
+        variant_name: loadedDocument.variant_name
+          ? {
+              label: loadedDocument.variant_name,
+              value: loadedDocument.variant_name,
+            }
+          : undefined,
+        role: loadedDocument?.metadata?.role
+          ? {
+              label: loadedDocument?.metadata?.role[0],
+              value: loadedDocument?.metadata?.role[0],
+            }
+          : undefined,
+        type: loadedDocument?.metadata?.type
+          ? {
+              label: loadedDocument?.metadata?.type[0],
+              value: loadedDocument?.metadata?.type[0],
+            }
+          : undefined,
         title: loadedDocument.title,
         source_url: loadedDocument.source_url ?? '',
         user_language_name: loadedDocument.user_language_name
@@ -158,12 +122,85 @@ export const DocumentForm = ({
             }
           : undefined,
       })
-    } else if (familyId) {
-      reset({
-        family_import_id: familyId,
-      })
     }
   }, [loadedDocument, familyId, reset])
+
+  const invalidDocumentCreation = !loadedDocument && !familyId
+
+  const handleFormSubmission = async (formData: IDocumentFormPost) => {
+    // Ensure family_import_id is always present
+    if (!formData.family_import_id && !familyId) {
+      toast({
+        title: 'Error',
+        description: 'Family ID is required for document creation',
+        status: 'error',
+        position: 'top',
+      })
+      return
+    }
+
+    setFormError(null)
+
+    const convertToModified = (
+      data: IDocumentFormPost,
+    ): IDocumentFormPostModified => {
+      const metadata: IDocumentMetadata = { role: [], type: [] }
+      if (data.role) {
+        metadata.role = [data.role?.value]
+      }
+      if (data.type) {
+        metadata.type = [data.type?.value]
+      }
+
+      return {
+        family_import_id: data.family_import_id || familyId || '',
+        title: data.title,
+        metadata: metadata,
+        source_url: data.source_url || null,
+        variant_name: data.variant_name?.value || null,
+        user_language_name: data.user_language_name?.value || null,
+      }
+    }
+
+    const modifiedDocumentData = convertToModified(formData)
+
+    try {
+      if (loadedDocument) {
+        const updateResult = await updateDocument(
+          modifiedDocumentData,
+          loadedDocument.import_id,
+        )
+        toast({
+          title: 'Document has been successfully updated',
+          status: 'success',
+          position: 'top',
+        })
+        onSuccess && onSuccess(updateResult.response.import_id)
+      } else {
+        const createResult = await createDocument(modifiedDocumentData)
+        toast({
+          title: 'Document has been successfully created',
+          status: 'success',
+          position: 'top',
+        })
+        onSuccess && onSuccess(createResult.response)
+      }
+    } catch (error) {
+      setFormError(error as IError)
+      toast({
+        title: loadedDocument
+          ? 'Document Update Failed'
+          : 'Document Creation Failed',
+        description: (error as IError)?.message,
+        status: 'error',
+        position: 'top',
+      })
+    }
+  }
+
+  const onSubmit: SubmitHandler<IDocumentFormPost> = (data) => {
+    return handleFormSubmission(data)
+  }
 
   return (
     <>
@@ -188,13 +225,20 @@ export const DocumentForm = ({
           {formError && <ApiError error={formError} />}
           <FormControl isRequired isReadOnly isDisabled>
             <FormLabel>Family ID</FormLabel>
-            <Input bg='white' {...register('family_import_id')} />
+            <Input
+              bg='white'
+              {...register('family_import_id')}
+              value={familyId || loadedDocument?.family_import_id || ''}
+              readOnly
+            />
             <FormHelperText>This field is not editable</FormHelperText>
           </FormControl>
+
           <FormControl isRequired>
             <FormLabel>Title</FormLabel>
             <Input bg='white' {...register('title')} />
           </FormControl>
+
           <FormControl isInvalid={!!errors.source_url}>
             <FormLabel>Source URL</FormLabel>
             <Input bg='white' {...register('source_url')} />
@@ -202,99 +246,62 @@ export const DocumentForm = ({
               {errors.source_url && errors.source_url.message}
             </FormErrorMessage>
           </FormControl>
-          <Controller
-            control={control}
-            name='role'
-            render={({ field }) => {
-              return (
-                <FormControl isRequired as='fieldset' isInvalid={!!errors.role}>
-                  <FormLabel as='legend'>Role</FormLabel>
-                  <Select background='white' {...field}>
-                    <option value=''>Please select</option>
-                    {taxonomy?._document?.role?.allowed_values.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </Select>
-                  <FormErrorMessage>Please select a role</FormErrorMessage>
-                </FormControl>
-              )
-            }}
-          />
-          <Controller
-            control={control}
-            name='type'
-            render={({ field }) => {
-              return (
-                <FormControl isRequired as='fieldset' isInvalid={!!errors.type}>
-                  <FormLabel as='legend'>Type</FormLabel>
-                  <Select background='white' {...field}>
-                    <option value=''>Please select</option>
-                    {taxonomy?._document?.type?.allowed_values.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </Select>
-                  <FormErrorMessage>Please select a type</FormErrorMessage>
-                </FormControl>
-              )
-            }}
-          />
-          <Controller
-            control={control}
+
+          {renderRoleSelector && (
+            <SelectField
+              name='role'
+              label='Role'
+              control={control}
+              options={documentRoles}
+              isMulti={false}
+              isRequired={true}
+              isClearable={false}
+            />
+          )}
+
+          {renderTypeSelector && (
+            <SelectField
+              name='type'
+              label='Type'
+              control={control}
+              options={documentTypes}
+              isMulti={false}
+              isRequired={true}
+              isClearable={false}
+            />
+          )}
+
+          <SelectField
             name='variant_name'
-            render={({ field }) => {
-              return (
-                <FormControl as='fieldset' isInvalid={!!errors.variant_name}>
-                  <FormLabel as='legend'>Variant</FormLabel>
-                  <Select background='white' {...field}>
-                    <option value=''>Please select</option>
-                    {config?.document?.variants.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </Select>
-                  <FormErrorMessage>Please select a type</FormErrorMessage>
-                </FormControl>
-              )
-            }}
-          />
-          <Controller
+            label='Variant'
             control={control}
-            name='user_language_name'
-            render={({ field }) => {
-              return (
-                <FormControl
-                  as='fieldset'
-                  isInvalid={!!errors.user_language_name}
-                >
-                  <FormLabel as='legend'>Language</FormLabel>
-                  <div data-testid='language-select'>
-                    <CRSelect
-                      chakraStyles={chakraStylesSelect}
-                      isClearable={true}
-                      isMulti={false}
-                      isSearchable={true}
-                      options={config?.languagesSorted}
-                      {...field}
-                    />
-                  </div>
-                  <FormErrorMessage>
-                    {errors.user_language_name?.message}
-                  </FormErrorMessage>
-                </FormControl>
-              )
-            }}
+            options={
+              config?.document?.variants?.map((option) => ({
+                value: option,
+                label: option,
+              })) || []
+            }
+            isMulti={false}
+            isRequired={false}
+            isClearable={true}
           />
+
+          <SelectField
+            name='user_language_name'
+            label='Language'
+            control={control}
+            options={config?.languagesSorted || []}
+            isMulti={false}
+            isRequired={false}
+            isClearable={true}
+          />
+
           <ButtonGroup isDisabled={!canModify}>
             <Button
               type='submit'
               colorScheme='blue'
-              onSubmit={handleSubmit(onSubmit)}
-              disabled={isSubmitting}
+              isLoading={isSubmitting}
+              isDisabled={!canModify || invalidDocumentCreation}
             >
               {(loadedDocument ? 'Update ' : 'Create new ') + ' Document'}
             </Button>

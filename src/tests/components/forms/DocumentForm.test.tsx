@@ -1,9 +1,9 @@
-import { screen, waitFor, fireEvent, within } from '@testing-library/react'
+import { screen, waitFor, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import { unfcccConfigMock } from '../../utilsTest/mocks'
+import { mcfConfigMock, unfcccConfigMock } from '../../utilsTest/mocks'
 import { customRender } from '@/tests/utilsTest/render'
 import { DocumentForm } from '@/components/forms/DocumentForm'
-import { IDocument } from '@/interfaces'
+import { IConfigTaxonomyUNFCCC, IDocument } from '@/interfaces'
 import userEvent from '@testing-library/user-event'
 
 vi.mock('@/api/Documents', () => ({
@@ -33,7 +33,8 @@ const mockDocument: IDocument = {
   last_modified: '4/1/2021',
 }
 
-const mockTaxonomy = unfcccConfigMock.corpora[0].taxonomy
+const mockUNFCCCTaxonomy = unfcccConfigMock.corpora[0].taxonomy
+const mockMCFTaxonomy = mcfConfigMock.corpora[0].taxonomy
 
 describe('DocumentForm', () => {
   const onDocumentFormSuccess = vi.fn()
@@ -42,13 +43,13 @@ describe('DocumentForm', () => {
     onDocumentFormSuccess.mockReset()
   })
 
-  it('displays original values for all fields', () => {
+  it('displays original values for all fields', async () => {
     customRender(
       <DocumentForm
         familyId={'test'}
         onSuccess={onDocumentFormSuccess}
         document={mockDocument}
-        taxonomy={mockTaxonomy}
+        taxonomy={mockUNFCCCTaxonomy}
       />,
     )
 
@@ -62,9 +63,17 @@ describe('DocumentForm', () => {
       mockDocument.source_url,
     )
 
-    const roleDropdown = within(screen.getByRole('group', { name: 'Role' }))
+    const roleDropdown = screen.getByRole('combobox', { name: 'Role' })
+    expect(roleDropdown).toBeInTheDocument()
 
-    expect(roleDropdown.getByText('Role One')).toBeInTheDocument()
+    // Simulate opening the dropdown
+    await userEvent.click(roleDropdown)
+
+    const options = screen.getAllByRole('option', { hidden: true })
+    const selectedOption = options.find(
+      (option) => option.textContent === mockDocument.metadata?.role?.[0],
+    )
+    expect(selectedOption).toBeInTheDocument()
   })
 
   it('shows allowed values when clicking on role dropdown', async () => {
@@ -73,18 +82,29 @@ describe('DocumentForm', () => {
         familyId={'test'}
         onSuccess={onDocumentFormSuccess}
         document={mockDocument}
-        taxonomy={mockTaxonomy}
+        taxonomy={mockUNFCCCTaxonomy}
       />,
     )
 
-    const roleDropdown = within(
-      screen.getByRole('group', { name: 'Role' }),
-    ).getByText('Please select')
+    const roleDropdown = screen.getByRole('combobox', { name: 'Role' })
     expect(roleDropdown).toBeInTheDocument()
 
     await userEvent.click(roleDropdown)
 
-    expect(screen.getByText('Role One')).toBeInTheDocument()
+    // Retrieve allowed values from mockUNFCCCTaxonomy
+    const taxonomy = mockUNFCCCTaxonomy as IConfigTaxonomyUNFCCC
+    const allowedValues = taxonomy._document?.role.allowed_values || []
+
+    // Use getAllByRole to find all options in the dropdown
+    const roleOptions = screen.getAllByRole('option')
+
+    // Check if each allowed value is in the dropdown options
+    allowedValues.forEach((value) => {
+      const option = Array.from(roleOptions).find(
+        (option) => option.textContent === value,
+      )
+      expect(option).toBeInTheDocument()
+    })
   })
 
   it('validate incorrect document URL', async () => {
@@ -169,33 +189,72 @@ describe('DocumentForm', () => {
       />,
     )
 
-    const languageDropdown = screen.getByTestId('language-select')
-    const submitButton = screen.getByText('Update Document')
+    const languageDropdown = screen.getByRole('combobox', { name: 'Language' })
+    expect(languageDropdown).toBeInTheDocument()
 
-    expect(languageDropdown).toBeDefined()
-    expect(languageDropdown).not.toBeNull()
+    const submitButton = screen.getByText('Update Document')
     expect(submitButton).toBeDefined()
-    expect(submitButton).not.toBeNull()
 
     // Original language as default
     await waitFor(() => {
       expect(screen.getByText('Default language')).toBeInTheDocument()
     })
 
-    // Open the dropdown
-    const languageSelectDropdown = screen
-      .getByTestId('language-select')
-      .querySelector('div')
-    if (languageSelectDropdown) {
-      fireEvent.click(languageSelectDropdown)
-    } else {
-      throw new Error('Dropdown not found')
-    }
+    // Simulate opening the dropdown
+    await userEvent.click(languageDropdown)
+
+    // Find and select 'English' from the dropdown
+    const englishOption = await screen.findByText('English')
+    await userEvent.click(englishOption)
+
+    // Verify 'English' is selected by checking the hidden input value
+    const hiddenInput = screen.getByDisplayValue('en')
+    expect(hiddenInput).toBeInTheDocument()
 
     // Check no errors at submit
     fireEvent.submit(submitButton)
     await waitFor(() => {
       expect(onDocumentFormSuccess).toHaveBeenCalled()
     })
+  })
+
+  it('does not render document role controller if property does not exist on taxonomy', () => {
+    customRender(
+      <DocumentForm
+        familyId={'test'}
+        onSuccess={onDocumentFormSuccess}
+        document={mockDocument}
+        taxonomy={mockMCFTaxonomy}
+      />,
+    )
+
+    expect(screen.queryByText('Role')).not.toBeInTheDocument()
+  })
+
+  it('does not render document type controller if property does not exist on taxonomy', () => {
+    customRender(
+      <DocumentForm
+        familyId={'test'}
+        onSuccess={onDocumentFormSuccess}
+        document={mockDocument}
+        taxonomy={mockMCFTaxonomy}
+      />,
+    )
+
+    expect(screen.queryByText('Type')).not.toBeInTheDocument()
+  })
+
+  it('renders role and type controller if properties exist on taxonomy', () => {
+    customRender(
+      <DocumentForm
+        familyId={'test'}
+        onSuccess={onDocumentFormSuccess}
+        document={mockDocument}
+        taxonomy={mockUNFCCCTaxonomy}
+      />,
+    )
+
+    expect(screen.getByText('Role')).toBeInTheDocument()
+    expect(screen.getByText('Type')).toBeInTheDocument()
   })
 })

@@ -1,7 +1,5 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
-import { useAuth } from '@/hooks/useAuth'
-
 import { ProtectedRoute } from './ProtectedRoute'
 import Root from '@/Root'
 import Login from '@/views/auth/Login'
@@ -10,6 +8,9 @@ import ErrorPage from '@views/Error'
 import Documents from '@/views/document/Documents'
 import DocumentList from '@/components/lists/DocumentList'
 import Document from '@/views/document/Document'
+import Corpus from '@/views/corpus/Corpus'
+import Corpora from '@/views/corpus/Corpora'
+import CorpusList from '@/components/lists/CorpusList'
 import { familyRoutes } from './familyRoutes'
 import { collectionRoutes } from './collectionRoutes'
 
@@ -50,6 +51,28 @@ const authenticatedRoutes = [
                   },
                 ],
               },
+              {
+                path: '/corpus/new',
+                element: <Corpus />,
+                errorElement: <ErrorPage />,
+              },
+              {
+                path: 'corpus/:importId/edit',
+                element: <Corpus />,
+                errorElement: <ErrorPage />,
+              },
+              {
+                path: 'corpora',
+                element: <Corpora />,
+                errorElement: <ErrorPage />,
+                children: [
+                  {
+                    path: '',
+                    element: <CorpusList />,
+                    errorElement: <ErrorPage />,
+                  },
+                ],
+              },
             ],
           },
         ],
@@ -66,10 +89,8 @@ const unauthenticatedRoutes = [
 ]
 
 const Routes = () => {
-  const { token } = useAuth()
-
   const router = createBrowserRouter([
-    ...(!token ? unauthenticatedRoutes : []),
+    ...unauthenticatedRoutes,
     ...authenticatedRoutes,
   ])
 

@@ -1,6 +1,62 @@
-import { TOrganisation } from './Organisation'
-import { TCorpusType } from './Corpus'
+import { IMetadata } from './Metadata'
 
+// Metadata as stored on ReadDTO.
+export interface IInternationalAgreementsMetadata extends IMetadata {
+  author: string[]
+  author_type: string[]
+}
+
+export interface ILawsAndPoliciesMetadata extends IMetadata {
+  topic: string[]
+  hazard: string[]
+  sector: string[]
+  keyword: string[]
+  framework: string[]
+  instrument: string[]
+}
+
+interface IMcfProjectsBaseMetadata extends IMetadata {
+  region: string[]
+  implementing_agency: string[]
+  status: string[]
+  project_id: string[]
+  project_url: string[]
+  project_value_co_financing: string[]
+  project_value_fund_spend: string[]
+}
+
+export interface IAfProjectsMetadata extends IMcfProjectsBaseMetadata {
+  sector: string[]
+}
+
+export interface ICifProjectsMetadata extends IMcfProjectsBaseMetadata {
+  sector: string[]
+}
+
+export interface IGefProjectsMetadata extends IMcfProjectsBaseMetadata {
+  focal_area: string[]
+}
+
+export interface IGcfProjectsMetadata extends IMcfProjectsBaseMetadata {
+  approved_ref: string[]
+  result_area: string[]
+  result_type: string[]
+  sector: string[]
+  theme: string[]
+}
+
+type TMcfProjectsMetadata =
+  | IAfProjectsMetadata
+  | IGefProjectsMetadata
+  | IGcfProjectsMetadata
+  | ICifProjectsMetadata
+
+export type TFamilyMetadata =
+  | IInternationalAgreementsMetadata
+  | ILawsAndPoliciesMetadata
+  | TMcfProjectsMetadata
+
+// Read DTOs.
 interface IFamilyBase {
   import_id: string
   title: string
@@ -14,60 +70,90 @@ interface IFamilyBase {
   last_updated_date: string | null
   documents: string[]
   collections: string[]
-  organisation: TOrganisation
+  organisation: string
   corpus_import_id: string
   corpus_title: string
-  corpus_type: TCorpusType
+  corpus_type: string
   created: string
   last_modified: string
 }
 
-export interface IUNFCCCMetadata {
-  author: string[]
-  author_type: string[]
+export interface IInternationalAgreementsFamily extends IFamilyBase {
+  metadata: IInternationalAgreementsMetadata
 }
 
-export interface ICCLWMetadata {
-  topic: string[]
-  hazard: string[]
-  sector: string[]
-  keyword: string[]
-  framework: string[]
-  instrument: string[]
+export interface ILawsAndPoliciesFamily extends IFamilyBase {
+  metadata: ILawsAndPoliciesMetadata
 }
 
-export interface IUNFCCCFamily extends IFamilyBase {
-  metadata: IUNFCCCMetadata
-  organisation: 'UNFCCC'
+interface IAfProjectsFamily extends IFamilyBase {
+  metadata: IAfProjectsMetadata
 }
 
-export interface ICCLWFamily extends IFamilyBase {
-  metadata: ICCLWMetadata
-  organisation: 'CCLW'
+interface ICifProjectsFamily extends IFamilyBase {
+  metadata: ICifProjectsMetadata
 }
 
-export type TFamily = IUNFCCCFamily | ICCLWFamily
+interface IGefProjectsFamily extends IFamilyBase {
+  metadata: IGefProjectsMetadata
+}
 
-interface IFamilyFormPostBase {
+interface IGcfProjectsFamily extends IFamilyBase {
+  metadata: IGcfProjectsMetadata
+}
+
+type TMcfFamily =
+  | IAfProjectsFamily
+  | IGefProjectsFamily
+  | IGcfProjectsFamily
+  | ICifProjectsFamily
+
+export type TFamily =
+  | IInternationalAgreementsFamily
+  | ILawsAndPoliciesFamily
+  | TMcfFamily
+
+// DTO for Create and Write.
+export interface IFamilyFormPostBase {
   title: string
   summary: string
   geography: string
   category: string
-  organisation: string
-  corpus_import_id: string
   collections: string[]
+  corpus_import_id: string
 }
 
-export interface ICCLWFamilyFormPost extends IFamilyFormPostBase {
-  organisation: 'CCLW'
-  metadata: ICCLWMetadata
+export interface ILawsAndPoliciesFamilyFormPost extends IFamilyFormPostBase {
+  metadata: ILawsAndPoliciesMetadata
 }
 
-export interface IUNFCCCFamilyFormPost extends IFamilyFormPostBase {
-  organisation: 'UNFCCC'
-  metadata: IUNFCCCMetadata
+export interface IInternationalAgreementsFamilyFormPost
+  extends IFamilyFormPostBase {
+  metadata: IInternationalAgreementsMetadata
+}
+export interface IAfProjectsFamilyFormPost extends IFamilyFormPostBase {
+  metadata: IAfProjectsMetadata
 }
 
-export type TFamilyFormPostMetadata = IUNFCCCMetadata | ICCLWMetadata
+export interface ICifProjectsFamilyFormPost extends IFamilyFormPostBase {
+  metadata: ICifProjectsMetadata
+}
 
-export type TFamilyFormPost = ICCLWFamilyFormPost | IUNFCCCFamilyFormPost
+export interface IGefProjectsFamilyFormPost extends IFamilyFormPostBase {
+  metadata: IGefProjectsMetadata
+}
+
+export interface IGcfProjectsFamilyFormPost extends IFamilyFormPostBase {
+  metadata: IGcfProjectsMetadata
+}
+
+type TMcfFamilyFormPost =
+  | IAfProjectsFamilyFormPost
+  | IGefProjectsFamilyFormPost
+  | IGcfProjectsFamilyFormPost
+  | ICifProjectsFamilyFormPost
+
+export type TFamilyFormPost =
+  | ILawsAndPoliciesFamilyFormPost
+  | IInternationalAgreementsFamilyFormPost
+  | TMcfFamilyFormPost

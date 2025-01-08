@@ -23,8 +23,10 @@ import {
   GoSignOut,
   GoComment,
   GoClock,
+  GoLog,
 } from 'react-icons/go'
 import Logout from './Logout'
+import useToken from '@/hooks/useToken'
 
 const IconLink = ({
   icon,
@@ -59,6 +61,9 @@ export function SideMenu() {
 
   const isCurrentPage = (page: string) =>
     pathname.split('/').reverse()[0] === page
+
+  const userToken = useToken()
+  const isSuperUser = !userToken ? false : userToken.is_superuser
 
   return (
     <>
@@ -106,6 +111,17 @@ export function SideMenu() {
                 >
                   Collections
                 </IconLink>
+                {isSuperUser && (
+                  <>
+                    <IconLink
+                      icon={<Icon as={GoLog} mr='2' />}
+                      to='/corpora'
+                      current={isCurrentPage('corpora')}
+                    >
+                      Corpora
+                    </IconLink>
+                  </>
+                )}
                 <IconLink icon={<Icon as={GoClock} mr='2' />}>
                   View audit history
                 </IconLink>

@@ -37,6 +37,8 @@ describe('modifyConfig', () => {
           organisation: {
             name: 'CCLW',
             id: 1,
+            display_name: 'CCLW',
+            type: 'Academic',
           },
           taxonomy: {
             topic: {
@@ -77,6 +79,12 @@ describe('modifyConfig', () => {
                 allowed_values: ['type1', 'type2'],
               },
             },
+            _event: {
+              event_type: {
+                allow_blanks: false,
+                allowed_values: ['eventType1', 'eventType2'],
+              },
+            },
           },
         },
         {
@@ -88,6 +96,8 @@ describe('modifyConfig', () => {
           organisation: {
             name: 'UNFCCC',
             id: 3,
+            display_name: 'UNFCCC',
+            type: 'UN',
           },
           taxonomy: {
             author: {
@@ -110,6 +120,12 @@ describe('modifyConfig', () => {
               type: {
                 allow_blanks: false,
                 allowed_values: ['type1', 'type2'],
+              },
+            },
+            _event: {
+              event_type: {
+                allow_blanks: false,
+                allowed_values: ['eventType1', 'eventType2'],
               },
             },
           },

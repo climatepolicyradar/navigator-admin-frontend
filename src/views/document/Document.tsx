@@ -14,12 +14,11 @@ import { DocumentForm } from '@/components/forms/DocumentForm'
 import { ApiError } from '@/components/feedback/ApiError'
 import useDocument from '@/hooks/useDocument'
 import useFamily from '@/hooks/useFamily'
-import useCorpus from '@/hooks/useCorpus'
 import useConfig from '@/hooks/useConfig'
-import useTaxonomy from '@/hooks/useTaxonomy'
 import { decodeToken } from '@/utils/decodeToken'
 import { IDecodedToken } from '@/interfaces'
 import { canModify } from '@/utils/canModify'
+import useCorpusFromConfig from '@/hooks/useCorpusFromConfig'
 
 export default function Document() {
   const { importId } = useParams()
@@ -30,8 +29,11 @@ export default function Document() {
     loading: familyLoading,
     error: familyError,
   } = useFamily(document?.family_import_id)
-  const corpusInfo = useCorpus(config?.corpora, family?.corpus_import_id)
-  const taxonomy = useTaxonomy(corpusInfo?.corpus_type, corpusInfo?.taxonomy)
+  const corpusInfo = useCorpusFromConfig(
+    config?.corpora,
+    family?.corpus_import_id,
+  )
+  const taxonomy = corpusInfo?.taxonomy
   const userToken = useMemo(() => {
     const token = localStorage.getItem('token')
     if (!token) return null
