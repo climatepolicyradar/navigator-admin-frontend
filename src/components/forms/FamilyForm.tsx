@@ -201,6 +201,10 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       title: formData.title,
       summary: stripHtml(formData.summary),
       geography: formData.geography?.value || '',
+      // TODO - implement multiple geographies for post/create request
+      geographies: loadedFamily
+        ? formData.geographies?.map((geo) => geo.value) || []
+        : [],
       category: isMCFCorpus ? 'MCF' : formData.category,
       corpus_import_id: formData.corpus?.value || '',
       collections:
@@ -509,29 +513,31 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               isRequired={false}
             />
 
-            <SelectField
-              name='geography'
-              label='Geography'
-              control={control}
-              options={getCountries(config?.geographies).map((country) => ({
-                value: country.value,
-                label: country.display_value,
-              }))}
-              isMulti={false}
-              isRequired={true}
-            />
-
-            <SelectField
-              name='geographies'
-              label='Geographies'
-              control={control}
-              options={getCountries(config?.geographies).map((country) => ({
-                value: country.value,
-                label: country.display_value,
-              }))}
-              isMulti={true}
-              isRequired={true}
-            />
+            {isMCFCorpus ? (
+              <SelectField
+                name='geographies'
+                label='Geographies'
+                control={control}
+                options={getCountries(config?.geographies).map((country) => ({
+                  value: country.value,
+                  label: country.display_value,
+                }))}
+                isMulti={true}
+                isRequired={true}
+              />
+            ) : (
+              <SelectField
+                name='geography'
+                label='Geography'
+                control={control}
+                options={getCountries(config?.geographies).map((country) => ({
+                  value: country.value,
+                  label: country.display_value,
+                }))}
+                isMulti={false}
+                isRequired={true}
+              />
+            )}
 
             {!loadedFamily && (
               <SelectField
