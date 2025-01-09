@@ -246,8 +246,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
 
     try {
       if (loadedFamily) {
-        console.log(submissionData)
-        return
         await updateFamily(submissionData, loadedFamily.import_id)
         toast({
           title: 'Family has been successfully updated',
