@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { useForm, SubmitHandler } from 'react-hook-form'
+import { useEffect, useState, useCallback } from 'react'
+import { useForm, SubmitHandler, SubmitErrorHandler } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import {
   BACK_TO_FAMILIES_ERROR_DETAIL,
@@ -144,14 +144,13 @@ export const DocumentForm = ({
     const convertToModified = (
       data: IDocumentFormPost,
     ): IDocumentFormPostModified => {
-      const metadata: IDocumentMetadata = { role: [], type: [] }
-      if (data.role) {
+      const metadata: IDocumentMetadata = {}
+      if (data.role?.value) {
         metadata.role = [data.role?.value]
       }
-      if (data.type) {
+      if (data.type?.value) {
         metadata.type = [data.type?.value]
       }
-
       return {
         family_import_id: data.family_import_id || familyId || '',
         title: data.title,
@@ -202,6 +201,20 @@ export const DocumentForm = ({
     return handleFormSubmission(data)
   }
 
+  const onSubmitErrorHandler: SubmitErrorHandler<IDocumentFormPost> =
+    useCallback(
+      (errors) => {
+        console.error('onSubmitErrorHandler', errors)
+        setFormError(errors as IError)
+        toast({
+          title: 'Form submission error',
+          description: (errors as IError).message,
+          status: 'error',
+        })
+      },
+      [toast],
+    )
+
   return (
     <>
       {invalidDocumentCreation && (
@@ -220,7 +233,7 @@ export const DocumentForm = ({
           detail={BACK_TO_FAMILIES_ERROR_DETAIL}
         />
       )}
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit, onSubmitErrorHandler)}>
         <VStack gap='4' mb={12} align={'stretch'}>
           {formError && <ApiError error={formError} />}
           <FormControl isRequired isReadOnly isDisabled>
