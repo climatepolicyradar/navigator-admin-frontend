@@ -62,7 +62,6 @@ interface IFamilyBase {
   title: string
   summary: string
   geography: string
-  geographies: string[]
   category: string
   status: string
   slug: string
