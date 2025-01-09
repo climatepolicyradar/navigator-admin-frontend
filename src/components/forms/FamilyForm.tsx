@@ -161,6 +161,16 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     )
   }, [watchCorpus?.value, loadedFamily?.corpus_import_id])
 
+  const isLegacyCorpus = useMemo(() => {
+    const prefixes = ['CCLW', 'CPR', 'UNFCCC']
+    return (
+      prefixes.some((prefix) => watchCorpus?.value?.startsWith(prefix)) ||
+      prefixes.some((prefix) =>
+        loadedFamily?.corpus_import_id?.startsWith(prefix),
+      )
+    )
+  }, [watchCorpus?.value, loadedFamily?.corpus_import_id])
+
   const [editingEntity, setEditingEntity] = useState<TChildEntity | undefined>()
   const [editingEvent, setEditingEvent] = useState<IEvent | undefined>()
   const [editingDocument, setEditingDocument] = useState<
@@ -191,6 +201,19 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     setIsFormSubmitting(true)
     setFormError(null)
 
+    const getGeographiesValues = () => {
+      // TODO APP:100 - implement multiple geographies for post/create request
+      // loadedFamily indicates its an edit form
+      if (!loadedFamily) {
+        return [formData.geography?.value]
+      }
+      if (isLegacyCorpus) {
+        return [formData.geography?.value]
+      } else {
+        return formData.geographies?.map((geo) => geo.value) || []
+      }
+    }
+
     // Validate corpus type
     if (!corpusInfo?.corpus_type) {
       throw new Error('No corpus type specified')
@@ -201,10 +224,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       title: formData.title,
       summary: stripHtml(formData.summary),
       geography: formData.geography?.value || '',
-      // TODO APP:100 - implement multiple geographies for post/create request
-      geographies: loadedFamily
-        ? formData.geographies?.map((geo) => geo.value) || []
-        : [],
+      geographies: getGeographiesValues(),
       category: isMCFCorpus ? 'MCF' : formData.category,
       corpus_import_id: formData.corpus?.value || '',
       collections:
@@ -223,6 +243,8 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
 
     try {
       if (loadedFamily) {
+        console.log(submissionData)
+        return
         await updateFamily(submissionData, loadedFamily.import_id)
         toast({
           title: 'Family has been successfully updated',
@@ -513,19 +535,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               isRequired={false}
             />
 
-            {isMCFCorpus && loadedFamily ? (
-              <SelectField
-                name='geographies'
-                label='Geographies'
-                control={control}
-                options={getCountries(config?.geographies).map((country) => ({
-                  value: country.value,
-                  label: country.display_value,
-                }))}
-                isMulti={true}
-                isRequired={true}
-              />
-            ) : (
+            {isLegacyCorpus ? (
               <SelectField
                 name='geography'
                 label='Geography'
@@ -535,6 +545,18 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                   label: country.display_value,
                 }))}
                 isMulti={false}
+                isRequired={true}
+              />
+            ) : (
+              <SelectField
+                name='geographies'
+                label='Geographies'
+                control={control}
+                options={getCountries(config?.geographies).map((country) => ({
+                  value: country.value,
+                  label: country.display_value,
+                }))}
+                isMulti={true}
                 isRequired={true}
               />
             )}
