@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo, useCallback } from 'react'
-import { useForm, SubmitHandler } from 'react-hook-form'
+import { useForm, SubmitHandler, SubmitErrorHandler } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useBlocker, useNavigate } from 'react-router-dom'
 import {
@@ -142,6 +142,9 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     formState: { errors, isSubmitting, dirtyFields },
   } = useForm<TFamilyFormSubmit>({
     resolver: yupResolver<TFamilyFormSubmit>(validationSchema),
+    defaultValues: {
+      category: 'MCF', // Can we be smarter about this?
+    },
   })
 
   // Watch for corpus changes and update schema only when creating a new family
@@ -274,7 +277,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     try {
       await handleFormSubmission(data)
     } catch (error) {
-      console.log('onSubmitErrorHandler', error)
+      console.error('onSubmit', error)
       setFormError(error as IError)
       toast({
         title: 'Form submission error',
@@ -283,6 +286,20 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       })
     }
   }
+
+  const onSubmitErrorHandler: SubmitErrorHandler<TFamilyFormSubmit> =
+    useCallback(
+      (errors) => {
+        console.error('onSubmitErrorHandler', errors)
+        setFormError(errors as IError)
+        toast({
+          title: 'Form submission error',
+          description: (errors as IError).message,
+          status: 'error',
+        })
+      },
+      [toast],
+    )
 
   useEffect(() => {
     if (loadedFamily) {
@@ -498,7 +515,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       )}
 
       {canLoadForm && (
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit, onSubmitErrorHandler)}>
           <VStack gap='4' mb={12} mt={4} align={'stretch'}>
             {formError && <ApiError error={formError} />}
 
