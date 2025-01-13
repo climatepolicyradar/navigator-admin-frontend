@@ -6,12 +6,7 @@ export const baseFamilySchema = yup
   .object({
     title: yup.string().required('Title is required'),
     summary: yup.string().required('Summary is required'),
-    geography: yup
-      .object({
-        label: yup.string().required(),
-        value: yup.string().required(),
-      })
-      .required('Geography is required'),
+    geographies: yup.array().required('Geographies is required'),
     category: yup.string().required('Category is required'),
     corpus: yup
       .object({

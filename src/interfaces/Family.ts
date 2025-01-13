@@ -62,6 +62,7 @@ interface IFamilyBase {
   title: string
   summary: string
   geography: string
+  geographies: string[]
   category: string
   status: string
   slug: string
@@ -118,6 +119,7 @@ export interface IFamilyFormPostBase {
   title: string
   summary: string
   geography: string
+  geographies: string[]
   category: string
   collections: string[]
   corpus_import_id: string

@@ -63,7 +63,7 @@ import {
 export interface IFamilyFormBase {
   title: string
   summary: string
-  geography: IChakraSelect
+  geographies: IChakraSelect[]
   category: string
   corpus: IChakraSelect
   collections?: IChakraSelect[]
@@ -202,7 +202,9 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     const baseData: IFamilyFormPostBase = {
       title: formData.title,
       summary: stripHtml(formData.summary),
-      geography: formData.geography?.value || '',
+      // We still expect this value in the backend
+      geography: formData.geographies?.[0].value || '',
+      geographies: formData.geographies?.map((geo) => geo.value),
       category: isMCFCorpus ? 'MCF' : formData.category,
       corpus_import_id: formData.corpus?.value || '',
       collections:
@@ -314,13 +316,13 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       reset({
         title: loadedFamily.title,
         summary: loadedFamily.summary,
-        geography: {
-          value: loadedFamily.geography,
+        geographies: loadedFamily.geographies?.map((geography) => ({
+          value: geography,
           label:
             getCountries(config?.geographies)?.find(
-              (country) => country.value === loadedFamily.geography,
-            )?.display_value || loadedFamily.geography,
-        },
+              (country) => country.value === geography,
+            )?.display_value || geography,
+        })),
         corpus: loadedFamily.corpus_import_id
           ? {
               label: loadedFamily.corpus_import_id,
@@ -484,16 +486,13 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
         <form onSubmit={handleSubmit(onSubmit, onSubmitErrorHandler)}>
           <VStack gap='4' mb={12} mt={4} align={'stretch'}>
             {formError && <ApiError error={formError} />}
-
             {loadedFamily && <ReadOnlyFields family={loadedFamily} />}
-
             <TextField
               name='title'
               label='Title'
               control={control}
               isRequired={true}
             />
-
             <WYSIWYGField
               name='summary'
               label='Summary'
@@ -503,7 +502,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               error={errors.summary}
               isRequired={true}
             />
-
             <SelectField
               name='collections'
               label='Collections'
@@ -517,19 +515,17 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               isMulti={true}
               isRequired={false}
             />
-
             <SelectField
-              name='geography'
-              label='Geography'
+              name='geographies'
+              label='Geographies'
               control={control}
               options={getCountries(config?.geographies).map((country) => ({
                 value: country.value,
                 label: country.display_value,
               }))}
-              isMulti={false}
+              isMulti={true}
               isRequired={true}
             />
-
             {!loadedFamily && (
               <SelectField
                 name='corpus'
@@ -544,7 +540,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 isRequired={true}
               />
             )}
-
             {!isMCFCorpus ? (
               <RadioGroupField
                 name='category'
@@ -562,7 +557,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 rules={{ required: true }}
               />
             ) : null}
-
             {corpusInfo && loadedAndReset && (
               <>
                 <MetadataSection
@@ -575,7 +569,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 />
               </>
             )}
-
             <DocumentSection
               familyDocuments={familyDocuments}
               userCanModify={userAccess.canModify}
@@ -586,7 +579,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               setUpdatedDocument={setUpdatedDocument}
               isNewFamily={!loadedFamily}
             />
-
             <EventSection
               familyEvents={familyEvents}
               userCanModify={userAccess.canModify}
@@ -597,7 +589,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               setUpdatedEvent={setUpdatedEvent}
               isNewFamily={!loadedFamily}
             />
-
             <ButtonGroup>
               <Button
                 type='submit'

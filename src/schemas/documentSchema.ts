@@ -12,9 +12,18 @@ export const documentSchema = yup
       .nullable(),
     role: yup
       .object({
-        label: yup.string().required(),
-        value: yup.string().required(),
+        label: yup.string().when('$isRoleRequired', {
+          is: true,
+          then: (schema) => schema.required('Role.label is a required field'),
+          otherwise: (schema) => schema.notRequired(),
+        }),
+        value: yup.string().when('$isRoleRequired', {
+          is: true,
+          then: (schema) => schema.required('Role.value is a required field'),
+          otherwise: (schema) => schema.notRequired(),
+        }),
       })
+      .nullable()
       .when('$isRoleRequired', {
         is: true,
         then: (schema) => schema.required(),
@@ -22,9 +31,18 @@ export const documentSchema = yup
       }),
     type: yup
       .object({
-        label: yup.string().required(),
-        value: yup.string().required(),
+        label: yup.string().when('$isTypeRequired', {
+          is: true,
+          then: (schema) => schema.required('Type.label is a required field'),
+          otherwise: (schema) => schema.notRequired(),
+        }),
+        value: yup.string().when('$isTypeRequired', {
+          is: true,
+          then: (schema) => schema.required('Type.value is a required field'),
+          otherwise: (schema) => schema.notRequired(),
+        }),
       })
+      .nullable()
       .when('$isTypeRequired', {
         is: true,
         then: (schema) => schema.required(),
