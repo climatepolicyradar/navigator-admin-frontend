@@ -55,7 +55,7 @@ export const documentSchema = yup
       .nullable()
       .when('$isMCFCorpus', {
         is: true,
-        then: (schema) => schema.required('Source url is a required field'),
+        then: (schema) => schema.required('Source Url is a required field'),
         otherwise: (schema) => schema.notRequired(),
       }),
     user_language_name: yup
