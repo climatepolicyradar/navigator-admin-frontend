@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import { useForm, SubmitHandler, SubmitErrorHandler } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import {
@@ -66,6 +66,12 @@ export const DocumentForm = ({
     ? docTaxonomy?.type?.allowed_values || []
     : []
 
+  const isMCFCorpus = useMemo(() => {
+    return config?.corpora.some((corpus) =>
+      corpus?.corpus_import_id.startsWith('MCF'),
+    )
+  }, [config?.corpora])
+
   const {
     control,
     register,
@@ -78,6 +84,7 @@ export const DocumentForm = ({
     context: {
       isTypeRequired: renderTypeSelector,
       isRoleRequired: renderRoleSelector,
+      isMCFCorpus: isMCFCorpus,
     },
   })
 
@@ -252,7 +259,10 @@ export const DocumentForm = ({
             <Input bg='white' {...register('title')} />
           </FormControl>
 
-          <FormControl isInvalid={!!errors.source_url}>
+          <FormControl
+            isRequired={!!isMCFCorpus}
+            isInvalid={!!errors.source_url}
+          >
             <FormLabel>Source URL</FormLabel>
             <Input bg='white' {...register('source_url')} />
             <FormErrorMessage role='error'>
