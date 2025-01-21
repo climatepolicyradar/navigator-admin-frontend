@@ -141,9 +141,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     formState: { errors, isSubmitting, dirtyFields },
   } = useForm<TFamilyFormSubmit>({
     resolver: yupResolver<TFamilyFormSubmit>(validationSchema),
-    defaultValues: {
-      category: 'MCF', // Can we be smarter about this?
-    },
   })
 
   // Watch for corpus changes and update schema only when creating a new family
@@ -154,14 +151,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     getCorpusImportId(loadedFamily, watchCorpus),
   )
   const taxonomy = corpusInfo?.taxonomy
-
-  // Determine if the corpus is an MCF type
-  const isMCFCorpus = useMemo(() => {
-    return (
-      watchCorpus?.value?.startsWith('MCF') ||
-      loadedFamily?.corpus_import_id?.startsWith('MCF')
-    )
-  }, [watchCorpus?.value, loadedFamily?.corpus_import_id])
 
   const [editingEntity, setEditingEntity] = useState<TChildEntity | undefined>()
   const [editingEvent, setEditingEvent] = useState<IEvent | undefined>()
@@ -174,6 +163,13 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   )
   const [updatedEvent, setUpdatedEvent] = useState<string>('')
   const [updatedDocument, setUpdatedDocument] = useState<string>('')
+
+  // Determine if the corpus is an MCF type
+  const isMCFCorpus = useMemo(() => {
+    return config?.corpora.some((corpus) =>
+      corpus?.corpus_import_id.startsWith('MCF'),
+    )
+  }, [config?.corpora])
 
   const userAccess = useMemo(() => {
     const token = localStorage.getItem('token')
@@ -205,7 +201,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       // We still expect this value in the backend
       geography: formData.geographies?.[0].value || '',
       geographies: formData.geographies?.map((geo) => geo.value),
-      category: isMCFCorpus ? 'MCF' : formData.category,
+      category: formData.category,
       corpus_import_id: formData.corpus?.value || '',
       collections:
         formData.collections?.map((collection) => collection.value) || [],
@@ -329,7 +325,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               value: loadedFamily.corpus_import_id,
             }
           : undefined,
-        category: isMCFCorpus ? 'MCF' : loadedFamily.category,
+        category: loadedFamily.category,
         collections: loadedFamily.collections
           ?.map((collectionId) => {
             const collection = getCollection(collectionId, collections)
@@ -349,7 +345,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     } else {
       setLoadedAndReset(true)
     }
-  }, [config, loadedFamily, reset, isMCFCorpus, collections, corpusInfo])
+  }, [config, loadedFamily, reset, collections, corpusInfo])
 
   const onAddNewEntityClick = (entityType: TChildEntity) => {
     setEditingEntity(entityType)
@@ -540,23 +536,35 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 isRequired={true}
               />
             )}
-            {!isMCFCorpus ? (
-              <RadioGroupField
-                name='category'
-                label='Category'
-                control={control}
-                options={
-                  // These are the global family categories. We set MCF as the category directly
-                  // in the form above if the family corpus is a MCF corpus.
-                  [
-                    { value: 'Executive', label: 'Executive' },
-                    { value: 'Legislative', label: 'Legislative' },
-                    { value: 'UNFCCC', label: 'UNFCCC' },
-                  ]
-                }
-                rules={{ required: true }}
-              />
-            ) : null}
+
+            <RadioGroupField
+              name='category'
+              label='Category'
+              control={control}
+              options={
+                // These are the global family categories. We set MCF as the category directly
+                // in the form above if the family corpus is a MCF corpus.
+                isMCFCorpus
+                  ? [
+                      { value: 'MCF', label: 'Projects' },
+                      {
+                        value: 'Reports',
+                        label: 'Reports (Guidance)',
+                      },
+                    ]
+                  : [
+                      { value: 'Executive', label: 'Executive' },
+                      { value: 'Legislative', label: 'Legislative' },
+                      { value: 'UNFCCC', label: 'UNFCCC' },
+                      {
+                        value: 'Reports',
+                        label: 'Reports',
+                      },
+                    ]
+              }
+              rules={{ required: true }}
+            />
+
             {corpusInfo && loadedAndReset && (
               <>
                 <MetadataSection
