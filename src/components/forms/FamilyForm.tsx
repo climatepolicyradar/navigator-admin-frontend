@@ -185,8 +185,8 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
 
     const corpusAuthor = watchCorpus.label.replace('Guidance', '').trim()
     const corpusAuthorType = {
-      value: 'Intergovermental Organization',
-      label: 'Intergovermental Organization',
+      value: 'Intergovernmental Organization',
+      label: 'Intergovernmental Organization',
     }
 
     setValue('author', corpusAuthor)
@@ -563,27 +563,16 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               name='category'
               label='Category'
               control={control}
-              options={
-                // These are the global family categories. We set MCF as the category directly
-                // in the form above if the family corpus is a MCF corpus.
-                isMCFCorpus
-                  ? [
-                      { value: 'MCF', label: 'Projects' },
-                      {
-                        value: 'Reports',
-                        label: 'Reports (Guidance)',
-                      },
-                    ]
-                  : [
-                      { value: 'Executive', label: 'Executive' },
-                      { value: 'Legislative', label: 'Legislative' },
-                      { value: 'UNFCCC', label: 'UNFCCC' },
-                      {
-                        value: 'Reports',
-                        label: 'Reports',
-                      },
-                    ]
-              }
+              options={[
+                { value: 'Executive', label: 'Executive' },
+                { value: 'Legislative', label: 'Legislative' },
+                { value: 'UNFCCC', label: 'UNFCCC' },
+                {
+                  value: 'Reports',
+                  label: 'Reports (Guidance)',
+                },
+                { value: 'MCF', label: 'MCF Projects' },
+              ]}
               rules={{ required: true }}
             />
 
