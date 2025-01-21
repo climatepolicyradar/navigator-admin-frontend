@@ -2,7 +2,7 @@ import { IConfig } from '@/interfaces'
 import { modifyConfig } from '@utils/modifyConfig'
 
 describe('modifyConfig', () => {
-  it(' adds a languagesSorted property to the config object with languages sorted alphabetically by label', () => {
+  it('adds a languagesSorted property to the config object with languages sorted alphabetically by label', () => {
     const mockConfig: IConfig = {
       document: {
         roles: ['role1', 'role2'],

@@ -2,8 +2,8 @@ import { cleanup } from '@testing-library/react'
 import { reset } from './mocks/repository.ts'
 import { server } from './mocks/server.ts'
 import * as matchers from '@testing-library/jest-dom/matchers'
-import sign from 'jwt-encode'
 import { vi } from 'vitest'
+import { setupUser } from './helpers.js'
 
 expect.extend(matchers)
 
@@ -60,7 +60,7 @@ window.IntersectionObserver =
 // Establish API mocking before all tests.
 beforeAll(() => {
   server.listen()
-  localStorage.setItem('token', sign({ is_superuser: true }, ''))
+  setupUser()
 })
 
 // Reset any request handlers that we may add during the tests,
