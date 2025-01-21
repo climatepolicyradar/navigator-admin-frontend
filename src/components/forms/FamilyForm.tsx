@@ -171,6 +171,28 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     )
   }, [config?.corpora])
 
+  useEffect(() => {
+    if (loadedFamily) {
+      return
+    }
+
+    if (
+      !isMCFCorpus ||
+      !watchCorpus?.label.toLowerCase().includes('guidance')
+    ) {
+      return
+    }
+
+    const corpusAuthor = watchCorpus.label.replace('Guidance', '').trim()
+    const corpusAuthorType = {
+      value: 'Intergovermental Organization',
+      label: 'Intergovermental Organization',
+    }
+
+    setValue('author', corpusAuthor)
+    setValue('author_type', corpusAuthorType)
+  }, [watchCorpus, isMCFCorpus, loadedFamily, setValue])
+
   const userAccess = useMemo(() => {
     const token = localStorage.getItem('token')
     if (!token) return { canModify: false, isSuperUser: false }
