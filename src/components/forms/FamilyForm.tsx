@@ -176,21 +176,16 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       return
     }
 
-    if (
-      !isMCFCorpus ||
-      !watchCorpus?.label.toLowerCase().includes('guidance')
-    ) {
-      return
-    }
+    if (isMCFCorpus && watchCorpus?.label.toLowerCase().includes('guidance')) {
+      const corpusAuthor = watchCorpus?.label.replace('Guidance', '').trim()
+      const corpusAuthorType = {
+        value: 'Intergovernmental Organization',
+        label: 'Intergovernmental Organization',
+      }
 
-    const corpusAuthor = watchCorpus.label.replace('Guidance', '').trim()
-    const corpusAuthorType = {
-      value: 'Intergovernmental Organization',
-      label: 'Intergovernmental Organization',
+      setValue('author', corpusAuthor)
+      setValue('author_type', corpusAuthorType)
     }
-
-    setValue('author', corpusAuthor)
-    setValue('author_type', corpusAuthorType)
   }, [watchCorpus, isMCFCorpus, loadedFamily, setValue])
 
   const userAccess = useMemo(() => {
