@@ -260,6 +260,8 @@ export const DocumentForm = ({
           </FormControl>
 
           <FormControl
+            // MCF projects and documents are required fields, other corpora related documents are not.
+            // Hence marking this form input as required
             isRequired={!!isMCFCorpus}
             isInvalid={!!errors.source_url}
           >
