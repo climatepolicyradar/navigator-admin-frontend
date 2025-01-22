@@ -59,7 +59,6 @@ import {
   FieldType,
   IFormMetadata,
 } from '@/interfaces/Metadata'
-
 export interface IFamilyFormBase {
   title: string
   summary: string
@@ -81,7 +80,6 @@ const getCollection = (collectionId: string, collections: ICollection[]) => {
 
 export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   const [isLeavingModalOpen, setIsLeavingModalOpen] = useState(false)
-  const [isFormSubmitting, setIsFormSubmitting] = useState(false)
   const [loadedAndReset, setLoadedAndReset] = useState(false)
   const { isOpen, onOpen, onClose } = useDisclosure()
   const navigate = useNavigate()
@@ -138,7 +136,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     reset,
     setValue,
     watch,
-    formState: { errors, isSubmitting, dirtyFields },
+    formState: { errors, isSubmitting, isSubmitted, touchedFields },
   } = useForm<TFamilyFormSubmit>({
     resolver: yupResolver<TFamilyFormSubmit>(validationSchema),
   })
@@ -203,7 +201,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   }, [loadedFamily])
 
   const handleFormSubmission = async (formData: TFamilyFormSubmit) => {
-    setIsFormSubmitting(true)
     setFormError(null)
 
     // Validate corpus type
@@ -256,8 +253,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
         description: (error as IError).message,
         status: 'error',
       })
-    } finally {
-      setIsFormSubmitting(false)
     }
   }
 
@@ -417,8 +412,8 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   }
 
   const summaryOnChange = (html: string) => {
-    if (stripHtml(html) === '') {
-      return setValue('summary', '', { shouldDirty: true })
+    if (stripHtml(html) === '' || loadedFamily?.summary === stripHtml(html)) {
+      return
     }
     setValue('summary', html, { shouldDirty: true })
   }
@@ -461,15 +456,15 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   const canLoadForm =
     !configLoading && !collectionsLoading && !configError && !collectionsError
 
-  const blocker = useBlocker(
-    ({ currentLocation, nextLocation }) =>
-      !isFormSubmitting &&
-      Object.keys(dirtyFields).length > 0 &&
-      currentLocation.pathname !== nextLocation.pathname,
-  )
+  const blocker = useBlocker(({ currentLocation, nextLocation }) => {
+    if (currentLocation.pathname !== nextLocation.pathname) {
+      return !isSubmitted && Object.keys(touchedFields).length > 0
+    }
+    return false
+  })
 
   useEffect(() => {
-    if (blocker && blocker.state === 'blocked') {
+    if (blocker?.state === 'blocked') {
       setIsLeavingModalOpen(true)
     }
   }, [blocker])
@@ -510,7 +505,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               name='summary'
               label='Summary'
               control={control}
-              defaultValue={loadedFamily?.summary}
+              defaultValue={loadedFamily?.summary ?? ''}
               onChange={summaryOnChange}
               error={errors.summary}
               isRequired={true}
