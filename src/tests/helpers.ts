@@ -1,11 +1,11 @@
 import sign from 'jwt-encode'
 
 export const setupUser = (
-  organisationName = 'CPR',
-  email = 'test@climatepolicyradar.com',
-  isSuperuser = true,
-  isAdmin = true,
-  orgId = 1,
+  organisationName: string = 'CPR',
+  email: string = 'test@climatepolicyradar.com',
+  isSuperuser: boolean = true,
+  isAdmin: boolean = true,
+  orgId: number = 1,
 ) => {
   localStorage.setItem(
     'token',

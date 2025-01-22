@@ -3,7 +3,7 @@ import { reset } from './mocks/repository.ts'
 import { server } from './mocks/server.ts'
 import * as matchers from '@testing-library/jest-dom/matchers'
 import { vi } from 'vitest'
-import { setupUser } from './helpers.js'
+import { setupUser } from './helpers.ts'
 
 expect.extend(matchers)
 

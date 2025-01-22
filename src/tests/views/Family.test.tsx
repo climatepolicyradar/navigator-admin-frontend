@@ -2,6 +2,7 @@ import { screen } from '@testing-library/react'
 import { renderRoute } from '../utilsTest/renderRoute'
 import { mockEvent } from '@/tests/utilsTest/mocks'
 import { formatDate } from '@/utils/formatDate'
+import { setupUser } from '../helpers.ts'
 
 vi.mock('react-router-dom', async (importOriginal) => {
   const actual: unknown = await importOriginal()
@@ -22,6 +23,11 @@ describe('FamilyForm edit', () => {
     expect(
       await screen.findByText('Editing: CCLW Family Six'),
     ).toBeInTheDocument()
+
+    expect(
+      await screen.findByRole('textbox', { name: 'Title' }),
+    ).toBeInTheDocument()
+
     expect(await screen.findByText('Events')).toBeInTheDocument()
     expect(await screen.findByText('Test event title')).toBeInTheDocument()
 
@@ -94,5 +100,21 @@ describe('FamilyForm edit', () => {
     ).toBeInTheDocument()
     expect(await screen.findByText('New document title')).toBeInTheDocument()
     expect(screen.queryByText('Test document title')).not.toBeInTheDocument()
+  })
+})
+
+describe('FamilyForm create', () => {
+  it('allows selection of multiple authors for Reports', async () => {
+    setupUser('GCF')
+    const { user } = renderRoute('/family/new')
+
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Create new family' }),
+    ).toBeInTheDocument()
+
+    await user.type(
+      await screen.findByRole('textbox', { name: 'Title' }),
+      'Test title',
+    )
   })
 })

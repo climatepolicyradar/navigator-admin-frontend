@@ -408,6 +408,50 @@ const mockMCFConfig: IConfig = {
         },
       },
     },
+    {
+      corpus_import_id: 'MCF.corpus.Guidance.n0000',
+      title: 'MCF Title',
+      description: 'Multilateral Climate Funds',
+      corpus_type: 'Reports',
+      corpus_type_description: 'Multilateral Climate Funds Guidance',
+      organisation: {
+        name: 'MCF',
+        id: 999,
+        display_name: 'MCF',
+        type: 'MCF',
+      },
+      taxonomy: {
+        author: {
+          allow_any: false,
+          allow_blanks: false,
+          allowed_values: [],
+        },
+        author_type: {
+          allow_any: false,
+          allow_blanks: false,
+          allowed_values: ['Type One', 'Type Two'],
+        },
+        event_type: {
+          allow_any: false,
+          allow_blanks: false,
+          allowed_values: ['Event One'],
+        },
+        _document: {
+          type: {
+            allow_any: false,
+            allow_blanks: false,
+            allowed_values: ['Type One', 'Type Two'],
+          },
+        },
+        _event: {
+          event_type: {
+            allow_any: false,
+            allow_blanks: false,
+            allowed_values: ['Event One'],
+          },
+        },
+      },
+    },
   ],
 }
 
