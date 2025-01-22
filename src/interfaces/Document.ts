@@ -1,4 +1,5 @@
-import { IChakraSelect } from '.'
+import * as Yup from 'yup'
+import { documentSchema } from '../schemas/documentSchema'
 
 export interface IDocument {
   import_id: string
@@ -18,21 +19,7 @@ export interface IDocument {
   last_modified: string
 }
 
-export interface IDocumentFormPost {
-  family_import_id: string
-  variant_name: IChakraSelect | null
-  role: {
-    label?: string
-    value?: string
-  } | null
-  type: {
-    label?: string
-    value?: string
-  } | null
-  title: string
-  source_url?: string | null
-  user_language_name: IChakraSelect | null
-}
+export type IDocumentFormPost = Yup.InferType<typeof documentSchema>
 
 export interface IDocumentFormPostModified {
   family_import_id: string
