@@ -59,11 +59,10 @@ import {
   FieldType,
   IFormMetadata,
 } from '@/interfaces/Metadata'
-
 export interface IFamilyFormBase {
   title: string
   summary: string
-  geography: IChakraSelect
+  geographies: IChakraSelect[]
   category: string
   corpus: IChakraSelect
   collections?: IChakraSelect[]
@@ -81,7 +80,6 @@ const getCollection = (collectionId: string, collections: ICollection[]) => {
 
 export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   const [isLeavingModalOpen, setIsLeavingModalOpen] = useState(false)
-  const [isFormSubmitting, setIsFormSubmitting] = useState(false)
   const [loadedAndReset, setLoadedAndReset] = useState(false)
   const { isOpen, onOpen, onClose } = useDisclosure()
   const navigate = useNavigate()
@@ -138,12 +136,9 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     reset,
     setValue,
     watch,
-    formState: { errors, isSubmitting, dirtyFields },
+    formState: { errors, isSubmitting, isSubmitted, touchedFields },
   } = useForm<TFamilyFormSubmit>({
     resolver: yupResolver<TFamilyFormSubmit>(validationSchema),
-    defaultValues: {
-      category: 'MCF', // Can we be smarter about this?
-    },
   })
 
   // Watch for corpus changes and update schema only when creating a new family
@@ -154,14 +149,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     getCorpusImportId(loadedFamily, watchCorpus),
   )
   const taxonomy = corpusInfo?.taxonomy
-
-  // Determine if the corpus is an MCF type
-  const isMCFCorpus = useMemo(() => {
-    return (
-      watchCorpus?.value?.startsWith('MCF') ||
-      loadedFamily?.corpus_import_id?.startsWith('MCF')
-    )
-  }, [watchCorpus?.value, loadedFamily?.corpus_import_id])
 
   const [editingEntity, setEditingEntity] = useState<TChildEntity | undefined>()
   const [editingEvent, setEditingEvent] = useState<IEvent | undefined>()
@@ -174,6 +161,30 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   )
   const [updatedEvent, setUpdatedEvent] = useState<string>('')
   const [updatedDocument, setUpdatedDocument] = useState<string>('')
+
+  // Determine if the corpus is an MCF type
+  const isMCFCorpus = useMemo(() => {
+    return config?.corpora.some((corpus) =>
+      corpus?.corpus_import_id.startsWith('MCF'),
+    )
+  }, [config?.corpora])
+
+  useEffect(() => {
+    if (loadedFamily) {
+      return
+    }
+
+    if (isMCFCorpus && watchCorpus?.label.toLowerCase().includes('guidance')) {
+      const corpusAuthor = watchCorpus?.label.replace('Guidance', '').trim()
+      const corpusAuthorType = {
+        value: 'Intergovernmental Organization',
+        label: 'Intergovernmental Organization',
+      }
+
+      setValue('author', corpusAuthor)
+      setValue('author_type', corpusAuthorType)
+    }
+  }, [watchCorpus, isMCFCorpus, loadedFamily, setValue])
 
   const userAccess = useMemo(() => {
     const token = localStorage.getItem('token')
@@ -190,7 +201,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   }, [loadedFamily])
 
   const handleFormSubmission = async (formData: TFamilyFormSubmit) => {
-    setIsFormSubmitting(true)
     setFormError(null)
 
     // Validate corpus type
@@ -202,8 +212,10 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     const baseData: IFamilyFormPostBase = {
       title: formData.title,
       summary: stripHtml(formData.summary),
-      geography: formData.geography?.value || '',
-      category: isMCFCorpus ? 'MCF' : formData.category,
+      // We still expect this value in the backend
+      geography: formData.geographies?.[0].value || '',
+      geographies: formData.geographies?.map((geo) => geo.value),
+      category: formData.category,
       corpus_import_id: formData.corpus?.value || '',
       collections:
         formData.collections?.map((collection) => collection.value) || [],
@@ -241,8 +253,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
         description: (error as IError).message,
         status: 'error',
       })
-    } finally {
-      setIsFormSubmitting(false)
     }
   }
 
@@ -314,20 +324,20 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       reset({
         title: loadedFamily.title,
         summary: loadedFamily.summary,
-        geography: {
-          value: loadedFamily.geography,
+        geographies: loadedFamily.geographies?.map((geography) => ({
+          value: geography,
           label:
             getCountries(config?.geographies)?.find(
-              (country) => country.value === loadedFamily.geography,
-            )?.display_value || loadedFamily.geography,
-        },
+              (country) => country.value === geography,
+            )?.display_value || geography,
+        })),
         corpus: loadedFamily.corpus_import_id
           ? {
               label: loadedFamily.corpus_import_id,
               value: loadedFamily.corpus_import_id,
             }
           : undefined,
-        category: isMCFCorpus ? 'MCF' : loadedFamily.category,
+        category: loadedFamily.category,
         collections: loadedFamily.collections
           ?.map((collectionId) => {
             const collection = getCollection(collectionId, collections)
@@ -347,7 +357,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     } else {
       setLoadedAndReset(true)
     }
-  }, [config, loadedFamily, reset, isMCFCorpus, collections, corpusInfo])
+  }, [config, loadedFamily, reset, collections, corpusInfo])
 
   const onAddNewEntityClick = (entityType: TChildEntity) => {
     setEditingEntity(entityType)
@@ -402,8 +412,8 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   }
 
   const summaryOnChange = (html: string) => {
-    if (stripHtml(html) === '') {
-      return setValue('summary', '', { shouldDirty: true })
+    if (stripHtml(html) === '' || loadedFamily?.summary === stripHtml(html)) {
+      return
     }
     setValue('summary', html, { shouldDirty: true })
   }
@@ -446,15 +456,15 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   const canLoadForm =
     !configLoading && !collectionsLoading && !configError && !collectionsError
 
-  const blocker = useBlocker(
-    ({ currentLocation, nextLocation }) =>
-      !isFormSubmitting &&
-      Object.keys(dirtyFields).length > 0 &&
-      currentLocation.pathname !== nextLocation.pathname,
-  )
+  const blocker = useBlocker(({ currentLocation, nextLocation }) => {
+    if (currentLocation.pathname !== nextLocation.pathname) {
+      return !isSubmitted && Object.keys(touchedFields).length > 0
+    }
+    return false
+  })
 
   useEffect(() => {
-    if (blocker && blocker.state === 'blocked') {
+    if (blocker?.state === 'blocked') {
       setIsLeavingModalOpen(true)
     }
   }, [blocker])
@@ -484,26 +494,22 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
         <form onSubmit={handleSubmit(onSubmit, onSubmitErrorHandler)}>
           <VStack gap='4' mb={12} mt={4} align={'stretch'}>
             {formError && <ApiError error={formError} />}
-
             {loadedFamily && <ReadOnlyFields family={loadedFamily} />}
-
             <TextField
               name='title'
               label='Title'
               control={control}
               isRequired={true}
             />
-
             <WYSIWYGField
               name='summary'
               label='Summary'
               control={control}
-              defaultValue={loadedFamily?.summary}
+              defaultValue={loadedFamily?.summary ?? ''}
               onChange={summaryOnChange}
               error={errors.summary}
               isRequired={true}
             />
-
             <SelectField
               name='collections'
               label='Collections'
@@ -517,19 +523,17 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               isMulti={true}
               isRequired={false}
             />
-
             <SelectField
-              name='geography'
-              label='Geography'
+              name='geographies'
+              label='Geographies'
               control={control}
               options={getCountries(config?.geographies).map((country) => ({
                 value: country.value,
                 label: country.display_value,
               }))}
-              isMulti={false}
+              isMulti={true}
               isRequired={true}
             />
-
             {!loadedFamily && (
               <SelectField
                 name='corpus'
@@ -545,23 +549,22 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               />
             )}
 
-            {!isMCFCorpus ? (
-              <RadioGroupField
-                name='category'
-                label='Category'
-                control={control}
-                options={
-                  // These are the global family categories. We set MCF as the category directly
-                  // in the form above if the family corpus is a MCF corpus.
-                  [
-                    { value: 'Executive', label: 'Executive' },
-                    { value: 'Legislative', label: 'Legislative' },
-                    { value: 'UNFCCC', label: 'UNFCCC' },
-                  ]
-                }
-                rules={{ required: true }}
-              />
-            ) : null}
+            <RadioGroupField
+              name='category'
+              label='Category'
+              control={control}
+              options={[
+                { value: 'Executive', label: 'Executive' },
+                { value: 'Legislative', label: 'Legislative' },
+                { value: 'UNFCCC', label: 'UNFCCC' },
+                {
+                  value: 'Reports',
+                  label: 'Reports (Guidance)',
+                },
+                { value: 'MCF', label: 'MCF Projects' },
+              ]}
+              rules={{ required: true }}
+            />
 
             {corpusInfo && loadedAndReset && (
               <>
@@ -575,7 +578,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 />
               </>
             )}
-
             <DocumentSection
               familyDocuments={familyDocuments}
               userCanModify={userAccess.canModify}
@@ -586,7 +588,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               setUpdatedDocument={setUpdatedDocument}
               isNewFamily={!loadedFamily}
             />
-
             <EventSection
               familyEvents={familyEvents}
               userCanModify={userAccess.canModify}
@@ -597,7 +598,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               setUpdatedEvent={setUpdatedEvent}
               isNewFamily={!loadedFamily}
             />
-
             <ButtonGroup>
               <Button
                 type='submit'

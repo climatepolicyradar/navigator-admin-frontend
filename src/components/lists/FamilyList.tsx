@@ -180,7 +180,7 @@ export default function FamilyList() {
     setSearchParams({
       q: searchParams.get('q') ?? '',
       status: searchParams.get('status') ?? '',
-      geography: selectedItems === null ? '' : selectedItems.value, // TODO support multi geo PDCT-1775
+      geography: selectedItems === null ? '' : selectedItems.label, // TODO support multi geo PDCT-1775
     })
   }
 

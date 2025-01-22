@@ -45,6 +45,12 @@ export interface IGcfProjectsMetadata extends IMcfProjectsBaseMetadata {
   theme: string[]
 }
 
+export interface IReportsMetadata extends IMetadata {
+  author: string[]
+  author_type: string[]
+  external_id: string[]
+}
+
 type TMcfProjectsMetadata =
   | IAfProjectsMetadata
   | IGefProjectsMetadata
@@ -62,6 +68,7 @@ interface IFamilyBase {
   title: string
   summary: string
   geography: string
+  geographies: string[]
   category: string
   status: string
   slug: string
@@ -102,6 +109,10 @@ interface IGcfProjectsFamily extends IFamilyBase {
   metadata: IGcfProjectsMetadata
 }
 
+interface IReportsFamily extends IFamilyBase {
+  metadata: IReportsMetadata
+}
+
 type TMcfFamily =
   | IAfProjectsFamily
   | IGefProjectsFamily
@@ -112,12 +123,14 @@ export type TFamily =
   | IInternationalAgreementsFamily
   | ILawsAndPoliciesFamily
   | TMcfFamily
+  | IReportsFamily
 
 // DTO for Create and Write.
 export interface IFamilyFormPostBase {
   title: string
   summary: string
   geography: string
+  geographies: string[]
   category: string
   collections: string[]
   corpus_import_id: string
@@ -145,6 +158,10 @@ export interface IGefProjectsFamilyFormPost extends IFamilyFormPostBase {
 
 export interface IGcfProjectsFamilyFormPost extends IFamilyFormPostBase {
   metadata: IGcfProjectsMetadata
+}
+
+export interface IReportsFamilyFormPost extends IFamilyFormPostBase {
+  metadata: IReportsMetadata
 }
 
 type TMcfFamilyFormPost =
