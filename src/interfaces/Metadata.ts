@@ -6,6 +6,7 @@ export enum FieldType {
   SINGLE_SELECT = 'single_select',
   NUMBER = 'number',
   DATE = 'date',
+  TAG_INPUT = 'tag_input',
 }
 
 export interface IMetadata {

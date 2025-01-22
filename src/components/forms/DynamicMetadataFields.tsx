@@ -5,6 +5,7 @@ import { formatFieldLabel } from '@/utils/metadataUtils'
 import { SelectField } from './fields/SelectField'
 import { TextField } from './fields/TextField'
 import { ITaxonomyField, TSubTaxonomy } from '@/interfaces'
+import TagInput from './fields/TagInput'
 
 type TProps<T extends FieldValues> = {
   fieldKey: string
@@ -77,6 +78,8 @@ export const DynamicMetadataFields = <T extends FieldValues>({
             label={formatFieldLabel(fieldKey)}
           />
         )
+      case FieldType.TAG_INPUT:
+        return <TagInput />
       case FieldType.TEXT:
       default:
         return (
