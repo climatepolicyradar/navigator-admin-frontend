@@ -337,7 +337,7 @@ const mockMCFConfig: IConfig = {
   corpora: [
     {
       corpus_import_id: 'MCF.corpus.i00000001.n0000',
-      title: 'MCF Title',
+      title: 'Climate Investment Funds Projects',
       description: 'Multilateral Climate Funds',
       corpus_type: 'CIF',
       corpus_type_description: 'Multilateral Climate Funds',
@@ -410,7 +410,7 @@ const mockMCFConfig: IConfig = {
     },
     {
       corpus_import_id: 'MCF.corpus.Guidance.n0000',
-      title: 'MCF Title',
+      title: 'Climate Investment Funds Guidance',
       description: 'Multilateral Climate Funds',
       corpus_type: 'Reports',
       corpus_type_description: 'Multilateral Climate Funds Guidance',
@@ -430,6 +430,11 @@ const mockMCFConfig: IConfig = {
           allow_any: false,
           allow_blanks: false,
           allowed_values: ['Type One', 'Type Two'],
+        },
+        external_id: {
+          allow_any: true,
+          allow_blanks: true,
+          allowed_values: [],
         },
         event_type: {
           allow_any: false,
