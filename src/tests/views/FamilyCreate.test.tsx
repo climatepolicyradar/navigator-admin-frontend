@@ -13,7 +13,7 @@ describe('FamilyForm create', () => {
 
     await user.type(
       await screen.findByRole('textbox', { name: 'Title' }),
-      'Test title',
+      'Test family',
     )
 
     await user.click(screen.getByRole('combobox', { name: 'Corpus' }))

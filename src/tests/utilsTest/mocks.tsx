@@ -15,7 +15,19 @@ const mockConfig = {
         type: 'continent',
         parent_id: 0,
       },
-      children: [],
+      children: [
+        {
+          node: {
+            id: 2,
+            display_value: 'Afghanistan',
+            slug: 'afghanistan',
+            value: 'AFG',
+            type: 'ISO-3166',
+            parent_id: 1,
+          },
+          children: [],
+        },
+      ],
     },
   ],
   languages: {

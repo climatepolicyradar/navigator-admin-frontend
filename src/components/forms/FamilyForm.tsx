@@ -559,11 +559,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 rules={{ required: true }}
               />
             ) : null}
-            {/* <MultiValueInput
-              name='testAuthor'
-              control={control}
-              label='Test author'
-            /> */}
             {corpusInfo && loadedAndReset && (
               <>
                 <MetadataSection
