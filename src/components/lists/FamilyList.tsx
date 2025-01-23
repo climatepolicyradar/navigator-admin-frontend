@@ -1,51 +1,51 @@
-import { useEffect, useState, useMemo } from 'react'
-import { Link, useLoaderData, useSearchParams } from 'react-router-dom'
 import { deleteFamily, getFamilies, TFamilySearchQuery } from '@/api/Families'
+import useConfig from '@/hooks/useConfig'
 import { IChakraSelect, IError, TFamily } from '@/interfaces'
+import { canModify } from '@/utils/canModify'
+import { decodeToken } from '@/utils/decodeToken'
+import { getCountries } from '@/utils/extractNestedGeographyData'
 import { formatDate, formatDateTime } from '@/utils/formatDate'
-import {
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  TableContainer,
-  IconButton,
-  Badge,
-  Box,
-  HStack,
-  Tooltip,
-  useToast,
-  Flex,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverBody,
-  Spinner,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-} from '@chakra-ui/react'
-import { GoPencil } from 'react-icons/go'
-import { FiFilter } from 'react-icons/fi'
-import { Select } from 'chakra-react-select'
-import { DeleteButton } from '../buttons/Delete'
+import { getStatusAlias } from '@/utils/getStatusAlias'
+import { getStatusColour } from '@/utils/getStatusColour'
 import { sortBy } from '@/utils/sortBy'
 import {
   ArrowDownIcon,
-  ArrowUpIcon,
   ArrowUpDownIcon,
+  ArrowUpIcon,
   WarningIcon,
 } from '@chakra-ui/icons'
-import { getStatusColour } from '@/utils/getStatusColour'
-import { getStatusAlias } from '@/utils/getStatusAlias'
+import {
+  Badge,
+  Box,
+  Flex,
+  HStack,
+  IconButton,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Popover,
+  PopoverBody,
+  PopoverContent,
+  PopoverTrigger,
+  Spinner,
+  Table,
+  TableContainer,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tooltip,
+  Tr,
+  useToast,
+} from '@chakra-ui/react'
+import { Select } from 'chakra-react-select'
+import { useEffect, useMemo, useState } from 'react'
+import { FiFilter } from 'react-icons/fi'
+import { GoPencil } from 'react-icons/go'
+import { Link, useLoaderData, useSearchParams } from 'react-router-dom'
+import { DeleteButton } from '../buttons/Delete'
 import { ApiError } from '../feedback/ApiError'
-import { canModify } from '@/utils/canModify'
-import { decodeToken } from '@/utils/decodeToken'
-import useConfig from '@/hooks/useConfig'
-import { getCountries } from '@/utils/extractNestedGeographyData'
 
 interface ILoaderProps {
   request: {
@@ -57,13 +57,13 @@ interface ILoaderProps {
 export async function loader({ request }: ILoaderProps) {
   const url = new URL(request.url)
   const q = url.searchParams.get('q')
-  const geography = url.searchParams.get('geography')
+  const geographies = url.searchParams.getAll('geography')
   const status = url.searchParams.get('status')
   const searchQuery: TFamilySearchQuery = {
     query: q,
   }
-  if (geography) {
-    searchQuery['geography'] = geography
+  if (geographies.length) {
+    searchQuery['geographies'] = geographies
   }
   if (status) {
     searchQuery['status'] = status
@@ -79,8 +79,9 @@ const STATUSES = [
 ]
 
 export default function FamilyList() {
-  const [selectedGeography, setSelectedGeography] =
-    useState<IChakraSelect | null>(null) // TODO Change to IChakraSelect[] PDCT-1775
+  const [selectedGeographies, setSelectedGeographies] = useState<
+    IChakraSelect[]
+  >([])
   const [sortControls, setSortControls] = useState<{
     key: keyof TFamily
     reverse: boolean
@@ -94,7 +95,7 @@ export default function FamilyList() {
   const toast = useToast()
   const [familyError, setFamilyError] = useState<string | null | undefined>()
   const [formError, setFormError] = useState<IError | null | undefined>()
-  const qGeography = searchParams.get('geography')
+  const qGeographies = searchParams.getAll('geography')
 
   const userToken = useMemo(() => {
     const token = localStorage.getItem('token')
@@ -157,8 +158,12 @@ export default function FamilyList() {
   useEffect(() => {
     // First filter by geography
     const geographyFiltered = families.filter((family) =>
-      selectedGeography ? selectedGeography.value === family.geography : true,
-    ) // TODO PDCT-1775 See ticket
+      selectedGeographies.length
+        ? selectedGeographies.some((geography) =>
+            family.geographies.includes(geography.value),
+          )
+        : true,
+    )
 
     // Then filter by status from URL
     const statusParam = searchParams.get('status')
@@ -172,15 +177,14 @@ export default function FamilyList() {
       .sort(sortBy(sortControls.key, sortControls.reverse))
 
     setFilteredItems(sortedItems)
-  }, [families, selectedGeography, sortControls, searchParams])
+  }, [families, selectedGeographies, sortControls, searchParams])
 
   const handleGeographyChange = (newValue: unknown) => {
-    const selectedItems = newValue as IChakraSelect // TODO PDCT-1775 IChakraSelect[]
-    // Update the URL params
+    const selectedItems = newValue as IChakraSelect[]
     setSearchParams({
       q: searchParams.get('q') ?? '',
       status: searchParams.get('status') ?? '',
-      geography: selectedItems === null ? '' : selectedItems.label, // TODO support multi geo PDCT-1775
+      geography: selectedItems.map((item) => item.label),
     })
   }
 
@@ -198,21 +202,15 @@ export default function FamilyList() {
   }, [config])
 
   useEffect(() => {
-    if (qGeography) {
-      const matchedGeography = geographyOptions.find(
-        (geo) => geo.value === qGeography || geo.label === qGeography,
-      )
+    const convertedGeographies: IChakraSelect[] = qGeographies.map(
+      (geography) =>
+        geographyOptions.find(
+          (option) => option.value === geography || option.label === geography,
+        ) || { value: geography, label: geography },
+    )
 
-      // TODO Update this block to take arrays PDCT-1775
-      if (matchedGeography) {
-        setSelectedGeography(matchedGeography)
-      } else {
-        setSelectedGeography({ value: qGeography, label: qGeography })
-      }
-    } else {
-      setSelectedGeography(null)
-    }
-  }, [qGeography, geographyOptions])
+    setSelectedGeographies(convertedGeographies)
+  }, [qGeographies, geographyOptions])
 
   return (
     <Box flex={1}>
@@ -236,18 +234,17 @@ export default function FamilyList() {
               </Th>
               <Th>
                 <Flex gap={2} align='center'>
-                  <span>Geography</span>
+                  <span>Geographies</span>
                   {!configError && (
                     <Popover>
                       <PopoverTrigger>
                         <IconButton
-                          aria-label='Filter by geography' // TODO Change to geographies PDCT-1775
+                          aria-label='Filter by geographies'
                           icon={<FiFilter />}
                           size='xs'
                           variant='ghost'
                           colorScheme={
-                            selectedGeography === null ? 'gray' : 'blue'
-                            // TODO PDCT-1775 selectedGeography.length > 0 ? 'blue' : 'gray'
+                            selectedGeographies.length ? 'blue' : 'gray'
                           }
                         />
                       </PopoverTrigger>
@@ -257,13 +254,13 @@ export default function FamilyList() {
                             <Spinner size='sm' />
                           ) : (
                             <Select
-                              isMulti={false} // TODO Change to true PDCT-1775
+                              isMulti={true}
                               isClearable={true}
                               options={geographyOptions}
-                              value={selectedGeography} // TODO Change to geographies PDCT-1775
+                              value={selectedGeographies}
                               onChange={handleGeographyChange}
-                              placeholder='Select geography...' // TODO Change to geographies PDCT-1775
-                              closeMenuOnSelect={true} // TODO Change to false PDCT-1775
+                              placeholder='Select geographies...'
+                              closeMenuOnSelect={false}
                               size='sm'
                             />
                           )}
@@ -403,11 +400,15 @@ export default function FamilyList() {
                 <Td>{family.category}</Td>
                 <Td>
                   <Flex gap={1} wrap='wrap'>
-                    {family.geography && (
-                      <Badge colorScheme='gray' variant='subtle'>
-                        {family.geography}
+                    {family.geographies.sort().map((geography) => (
+                      <Badge
+                        key={geography}
+                        colorScheme='gray'
+                        variant='subtle'
+                      >
+                        {geography}
                       </Badge>
-                    )}
+                    ))}
                   </Flex>
                 </Td>
                 <Td>{formatDate(family.published_date)}</Td>

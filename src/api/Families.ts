@@ -2,11 +2,11 @@ import { AxiosError } from 'axios'
 
 import API from '@/api'
 import { setToken } from '@/api/Auth'
-import { TFamily, IError, TFamilyFormPost } from '@/interfaces'
+import { IError, TFamily, TFamilyFormPost } from '@/interfaces'
 
 export type TFamilySearchQuery = {
   query?: string | null
-  geography?: string | null
+  geographies?: string[] | null
   status?: string | null
   title?: string | null
   description?: string | null
@@ -14,13 +14,13 @@ export type TFamilySearchQuery = {
 
 type TSearchParams = {
   q?: string
-  geography?: string
+  geography?: string[]
   status?: string
 }
 
 export async function getFamilies({
   query,
-  geography,
+  geographies,
   status,
 }: TFamilySearchQuery) {
   setToken(API)
@@ -28,8 +28,8 @@ export async function getFamilies({
   const searchParams: TSearchParams = {
     q: query ?? '',
   }
-  if (geography) {
-    searchParams['geography'] = geography
+  if (geographies) {
+    searchParams['geography'] = geographies
   }
   if (status) {
     searchParams['status'] = status
@@ -37,6 +37,7 @@ export async function getFamilies({
 
   const response = await API.get<TFamily[]>('/v1/families/', {
     params: searchParams,
+    paramsSerializer: { indexes: null }, // Allows multiple 'geography' param instances
   })
     .then((response) => {
       return response
