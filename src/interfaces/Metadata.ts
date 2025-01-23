@@ -126,7 +126,7 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
       project_url: { type: FieldType.TEXT },
       project_value_co_financing: { type: FieldType.NUMBER },
       project_value_fund_spend: { type: FieldType.NUMBER },
-      approved_ref: { type: FieldType.NUMBER },
+      approved_ref: { type: FieldType.TEXT },
     },
     validationFields: [
       'project_id',

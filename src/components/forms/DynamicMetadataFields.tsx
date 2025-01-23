@@ -51,6 +51,7 @@ export const DynamicMetadataFields = <T extends FieldValues>({
           control={control}
           isRequired={isRequired}
           label={formatFieldLabel(fieldKey)}
+          type={fieldType === FieldType.NUMBER ? 'number' : 'text'}
         />
       )
     }
