@@ -40,12 +40,13 @@ describe('FamilyForm create', () => {
     const authorInput = await screen.findByRole('textbox', {
       name: 'Author',
     })
-    await user.type(authorInput, 'Test Author')
+    await user.type(authorInput, 'Test Author 1')
     await user.keyboard('[Enter]')
-    await user.type(authorInput, 'Test Author')
+    await user.type(authorInput, 'Test Author 2')
     await user.keyboard('[Enter]')
 
-    expect(screen.getAllByText('Test Author')).toHaveLength(2)
+    expect(screen.getByText('Test Author 1')).toBeInTheDocument()
+    expect(screen.getByText('Test Author 2')).toBeInTheDocument()
 
     expect(await screen.findByLabelText('Author Type')).toBeInTheDocument()
   })

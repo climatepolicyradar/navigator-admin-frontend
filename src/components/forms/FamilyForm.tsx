@@ -304,6 +304,8 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               value: v,
               label: v,
             }))
+          } else if (fieldConfig.type === FieldType.MULTI_VALUE_INPUT) {
+            loadedMetadata[key] = value
           } else {
             loadedMetadata[key] = value?.[0]
           }

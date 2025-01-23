@@ -41,7 +41,7 @@ export const MultiValueInput = <T extends FieldValues>({
       control={control}
       render={({ field, fieldState: { error } }) => {
         const handleAddValue = () => {
-          const currentValues = field.value || []
+          const currentValues = (field.value as string[]) || []
           if (inputValue.trim() && !currentValues.includes(inputValue.trim())) {
             const newValues = [...currentValues, inputValue.trim()]
             field.onChange(newValues)

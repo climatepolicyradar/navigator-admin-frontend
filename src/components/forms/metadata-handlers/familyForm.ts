@@ -249,7 +249,7 @@ export const corpusMetadataHandlers: Record<
     extractMetadata: (formData: TFamilyFormSubmit) => {
       const reportsData = formData as IFamilyFormReports
       return {
-        author: reportsData.author ? [reportsData.author] : [],
+        author: reportsData.author ? reportsData.author : [],
         author_type: reportsData.author_type
           ? [reportsData.author_type?.value]
           : [],

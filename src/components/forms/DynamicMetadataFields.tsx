@@ -44,7 +44,7 @@ export const DynamicMetadataFields = <T extends FieldValues>({
   const isRequired = !allow_blanks
 
   const renderField = () => {
-    if (allow_any) {
+    if (allow_any && fieldType !== FieldType.MULTI_VALUE_INPUT) {
       return (
         <TextField<T>
           name={fieldKey as Path<T>}
