@@ -5,7 +5,7 @@ import { formatFieldLabel } from '@/utils/metadataUtils'
 import { SelectField } from './fields/SelectField'
 import { TextField } from './fields/TextField'
 import { ITaxonomyField, TSubTaxonomy } from '@/interfaces'
-import TagInput from './fields/TagInput'
+import { MultiValueInput } from './fields/MultiValueInput'
 
 type TProps<T extends FieldValues> = {
   fieldKey: string
@@ -79,7 +79,13 @@ export const DynamicMetadataFields = <T extends FieldValues>({
           />
         )
       case FieldType.TAG_INPUT:
-        return <TagInput />
+        return (
+          <MultiValueInput
+            name='testAuthor'
+            control={control}
+            label='Test author'
+          />
+        )
       case FieldType.TEXT:
       default:
         return (

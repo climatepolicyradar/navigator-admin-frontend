@@ -37,8 +37,10 @@ describe('FamilyForm create', () => {
       await screen.findByRole('textbox', { name: 'External Id' }),
     ).toBeInTheDocument()
 
-    const authorInput = await screen.findByRole('textbox', { name: 'Author' })
-
+    // console.log(screen.getAllByRole('textbox'))
+    const authorInput = await screen.findByRole('textbox', {
+      name: 'author',
+    })
     await user.type(authorInput, 'Test Author')
     await user.keyboard('[Enter]')
     await user.type(authorInput, 'Test Author')

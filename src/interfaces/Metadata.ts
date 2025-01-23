@@ -171,7 +171,7 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
   },
   Reports: {
     renderFields: {
-      author: { type: FieldType.TEXT },
+      author: { type: FieldType.TAG_INPUT },
       author_type: { type: FieldType.SINGLE_SELECT },
       external_id: { type: FieldType.TEXT },
     },

@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import TagInput from '../../../../components/forms/fields/TagInput'
+import TagInput from '../../../../components/forms/fields/MultiValueInput'
 
 describe('TagInput', () => {
   it('should add tags when Enter is pressed', async () => {
