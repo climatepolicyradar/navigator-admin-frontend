@@ -78,12 +78,13 @@ export const DynamicMetadataFields = <T extends FieldValues>({
             label={formatFieldLabel(fieldKey)}
           />
         )
-      case FieldType.TAG_INPUT:
+      case FieldType.MULTI_VALUE_INPUT:
         return (
           <MultiValueInput
-            name='testAuthor'
+            name={fieldKey as Path<T>}
             control={control}
-            label='Test author'
+            label={formatFieldLabel(fieldKey)}
+            type='text'
           />
         )
       case FieldType.TEXT:

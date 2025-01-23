@@ -9,9 +9,6 @@ import {
   useToast,
   SkeletonText,
   useDisclosure,
-  Tag,
-  TagLabel,
-  TagCloseButton,
 } from '@chakra-ui/react'
 import * as yup from 'yup'
 import useCorpusFromConfig from '@/hooks/useCorpusFromConfig'
@@ -62,7 +59,6 @@ import {
   FieldType,
   IFormMetadata,
 } from '@/interfaces/Metadata'
-import { MultiValueInput } from './fields/MultiValueInput'
 
 export interface IFamilyFormBase {
   title: string
@@ -142,7 +138,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     reset,
     setValue,
     watch,
-    getValues,
     formState: { errors, isSubmitting, dirtyFields },
   } = useForm<TFamilyFormSubmit>({
     resolver: yupResolver<TFamilyFormSubmit>(validationSchema),
@@ -150,7 +145,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       category: 'MCF', // Can we be smarter about this?
     },
   })
-  console.log(getValues())
 
   // Watch for corpus changes and update schema only when creating a new family
   const watchCorpus = !loadedFamily ? watch('corpus') : undefined
@@ -215,7 +209,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       corpus_import_id: formData.corpus?.value || '',
       collections:
         formData.collections?.map((collection) => collection.value) || [],
-      testAuthor: formData.testAuthor,
     }
 
     // Get the appropriate metadata handler & extract metadata
@@ -236,8 +229,6 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
           status: 'success',
         })
       } else {
-        console.log(submissionData)
-        return
         const createResult = await createFamily(submissionData)
         toast({
           title: 'Family has been successfully created',
@@ -566,11 +557,11 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 rules={{ required: true }}
               />
             ) : null}
-            <MultiValueInput
+            {/* <MultiValueInput
               name='testAuthor'
               control={control}
               label='Test author'
-            />
+            /> */}
             {corpusInfo && loadedAndReset && (
               <>
                 <MetadataSection

@@ -79,7 +79,8 @@ export const MultiValueInput = <T extends FieldValues>({
               <VStack spacing={4} align='stretch'>
                 <HStack>
                   <Input
-                    name='author'
+                    {...field} // This destructured object contains the value
+                    name={name}
                     type={type}
                     bg='white'
                     onChange={(e) => setInputValue(e.target.value)}

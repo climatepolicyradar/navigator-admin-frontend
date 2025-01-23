@@ -6,7 +6,7 @@ export enum FieldType {
   SINGLE_SELECT = 'single_select',
   NUMBER = 'number',
   DATE = 'date',
-  TAG_INPUT = 'tag_input',
+  MULTI_VALUE_INPUT = 'multi_value_input',
 }
 
 export interface IMetadata {
@@ -171,7 +171,7 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
   },
   Reports: {
     renderFields: {
-      author: { type: FieldType.TAG_INPUT },
+      author: { type: FieldType.TEXT },
       author_type: { type: FieldType.SINGLE_SELECT },
       external_id: { type: FieldType.TEXT },
     },
