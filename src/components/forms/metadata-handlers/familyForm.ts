@@ -89,6 +89,7 @@ export type TFamilyFormSubmit =
   | IFamilyFormLawsAndPolicies
   | IFamilyFormIntlAgreements
   | TFamilyFormMcfProjects
+  | IFamilyFormReports
 
 // Mapping of corpus types to their specific metadata handlers
 export const corpusMetadataHandlers: Record<

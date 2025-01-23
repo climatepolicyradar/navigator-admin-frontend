@@ -181,8 +181,8 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
         label: 'Intergovernmental Organization',
       }
 
-      setValue('author', corpusAuthor)
-      setValue('author_type', corpusAuthorType)
+      setValue('author', [corpusAuthor])
+      setValue('author_type', [corpusAuthorType])
     }
   }, [watchCorpus, isMCFCorpus, loadedFamily, setValue])
 

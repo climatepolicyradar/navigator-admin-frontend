@@ -29,7 +29,6 @@ export const MultiValueInput = <T extends FieldValues>({
   control,
   type = 'text',
   label,
-  isRequired,
   showHelperText,
   isDisabled,
 }: TProps<T>) => {
@@ -67,7 +66,7 @@ export const MultiValueInput = <T extends FieldValues>({
         return (
           <FormControl
             isInvalid={!!error}
-            isRequired={isRequired}
+            // isRequired={isRequired}
             isReadOnly={isDisabled}
             isDisabled={isDisabled}
           >
