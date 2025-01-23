@@ -84,7 +84,7 @@ export const DynamicMetadataFields = <T extends FieldValues>({
             name={fieldKey as Path<T>}
             control={control}
             label={formatFieldLabel(fieldKey)}
-            type='text'
+            // isRequired={isRequired}
           />
         )
       case FieldType.TEXT:

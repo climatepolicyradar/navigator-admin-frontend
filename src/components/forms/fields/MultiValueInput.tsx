@@ -27,7 +27,7 @@ type TProps<T extends FieldValues> = {
 export const MultiValueInput = <T extends FieldValues>({
   name,
   control,
-  type,
+  type = 'text',
   label,
   isRequired,
   showHelperText,

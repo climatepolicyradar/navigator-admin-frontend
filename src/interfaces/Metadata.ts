@@ -172,7 +172,7 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
   Reports: {
     renderFields: {
       author: { type: FieldType.MULTI_VALUE_INPUT },
-      author_type: { type: FieldType.SINGLE_SELECT },
+      author_type: { type: FieldType.MULTI_SELECT },
       external_id: { type: FieldType.TEXT },
     },
     validationFields: ['author', 'author_type', 'external_id'],

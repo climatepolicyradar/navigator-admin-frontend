@@ -251,7 +251,7 @@ export const corpusMetadataHandlers: Record<
       return {
         author: reportsData.author ? reportsData.author : [],
         author_type: reportsData.author_type
-          ? [reportsData.author_type?.value]
+          ? reportsData.author_type?.value
           : [],
         external_id: reportsData.external_id ? [reportsData.external_id] : [],
       } as IReportsMetadata

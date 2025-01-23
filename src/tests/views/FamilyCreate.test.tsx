@@ -18,10 +18,10 @@ describe('FamilyForm create', () => {
 
     await user.click(screen.getByRole('combobox', { name: 'Corpus' }))
 
-    const option = screen.getByRole('option', {
+    const corpus_option = screen.getByRole('option', {
       name: 'Climate Investment Funds Guidance',
     })
-    await user.click(option)
+    await user.click(corpus_option)
 
     expect(
       screen.getByText('Climate Investment Funds Guidance'),
@@ -48,6 +48,23 @@ describe('FamilyForm create', () => {
     expect(screen.getByText('Test Author 1')).toBeInTheDocument()
     expect(screen.getByText('Test Author 2')).toBeInTheDocument()
 
-    expect(await screen.findByLabelText('Author Type')).toBeInTheDocument()
+    const author_type_dropdown = screen.getByRole('combobox', {
+      name: 'Author Type',
+    })
+    await user.click(author_type_dropdown)
+    await user.click(
+      screen.getByRole('option', {
+        name: 'Type One',
+      }),
+    )
+    await user.click(author_type_dropdown)
+    await user.click(
+      screen.getByRole('option', {
+        name: 'Type Two',
+      }),
+    )
+
+    expect(screen.getByText('Type One')).toBeInTheDocument()
+    expect(screen.getByText('Type Two')).toBeInTheDocument()
   })
 })
