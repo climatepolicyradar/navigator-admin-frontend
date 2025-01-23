@@ -34,31 +34,36 @@ export const MultiValueInput = <T extends FieldValues>({
   isDisabled,
 }: TProps<T>) => {
   const [inputValue, setInputValue] = useState('')
-  const [values, setValues] = useState<string[]>([])
-
-  const handleAddValue = () => {
-    if (inputValue.trim() && !values.includes(inputValue.trim())) {
-      setValues([...values, inputValue.trim()])
-      setInputValue('')
-    }
-  }
-
-  const handleRemoveValue = (valueToRemove: string) => {
-    setValues(values.filter((value) => value !== valueToRemove))
-  }
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      e.preventDefault()
-      handleAddValue()
-    }
-  }
 
   return (
     <Controller
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => {
+        const handleAddValue = () => {
+          const currentValues = field.value || []
+          if (inputValue.trim() && !currentValues.includes(inputValue.trim())) {
+            const newValues = [...currentValues, inputValue.trim()]
+            field.onChange(newValues)
+            setInputValue('')
+          }
+        }
+
+        const handleRemoveValue = (valueToRemove: string) => {
+          const currentValues = field.value || []
+          const newValues = currentValues.filter(
+            (value) => value !== valueToRemove,
+          )
+          field.onChange(newValues)
+        }
+
+        const handleKeyDown = (e: React.KeyboardEvent) => {
+          if (e.key === 'Enter') {
+            e.preventDefault()
+            handleAddValue()
+          }
+        }
+
         return (
           <FormControl
             isInvalid={!!error}
@@ -74,7 +79,6 @@ export const MultiValueInput = <T extends FieldValues>({
               <VStack spacing={4} align='stretch'>
                 <HStack>
                   <Input
-                    {...field} // This destructured object contains the value
                     name='author'
                     type={type}
                     bg='white'
@@ -85,7 +89,7 @@ export const MultiValueInput = <T extends FieldValues>({
                   />
                 </HStack>
                 <HStack wrap='wrap' spacing={2}>
-                  {values.map((value, index) => (
+                  {(field.value || []).map((value: string, index: number) => (
                     <Tag
                       key={index}
                       size='lg'
