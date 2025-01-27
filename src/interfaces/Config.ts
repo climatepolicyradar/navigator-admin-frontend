@@ -17,6 +17,10 @@ export interface IDefaultDocSubTaxonomy extends ISubTaxonomy {
   type: ITaxonomyField
 }
 
+export interface IReportsDocSubTaxonomy extends ISubTaxonomy {
+  type: ITaxonomyField
+}
+
 export interface IGcfDocSubTaxonomy extends ISubTaxonomy {
   type: ITaxonomyField
 }
@@ -64,6 +68,14 @@ export interface IConfigTaxonomyUNFCCC extends ITaxonomy {
   _event: IEventSubTaxonomy
 }
 
+export interface IConfigReportsTaxonomy extends ITaxonomy {
+  author: ITaxonomyField
+  author_type: ITaxonomyField
+  event_type: ITaxonomyField
+  _document: IReportsDocSubTaxonomy
+  _event: IEventSubTaxonomy
+}
+
 interface IConfigMCFBaseTaxonomy extends ITaxonomy {
   event_type: ITaxonomyField
   implementing_agency: ITaxonomyField
@@ -108,6 +120,7 @@ export type TTaxonomy =
   | IConfigTaxonomyCCLW
   | IConfigTaxonomyUNFCCC
   | IConfigTaxonomyMCF
+  | IConfigReportsTaxonomy
 
 // Config endpoint types.
 export interface IConfigGeographyNode {

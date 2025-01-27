@@ -74,8 +74,8 @@ interface IFamilyFormGefProjects extends IFamilyFormMcfProjects {
 }
 
 interface IFamilyFormReports extends IFamilyFormBase {
-  author?: string
-  author_type?: IChakraSelect
+  author?: string[]
+  author_type?: IChakraSelect[]
   external_id?: string
 }
 
@@ -89,6 +89,7 @@ export type TFamilyFormSubmit =
   | IFamilyFormLawsAndPolicies
   | IFamilyFormIntlAgreements
   | TFamilyFormMcfProjects
+  | IFamilyFormReports
 
 // Mapping of corpus types to their specific metadata handlers
 export const corpusMetadataHandlers: Record<
@@ -249,10 +250,8 @@ export const corpusMetadataHandlers: Record<
     extractMetadata: (formData: TFamilyFormSubmit) => {
       const reportsData = formData as IFamilyFormReports
       return {
-        author: reportsData.author ? [reportsData.author] : [],
-        author_type: reportsData.author_type
-          ? [reportsData.author_type?.value]
-          : [],
+        author: reportsData.author ? reportsData.author : [],
+        author_type: reportsData.author_type?.map((type) => type.value),
         external_id: reportsData.external_id ? [reportsData.external_id] : [],
       } as IReportsMetadata
     },
