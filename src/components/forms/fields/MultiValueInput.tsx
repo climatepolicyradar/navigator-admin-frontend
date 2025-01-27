@@ -66,7 +66,6 @@ export const MultiValueInput = <T extends FieldValues>({
         return (
           <FormControl
             isInvalid={!!error}
-            // isRequired={isRequired}
             isReadOnly={isDisabled}
             isDisabled={isDisabled}
           >
