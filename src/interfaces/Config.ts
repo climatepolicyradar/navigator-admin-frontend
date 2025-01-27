@@ -115,12 +115,12 @@ export type IConfigTaxonomyMCF =
   | IConfigTaxonomyAF
   | IConfigTaxonomyGEF
   | IConfigTaxonomyCIF
-  | IConfigReportsTaxonomy
 
 export type TTaxonomy =
   | IConfigTaxonomyCCLW
   | IConfigTaxonomyUNFCCC
   | IConfigTaxonomyMCF
+  | IConfigReportsTaxonomy
 
 // Config endpoint types.
 export interface IConfigGeographyNode {

@@ -68,6 +68,7 @@ export const MultiValueInput = <T extends FieldValues>({
             isInvalid={!!error}
             isReadOnly={isDisabled}
             isDisabled={isDisabled}
+            isRequired={field.value?.length === 0}
           >
             {label && (
               <FormLabel>
