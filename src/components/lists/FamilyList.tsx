@@ -95,7 +95,8 @@ export default function FamilyList() {
   const toast = useToast()
   const [familyError, setFamilyError] = useState<string | null | undefined>()
   const [formError, setFormError] = useState<IError | null | undefined>()
-  const qGeographies = searchParams.getAll('geography')
+  // String so useEffect doesn't keep re-rendering (referential comparison)
+  const qGeographies = searchParams.getAll('geography').join(';')
 
   const userToken = useMemo(() => {
     const token = localStorage.getItem('token')
@@ -202,7 +203,8 @@ export default function FamilyList() {
   }, [config])
 
   useEffect(() => {
-    const convertedGeographies: IChakraSelect[] = qGeographies.map(
+    const geographiesArray = qGeographies ? qGeographies.split(';') : []
+    const convertedGeographies: IChakraSelect[] = geographiesArray.map(
       (geography) =>
         geographyOptions.find(
           (option) => option.value === geography || option.label === geography,
