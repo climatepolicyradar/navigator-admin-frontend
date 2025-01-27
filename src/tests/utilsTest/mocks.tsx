@@ -441,7 +441,7 @@ const mockMCFConfig: IConfig = {
         author_type: {
           allow_any: false,
           allow_blanks: false,
-          allowed_values: ['Type One', 'Type Two'],
+          allowed_values: ['Individual', 'Academic/Research'],
         },
         external_id: {
           allow_any: true,

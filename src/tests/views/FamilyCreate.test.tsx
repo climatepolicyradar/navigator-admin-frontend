@@ -4,7 +4,7 @@ import { setupUser } from '../helpers.ts'
 
 describe('FamilyForm create', () => {
   it('allows selection of multiple authors for Reports', async () => {
-    setupUser('GCF')
+    setupUser({ organisationName: 'GCF', orgId: 6 })
     const { user } = renderRoute('/family/new')
 
     expect(
@@ -54,17 +54,17 @@ describe('FamilyForm create', () => {
     await user.click(author_type_dropdown)
     await user.click(
       screen.getByRole('option', {
-        name: 'Type One',
+        name: 'Individual',
       }),
     )
     await user.click(author_type_dropdown)
     await user.click(
       screen.getByRole('option', {
-        name: 'Type Two',
+        name: 'Academic/Research',
       }),
     )
 
-    expect(screen.getByText('Type One')).toBeInTheDocument()
-    expect(screen.getByText('Type Two')).toBeInTheDocument()
+    expect(screen.getByText('Individual')).toBeInTheDocument()
+    expect(screen.getByText('Academic/Research')).toBeInTheDocument()
   })
 })
