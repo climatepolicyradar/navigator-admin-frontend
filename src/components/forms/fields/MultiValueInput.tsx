@@ -70,14 +70,7 @@ export const MultiValueInput = <T extends FieldValues>({
             isDisabled={isDisabled}
             isRequired={field.value?.length === 0}
           >
-            {label && (
-              <FormLabel>
-                {label}
-                <Box as='span' color='red' ml={1}>
-                  *
-                </Box>
-              </FormLabel>
-            )}
+            {label && <FormLabel>{label}</FormLabel>}
             <FormHelperText mb={2}>
               You are able to add multiple values
             </FormHelperText>
