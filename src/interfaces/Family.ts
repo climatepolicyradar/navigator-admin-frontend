@@ -61,6 +61,7 @@ export type TFamilyMetadata =
   | IInternationalAgreementsMetadata
   | ILawsAndPoliciesMetadata
   | TMcfProjectsMetadata
+  | IReportsMetadata
 
 // Read DTOs.
 interface IFamilyBase {
@@ -174,3 +175,4 @@ export type TFamilyFormPost =
   | ILawsAndPoliciesFamilyFormPost
   | IInternationalAgreementsFamilyFormPost
   | TMcfFamilyFormPost
+  | IReportsFamilyFormPost

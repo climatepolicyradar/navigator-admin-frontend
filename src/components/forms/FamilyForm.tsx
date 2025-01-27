@@ -181,8 +181,8 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
         label: 'Intergovernmental Organization',
       }
 
-      setValue('author', corpusAuthor)
-      setValue('author_type', corpusAuthorType)
+      setValue('author', [corpusAuthor])
+      setValue('author_type', [corpusAuthorType])
     }
   }, [watchCorpus, isMCFCorpus, loadedFamily, setValue])
 
@@ -312,6 +312,8 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               value: v,
               label: v,
             }))
+          } else if (fieldConfig.type === FieldType.MULTI_VALUE_INPUT) {
+            loadedMetadata[key] = value
           } else {
             loadedMetadata[key] = value?.[0]
           }

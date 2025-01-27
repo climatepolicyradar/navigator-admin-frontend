@@ -15,7 +15,19 @@ const mockConfig = {
         type: 'continent',
         parent_id: 0,
       },
-      children: [],
+      children: [
+        {
+          node: {
+            id: 2,
+            display_value: 'Afghanistan',
+            slug: 'afghanistan',
+            value: 'AFG',
+            type: 'ISO-3166',
+            parent_id: 1,
+          },
+          children: [],
+        },
+      ],
     },
   ],
   languages: {
@@ -337,7 +349,7 @@ const mockMCFConfig: IConfig = {
   corpora: [
     {
       corpus_import_id: 'MCF.corpus.i00000001.n0000',
-      title: 'MCF Title',
+      title: 'Climate Investment Funds Projects',
       description: 'Multilateral Climate Funds',
       corpus_type: 'CIF',
       corpus_type_description: 'Multilateral Climate Funds',
@@ -405,6 +417,55 @@ const mockMCFConfig: IConfig = {
           allow_any: true,
           allow_blanks: false,
           allowed_values: ['1000', '5000'],
+        },
+      },
+    },
+    {
+      corpus_import_id: 'MCF.corpus.Guidance.n0000',
+      title: 'Climate Investment Funds Guidance',
+      description: 'Multilateral Climate Funds',
+      corpus_type: 'Reports',
+      corpus_type_description: 'Multilateral Climate Funds Guidance',
+      organisation: {
+        name: 'MCF',
+        id: 999,
+        display_name: 'MCF',
+        type: 'MCF',
+      },
+      taxonomy: {
+        author: {
+          allow_any: false,
+          allow_blanks: false,
+          allowed_values: [],
+        },
+        author_type: {
+          allow_any: false,
+          allow_blanks: false,
+          allowed_values: ['Type One', 'Type Two'],
+        },
+        external_id: {
+          allow_any: true,
+          allow_blanks: true,
+          allowed_values: [],
+        },
+        event_type: {
+          allow_any: false,
+          allow_blanks: false,
+          allowed_values: ['Event One'],
+        },
+        _document: {
+          type: {
+            allow_any: false,
+            allow_blanks: false,
+            allowed_values: ['Type One', 'Type Two'],
+          },
+        },
+        _event: {
+          event_type: {
+            allow_any: false,
+            allow_blanks: false,
+            allowed_values: ['Event One'],
+          },
         },
       },
     },

@@ -1,5 +1,5 @@
 import { screen } from '@testing-library/react'
-import { renderRoute } from '../utilsTest/renderRoute'
+import { renderRoute } from '../utilsTest/renderRoute.tsx'
 import { mockEvent } from '@/tests/utilsTest/mocks'
 import { formatDate } from '@/utils/formatDate'
 
@@ -22,6 +22,11 @@ describe('FamilyForm edit', () => {
     expect(
       await screen.findByText('Editing: CCLW Family Six'),
     ).toBeInTheDocument()
+
+    expect(
+      await screen.findByRole('textbox', { name: 'Title' }),
+    ).toBeInTheDocument()
+
     expect(await screen.findByText('Events')).toBeInTheDocument()
     expect(await screen.findByText('Test event title')).toBeInTheDocument()
 
