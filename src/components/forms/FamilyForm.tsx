@@ -459,10 +459,13 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     !configLoading && !collectionsLoading && !configError && !collectionsError
 
   const blocker = useBlocker(({ currentLocation, nextLocation }) => {
-    if (currentLocation.pathname !== nextLocation.pathname) {
-      return !isSubmitted && Object.keys(touchedFields).length > 0
-    }
-    return false
+    const isRouteChange = currentLocation.pathname !== nextLocation.pathname
+    const isFormBeingSubmitted = isSubmitted || isSubmitting
+    const shouldBlockRouteChange =
+      isRouteChange &&
+      !isFormBeingSubmitted &&
+      Object.keys(touchedFields).length > 0
+    return shouldBlockRouteChange
   })
 
   useEffect(() => {
