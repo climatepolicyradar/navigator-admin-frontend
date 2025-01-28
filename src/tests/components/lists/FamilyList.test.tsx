@@ -24,23 +24,23 @@ describe('FamilyList', () => {
     customRender(<FamilyList />)
     // Verify expected family properties are rendered there
     expect(await screen.findAllByText(UNFCCCFamily.title)).toHaveLength(1)
-    expect(screen.getAllByText(UNFCCCFamily.category)).toHaveLength(2)
-    expect(screen.getAllByText(UNFCCCFamily.geography)).toHaveLength(2)
+    expect(screen.getAllByText(UNFCCCFamily.category)).toHaveLength(3)
+    expect(screen.getAllByText(UNFCCCFamily.geography)).toHaveLength(3)
 
     // We put the formatDate here so that the formatting runs in the same locale
     // as the component when it runs formatDate.
     expect(
       screen.getAllByText(formatDate(UNFCCCFamily.published_date)),
-    ).toHaveLength(1)
+    ).toHaveLength(2)
     expect(
       screen.getAllByText(formatDate(UNFCCCFamily.last_updated_date)),
-    ).toHaveLength(1)
+    ).toHaveLength(2)
     expect(screen.getAllByText(formatDate(UNFCCCFamily.created))).toHaveLength(
-      1,
+      2,
     )
     expect(
       screen.getAllByText(formatDate(UNFCCCFamily.last_modified)),
-    ).toHaveLength(1)
+    ).toHaveLength(2)
   })
 
   it('sorts families by title when title header is clicked', async () => {

@@ -502,12 +502,12 @@ const mockMCFConfig: IConfig = {
 
 // Exports
 export const mockFamiliesData = [
-  mockGCFFamily,
   mockUNFCCCFamily,
   mockCCLWFamily,
   mockUNFCCCFamilyNoDocumentsNoEvents,
   mockCCLWFamilyNoDocuments,
   mockCCLWFamilyNoEvents,
+  mockGCFFamily,
 ]
 export { mockConfig as configMock }
 export { mockCCLWConfig as cclwConfigMock }
@@ -520,3 +520,5 @@ export { mockCCLWFamilyWithOneEvent }
 export { mockCCLWFamilyOneDocument }
 export { mockGCFFamily }
 export { mockCollection }
+export { mockUNFCCCFamily }
+export { mockCCLWFamily }

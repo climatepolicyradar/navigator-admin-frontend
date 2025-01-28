@@ -3,6 +3,7 @@ import {
   mockCCLWFamilyOneDocument,
   mockCCLWFamilyWithOneEvent,
   mockFamiliesData,
+  mockUNFCCCFamily,
 } from '@/tests/utilsTest/mocks'
 import { http, HttpResponse } from 'msw'
 import { createFamily, getFamily } from '../repository'
@@ -22,7 +23,7 @@ export const familyHandlers = [
       const family = getFamily(id as string)
       return HttpResponse.json(family)
     }
-    return HttpResponse.json({ ...mockFamiliesData[0] })
+    return HttpResponse.json({ ...mockUNFCCCFamily })
   }),
   http.get('*/v1/families/', () => {
     return HttpResponse.json({ families: { data: mockFamiliesData } })
