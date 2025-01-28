@@ -1,13 +1,10 @@
 import { cclwConfigMock, mcfConfigMock } from '@/tests/utilsTest/mocks'
 import { http, HttpResponse } from 'msw'
-import { jwtDecode } from 'jwt-decode'
+import { extractOrgFromAuthHeader } from '@/tests/helpers'
 
 export const configHandlers = [
   http.get('*/v1/config', ({ request }) => {
-    const authHeader = request.headers.get('authorization')
-    const parsedAuthToken: Record<string, object> = jwtDecode(authHeader || '')
-    const authorisation = parsedAuthToken?.authorisation || {}
-    const org = Object.keys(authorisation)[0]
+    const org = extractOrgFromAuthHeader(request.headers)
     if (org && ['GCF', 'GEF', 'AF', 'CIF'].includes(org)) {
       return HttpResponse.json({ ...mcfConfigMock })
     }

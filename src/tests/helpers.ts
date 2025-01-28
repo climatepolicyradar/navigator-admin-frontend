@@ -1,3 +1,4 @@
+import { jwtDecode } from 'jwt-decode'
 import sign from 'jwt-encode'
 
 interface SetupUserParams {
@@ -31,4 +32,11 @@ export const setupUser = ({
       process.env.SECRET_KEY as string,
     ),
   )
+}
+
+export const extractOrgFromAuthHeader = (headers: Headers) => {
+  const authHeader = headers.get('authorization')
+  const parsedAuthToken: Record<string, object> = jwtDecode(authHeader || '')
+  const authorisation = parsedAuthToken?.authorisation || {}
+  return Object.keys(authorisation)[0]
 }
