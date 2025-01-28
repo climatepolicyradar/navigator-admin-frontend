@@ -2,6 +2,7 @@ import { ICollection, IConfig, IDocument, IEvent } from '@/interfaces'
 import {
   ILawsAndPoliciesFamily,
   IInternationalAgreementsFamily,
+  IReportsFamily,
 } from '@/interfaces/Family'
 
 const mockConfig = {
@@ -160,6 +161,33 @@ const mockCCLWFamilyOneDocument: ILawsAndPoliciesFamily = {
   documents: ['document5'],
   created: new Date(2021, 1, 5).toISOString(),
   last_modified: new Date(2021, 1, 6).toISOString(),
+}
+
+const mockGCFFamily: IReportsFamily = {
+  import_id: 'GCF.family.1.0',
+  title: 'GCF Family',
+  summary: 'Summary for GCF Family One',
+  geography: 'Geography One',
+  geographies: ['Geography One'],
+  category: 'Category One',
+  status: 'active',
+  slug: 'gcf-family-one',
+  events: ['event1', 'event2'],
+  published_date: new Date(2021, 3, 1).toISOString(),
+  last_updated_date: new Date(2021, 0, 2).toISOString(),
+  documents: [],
+  collections: ['collection1', 'collection2'],
+  organisation: 'GCF',
+  corpus_import_id: 'GCF.corpus.Guidance.n0000',
+  corpus_title: 'GCF Guidance',
+  corpus_type: 'Reports',
+  created: new Date(2021, 0, 3).toISOString(),
+  last_modified: new Date(2021, 0, 4).toISOString(),
+  metadata: {
+    author: ['Author One', 'Author 2'],
+    author_type: ['Individual', 'Academic/Research'],
+    external_id: ['1234'],
+  },
 }
 
 const mockEvent: IEvent = {
@@ -474,6 +502,7 @@ const mockMCFConfig: IConfig = {
 
 // Exports
 export const mockFamiliesData = [
+  mockGCFFamily,
   mockUNFCCCFamily,
   mockCCLWFamily,
   mockUNFCCCFamilyNoDocumentsNoEvents,
@@ -489,4 +518,5 @@ export { mockDocument2 }
 export { mockEvent }
 export { mockCCLWFamilyWithOneEvent }
 export { mockCCLWFamilyOneDocument }
+export { mockGCFFamily }
 export { mockCollection }

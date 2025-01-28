@@ -4,6 +4,7 @@ import { server } from './mocks/server.ts'
 import * as matchers from '@testing-library/jest-dom/matchers'
 import { vi } from 'vitest'
 import { setupUser } from './helpers.ts'
+require('dotenv').config({ path: '.env' })
 
 expect.extend(matchers)
 
