@@ -164,7 +164,7 @@ export const DocumentForm = ({
         metadata: metadata,
         source_url: data.source_url || null,
         variant_name: data.variant_name?.value || null,
-        user_language_name: data.user_language_name?.value || null,
+        user_language_name: data.user_language_name?.label || null,
       }
     }
 
