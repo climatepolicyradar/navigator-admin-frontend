@@ -41,6 +41,7 @@ import { TextField } from './fields/TextField'
 import { ImportIdSection } from './sections/ImportIdSection'
 import { FormLoader } from '../feedback/FormLoader'
 import useCorpusTypes from '@/hooks/useCorpusTypes'
+import useOrganisations from '@/hooks/useOrganisations'
 
 type TProps = {
   corpus?: ICorpus
@@ -93,6 +94,11 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
     error: corpusTypesError,
     loading: corpusTypesLoading,
   } = useCorpusTypes()
+  const {
+    organisations,
+    error: organisationsError,
+    loading: organisationsLoading,
+  } = useOrganisations()
 
   const initialDescription = useRef<string | undefined>(
     loadedCorpus?.corpus_type_description,
@@ -432,7 +438,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
             </FormControl>
           )}
 
-          {config && !configLoading && (
+          {!organisationsError && !organisationsLoading && (
             <Controller
               control={control}
               name='organisation_id'
@@ -450,17 +456,13 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
                       isMulti={false}
                       isSearchable={true}
                       options={Array.from(
-                        new Set(
-                          config?.corpora?.map(
-                            (corpus) => corpus.organisation?.id,
-                          ),
-                        ),
+                        new Set(organisations.map((corpus) => corpus?.id)),
                       ).map((id) => {
-                        const corpus = config?.corpora?.find(
-                          (corpus) => corpus.organisation?.id === id,
+                        const corpus = organisations.find(
+                          (corpus) => corpus?.id === id,
                         )
                         return {
-                          label: corpus?.organisation?.display_name,
+                          label: corpus?.display_name,
                           value: id,
                         }
                       })}
