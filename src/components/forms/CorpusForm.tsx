@@ -326,6 +326,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
       {configError && <ApiError error={configError} />}
       {configLoading && <FormLoader />}
       {corpusTypesError && <ApiError error={corpusTypesError} />}
+      {organisationsError && <ApiError error={organisationsError} />}
 
       <form onSubmit={handleSubmit(onSubmit, onSubmitErrorHandler)}>
         <VStack gap='4' mb={12} align={'stretch'}>
@@ -438,7 +439,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
             </FormControl>
           )}
 
-          {!organisationsError && !organisationsLoading && (
+          {!organisationsLoading && (
             <Controller
               control={control}
               name='organisation_id'
