@@ -74,7 +74,7 @@ describe('FamilyForm create', () => {
     await user.click(screen.getByRole('button', { name: 'Create Family' }))
 
     expect(
-      screen.getByText('Family has been successfully created'),
+      await screen.findByText('Family has been successfully created'),
     ).toBeInTheDocument()
     expect(
       await screen.findByRole('heading', {

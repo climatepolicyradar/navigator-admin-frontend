@@ -19,7 +19,6 @@ export const familyHandlers = [
       return HttpResponse.json({ ...mockCCLWFamilyOneDocument })
     }
     if (id?.includes('GCF')) {
-      const { id } = params
       const family = getFamily(id as string)
       return HttpResponse.json(family)
     }
