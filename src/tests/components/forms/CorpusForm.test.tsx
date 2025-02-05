@@ -9,6 +9,8 @@ import { BrowserRouter } from 'react-router-dom'
 import { ChakraProvider } from '@chakra-ui/react'
 import '../../setup'
 import { ICorpusType } from '@/interfaces/CorpusType'
+import useOrganisations from '@/hooks/useOrganisations'
+import { IOrganisation } from '@/interfaces/Organisation'
 
 // Mock the API calls
 vi.mock('@/api/Corpora', () => ({
@@ -21,6 +23,10 @@ vi.mock('@/hooks/useConfig', () => ({
 }))
 
 vi.mock('@/hooks/useCorpusTypes', () => ({
+  default: vi.fn(),
+}))
+
+vi.mock('@/hooks/useOrganisations', () => ({
   default: vi.fn(),
 }))
 
@@ -59,6 +65,23 @@ const mockConfig = {
   ],
 }
 
+const mockOrganisations: IOrganisation[] = [
+  {
+    id: 1,
+    internal_name: 'TEST',
+    display_name: 'Test Organisation 1',
+    description: "Test Organisation 1's description",
+    type: 'Test',
+  },
+  {
+    id: 2,
+    internal_name: 'CCLW',
+    display_name: 'Test Organisation 2',
+    description: "Test Organisation 2's description",
+    type: 'Academic',
+  },
+]
+
 const mockCorpusTypes: ICorpusType[] = [
   {
     name: 'Test Corpus Type 1',
@@ -72,6 +95,9 @@ const mockCorpusTypes: ICorpusType[] = [
 
 const mockUseConfig = useConfig as unknown as ReturnType<typeof vi.fn>
 const mockUseCorpusTypes = useCorpusTypes as unknown as ReturnType<typeof vi.fn>
+const mockUseOrganisations = useOrganisations as unknown as ReturnType<
+  typeof vi.fn
+>
 
 describe('CorpusForm', () => {
   beforeEach(() => {
@@ -83,6 +109,11 @@ describe('CorpusForm', () => {
     })
     mockUseCorpusTypes.mockReturnValue({
       corpusTypes: mockCorpusTypes,
+      loading: false,
+      error: null,
+    })
+    mockUseOrganisations.mockReturnValue({
+      organisations: mockOrganisations,
       loading: false,
       error: null,
     })
