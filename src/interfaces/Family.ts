@@ -94,23 +94,23 @@ export interface ILawsAndPoliciesFamily extends IFamilyBase {
   metadata: ILawsAndPoliciesMetadata
 }
 
-interface IAfProjectsFamily extends IFamilyBase {
+export interface IAfProjectsFamily extends IFamilyBase {
   metadata: IAfProjectsMetadata
 }
 
-interface ICifProjectsFamily extends IFamilyBase {
+export interface ICifProjectsFamily extends IFamilyBase {
   metadata: ICifProjectsMetadata
 }
 
-interface IGefProjectsFamily extends IFamilyBase {
+export interface IGefProjectsFamily extends IFamilyBase {
   metadata: IGefProjectsMetadata
 }
 
-interface IGcfProjectsFamily extends IFamilyBase {
+export interface IGcfProjectsFamily extends IFamilyBase {
   metadata: IGcfProjectsMetadata
 }
 
-interface IReportsFamily extends IFamilyBase {
+export interface IReportsFamily extends IFamilyBase {
   metadata: IReportsMetadata
 }
 

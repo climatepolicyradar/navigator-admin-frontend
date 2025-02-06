@@ -1,10 +1,22 @@
 import { IEvent } from '@/interfaces/Event'
-import { mockCollection, mockDocument2, mockEvent } from '../utilsTest/mocks'
-import { ICollection, ICollectionFormPost, IDocument } from '@/interfaces'
+import {
+  mockCollection,
+  mockDocument2,
+  mockEvent,
+  mockFamiliesData,
+} from '../utilsTest/mocks'
+import {
+  ICollection,
+  ICollectionFormPost,
+  IDocument,
+  TFamily,
+  TFamilyFormPost,
+} from '@/interfaces'
 
 let eventRepository = [mockEvent]
 let documentRepository = [mockDocument2]
 let collectionRepository = [mockCollection]
+const familyRepository: TFamily[] = [...mockFamiliesData]
 
 const getEvent = (id: string) => {
   return eventRepository.find((event) => event.import_id === id)
@@ -57,6 +69,19 @@ const updateCollection = (data: ICollection, id: string) => {
   })
 }
 
+const getFamily = (id: string) => {
+  return familyRepository.find((fam) => fam.import_id === id)
+}
+
+const createFamily = (data: TFamilyFormPost, org: string) => {
+  const import_id = `${org}.family.${familyRepository.length}`
+  familyRepository.push({
+    import_id: import_id,
+    ...data,
+  } as TFamily)
+  return import_id
+}
+
 const reset = () => {
   eventRepository = [mockEvent]
   documentRepository = [mockDocument2]
@@ -71,5 +96,7 @@ export {
   getCollection,
   createCollection,
   updateCollection,
+  getFamily,
+  createFamily,
   reset,
 }

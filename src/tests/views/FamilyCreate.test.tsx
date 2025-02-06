@@ -4,7 +4,7 @@ import { setupUser } from '../helpers.ts'
 
 describe('FamilyForm create', () => {
   it('allows selection of multiple authors for Reports', async () => {
-    setupUser('GCF')
+    setupUser({ organisationName: 'GCF', orgId: 6 })
     const { user } = renderRoute('/family/new')
 
     expect(
@@ -13,26 +13,30 @@ describe('FamilyForm create', () => {
 
     await user.type(
       await screen.findByRole('textbox', { name: 'Title' }),
-      'Test family',
+      'GCF Family',
     )
+    await user.click(screen.getByRole('combobox', { name: 'Geographies' }))
+    const geo_option = screen.getByRole('option', {
+      name: 'Afghanistan',
+    })
+    await user.click(geo_option)
 
+    const corpus_name = 'Climate Investment Funds Guidance'
     await user.click(screen.getByRole('combobox', { name: 'Corpus' }))
-
     const corpus_option = screen.getByRole('option', {
-      name: 'Climate Investment Funds Guidance',
+      name: corpus_name,
     })
     await user.click(corpus_option)
+    expect(screen.getByText(corpus_name)).toBeInTheDocument()
 
-    expect(
-      screen.getByText('Climate Investment Funds Guidance'),
-    ).toBeInTheDocument()
+    await user.click(screen.getByRole('radio', { name: 'Reports (Guidance)' }))
 
     expect(await screen.findByText('Metadata')).toBeInTheDocument()
-
     expect(screen.queryByLabelText('Project Id')).not.toBeInTheDocument()
     expect(
       screen.queryByLabelText('Implementing Agency'),
     ).not.toBeInTheDocument()
+
     expect(
       await screen.findByRole('textbox', { name: 'External Id' }),
     ).toBeInTheDocument()
@@ -54,17 +58,29 @@ describe('FamilyForm create', () => {
     await user.click(author_type_dropdown)
     await user.click(
       screen.getByRole('option', {
-        name: 'Type One',
+        name: 'Individual',
       }),
     )
     await user.click(author_type_dropdown)
     await user.click(
       screen.getByRole('option', {
-        name: 'Type Two',
+        name: 'Academic/Research',
       }),
     )
 
-    expect(screen.getByText('Type One')).toBeInTheDocument()
-    expect(screen.getByText('Type Two')).toBeInTheDocument()
+    expect(screen.getByText('Individual')).toBeInTheDocument()
+    expect(screen.getByText('Academic/Research')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Create Family' }))
+
+    expect(
+      await screen.findByText('Family has been successfully created'),
+    ).toBeInTheDocument()
+    expect(
+      await screen.findByRole('heading', {
+        level: 1,
+        name: 'Editing: GCF Family',
+      }),
+    ).toBeInTheDocument()
   })
 })
