@@ -133,6 +133,17 @@ export function SideMenu() {
                     </IconLink>
                   </>
                 )}
+                {isSuperUser && (
+                  <>
+                    <IconLink
+                      icon={<Icon as={GoLog} mr='2' />}
+                      to='/organisations'
+                      current={isCurrentPage('organisations')}
+                    >
+                      Organisations
+                    </IconLink>
+                  </>
+                )}
                 <IconLink icon={<Icon as={GoClock} mr='2' />}>
                   View audit history
                 </IconLink>
