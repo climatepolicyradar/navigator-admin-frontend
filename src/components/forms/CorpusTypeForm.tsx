@@ -79,7 +79,7 @@ export const CorpusTypeForm = ({ corpusType: loadedCorpusType }: TProps) => {
       } else {
         toast({
           title: 'Not implemented',
-          description: 'Corpus type update has not been implemented',
+          description: 'Corpus type create has not been implemented',
           status: 'error',
           position: 'top',
         })
