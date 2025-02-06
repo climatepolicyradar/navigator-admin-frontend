@@ -1,8 +1,8 @@
 import { AxiosError } from 'axios'
 
 import API from '@/api'
-import { IError } from '@/interfaces'
 import { setToken } from '@/api/Auth'
+import { IError } from '@/interfaces'
 import { ICorpusType } from '@/interfaces/CorpusType'
 
 export async function getCorpusTypes() {
@@ -17,7 +17,7 @@ export async function getCorpusTypes() {
         status: error.response?.status || 500,
         detail: error.response?.data?.detail || 'Unknown error',
         message: error.message,
-        returnPage: '/corpora',
+        returnPage: '/corpus-types',
       }
       throw e
     })
