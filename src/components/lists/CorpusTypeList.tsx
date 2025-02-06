@@ -60,7 +60,7 @@ export default function CorpusTypeList() {
         .sort(sortBy(sortControls.key, sortControls.reverse))
       setFilteredItems(sortedItems)
     } else {
-      setFilteredItems([]) // Set to empty array if corpusTypes is undefined
+      setFilteredItems([])
     }
   }, [sortControls, corpusTypes])
 
