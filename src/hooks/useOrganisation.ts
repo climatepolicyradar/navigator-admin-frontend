@@ -4,7 +4,7 @@ import { getOrganisation } from '@/api/Organisations'
 import { IError } from '@/interfaces'
 import { IOrganisation } from '@/interfaces/Organisation'
 
-const useOrganisation = (id?: number) => {
+const useOrganisation = (id?: string) => {
   const [organisation, setOrganisation] = useState<IOrganisation>()
   const [error, setError] = useState<IError>()
   const [loading, setLoading] = useState<boolean>(false)

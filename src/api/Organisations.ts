@@ -24,7 +24,7 @@ export async function getOrganisations() {
   return { response }
 }
 
-export async function getOrganisation(id: number) {
+export async function getOrganisation(id: string) {
   setToken(API)
 
   const response = await API.get<IOrganisation>('/v1/organisations/' + id)
