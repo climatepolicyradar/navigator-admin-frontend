@@ -29,7 +29,7 @@ export const setupUser = ({
         },
         org_id: orgId,
       },
-      process.env.SECRET_KEY as string,
+      process.env.SECRET_KEY || '',
     ),
   )
 }
