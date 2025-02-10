@@ -3,12 +3,12 @@ import { AxiosError } from 'axios'
 import API from '@/api'
 import { setToken } from '@/api/Auth'
 import { IError } from '@/interfaces'
-import { ICorpusType } from '@/interfaces/CorpusType'
+import { IOrganisation } from '@/interfaces/Organisation'
 
-export async function getCorpusTypes() {
+export async function getOrganisations() {
   setToken(API)
 
-  const response = await API.get<ICorpusType[]>('/v1/corpus-types')
+  const response = await API.get<IOrganisation[]>('/v1/organisations')
     .then((response) => {
       return response.data
     })
@@ -17,7 +17,6 @@ export async function getCorpusTypes() {
         status: error.response?.status || 500,
         detail: error.response?.data?.detail || 'Unknown error',
         message: error.message,
-        returnPage: '/corpus-types',
       }
       throw e
     })
@@ -25,10 +24,10 @@ export async function getCorpusTypes() {
   return { response }
 }
 
-export async function getCorpusType(id: string) {
+export async function getOrganisation(id: string) {
   setToken(API)
 
-  const response = await API.get<ICorpusType>('/v1/corpus-types/' + id)
+  const response = await API.get<IOrganisation>('/v1/organisations/' + id)
     .then((response) => {
       return response
     })
