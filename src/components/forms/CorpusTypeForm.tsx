@@ -20,12 +20,18 @@ import {
   ModalContent,
   ModalFooter,
   Modal,
+  Box,
+  Divider,
+  AbsoluteCenter,
+  Checkbox,
+  Flex,
 } from '@chakra-ui/react'
 import { ApiError } from '../feedback/ApiError'
 import { InfoOutlineIcon } from '@chakra-ui/icons'
 import { TextField } from './fields/TextField'
 import * as Yup from 'yup'
 import { ICorpusType } from '@/interfaces/CorpusType'
+import { MultiValueInput } from './fields/MultiValueInput'
 
 type TProps = {
   corpusType?: ICorpusType
@@ -158,6 +164,41 @@ export const CorpusTypeForm = ({ corpusType: loadedCorpusType }: TProps) => {
               {...register('description')}
             />
           </FormControl>
+
+          <Box position='relative' padding='10'>
+            <Divider />
+            <AbsoluteCenter bg='gray.50' px='4'>
+              Taxonomy
+            </AbsoluteCenter>
+          </Box>
+          <VStack gap='4' mb={12} align={'stretch'}>
+            <TextField
+              name='taxonomyFieldName'
+              label='Name'
+              control={control}
+              // isRequired={true}
+            />
+            <Flex flexDirection={'row'} gap={0} height={'100%'} width={'30%'}>
+              <FormControl>
+                <Checkbox>Allow any</Checkbox>
+              </FormControl>
+              <FormControl>
+                <Checkbox>Allow blanks</Checkbox>
+              </FormControl>
+            </Flex>
+            <FormControl>
+              <MultiValueInput
+                name='allowedValues'
+                label='Allowed values'
+                control={control}
+              />
+            </FormControl>
+            <ButtonGroup>
+              <Button type='submit' colorScheme='blue'>
+                Add
+              </Button>
+            </ButtonGroup>
+          </VStack>
 
           <Modal isOpen={isModalOpen} onClose={handleModalCancel}>
             <ModalOverlay />

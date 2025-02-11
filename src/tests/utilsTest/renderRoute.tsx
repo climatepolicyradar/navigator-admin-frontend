@@ -1,5 +1,6 @@
 import AuthProvider from '@/providers/AuthProvider'
 import { collectionRoutes } from '@/routes/collectionRoutes'
+import { corpusTypeRoutes } from '@/routes/corpusTypeRoutes'
 import { familyRoutes } from '@/routes/familyRoutes'
 import { ChakraProvider } from '@chakra-ui/react'
 import { render } from '@testing-library/react'
@@ -29,7 +30,11 @@ export const renderRoute = (route = '/') => {
       <ChakraProvider>
         <AuthProvider>
           <RouterProvider
-            router={createBrowserRouter([...familyRoutes, ...collectionRoutes])}
+            router={createBrowserRouter([
+              ...familyRoutes,
+              ...collectionRoutes,
+              ...corpusTypeRoutes,
+            ])}
           />
         </AuthProvider>
       </ChakraProvider>,
