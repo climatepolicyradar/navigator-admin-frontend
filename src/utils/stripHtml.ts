@@ -12,7 +12,7 @@ const ALLOWED_TAGS = [
   'ul',
 ]
 
-const REPLACE: Record<string, string> = {
+const REPLACE_TAGS: Record<string, string> = {
   b: 'strong',
   i: 'em',
   u: 'ins',
@@ -26,8 +26,8 @@ export const stripHtml = (html: string) => {
       if (!ALLOWED_TAGS.includes(lowerCasedTag)) return ''
 
       const updatedMatch =
-        lowerCasedTag in REPLACE
-          ? match.replace(/(<\/*)\w+/im, `$1${REPLACE[lowerCasedTag]}`)
+        lowerCasedTag in REPLACE_TAGS
+          ? match.replace(/(<\/*)\w+/im, `$1${REPLACE_TAGS[lowerCasedTag]}`)
           : match
 
       return updatedMatch.replace(/\s+\bstyle="[^"]*?"/im, '')
