@@ -6,6 +6,7 @@ const ALLOWED_TAGS = [
   'ins',
   'li',
   'ol',
+  'p',
   'strong',
   'u',
   'ul',
@@ -20,10 +21,12 @@ const REPLACE: Record<string, string> = {
 export const stripHtml = (html: string) => {
   return html
     .replace(/<\/*(\w+)[^>]*>?/gim, (match, tag: string) => {
-      if (!ALLOWED_TAGS.includes(tag)) return ''
-      if (!(tag in REPLACE)) return match
+      const lowerCasedTag = tag.toLowerCase()
 
-      const newTag = REPLACE[tag]
+      if (!ALLOWED_TAGS.includes(lowerCasedTag)) return ''
+      if (!(lowerCasedTag in REPLACE)) return match
+
+      const newTag = REPLACE[lowerCasedTag]
       return match.replace(/(<\/*)\w+/im, `$1${newTag}`)
     })
     .replace(/&[^;]+;/g, '')
