@@ -25,13 +25,21 @@ import {
   AbsoluteCenter,
   Checkbox,
   Flex,
+  Card,
+  CardBody,
+  CardFooter,
+  HStack,
+  Stack,
+  Text,
 } from '@chakra-ui/react'
 import { ApiError } from '../feedback/ApiError'
 import { InfoOutlineIcon } from '@chakra-ui/icons'
 import { TextField } from './fields/TextField'
 import * as Yup from 'yup'
-import { ICorpusType } from '@/interfaces/CorpusType'
+import { ICorpusType, ICorpusTypeMetadata } from '@/interfaces/CorpusType'
 import { MultiValueInput } from './fields/MultiValueInput'
+import { canModify } from '@/utils/canModify'
+import { DeleteButton } from '../buttons/Delete'
 
 type TProps = {
   corpusType?: ICorpusType
@@ -49,8 +57,16 @@ export const CorpusTypeForm = ({ corpusType: loadedCorpusType }: TProps) => {
     reset,
     formState: { isSubmitting },
     getValues,
+    setValue,
   } = useForm<ICorpusTypeFormSubmit>({
     resolver: yupResolver(corpusTypeSchema),
+  })
+
+  const [taxonomy, setTaxonomy] = useState<ICorpusTypeMetadata>({
+    allowBlanks: 'false',
+    allowAny: 'false',
+    allowedValues: [],
+    fieldName: '',
   })
 
   const initialDescription = useRef<string | undefined>(
@@ -64,7 +80,7 @@ export const CorpusTypeForm = ({ corpusType: loadedCorpusType }: TProps) => {
     /* trunk-ignore(eslint/@typescript-eslint/require-await) */
     async (formValues: ICorpusTypeFormSubmit) => {
       setFormError(null)
-
+      setTaxonomy(formValues.taxonomy)
       // Only check for corpus type description changes if updating an existing corpus
       if (
         loadedCorpusType &&
@@ -143,14 +159,12 @@ export const CorpusTypeForm = ({ corpusType: loadedCorpusType }: TProps) => {
       <form onSubmit={handleSubmit(onSubmit, onSubmitErrorHandler)}>
         <VStack gap='4' mb={12} align={'stretch'}>
           {formError && <ApiError error={formError} />}
-
           <TextField
             name='name'
             label='Title'
             control={control}
             isRequired={true}
           />
-
           <FormControl isRequired>
             <FormLabel>
               Description
@@ -164,7 +178,6 @@ export const CorpusTypeForm = ({ corpusType: loadedCorpusType }: TProps) => {
               {...register('description')}
             />
           </FormControl>
-
           <Box position='relative' padding='10'>
             <Divider />
             <AbsoluteCenter bg='gray.50' px='4'>
@@ -173,22 +186,39 @@ export const CorpusTypeForm = ({ corpusType: loadedCorpusType }: TProps) => {
           </Box>
           <VStack gap='4' mb={12} align={'stretch'}>
             <TextField
-              name='taxonomyFieldName'
+              name='taxonomy.fieldName'
               label='Name'
               control={control}
               // isRequired={true}
             />
             <Flex flexDirection={'row'} gap={0} height={'100%'} width={'30%'}>
               <FormControl>
-                <Checkbox>Allow any</Checkbox>
+                <Checkbox
+                  {...register('taxonomy.allowAny')}
+                  onChange={(e) =>
+                    setValue('taxonomy.allowAny', e.target.checked.toString())
+                  }
+                >
+                  Allow any
+                </Checkbox>
               </FormControl>
               <FormControl>
-                <Checkbox>Allow blanks</Checkbox>
+                <Checkbox
+                  {...register('taxonomy.allowBlanks')}
+                  onChange={(e) =>
+                    setValue(
+                      'taxonomy.allowBlanks',
+                      e.target.checked.toString(),
+                    )
+                  }
+                >
+                  Allow blanks
+                </Checkbox>
               </FormControl>
             </Flex>
             <FormControl>
               <MultiValueInput
-                name='allowedValues'
+                name='taxonomy.allowedValues'
                 label='Allowed values'
                 control={control}
               />
@@ -199,7 +229,30 @@ export const CorpusTypeForm = ({ corpusType: loadedCorpusType }: TProps) => {
               </Button>
             </ButtonGroup>
           </VStack>
-
+          (taxonomy &&
+          <Card direction='row'>
+            <CardBody>
+              <Text mb='2'>{taxonomy?.fieldName}</Text>
+              <Text>Allowed values: {taxonomy?.allowedValues}</Text>
+              <HStack divider={<Text>·</Text>} gap={4}>
+                <Text>Allow blanks: {taxonomy?.allowBlanks}</Text>
+                <Text>Allow any: {taxonomy?.allowAny}</Text>
+              </HStack>
+            </CardBody>
+            <CardFooter>
+              <Stack direction='row' spacing={4}>
+                <Button size='sm' onClick={() => {}}>
+                  Edit
+                </Button>
+                <DeleteButton
+                  isDisabled={!canModify}
+                  entityName='event'
+                  entityTitle={''}
+                />
+              </Stack>
+            </CardFooter>
+          </Card>
+          )
           <Modal isOpen={isModalOpen} onClose={handleModalCancel}>
             <ModalOverlay />
             <ModalContent>
@@ -233,7 +286,6 @@ export const CorpusTypeForm = ({ corpusType: loadedCorpusType }: TProps) => {
               </ModalFooter>
             </ModalContent>
           </Modal>
-
           <ButtonGroup>
             <Button type='submit' colorScheme='blue' disabled={isSubmitting}>
               {(loadedCorpusType ? 'Update ' : 'Create new ') + 'Corpus type'}

@@ -42,10 +42,10 @@ describe('Corpus Type create', () => {
 
     await user.click(screen.getByRole('button', { name: 'Add' }))
 
-    // expect(screen.getByText('Taxonomy field 1')).toBeInTheDocument()
-    // expect(screen.getByText('Test value 1')).toBeInTheDocument()
-    // expect(screen.getByText('Test value 2')).toBeInTheDocument()
-    // expect(screen.getByText('Allow any: false')).toBeInTheDocument()
-    // expect(screen.getByText('Allow blanks: true')).toBeInTheDocument()
+    expect(screen.getByText('Taxonomy field 1')).toBeInTheDocument()
+    expect(screen.getByText('Test value 1')).toBeInTheDocument()
+    expect(screen.getByText('Test value 2')).toBeInTheDocument()
+    expect(screen.getByText('Allow any: false')).toBeInTheDocument()
+    expect(screen.getByText('Allow blanks: true')).toBeInTheDocument()
   })
 })
