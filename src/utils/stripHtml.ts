@@ -24,10 +24,13 @@ export const stripHtml = (html: string) => {
       const lowerCasedTag = tag.toLowerCase()
 
       if (!ALLOWED_TAGS.includes(lowerCasedTag)) return ''
-      if (!(lowerCasedTag in REPLACE)) return match
 
-      const newTag = REPLACE[lowerCasedTag]
-      return match.replace(/(<\/*)\w+/im, `$1${newTag}`)
+      const updatedMatch =
+        lowerCasedTag in REPLACE
+          ? match.replace(/(<\/*)\w+/im, `$1${REPLACE[lowerCasedTag]}`)
+          : match
+
+      return updatedMatch.replace(/\s+\bstyle="[^"]*?"/im, '')
     })
     .replace(/&[^;]+;/g, '')
     .trim()

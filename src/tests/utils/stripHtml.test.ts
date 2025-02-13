@@ -24,5 +24,10 @@ describe('stripHtml', () => {
     expect(stripHtml('<U>underline</U>')).toBe('<ins>underline</ins>')
   })
 
-  // TODO test attributes remain intact
+  it('removes style attributes from allowed tags', () => {
+    expect(stripHtml('<p style="color:red;">red</p>')).toBe('<p>red</p>')
+    expect(
+      stripHtml('<p\n      style="font-weight:bold" id="bold">bold</p>'),
+    ).toBe('<p id="bold">bold</p>')
+  })
 })
