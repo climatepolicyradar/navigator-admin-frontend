@@ -80,7 +80,12 @@ export const CorpusTypeForm = ({ corpusType: loadedCorpusType }: TProps) => {
     /* trunk-ignore(eslint/@typescript-eslint/require-await) */
     async (formValues: ICorpusTypeFormSubmit) => {
       setFormError(null)
-      setTaxonomy(formValues.taxonomy)
+      setTaxonomy({
+        ...formValues.taxonomy,
+        allowedValues: formValues.taxonomy.allowedValues?.filter(
+          (value): value is string => Boolean(value),
+        ),
+      })
       // Only check for corpus type description changes if updating an existing corpus
       if (
         loadedCorpusType &&
