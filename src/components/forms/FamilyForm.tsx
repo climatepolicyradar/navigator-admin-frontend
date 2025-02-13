@@ -1,64 +1,64 @@
-import { useEffect, useState, useMemo, useCallback } from 'react'
-import { useForm, SubmitHandler, SubmitErrorHandler } from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
-import { useBlocker, useNavigate } from 'react-router-dom'
+import useCollections from '@/hooks/useCollections'
+import useConfig from '@/hooks/useConfig'
+import useCorpusFromConfig from '@/hooks/useCorpusFromConfig'
 import {
-  VStack,
   Button,
   ButtonGroup,
-  useToast,
   SkeletonText,
   useDisclosure,
+  useToast,
+  VStack,
 } from '@chakra-ui/react'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { SubmitErrorHandler, SubmitHandler, useForm } from 'react-hook-form'
+import { useBlocker, useNavigate } from 'react-router-dom'
 import * as yup from 'yup'
-import useCorpusFromConfig from '@/hooks/useCorpusFromConfig'
-import useConfig from '@/hooks/useConfig'
-import useCollections from '@/hooks/useCollections'
 
+import { EntityEditDrawer } from '../drawers/EntityEditDrawer'
+import { ReadOnlyFields } from '../family/ReadOnlyFields'
+import { RadioGroupField } from './fields/RadioGroupField'
 import { SelectField } from './fields/SelectField'
 import { TextField } from './fields/TextField'
-import { RadioGroupField } from './fields/RadioGroupField'
 import { WYSIWYGField } from './fields/WYSIWYGField'
-import { MetadataSection } from './sections/MetadataSection'
+import { UnsavedChangesModal } from './modals/UnsavedChangesModal'
 import { DocumentSection } from './sections/DocumentSection'
 import { EventSection } from './sections/EventSection'
-import { UnsavedChangesModal } from './modals/UnsavedChangesModal'
-import { ReadOnlyFields } from '../family/ReadOnlyFields'
-import { EntityEditDrawer } from '../drawers/EntityEditDrawer'
+import { MetadataSection } from './sections/MetadataSection'
 
-import {
-  TFamily,
-  IFamilyFormPostBase,
-  TFamilyMetadata,
-} from '@/interfaces/Family'
-import { canModify } from '@/utils/canModify'
-import { getCountries } from '@/utils/extractNestedGeographyData'
-import { decodeToken } from '@/utils/decodeToken'
-import { stripHtml } from '@/utils/stripHtml'
-import { generateDynamicValidationSchema } from '@/schemas/dynamicValidationSchema'
-import { createFamily, updateFamily } from '@/api/Families'
 import { deleteDocument } from '@/api/Documents'
 import { deleteEvent } from '@/api/Events'
-import { createFamilySchema } from '@/schemas/familySchema'
-import { ApiError } from '../feedback/ApiError'
-import { IDocument } from '@/interfaces/Document'
-import { IEvent } from '@/interfaces/Event'
-import { IError } from '@/interfaces/Auth'
+import { createFamily, updateFamily } from '@/api/Families'
 import {
   IChakraSelect,
   ICollection,
   IConfigCorpora,
   TTaxonomy,
 } from '@/interfaces'
+import { IError } from '@/interfaces/Auth'
+import { IDocument } from '@/interfaces/Document'
+import { IEvent } from '@/interfaces/Event'
 import {
-  getMetadataHandler,
-  TFamilyFormSubmit,
-} from './metadata-handlers/familyForm'
+  IFamilyFormPostBase,
+  TFamily,
+  TFamilyMetadata,
+} from '@/interfaces/Family'
 import {
   CORPUS_METADATA_CONFIG,
   FieldType,
   IFormMetadata,
 } from '@/interfaces/Metadata'
+import { generateDynamicValidationSchema } from '@/schemas/dynamicValidationSchema'
+import { createFamilySchema } from '@/schemas/familySchema'
+import { canModify } from '@/utils/canModify'
+import { decodeToken } from '@/utils/decodeToken'
+import { getCountries } from '@/utils/extractNestedGeographyData'
+import { stripHtml } from '@/utils/stripHtml'
+import { ApiError } from '../feedback/ApiError'
+import {
+  getMetadataHandler,
+  TFamilyFormSubmit,
+} from './metadata-handlers/familyForm'
 export interface IFamilyFormBase {
   title: string
   summary: string
