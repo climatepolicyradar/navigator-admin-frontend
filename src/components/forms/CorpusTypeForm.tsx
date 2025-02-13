@@ -28,7 +28,6 @@ import {
   Card,
   CardBody,
   CardFooter,
-  HStack,
   Stack,
   Text,
 } from '@chakra-ui/react'
@@ -237,12 +236,16 @@ export const CorpusTypeForm = ({ corpusType: loadedCorpusType }: TProps) => {
           (taxonomy &&
           <Card direction='row'>
             <CardBody>
-              <Text mb='2'>{taxonomy?.fieldName}</Text>
-              <Text>Allowed values: {taxonomy?.allowedValues}</Text>
-              <HStack divider={<Text>·</Text>} gap={4}>
+              <Text mb='2' fontWeight='bold'>
+                {taxonomy?.fieldName}
+              </Text>
+              <VStack align={'stretch'}>
+                <Text>
+                  Allowed values: {taxonomy?.allowedValues?.join(', ')}
+                </Text>
                 <Text>Allow blanks: {taxonomy?.allowBlanks}</Text>
                 <Text>Allow any: {taxonomy?.allowAny}</Text>
-              </HStack>
+              </VStack>
             </CardBody>
             <CardFooter>
               <Stack direction='row' spacing={4}>
