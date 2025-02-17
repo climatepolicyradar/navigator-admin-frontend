@@ -18,8 +18,8 @@ const REPLACE_TAGS: Record<string, string> = {
   u: 'ins',
 }
 
-export const stripHtmlForRichText = (html: string) => {
-  return html
+export const stripHtml = (html: string) => {
+  const strippedHtml = html
     .replace(/<\/*(\w+)[^>]*>?/gim, (match, tag: string) => {
       const lowerCasedTag = tag.toLowerCase()
 
@@ -34,11 +34,6 @@ export const stripHtmlForRichText = (html: string) => {
     })
     .replace(/&[^;]+;/g, '')
     .trim()
-}
 
-export const stripHtml = (html: string) => {
-  return html
-    .replace(/<[^>]*>?/gm, '')
-    .replace(/&[^;]+;/g, '')
-    .trim()
+  return strippedHtml === '<p></p>' ? '' : strippedHtml
 }

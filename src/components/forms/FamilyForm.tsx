@@ -34,7 +34,7 @@ import {
 import { canModify } from '@/utils/canModify'
 import { getCountries } from '@/utils/extractNestedGeographyData'
 import { decodeToken } from '@/utils/decodeToken'
-import { stripHtmlForRichText } from '@/utils/stripHtml'
+import { stripHtml } from '@/utils/stripHtml'
 import { generateDynamicValidationSchema } from '@/schemas/dynamicValidationSchema'
 import { createFamily, updateFamily } from '@/api/Families'
 import { deleteDocument } from '@/api/Documents'
@@ -211,7 +211,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     // Prepare base family data common to all types
     const baseData: IFamilyFormPostBase = {
       title: formData.title,
-      summary: stripHtmlForRichText(formData.summary),
+      summary: stripHtml(formData.summary),
       // We still expect this value in the backend
       geography: formData.geographies?.[0].value || '',
       geographies: formData.geographies?.map((geo) => geo.value),
@@ -414,10 +414,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   }
 
   const summaryOnChange = (html: string) => {
-    if (
-      stripHtmlForRichText(html) === '' ||
-      loadedFamily?.summary === stripHtmlForRichText(html)
-    ) {
+    if (stripHtml(html) === '' || loadedFamily?.summary === stripHtml(html)) {
       return
     }
     setValue('summary', html, { shouldDirty: true })
