@@ -21,7 +21,7 @@ type TProps<T extends FieldValues> = {
   label: string
   control: Control<T>
   options: IChakraSelect[]
-  rules?: RegisterOptions
+  rules?: RegisterOptions<T, Path<T>>
 }
 
 export const RadioGroupField = <T extends FieldValues>({

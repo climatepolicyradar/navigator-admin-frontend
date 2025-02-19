@@ -23,7 +23,7 @@ type TProps<T extends FieldValues> = {
   control: Control<T>
   options: string[] | IChakraSelect[]
   isMulti?: boolean
-  rules?: RegisterOptions
+  rules?: RegisterOptions<T, Path<T>>
   isRequired?: boolean
   isClearable?: boolean
 }
