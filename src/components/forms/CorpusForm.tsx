@@ -1,14 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react'
-import {
-  useForm,
-  SubmitHandler,
-  SubmitErrorHandler,
-  Controller,
-} from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
-import { ICorpus, ICorpusFormPost, ICorpusFormPut, IError } from '@/interfaces'
-import { corpusSchema } from '@/schemas/corpusSchema'
-import { createCorpus, updateCorpus } from '@/api/Corpora'
+import { InfoOutlineIcon } from '@chakra-ui/icons'
 import {
   FormControl,
   FormLabel,
@@ -28,20 +18,32 @@ import {
   ModalFooter,
   Modal,
 } from '@chakra-ui/react'
-import { useNavigate } from 'react-router-dom'
-import { ApiError } from '../feedback/ApiError'
-import { chakraStylesSelect } from '@/styles/chakra'
+import { yupResolver } from '@hookform/resolvers/yup'
 import { Select as CRSelect } from 'chakra-react-select'
+import { useEffect, useRef, useState, useCallback } from 'react'
+import {
+  useForm,
+  SubmitHandler,
+  SubmitErrorHandler,
+  Controller,
+} from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
+
+import { createCorpus, updateCorpus } from '@/api/Corpora'
 import useConfig from '@/hooks/useConfig'
-import { InfoOutlineIcon } from '@chakra-ui/icons'
-import { WYSIWYG } from '../form-components/WYSIWYG'
-import { stripHtml } from '@/utils/stripHtml'
+import useCorpusTypes from '@/hooks/useCorpusTypes'
+import useOrganisations from '@/hooks/useOrganisations'
+import { ICorpus, ICorpusFormPost, ICorpusFormPut, IError } from '@/interfaces'
+import { corpusSchema } from '@/schemas/corpusSchema'
+import { chakraStylesSelect } from '@/styles/chakra'
 import { convertEmptyToNull } from '@/utils/convertEmptyToNull'
+import { stripHtml } from '@/utils/stripHtml'
+
+import { ApiError } from '../feedback/ApiError'
+import { WYSIWYG } from '../form-components/WYSIWYG'
 import { TextField } from './fields/TextField'
 import { ImportIdSection } from './sections/ImportIdSection'
 import { FormLoader } from '../feedback/FormLoader'
-import useCorpusTypes from '@/hooks/useCorpusTypes'
-import useOrganisations from '@/hooks/useOrganisations'
 
 type TProps = {
   corpus?: ICorpus

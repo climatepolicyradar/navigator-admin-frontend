@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 
-import { IError, IDocument } from '@/interfaces'
 import { getDocuments } from '@/api/Documents'
+import { IError, IDocument } from '@/interfaces'
 
 const useDocuments = (query: string) => {
   const [documents, setDocuments] = useState<IDocument[]>([])

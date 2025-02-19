@@ -1,4 +1,4 @@
-import { useParams, Link as RouterLink } from 'react-router-dom'
+import { ArrowBackIcon } from '@chakra-ui/icons'
 import {
   Link,
   Box,
@@ -7,10 +7,11 @@ import {
   Button,
   SkeletonText,
 } from '@chakra-ui/react'
-import { ArrowBackIcon } from '@chakra-ui/icons'
-import { CorpusForm } from '@/components/forms/CorpusForm'
+import { useParams, Link as RouterLink } from 'react-router-dom'
+
 import { Loader } from '@/components/Loader'
 import { ApiError } from '@/components/feedback/ApiError'
+import { CorpusForm } from '@/components/forms/CorpusForm'
 import useCorpus from '@/hooks/useCorpus'
 
 export default function Corpus() {

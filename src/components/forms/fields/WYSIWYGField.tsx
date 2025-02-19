@@ -1,7 +1,13 @@
-import { Control, Controller, FieldValues, Path } from 'react-hook-form'
 import { FormControl, FormLabel, FormErrorMessage } from '@chakra-ui/react'
+import {
+  Control,
+  Controller,
+  FieldValues,
+  Path,
+  FieldError,
+} from 'react-hook-form'
+
 import { WYSIWYG } from '@/components/form-components/WYSIWYG'
-import { FieldError } from 'react-hook-form'
 
 type TProps<T extends FieldValues> = {
   name: Path<T>

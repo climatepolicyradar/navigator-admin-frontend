@@ -1,8 +1,8 @@
 import { AxiosError } from 'axios'
 
 import API from '@/api'
-import { ICorpus, ICorpusFormPost, ICorpusFormPut, IError } from '@/interfaces'
 import { setToken } from '@/api/Auth'
+import { ICorpus, ICorpusFormPost, ICorpusFormPut, IError } from '@/interfaces'
 
 export async function getCorpora(query?: string) {
   setToken(API)

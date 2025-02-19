@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 
-import { IError, IEvent } from '@/interfaces'
 import { getEvent } from '@/api/Events'
+import { IError, IEvent } from '@/interfaces'
 
 const useEvent = (id?: string) => {
   const [event, setEvent] = useState<IEvent | null>(null)

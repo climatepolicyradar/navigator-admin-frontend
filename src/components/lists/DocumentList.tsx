@@ -1,7 +1,4 @@
-import { useState, useEffect } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
-import { deleteDocument } from '@/api/Documents'
-import { IDocument, IError } from '@/interfaces'
+import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from '@chakra-ui/icons'
 import {
   Table,
   Thead,
@@ -19,16 +16,20 @@ import {
   Badge,
   Flex,
 } from '@chakra-ui/react'
+import { useState, useEffect } from 'react'
 import { GoPencil } from 'react-icons/go'
+import { Link, useSearchParams } from 'react-router-dom'
 
-import { DeleteButton } from '../buttons/Delete'
+import { deleteDocument } from '@/api/Documents'
 import useDocuments from '@/hooks/useDocuments'
-import { Loader } from '../Loader'
-import { sortBy } from '@/utils/sortBy'
-import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from '@chakra-ui/icons'
-import { getStatusColour } from '@/utils/getStatusColour'
-import { ApiError } from '../feedback/ApiError'
+import { IDocument, IError } from '@/interfaces'
 import { formatDate, formatDateTime } from '@/utils/formatDate'
+import { getStatusColour } from '@/utils/getStatusColour'
+import { sortBy } from '@/utils/sortBy'
+
+import { Loader } from '../Loader'
+import { DeleteButton } from '../buttons/Delete'
+import { ApiError } from '../feedback/ApiError'
 
 export default function DocumentList() {
   const [sortControls, setSortControls] = useState<{

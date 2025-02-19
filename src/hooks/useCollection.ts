@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 
-import { IError, ICollection } from '@/interfaces'
 import { getCollection } from '@/api/Collections'
+import { IError, ICollection } from '@/interfaces'
 
 const useCollection = (id?: string) => {
   const [collection, setCollection] = useState<ICollection | null>(null)

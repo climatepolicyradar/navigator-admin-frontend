@@ -1,10 +1,3 @@
-import { IEvent } from '@/interfaces/Event'
-import {
-  mockCollection,
-  mockDocument2,
-  mockEvent,
-  mockFamiliesData,
-} from '../utilsTest/mocks'
 import {
   ICollection,
   ICollectionFormPost,
@@ -12,6 +5,14 @@ import {
   TFamily,
   TFamilyFormPost,
 } from '@/interfaces'
+import { IEvent } from '@/interfaces/Event'
+
+import {
+  mockCollection,
+  mockDocument2,
+  mockEvent,
+  mockFamiliesData,
+} from '../utilsTest/mocks'
 
 let eventRepository = [mockEvent]
 let documentRepository = [mockDocument2]

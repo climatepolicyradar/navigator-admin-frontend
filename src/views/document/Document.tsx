@@ -1,5 +1,4 @@
-import { useMemo } from 'react'
-import { useParams, Link as RouterLink } from 'react-router-dom'
+import { ArrowBackIcon } from '@chakra-ui/icons'
 import {
   Box,
   Heading,
@@ -8,17 +7,19 @@ import {
   SkeletonText,
   Link,
 } from '@chakra-ui/react'
-import { ArrowBackIcon } from '@chakra-ui/icons'
+import { useMemo } from 'react'
+import { useParams, Link as RouterLink } from 'react-router-dom'
+
 import { Loader } from '@/components/Loader'
-import { DocumentForm } from '@/components/forms/DocumentForm'
 import { ApiError } from '@/components/feedback/ApiError'
+import { DocumentForm } from '@/components/forms/DocumentForm'
+import useConfig from '@/hooks/useConfig'
+import useCorpusFromConfig from '@/hooks/useCorpusFromConfig'
 import useDocument from '@/hooks/useDocument'
 import useFamily from '@/hooks/useFamily'
-import useConfig from '@/hooks/useConfig'
-import { decodeToken } from '@/utils/decodeToken'
 import { IDecodedToken } from '@/interfaces'
 import { canModify } from '@/utils/canModify'
-import useCorpusFromConfig from '@/hooks/useCorpusFromConfig'
+import { decodeToken } from '@/utils/decodeToken'
 
 export default function Document() {
   const { importId } = useParams()

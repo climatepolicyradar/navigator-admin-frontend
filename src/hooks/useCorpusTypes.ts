@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 
-import { IError } from '@/interfaces'
 import { getCorpusTypes } from '@/api/CorpusTypes'
+import { IError } from '@/interfaces'
 import { ICorpusType } from '@/interfaces/CorpusType'
 
 const useCorpusTypes = () => {

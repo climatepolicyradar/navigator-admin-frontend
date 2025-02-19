@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 
-import { IError, ICorpus } from '@/interfaces'
 import { getCorpora } from '@/api/Corpora'
+import { IError, ICorpus } from '@/interfaces'
 
 const useCorpora = (id: string) => {
   const [corpora, setCorpora] = useState<ICorpus[]>([])

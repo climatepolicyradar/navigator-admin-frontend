@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 
-import { IError, IConfig } from '@/interfaces'
 import { getConfig } from '@/api/Config'
+import { IError, IConfig } from '@/interfaces'
 import { modifyConfig } from '@/utils/modifyConfig'
 
 let cache: IConfig | null = null

@@ -1,3 +1,11 @@
+import '@testing-library/jest-dom'
+import { screen, render } from '@testing-library/react'
+import { vi } from 'vitest'
+
+import CorpusList from '@/components/lists/CorpusList'
+import { ICorpus } from '@/interfaces/Corpus'
+import { TestWrapper } from '@/tests/utilsTest/render'
+
 // Mock data needs to be defined before imports for vi.mock hoisting
 const mockCorpora: ICorpus[] = [
   {
@@ -35,18 +43,8 @@ vi.mock('@/hooks/useCorpora', () => ({
 
 vi.mock('react-router-dom', async (importOriginal) => {
   const actual = await importOriginal()
-  return {
-    ...(actual as object),
-    useNavigate: () => vi.fn(),
-  }
+  return { ...(actual as object), useNavigate: () => vi.fn() }
 })
-
-import { screen, render } from '@testing-library/react'
-import CorpusList from '@/components/lists/CorpusList'
-import { TestWrapper } from '@/tests/utilsTest/render'
-import '@testing-library/jest-dom'
-import { vi } from 'vitest'
-import { ICorpus } from '@/interfaces/Corpus'
 
 const renderComponent = () => {
   return render(

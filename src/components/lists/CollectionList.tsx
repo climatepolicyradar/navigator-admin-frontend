@@ -1,7 +1,4 @@
-import { useState, useEffect } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
-import { deleteCollection } from '@/api/Collections'
-import { ICollection, IError } from '@/interfaces'
+import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from '@chakra-ui/icons'
 import {
   Table,
   Thead,
@@ -17,13 +14,17 @@ import {
   useToast,
   SkeletonText,
 } from '@chakra-ui/react'
+import { useState, useEffect } from 'react'
 import { GoPencil } from 'react-icons/go'
+import { Link, useSearchParams } from 'react-router-dom'
 
-import { DeleteButton } from '../buttons/Delete'
+import { deleteCollection } from '@/api/Collections'
 import useCollections from '@/hooks/useCollections'
-import { Loader } from '../Loader'
+import { ICollection, IError } from '@/interfaces'
 import { sortBy } from '@/utils/sortBy'
-import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from '@chakra-ui/icons'
+
+import { Loader } from '../Loader'
+import { DeleteButton } from '../buttons/Delete'
 import { ApiError } from '../feedback/ApiError'
 
 export default function CollectionList() {

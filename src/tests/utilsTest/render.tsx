@@ -1,7 +1,7 @@
+import { ChakraProvider } from '@chakra-ui/react'
+import { render as rtlRender, RenderOptions } from '@testing-library/react'
 import React from 'react'
 import { MemoryRouter } from 'react-router-dom'
-import { render as rtlRender, RenderOptions } from '@testing-library/react'
-import { ChakraProvider } from '@chakra-ui/react'
 
 // Solution for avoid -> Error: Uncaught [TypeError: env.window.matchMedia is not a function]
 // Please check https://github.com/chakra-ui/chakra-ui/discussions/6664

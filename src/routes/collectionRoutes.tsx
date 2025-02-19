@@ -1,7 +1,7 @@
 import CollectionList from '@/components/lists/CollectionList'
+import ErrorPage from '@/views/Error'
 import Collection from '@/views/collection/Collection'
 import Collections from '@/views/collection/Collections'
-import ErrorPage from '@/views/Error'
 
 export const collectionRoutes = [
   {

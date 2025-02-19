@@ -1,6 +1,6 @@
+import { ChakraProvider } from '@chakra-ui/react'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { ChakraProvider } from '@chakra-ui/react'
 
 import AuthProvider from './providers/AuthProvider'
 import Routes from './routes'

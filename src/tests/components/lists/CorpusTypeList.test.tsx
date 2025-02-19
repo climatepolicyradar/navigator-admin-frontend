@@ -1,37 +1,28 @@
 import { render, screen } from '@testing-library/react'
 import { describe, it, expect, beforeEach, vi } from 'vitest'
+import '@testing-library/jest-dom'
+
+import CorpusTypeList from '@/components/lists/CorpusTypeList'
 import useCorpusTypes from '@/hooks/useCorpusTypes'
-import '../../setup'
 import { ICorpusType } from '@/interfaces/CorpusType'
 import { TestWrapper } from '@/tests/utilsTest/render'
-import '@testing-library/jest-dom'
-import CorpusTypeList from '@/components/lists/CorpusTypeList'
+
+import '../../setup'
 
 // Mock data needs to be defined before imports for vi.mock hoisting
 const mockCorpusTypes: ICorpusType[] = [
-  {
-    name: 'Test Corpus Type 1',
-    description: 'Test Type Description 1',
-  },
-  {
-    name: 'Test Corpus Type 2',
-    description: 'Test Type Description 2',
-  },
+  { name: 'Test Corpus Type 1', description: 'Test Type Description 1' },
+  { name: 'Test Corpus Type 2', description: 'Test Type Description 2' },
 ] as const
 
 const mockUseCorpusTypes = useCorpusTypes as unknown as ReturnType<typeof vi.fn>
 
 // Mock modules before imports
-vi.mock('@/hooks/useCorpusTypes', () => ({
-  default: vi.fn(),
-}))
+vi.mock('@/hooks/useCorpusTypes', () => ({ default: vi.fn() }))
 
 vi.mock('react-router-dom', async (importOriginal) => {
   const actual = await importOriginal()
-  return {
-    ...(actual as object),
-    useNavigate: () => vi.fn(),
-  }
+  return { ...(actual as object), useNavigate: () => vi.fn() }
 })
 
 const renderComponent = () => {

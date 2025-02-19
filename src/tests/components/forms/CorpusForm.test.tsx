@@ -1,16 +1,18 @@
+import { ChakraProvider } from '@chakra-ui/react'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { BrowserRouter } from 'react-router-dom'
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { CorpusForm } from '@/components/forms/CorpusForm'
+
 import { createCorpus, updateCorpus } from '@/api/Corpora'
+import { CorpusForm } from '@/components/forms/CorpusForm'
 import useConfig from '@/hooks/useConfig'
 import useCorpusTypes from '@/hooks/useCorpusTypes'
-import { BrowserRouter } from 'react-router-dom'
-import { ChakraProvider } from '@chakra-ui/react'
-import '../../setup'
-import { ICorpusType } from '@/interfaces/CorpusType'
 import useOrganisations from '@/hooks/useOrganisations'
+import { ICorpusType } from '@/interfaces/CorpusType'
 import { IOrganisation } from '@/interfaces/Organisation'
+
+import '../../setup'
 
 // Mock the API calls
 vi.mock('@/api/Corpora', () => ({
@@ -18,26 +20,17 @@ vi.mock('@/api/Corpora', () => ({
   updateCorpus: vi.fn(),
 }))
 
-vi.mock('@/hooks/useConfig', () => ({
-  default: vi.fn(),
-}))
+vi.mock('@/hooks/useConfig', () => ({ default: vi.fn() }))
 
-vi.mock('@/hooks/useCorpusTypes', () => ({
-  default: vi.fn(),
-}))
+vi.mock('@/hooks/useCorpusTypes', () => ({ default: vi.fn() }))
 
-vi.mock('@/hooks/useOrganisations', () => ({
-  default: vi.fn(),
-}))
+vi.mock('@/hooks/useOrganisations', () => ({ default: vi.fn() }))
 
 // Mock navigation
 const mockNavigate = vi.fn()
 vi.mock('react-router-dom', async (importOriginal) => {
   const actual = await importOriginal()
-  return {
-    ...(actual as object),
-    useNavigate: () => mockNavigate,
-  }
+  return { ...(actual as object), useNavigate: () => mockNavigate }
 })
 
 const mockConfig = {
@@ -83,14 +76,8 @@ const mockOrganisations: IOrganisation[] = [
 ]
 
 const mockCorpusTypes: ICorpusType[] = [
-  {
-    name: 'Test Corpus Type 1',
-    description: 'Test Corpus Type Description 1',
-  },
-  {
-    name: 'Test Corpus Type 2',
-    description: 'Test Corpus Type Description 2',
-  },
+  { name: 'Test Corpus Type 1', description: 'Test Corpus Type Description 1' },
+  { name: 'Test Corpus Type 2', description: 'Test Corpus Type Description 2' },
 ]
 
 const mockUseConfig = useConfig as unknown as ReturnType<typeof vi.fn>
@@ -338,9 +325,7 @@ describe('CorpusForm', () => {
       await user.type(orgSelect, '1{enter}')
 
       // Build import ID
-      const part1 = screen.getByRole('combobox', {
-        name: 'Part 1',
-      })
+      const part1 = screen.getByRole('combobox', { name: 'Part 1' })
       expect(part1).toBeInTheDocument()
       await user.click(part1)
       await user.type(part1, 'Test{enter}')
@@ -403,16 +388,12 @@ describe('CorpusForm', () => {
       await user.type(orgSelect, '2{enter}')
 
       // Build import ID
-      const part1 = screen.getByRole('combobox', {
-        name: 'Part 1',
-      })
+      const part1 = screen.getByRole('combobox', { name: 'Part 1' })
       expect(part1).toBeInTheDocument()
       await user.click(part1)
       await user.type(part1, 'Academic{enter}')
 
-      const part4 = screen.getByRole('textbox', {
-        name: 'Part 4',
-      })
+      const part4 = screen.getByRole('textbox', { name: 'Part 4' })
       await user.clear(part4)
       await user.type(part4, 'apples{enter}')
 
@@ -475,9 +456,7 @@ describe('CorpusForm', () => {
 
       const user = userEvent.setup()
 
-      renderCorpusForm({
-        corpus: mockCorpus,
-      })
+      renderCorpusForm({ corpus: mockCorpus })
 
       // Wait for all form fields to be initialized
       await waitFor(() => {

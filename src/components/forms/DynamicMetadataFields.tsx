@@ -1,11 +1,13 @@
 import { FormControl, FormErrorMessage } from '@chakra-ui/react'
 import { Control, FieldErrors, FieldValues, Path } from 'react-hook-form'
+
+import { ITaxonomyField, TSubTaxonomy } from '@/interfaces'
 import { FieldType } from '@/interfaces/Metadata'
 import { formatFieldLabel } from '@/utils/metadataUtils'
+
+import { MultiValueInput } from './fields/MultiValueInput'
 import { SelectField } from './fields/SelectField'
 import { TextField } from './fields/TextField'
-import { ITaxonomyField, TSubTaxonomy } from '@/interfaces'
-import { MultiValueInput } from './fields/MultiValueInput'
 
 type TProps<T extends FieldValues> = {
   fieldKey: string
