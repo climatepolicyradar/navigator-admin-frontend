@@ -45,6 +45,12 @@ export interface IGcfProjectsMetadata extends IMcfProjectsBaseMetadata {
   theme: string[]
 }
 
+export interface IReportsMetadata extends IMetadata {
+  author: string[]
+  author_type: string[]
+  external_id: string[]
+}
+
 type TMcfProjectsMetadata =
   | IAfProjectsMetadata
   | IGefProjectsMetadata
@@ -55,6 +61,7 @@ export type TFamilyMetadata =
   | IInternationalAgreementsMetadata
   | ILawsAndPoliciesMetadata
   | TMcfProjectsMetadata
+  | IReportsMetadata
 
 // Read DTOs.
 interface IFamilyBase {
@@ -62,6 +69,7 @@ interface IFamilyBase {
   title: string
   summary: string
   geography: string
+  geographies: string[]
   category: string
   status: string
   slug: string
@@ -86,20 +94,24 @@ export interface ILawsAndPoliciesFamily extends IFamilyBase {
   metadata: ILawsAndPoliciesMetadata
 }
 
-interface IAfProjectsFamily extends IFamilyBase {
+export interface IAfProjectsFamily extends IFamilyBase {
   metadata: IAfProjectsMetadata
 }
 
-interface ICifProjectsFamily extends IFamilyBase {
+export interface ICifProjectsFamily extends IFamilyBase {
   metadata: ICifProjectsMetadata
 }
 
-interface IGefProjectsFamily extends IFamilyBase {
+export interface IGefProjectsFamily extends IFamilyBase {
   metadata: IGefProjectsMetadata
 }
 
-interface IGcfProjectsFamily extends IFamilyBase {
+export interface IGcfProjectsFamily extends IFamilyBase {
   metadata: IGcfProjectsMetadata
+}
+
+export interface IReportsFamily extends IFamilyBase {
+  metadata: IReportsMetadata
 }
 
 type TMcfFamily =
@@ -112,12 +124,14 @@ export type TFamily =
   | IInternationalAgreementsFamily
   | ILawsAndPoliciesFamily
   | TMcfFamily
+  | IReportsFamily
 
 // DTO for Create and Write.
 export interface IFamilyFormPostBase {
   title: string
   summary: string
   geography: string
+  geographies: string[]
   category: string
   collections: string[]
   corpus_import_id: string
@@ -147,6 +161,10 @@ export interface IGcfProjectsFamilyFormPost extends IFamilyFormPostBase {
   metadata: IGcfProjectsMetadata
 }
 
+export interface IReportsFamilyFormPost extends IFamilyFormPostBase {
+  metadata: IReportsMetadata
+}
+
 type TMcfFamilyFormPost =
   | IAfProjectsFamilyFormPost
   | IGefProjectsFamilyFormPost
@@ -157,3 +175,4 @@ export type TFamilyFormPost =
   | ILawsAndPoliciesFamilyFormPost
   | IInternationalAgreementsFamilyFormPost
   | TMcfFamilyFormPost
+  | IReportsFamilyFormPost

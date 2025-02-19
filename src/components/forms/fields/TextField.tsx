@@ -5,6 +5,8 @@ import {
   FormLabel,
   FormErrorMessage,
   FormHelperText,
+  InputGroup,
+  InputLeftAddon,
 } from '@chakra-ui/react'
 
 type TProps<T extends FieldValues> = {
@@ -41,16 +43,20 @@ export const TextField = <T extends FieldValues>({
             isDisabled={isDisabled}
           >
             {label && <FormLabel>{label}</FormLabel>}
-            <Input
-              {...field} // This destructured object contains the value
-              bg='white'
-              type={type}
-              placeholder={placeholder ?? `Enter ${label?.toLowerCase()}`}
-              value={field.value ?? ''} // this prevents the component changing from a controlled to uncontrolled component
-            />
-            {showHelperText && isDisabled && (
-              <FormHelperText>You cannot edit this</FormHelperText>
-            )}
+
+            <InputGroup>
+              {type === 'number' && <InputLeftAddon children='$' />}
+              <Input
+                {...field} // This destructured object contains the value
+                bg='white'
+                type={type}
+                placeholder={placeholder ?? `Enter ${label?.toLowerCase()}`}
+                value={field.value ?? ''} // this prevents the component changing from a controlled to uncontrolled component
+              />
+              {showHelperText && isDisabled && (
+                <FormHelperText>You cannot edit this</FormHelperText>
+              )}
+            </InputGroup>
             {error && <FormErrorMessage>{error.message}</FormErrorMessage>}
           </FormControl>
         )

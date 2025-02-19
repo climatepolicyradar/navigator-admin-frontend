@@ -2,8 +2,9 @@ import { cleanup } from '@testing-library/react'
 import { reset } from './mocks/repository.ts'
 import { server } from './mocks/server.ts'
 import * as matchers from '@testing-library/jest-dom/matchers'
-import sign from 'jwt-encode'
 import { vi } from 'vitest'
+import { setupUser } from './helpers.ts'
+require('dotenv').config({ path: '.env' })
 
 expect.extend(matchers)
 
@@ -59,20 +60,26 @@ window.IntersectionObserver =
 
 // Establish API mocking before all tests.
 beforeAll(() => {
-  server.listen()
-  localStorage.setItem('token', sign({ is_superuser: true }, ''))
+  if (!process.env.DISABLE_MSW) {
+    server.listen()
+  }
+  setupUser()
 })
 
 // Reset any request handlers that we may add during the tests,
 // so they don't affect other tests.
 afterEach(() => {
-  server.resetHandlers()
+  if (!process.env.DISABLE_MSW) {
+    server.resetHandlers()
+  }
   cleanup()
   reset()
 })
 
 // Clean up after the tests are finished.
 afterAll(() => {
-  server.close()
+  if (!process.env.DISABLE_MSW) {
+    server.close()
+  }
   localStorage.clear()
 })

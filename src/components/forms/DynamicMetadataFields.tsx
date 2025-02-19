@@ -5,6 +5,7 @@ import { formatFieldLabel } from '@/utils/metadataUtils'
 import { SelectField } from './fields/SelectField'
 import { TextField } from './fields/TextField'
 import { ITaxonomyField, TSubTaxonomy } from '@/interfaces'
+import { MultiValueInput } from './fields/MultiValueInput'
 
 type TProps<T extends FieldValues> = {
   fieldKey: string
@@ -43,13 +44,14 @@ export const DynamicMetadataFields = <T extends FieldValues>({
   const isRequired = !allow_blanks
 
   const renderField = () => {
-    if (allow_any) {
+    if (allow_any && fieldType !== FieldType.MULTI_VALUE_INPUT) {
       return (
         <TextField<T>
           name={fieldKey as Path<T>}
           control={control}
           isRequired={isRequired}
           label={formatFieldLabel(fieldKey)}
+          type={fieldType === FieldType.NUMBER ? 'number' : 'text'}
         />
       )
     }
@@ -75,6 +77,15 @@ export const DynamicMetadataFields = <T extends FieldValues>({
             type='number'
             isRequired={isRequired}
             label={formatFieldLabel(fieldKey)}
+          />
+        )
+      case FieldType.MULTI_VALUE_INPUT:
+        return (
+          <MultiValueInput
+            name={fieldKey as Path<T>}
+            control={control}
+            label={formatFieldLabel(fieldKey)}
+            isRequired={isRequired}
           />
         )
       case FieldType.TEXT:

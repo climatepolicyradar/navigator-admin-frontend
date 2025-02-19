@@ -15,6 +15,8 @@ import {
   IGcfProjectsFamilyFormPost,
   ICifProjectsMetadata,
   ICifProjectsFamilyFormPost,
+  IReportsMetadata,
+  IReportsFamilyFormPost,
 } from '../../../interfaces/Family'
 import { IChakraSelect } from '@/interfaces'
 
@@ -71,6 +73,12 @@ interface IFamilyFormGefProjects extends IFamilyFormMcfProjects {
   focal_area?: IChakraSelect[]
 }
 
+interface IFamilyFormReports extends IFamilyFormBase {
+  author?: string[]
+  author_type?: IChakraSelect[]
+  external_id?: string
+}
+
 type TFamilyFormMcfProjects =
   | IFamilyFormAfProjects
   | IFamilyFormGcfProjects
@@ -81,6 +89,7 @@ export type TFamilyFormSubmit =
   | IFamilyFormLawsAndPolicies
   | IFamilyFormIntlAgreements
   | TFamilyFormMcfProjects
+  | IFamilyFormReports
 
 // Mapping of corpus types to their specific metadata handlers
 export const corpusMetadataHandlers: Record<
@@ -236,6 +245,21 @@ export const corpusMetadataHandlers: Record<
         ...baseData,
         metadata,
       }) as IGefProjectsFamilyFormPost,
+  },
+  Reports: {
+    extractMetadata: (formData: TFamilyFormSubmit) => {
+      const reportsData = formData as IFamilyFormReports
+      return {
+        author: reportsData.author ? reportsData.author : [],
+        author_type: reportsData.author_type?.map((type) => type.value),
+        external_id: reportsData.external_id ? [reportsData.external_id] : [],
+      } as IReportsMetadata
+    },
+    createSubmissionData: (baseData, metadata) =>
+      ({
+        ...baseData,
+        metadata,
+      }) as IReportsFamilyFormPost,
   },
   // Add other corpus types here with their specific metadata extraction logic
 }

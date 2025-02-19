@@ -2,6 +2,7 @@ import { ICollection, IConfig, IDocument, IEvent } from '@/interfaces'
 import {
   ILawsAndPoliciesFamily,
   IInternationalAgreementsFamily,
+  IReportsFamily,
 } from '@/interfaces/Family'
 
 const mockConfig = {
@@ -15,7 +16,19 @@ const mockConfig = {
         type: 'continent',
         parent_id: 0,
       },
-      children: [],
+      children: [
+        {
+          node: {
+            id: 2,
+            display_value: 'Afghanistan',
+            slug: 'afghanistan',
+            value: 'AFG',
+            type: 'ISO-3166',
+            parent_id: 1,
+          },
+          children: [],
+        },
+      ],
     },
   ],
   languages: {
@@ -44,6 +57,7 @@ const mockUNFCCCFamily: IInternationalAgreementsFamily = {
   title: 'UNFCCC Family One',
   summary: 'Summary for UNFCCC Family One',
   geography: 'Geography One',
+  geographies: ['Geography One'],
   category: 'Category One',
   status: 'active',
   slug: 'unfccc-family-one',
@@ -69,6 +83,7 @@ const mockCCLWFamily: ILawsAndPoliciesFamily = {
   title: 'CCLW Family Two',
   summary: 'Summary for CCLW Family Two',
   geography: 'Geography Two',
+  geographies: ['Geography Two'],
   category: 'Category Two',
   status: 'active',
   slug: 'cclw-family-two',
@@ -146,6 +161,33 @@ const mockCCLWFamilyOneDocument: ILawsAndPoliciesFamily = {
   documents: ['document5'],
   created: new Date(2021, 1, 5).toISOString(),
   last_modified: new Date(2021, 1, 6).toISOString(),
+}
+
+const mockGCFFamily: IReportsFamily = {
+  import_id: 'GCF.family.1.0',
+  title: 'GCF Family',
+  summary: 'Summary for GCF Family One',
+  geography: 'Geography One',
+  geographies: ['Geography One'],
+  category: 'Category One',
+  status: 'active',
+  slug: 'gcf-family-one',
+  events: ['event1', 'event2'],
+  published_date: new Date(2021, 3, 1).toISOString(),
+  last_updated_date: new Date(2021, 0, 2).toISOString(),
+  documents: [],
+  collections: ['collection1', 'collection2'],
+  organisation: 'GCF',
+  corpus_import_id: 'GCF.corpus.Guidance.n0000',
+  corpus_title: 'GCF Guidance',
+  corpus_type: 'Reports',
+  created: new Date(2021, 0, 3).toISOString(),
+  last_modified: new Date(2021, 0, 4).toISOString(),
+  metadata: {
+    author: ['Author One', 'Author 2'],
+    author_type: ['Individual', 'Academic/Research'],
+    external_id: ['1234'],
+  },
 }
 
 const mockEvent: IEvent = {
@@ -335,7 +377,7 @@ const mockMCFConfig: IConfig = {
   corpora: [
     {
       corpus_import_id: 'MCF.corpus.i00000001.n0000',
-      title: 'MCF Title',
+      title: 'Climate Investment Funds Projects',
       description: 'Multilateral Climate Funds',
       corpus_type: 'CIF',
       corpus_type_description: 'Multilateral Climate Funds',
@@ -406,6 +448,55 @@ const mockMCFConfig: IConfig = {
         },
       },
     },
+    {
+      corpus_import_id: 'MCF.corpus.Guidance.n0000',
+      title: 'Climate Investment Funds Guidance',
+      description: 'Multilateral Climate Funds',
+      corpus_type: 'Reports',
+      corpus_type_description: 'Multilateral Climate Funds Guidance',
+      organisation: {
+        name: 'MCF',
+        id: 999,
+        display_name: 'MCF',
+        type: 'MCF',
+      },
+      taxonomy: {
+        author: {
+          allow_any: false,
+          allow_blanks: false,
+          allowed_values: [],
+        },
+        author_type: {
+          allow_any: false,
+          allow_blanks: false,
+          allowed_values: ['Individual', 'Academic/Research'],
+        },
+        external_id: {
+          allow_any: true,
+          allow_blanks: true,
+          allowed_values: [],
+        },
+        event_type: {
+          allow_any: false,
+          allow_blanks: false,
+          allowed_values: ['Event One'],
+        },
+        _document: {
+          type: {
+            allow_any: false,
+            allow_blanks: false,
+            allowed_values: ['Type One', 'Type Two'],
+          },
+        },
+        _event: {
+          event_type: {
+            allow_any: false,
+            allow_blanks: false,
+            allowed_values: ['Event One'],
+          },
+        },
+      },
+    },
   ],
 }
 
@@ -416,6 +507,7 @@ export const mockFamiliesData = [
   mockUNFCCCFamilyNoDocumentsNoEvents,
   mockCCLWFamilyNoDocuments,
   mockCCLWFamilyNoEvents,
+  mockGCFFamily,
 ]
 export { mockConfig as configMock }
 export { mockCCLWConfig as cclwConfigMock }
@@ -426,4 +518,7 @@ export { mockDocument2 }
 export { mockEvent }
 export { mockCCLWFamilyWithOneEvent }
 export { mockCCLWFamilyOneDocument }
+export { mockGCFFamily }
 export { mockCollection }
+export { mockUNFCCCFamily }
+export { mockCCLWFamily }

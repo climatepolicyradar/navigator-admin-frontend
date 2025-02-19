@@ -24,6 +24,13 @@ const getFieldValidation = (
         }),
       )
       break
+    case FieldType.MULTI_VALUE_INPUT:
+      fieldValidation = yup
+        .array()
+        .of(yup.string())
+        .required()
+        .min(1, 'You must provide at least one author')
+      break
     case FieldType.SINGLE_SELECT:
       fieldValidation = yup.object({
         value: yup.string().required(),

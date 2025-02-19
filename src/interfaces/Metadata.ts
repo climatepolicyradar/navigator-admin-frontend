@@ -6,6 +6,7 @@ export enum FieldType {
   SINGLE_SELECT = 'single_select',
   NUMBER = 'number',
   DATE = 'date',
+  MULTI_VALUE_INPUT = 'multi_value_input',
 }
 
 export interface IMetadata {
@@ -125,7 +126,7 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
       project_url: { type: FieldType.TEXT },
       project_value_co_financing: { type: FieldType.NUMBER },
       project_value_fund_spend: { type: FieldType.NUMBER },
-      approved_ref: { type: FieldType.NUMBER },
+      approved_ref: { type: FieldType.TEXT },
     },
     validationFields: [
       'project_id',
@@ -167,5 +168,13 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
   default: {
     renderFields: {},
     validationFields: [],
+  },
+  Reports: {
+    renderFields: {
+      author: { type: FieldType.MULTI_VALUE_INPUT },
+      author_type: { type: FieldType.MULTI_SELECT },
+      external_id: { type: FieldType.TEXT },
+    },
+    validationFields: ['author', 'author_type', 'external_id'],
   },
 }
