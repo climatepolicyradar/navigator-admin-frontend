@@ -1,55 +1,50 @@
 import { fixupConfigRules, fixupPluginRules } from '@eslint/compat'
 import typescriptEslint from '@typescript-eslint/eslint-plugin'
 import reactRefresh from 'eslint-plugin-react-refresh'
-import _import from 'eslint-plugin-import'
+import importPlugin from 'eslint-plugin-import'
 import globals from 'globals'
 import tsParser from '@typescript-eslint/parser'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import js from '@eslint/js'
-import { FlatCompat } from '@eslint/eslintrc'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-  recommendedConfig: js.configs.recommended,
-  allConfig: js.configs.all,
-})
 
 export default [
   {
-    ignores: ['**/eslint.config.mjs', '**/vite.config.ts', '**/*.js'],
+    ignores: [
+      '**/dist',
+      '**/build',
+      '**/node_modules',
+      '**/*.config.js',
+      '**/*.config.mjs',
+      '**/eslint.config.mjs',
+      '**/vite.config.ts',
+      '**/*.js',
+    ],
   },
-  ...fixupConfigRules(
-    compat.extends(
-      'eslint:recommended',
-      'plugin:@typescript-eslint/eslint-recommended',
-      'plugin:@typescript-eslint/recommended',
-      'plugin:@typescript-eslint/recommended-requiring-type-checking',
-      'plugin:react-hooks/recommended',
-      'plugin:import/recommended',
-      'plugin:import/typescript',
-    ),
-  ),
   {
+    files: ['**/*.{ts,tsx}'],
     plugins: {
       '@typescript-eslint': fixupPluginRules(typescriptEslint),
       'react-refresh': reactRefresh,
-      import: fixupPluginRules(_import),
+      import: fixupPluginRules(importPlugin),
     },
 
     languageOptions: {
       globals: {
         ...globals.browser,
+        ...globals.es2021,
       },
-
       parser: tsParser,
-      ecmaVersion: 'latest',
-      sourceType: 'module',
-
       parserOptions: {
         project: './tsconfig.json',
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+        ecmaFeatures: {
+          jsx: true,
+        },
       },
     },
 
@@ -59,18 +54,16 @@ export default [
           project: './tsconfig.json',
         },
       },
+      react: {
+        version: 'detect',
+      },
     },
 
     rules: {
-      'react-refresh/only-export-components': [
-        'warn',
-        {
-          allowConstantExport: true,
-        },
-      ],
-
+      // TypeScript specific rules
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/no-non-null-assertion': 'off',
-
       '@typescript-eslint/no-misused-promises': [
         'error',
         {
@@ -80,8 +73,15 @@ export default [
         },
       ],
 
-      'import/no-unresolved': 'error',
+      // React refresh rules
+      'react-refresh/only-export-components': [
+        'warn',
+        {
+          allowConstantExport: true,
+        },
+      ],
 
+      // Import rules with custom grouping
       'import/order': [
         'error',
         {
@@ -89,31 +89,37 @@ export default [
             'builtin',
             'external',
             'internal',
-            ['sibling', 'parent'],
-            'index',
-            'unknown',
+            ['parent', 'sibling', 'index'],
           ],
-
+          pathGroups: [
+            {
+              pattern: '@/**',
+              group: 'internal',
+              position: 'after',
+            },
+            {
+              pattern: '@**/**',
+              group: 'external',
+            },
+          ],
+          pathGroupsExcludedImportTypes: ['builtin'],
           'newlines-between': 'always',
-
           alphabetize: {
             order: 'asc',
             caseInsensitive: false,
           },
         },
       ],
-    },
-  },
-  {
-    files: ['**/eslint.config.{js,cjs,mjs}'],
+      'import/no-unresolved': 'error',
+      'import/named': 'error',
+      'import/default': 'error',
+      'import/namespace': 'error',
+      'import/no-absolute-path': 'error',
 
-    languageOptions: {
-      globals: {
-        ...globals.node,
-      },
-
-      ecmaVersion: 'latest',
-      sourceType: 'commonjs',
+      // General best practices
+      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'no-debugger': 'warn',
+      'prefer-const': 'error',
     },
   },
 ]
