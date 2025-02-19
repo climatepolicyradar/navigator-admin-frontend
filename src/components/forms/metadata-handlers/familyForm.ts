@@ -1,4 +1,6 @@
 import { IFamilyFormBase } from '@/components/forms/FamilyForm'
+import { IChakraSelect } from '@/interfaces'
+
 import {
   IAfProjectsFamilyFormPost,
   IAfProjectsMetadata,
@@ -18,7 +20,6 @@ import {
   IReportsMetadata,
   IReportsFamilyFormPost,
 } from '../../../interfaces/Family'
-import { IChakraSelect } from '@/interfaces'
 
 // Type-safe metadata handler type
 export type MetadataHandler<T extends TFamilyMetadata> = {

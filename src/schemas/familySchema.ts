@@ -1,4 +1,5 @@
 import * as yup from 'yup'
+
 import { TFamilyMetadata } from '@/interfaces/Family'
 
 // Base schema for core family fields (non-metadata)

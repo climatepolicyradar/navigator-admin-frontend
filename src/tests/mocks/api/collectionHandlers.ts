@@ -1,10 +1,12 @@
+import { http, HttpResponse } from 'msw'
+
+import { ICollection, ICollectionFormPost } from '@/interfaces'
+
 import {
   getCollection,
   createCollection,
   updateCollection,
 } from '../repository'
-import { ICollection, ICollectionFormPost } from '@/interfaces'
-import { http, HttpResponse } from 'msw'
 
 export const collectionHandlers = [
   http.get('*/v1/collection/:id/edit', async ({ request, params }) => {

@@ -1,16 +1,3 @@
-import { useEffect, useState } from 'react'
-import { useForm, SubmitHandler } from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
-import {
-  IEvent,
-  IEventFormPost,
-  IError,
-  IEventFormPut,
-  TTaxonomy,
-} from '@/interfaces'
-import { eventSchema } from '@/schemas/eventSchema'
-import { createEvent, updateEvent } from '@/api/Events'
-
 import {
   FormControl,
   FormLabel,
@@ -22,7 +9,21 @@ import {
   useToast,
   Select,
 } from '@chakra-ui/react'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { useEffect, useState } from 'react'
+import { useForm, SubmitHandler } from 'react-hook-form'
+
+import { createEvent, updateEvent } from '@/api/Events'
+import {
+  IEvent,
+  IEventFormPost,
+  IError,
+  IEventFormPut,
+  TTaxonomy,
+} from '@/interfaces'
+import { eventSchema } from '@/schemas/eventSchema'
 import { formatDateISO } from '@/utils/formatDate'
+
 import { ApiError } from '../feedback/ApiError'
 
 type TProps = {

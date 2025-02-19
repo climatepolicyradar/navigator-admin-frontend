@@ -1,7 +1,9 @@
 import { screen } from '@testing-library/react'
-import { renderRoute } from '../utilsTest/renderRoute.tsx'
+
 import { mockEvent } from '@/tests/utilsTest/mocks'
 import { formatDate } from '@/utils/formatDate'
+
+import { renderRoute } from '../utilsTest/renderRoute.tsx'
 
 vi.mock('react-router-dom', async (importOriginal) => {
   const actual: unknown = await importOriginal()

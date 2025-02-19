@@ -1,9 +1,11 @@
-import { customRender } from '@/tests/utilsTest/render'
 import { screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+
 import FamilyList from '@/components/lists/FamilyList'
 import { mockFamiliesData } from '@/tests/utilsTest/mocks'
+import { customRender } from '@/tests/utilsTest/render'
 import { formatDate } from '@/utils/formatDate'
-import userEvent from '@testing-library/user-event'
+
 import '@testing-library/jest-dom'
 
 vi.mock('react-router-dom', async (importOriginal) => {

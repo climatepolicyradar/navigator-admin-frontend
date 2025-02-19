@@ -1,3 +1,4 @@
+import { SearchIcon } from '@chakra-ui/icons'
 import {
   Box,
   Button,
@@ -20,7 +21,6 @@ import {
 } from 'react-router-dom'
 
 import { Loader } from '@/components/Loader'
-import { SearchIcon } from '@chakra-ui/icons'
 
 export default function Families() {
   const navigation = useNavigation()

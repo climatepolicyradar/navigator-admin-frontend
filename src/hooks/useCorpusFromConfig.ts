@@ -1,5 +1,6 @@
-import { IConfigCorpora } from '@/interfaces'
 import { useMemo } from 'react'
+
+import { IConfigCorpora } from '@/interfaces'
 
 const useCorpusFromConfig = (
   corpora?: IConfigCorpora[],

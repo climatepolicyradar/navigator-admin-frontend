@@ -1,6 +1,4 @@
-import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import { IError } from '@/interfaces'
+import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from '@chakra-ui/icons'
 import {
   Table,
   Thead,
@@ -15,14 +13,17 @@ import {
   Tooltip,
   SkeletonText,
 } from '@chakra-ui/react'
+import { useState, useEffect } from 'react'
 import { GoPencil } from 'react-icons/go'
+import { Link } from 'react-router-dom'
+
+import useCorpusTypes from '@/hooks/useCorpusTypes'
+import { IError } from '@/interfaces'
+import { ICorpusType } from '@/interfaces/CorpusType'
+import { sortBy } from '@/utils/sortBy'
 
 import { Loader } from '../Loader'
-import { sortBy } from '@/utils/sortBy'
-import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from '@chakra-ui/icons'
 import { ApiError } from '../feedback/ApiError'
-import { ICorpusType } from '@/interfaces/CorpusType'
-import useCorpusTypes from '@/hooks/useCorpusTypes'
 
 export default function CorpusTypeList() {
   const [sortControls, setSortControls] = useState<{

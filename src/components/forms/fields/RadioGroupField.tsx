@@ -1,11 +1,4 @@
 import {
-  Control,
-  Controller,
-  FieldValues,
-  Path,
-  RegisterOptions,
-} from 'react-hook-form'
-import {
   FormControl,
   FormLabel,
   FormErrorMessage,
@@ -13,6 +6,14 @@ import {
   Radio,
   HStack,
 } from '@chakra-ui/react'
+import {
+  Control,
+  Controller,
+  FieldValues,
+  Path,
+  RegisterOptions,
+} from 'react-hook-form'
+
 import { IChakraSelect } from '@/interfaces'
 
 type TProps<T extends FieldValues> = {

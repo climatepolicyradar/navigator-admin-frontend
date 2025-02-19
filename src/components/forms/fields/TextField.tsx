@@ -1,4 +1,3 @@
-import { Controller, Control, FieldValues, Path } from 'react-hook-form'
 import {
   Input,
   FormControl,
@@ -8,6 +7,7 @@ import {
   InputGroup,
   InputLeftAddon,
 } from '@chakra-ui/react'
+import { Controller, Control, FieldValues, Path } from 'react-hook-form'
 
 type TProps<T extends FieldValues> = {
   name: Path<T>

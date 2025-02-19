@@ -1,6 +1,8 @@
 import { http, HttpResponse } from 'msw'
-import { getEvent, updateEvent } from '../repository'
+
 import { IEvent } from '@/interfaces/Event'
+
+import { getEvent, updateEvent } from '../repository'
 
 export const eventHandlers = [
   http.get('*/v1/events/:id', ({ params }) => {

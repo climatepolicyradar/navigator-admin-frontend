@@ -1,5 +1,7 @@
-import { IDocument } from '@/interfaces'
 import { http, HttpResponse } from 'msw'
+
+import { IDocument } from '@/interfaces'
+
 import { getDocument, updateDocument } from '../repository'
 
 export const documentHandlers = [

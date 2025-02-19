@@ -1,16 +1,12 @@
-import { useEffect, useState } from 'react'
+import { Card, CardBody } from '@chakra-ui/react'
 import { EditorState, convertToRaw, ContentState } from 'draft-js'
-import { Editor } from 'react-draft-wysiwyg'
 import draftToHtml from 'draftjs-to-html'
 import htmlToDraft from 'html-to-draftjs'
+import { useEffect, useState } from 'react'
+import { Editor } from 'react-draft-wysiwyg'
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
-import { Card, CardBody } from '@chakra-ui/react'
 
-type TProps = {
-  html?: string
-  onChange: (html: string) => void
-  id?: string
-}
+type TProps = { html?: string; onChange: (html: string) => void; id?: string }
 
 const DEFAULT_HTML = '<p></p>'
 
@@ -49,9 +45,7 @@ export const WYSIWYG = ({ html = DEFAULT_HTML, onChange, id }: TProps) => {
             wrapperClassName='demo-wrapper'
             editorClassName='demo-editor'
             onEditorStateChange={setEditorState}
-            toolbar={{
-              options: ['inline', 'list'],
-            }}
+            toolbar={{ options: ['inline', 'list'] }}
           />
         </CardBody>
       </Card>

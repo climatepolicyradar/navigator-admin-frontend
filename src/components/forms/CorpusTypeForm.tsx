@@ -1,8 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react'
-import { useForm, SubmitHandler, SubmitErrorHandler } from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
-import { IError } from '@/interfaces'
-import { corpusTypeSchema } from '@/schemas/corpusTypeSchema'
+import { InfoOutlineIcon } from '@chakra-ui/icons'
 import {
   FormControl,
   FormLabel,
@@ -21,11 +17,17 @@ import {
   ModalFooter,
   Modal,
 } from '@chakra-ui/react'
-import { ApiError } from '../feedback/ApiError'
-import { InfoOutlineIcon } from '@chakra-ui/icons'
-import { TextField } from './fields/TextField'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { useEffect, useRef, useState, useCallback } from 'react'
+import { useForm, SubmitHandler, SubmitErrorHandler } from 'react-hook-form'
 import * as Yup from 'yup'
+
+import { IError } from '@/interfaces'
 import { ICorpusType } from '@/interfaces/CorpusType'
+import { corpusTypeSchema } from '@/schemas/corpusTypeSchema'
+
+import { ApiError } from '../feedback/ApiError'
+import { TextField } from './fields/TextField'
 
 type TProps = {
   corpusType?: ICorpusType

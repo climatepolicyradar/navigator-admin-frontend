@@ -1,7 +1,5 @@
-import { useState, useEffect } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
 // import { deleteCorpus } from '@/api/Corpora'
-import { ICorpus, IError } from '@/interfaces'
+import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from '@chakra-ui/icons'
 import {
   Table,
   Thead,
@@ -16,12 +14,15 @@ import {
   Tooltip,
   SkeletonText,
 } from '@chakra-ui/react'
+import { useState, useEffect } from 'react'
 import { GoPencil } from 'react-icons/go'
+import { Link, useSearchParams } from 'react-router-dom'
 
 import useCorpora from '@/hooks/useCorpora'
-import { Loader } from '../Loader'
+import { ICorpus, IError } from '@/interfaces'
 import { sortBy } from '@/utils/sortBy'
-import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from '@chakra-ui/icons'
+
+import { Loader } from '../Loader'
 import { ApiError } from '../feedback/ApiError'
 
 export default function CorpusList() {

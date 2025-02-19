@@ -1,11 +1,12 @@
 import { configure, screen, render, cleanup } from '@testing-library/react'
+
+import { FamilyForm } from '@/components/forms/FamilyForm'
+import { TFamily } from '@/interfaces'
 import {
   configMock,
   mockDocument,
   mockFamiliesData,
 } from '@/tests/utilsTest/mocks'
-import { FamilyForm } from '@/components/forms/FamilyForm'
-import { TFamily } from '@/interfaces'
 import { TestWrapper } from '@/tests/utilsTest/render'
 import '@testing-library/jest-dom'
 

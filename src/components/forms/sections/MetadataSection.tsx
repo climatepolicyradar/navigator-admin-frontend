@@ -1,8 +1,10 @@
-import { Control, FieldErrors, UseFormReset } from 'react-hook-form'
 import { Box, Divider, AbsoluteCenter } from '@chakra-ui/react'
-import { DynamicMetadataFields } from '../DynamicMetadataFields'
-import { CORPUS_METADATA_CONFIG, FieldType } from '@/interfaces/Metadata'
+import { Control, FieldErrors, UseFormReset } from 'react-hook-form'
+
 import { IConfigCorpora, TFamily, TTaxonomy } from '@/interfaces'
+import { CORPUS_METADATA_CONFIG, FieldType } from '@/interfaces/Metadata'
+
+import { DynamicMetadataFields } from '../DynamicMetadataFields'
 import { IFamilyFormBase } from '../FamilyForm'
 
 type TProps = {

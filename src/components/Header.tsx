@@ -1,7 +1,7 @@
 import { Box, HStack, Stack } from '@chakra-ui/react'
 
-import { SideMenu } from './SideMenu'
 import { BreadCrumbs } from './Breadcrumbs'
+import { SideMenu } from './SideMenu'
 
 export function Header() {
   return (

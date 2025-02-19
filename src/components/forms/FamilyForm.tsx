@@ -1,7 +1,3 @@
-import { useEffect, useState, useMemo, useCallback } from 'react'
-import { useForm, SubmitHandler, SubmitErrorHandler } from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
-import { useBlocker, useNavigate } from 'react-router-dom'
 import {
   VStack,
   Button,
@@ -10,55 +6,60 @@ import {
   SkeletonText,
   useDisclosure,
 } from '@chakra-ui/react'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { useEffect, useState, useMemo, useCallback } from 'react'
+import { useForm, SubmitHandler, SubmitErrorHandler } from 'react-hook-form'
+import { useBlocker, useNavigate } from 'react-router-dom'
 import * as yup from 'yup'
-import useCorpusFromConfig from '@/hooks/useCorpusFromConfig'
-import useConfig from '@/hooks/useConfig'
-import useCollections from '@/hooks/useCollections'
 
-import { SelectField } from './fields/SelectField'
-import { TextField } from './fields/TextField'
-import { RadioGroupField } from './fields/RadioGroupField'
-import { WYSIWYGField } from './fields/WYSIWYGField'
-import { MetadataSection } from './sections/MetadataSection'
-import { DocumentSection } from './sections/DocumentSection'
-import { EventSection } from './sections/EventSection'
-import { UnsavedChangesModal } from './modals/UnsavedChangesModal'
-import { ReadOnlyFields } from '../family/ReadOnlyFields'
-import { EntityEditDrawer } from '../drawers/EntityEditDrawer'
-
-import {
-  TFamily,
-  IFamilyFormPostBase,
-  TFamilyMetadata,
-} from '@/interfaces/Family'
-import { canModify } from '@/utils/canModify'
-import { getCountries } from '@/utils/extractNestedGeographyData'
-import { decodeToken } from '@/utils/decodeToken'
-import { stripHtml } from '@/utils/stripHtml'
-import { generateDynamicValidationSchema } from '@/schemas/dynamicValidationSchema'
-import { createFamily, updateFamily } from '@/api/Families'
 import { deleteDocument } from '@/api/Documents'
 import { deleteEvent } from '@/api/Events'
-import { createFamilySchema } from '@/schemas/familySchema'
-import { ApiError } from '../feedback/ApiError'
-import { IDocument } from '@/interfaces/Document'
-import { IEvent } from '@/interfaces/Event'
-import { IError } from '@/interfaces/Auth'
+import { createFamily, updateFamily } from '@/api/Families'
+import useCollections from '@/hooks/useCollections'
+import useConfig from '@/hooks/useConfig'
+import useCorpusFromConfig from '@/hooks/useCorpusFromConfig'
 import {
   IChakraSelect,
   ICollection,
   IConfigCorpora,
   TTaxonomy,
 } from '@/interfaces'
+import { IError } from '@/interfaces/Auth'
+import { IDocument } from '@/interfaces/Document'
+import { IEvent } from '@/interfaces/Event'
 import {
-  getMetadataHandler,
-  TFamilyFormSubmit,
-} from './metadata-handlers/familyForm'
+  TFamily,
+  IFamilyFormPostBase,
+  TFamilyMetadata,
+} from '@/interfaces/Family'
 import {
   CORPUS_METADATA_CONFIG,
   FieldType,
   IFormMetadata,
 } from '@/interfaces/Metadata'
+import { generateDynamicValidationSchema } from '@/schemas/dynamicValidationSchema'
+import { createFamilySchema } from '@/schemas/familySchema'
+import { canModify } from '@/utils/canModify'
+import { decodeToken } from '@/utils/decodeToken'
+import { getCountries } from '@/utils/extractNestedGeographyData'
+import { stripHtml } from '@/utils/stripHtml'
+
+import { RadioGroupField } from './fields/RadioGroupField'
+import { SelectField } from './fields/SelectField'
+import { TextField } from './fields/TextField'
+import { WYSIWYGField } from './fields/WYSIWYGField'
+import {
+  getMetadataHandler,
+  TFamilyFormSubmit,
+} from './metadata-handlers/familyForm'
+import { UnsavedChangesModal } from './modals/UnsavedChangesModal'
+import { DocumentSection } from './sections/DocumentSection'
+import { EventSection } from './sections/EventSection'
+import { MetadataSection } from './sections/MetadataSection'
+import { EntityEditDrawer } from '../drawers/EntityEditDrawer'
+import { ReadOnlyFields } from '../family/ReadOnlyFields'
+import { ApiError } from '../feedback/ApiError'
+
 export interface IFamilyFormBase {
   title: string
   summary: string
@@ -70,9 +71,7 @@ export interface IFamilyFormBase {
 
 type TChildEntity = 'event' | 'document'
 
-type TProps = {
-  family?: TFamily
-}
+type TProps = { family?: TFamily }
 
 const getCollection = (collectionId: string, collections: ICollection[]) => {
   return collections.find((collection) => collection.import_id === collectionId)
@@ -302,16 +301,10 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
 
           if (fieldConfig.type === FieldType.SINGLE_SELECT) {
             loadedMetadata[key] = value?.[0]
-              ? {
-                  value: value[0],
-                  label: value[0],
-                }
+              ? { value: value[0], label: value[0] }
               : undefined
           } else if (fieldConfig.type === FieldType.MULTI_SELECT) {
-            loadedMetadata[key] = value?.map((v) => ({
-              value: v,
-              label: v,
-            }))
+            loadedMetadata[key] = value?.map((v) => ({ value: v, label: v }))
           } else if (fieldConfig.type === FieldType.MULTI_VALUE_INPUT) {
             loadedMetadata[key] = value
           } else {
@@ -344,10 +337,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
           ?.map((collectionId) => {
             const collection = getCollection(collectionId, collections)
             if (!collection) return null
-            return {
-              value: collection.import_id,
-              label: collection.title,
-            }
+            return { value: collection.import_id, label: collection.title }
           })
           .filter(
             (collection): collection is IChakraSelect => collection !== null,
@@ -387,10 +377,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   }
 
   const onDocumentDeleteClick = async (documentId: string) => {
-    toast({
-      title: 'Document deletion in progress',
-      status: 'info',
-    })
+    toast({ title: 'Document deletion in progress', status: 'info' })
     await deleteDocument(documentId)
       .then(() => {
         toast({
@@ -428,10 +415,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   }
 
   const onEventDeleteClick = async (eventId: string) => {
-    toast({
-      title: 'Event deletion in progress',
-      status: 'info',
-    })
+    toast({ title: 'Event deletion in progress', status: 'info' })
     await deleteEvent(eventId)
       .then(() => {
         toast({
@@ -562,10 +546,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 { value: 'Executive', label: 'Executive' },
                 { value: 'Legislative', label: 'Legislative' },
                 { value: 'UNFCCC', label: 'UNFCCC' },
-                {
-                  value: 'Reports',
-                  label: 'Reports (Guidance)',
-                },
+                { value: 'Reports', label: 'Reports (Guidance)' },
                 { value: 'MCF', label: 'MCF Projects' },
               ]}
               rules={{ required: true }}

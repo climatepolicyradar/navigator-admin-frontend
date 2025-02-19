@@ -1,4 +1,5 @@
 import { Box, Text, VStack, Divider } from '@chakra-ui/react'
+
 import { TFamily } from '@/interfaces'
 
 type TProps = {

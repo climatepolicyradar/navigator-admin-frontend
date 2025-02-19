@@ -1,10 +1,12 @@
 import { screen, waitFor, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import { mcfConfigMock, unfcccConfigMock } from '../../utilsTest/mocks'
-import { customRender } from '@/tests/utilsTest/render'
+import userEvent from '@testing-library/user-event'
+
 import { DocumentForm } from '@/components/forms/DocumentForm'
 import { IConfigTaxonomyUNFCCC, IDocument } from '@/interfaces'
-import userEvent from '@testing-library/user-event'
+import { customRender } from '@/tests/utilsTest/render'
+
+import { mcfConfigMock, unfcccConfigMock } from '../../utilsTest/mocks'
 
 vi.mock('@/api/Documents', () => ({
   createDocument: vi

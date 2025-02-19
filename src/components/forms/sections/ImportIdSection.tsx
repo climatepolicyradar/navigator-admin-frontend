@@ -1,10 +1,12 @@
 import { Box, Divider, AbsoluteCenter, Text } from '@chakra-ui/react'
+import { useEffect, useState } from 'react'
+import { Control, UseFormSetValue } from 'react-hook-form'
+
 import { IChakraSelect, IConfigCorpora } from '@/interfaces'
+
+import { ICorpusFormSubmit } from '../CorpusForm'
 import { SelectField } from '../fields/SelectField'
 import { TextField } from '../fields/TextField'
-import { Control, UseFormSetValue } from 'react-hook-form'
-import { useEffect, useState } from 'react'
-import { ICorpusFormSubmit } from '../CorpusForm'
 
 type TProps = {
   corpora: IConfigCorpora[]

@@ -5,7 +5,9 @@ import {
   DrawerHeader,
   DrawerOverlay,
 } from '@chakra-ui/react'
+
 import { IDocument, TTaxonomy } from '@/interfaces'
+
 import { DocumentForm } from '../forms/DocumentForm'
 
 type TProps = {
