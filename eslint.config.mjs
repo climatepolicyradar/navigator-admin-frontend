@@ -2,6 +2,7 @@ import { fixupPluginRules } from '@eslint/compat'
 import typescriptEslint from '@typescript-eslint/eslint-plugin'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import importPlugin from 'eslint-plugin-import'
+import reactHooks from 'eslint-plugin-react-hooks'
 import globals from 'globals'
 import tsParser from '@typescript-eslint/parser'
 
@@ -24,6 +25,7 @@ export default [
       '@typescript-eslint': fixupPluginRules(typescriptEslint),
       'react-refresh': reactRefresh,
       import: fixupPluginRules(importPlugin),
+      'react-hooks': reactHooks,
     },
 
     languageOptions: {
