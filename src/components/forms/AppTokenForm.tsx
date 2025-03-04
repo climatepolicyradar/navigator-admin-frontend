@@ -32,8 +32,6 @@ import * as Yup from 'yup'
 import { SelectField } from '@/components/forms/fields/SelectField'
 import { jwtDecode } from 'jwt-decode'
 
-type TProps = {}
-
 export type IAppTokenFormSubmit = Yup.InferType<typeof appTokenSchema>
 
 interface JWTPayload {
@@ -42,7 +40,7 @@ interface JWTPayload {
   allowed_corpora_ids?: string[]
 }
 
-export const AppTokenForm = ({}: TProps) => {
+export const AppTokenForm = () => {
   const toast = useToast()
   const [formError, setFormError] = useState<IError | null | undefined>()
   const [createdAppToken, setCreatedAppToken] = useState<string | null>(null)
@@ -124,13 +122,25 @@ export const AppTokenForm = ({}: TProps) => {
           toast.closeAll()
           setCreatedAppToken(appToken)
           setPastedToken('')
-          navigator.clipboard.writeText(appToken).then(() => {
-            toast({
-              title: 'App token copied to clipboard',
-              status: 'success',
-              position: 'top',
+          navigator.clipboard
+            .writeText(appToken)
+            .then(() => {
+              toast({
+                title: 'App token copied to clipboard',
+                status: 'success',
+                duration: 2000,
+                position: 'top',
+              })
             })
-          })
+            .catch((error: IError) => {
+              toast({
+                title: 'Failed to copy token',
+                description: error.message,
+                status: 'error',
+                duration: 2000,
+                position: 'top',
+              })
+            })
         })
         .catch((error: IError) => {
           console.error('❌ Error during form submission:', error)
@@ -161,6 +171,12 @@ export const AppTokenForm = ({}: TProps) => {
     useCallback((errors) => {
       console.error(errors)
     }, [])
+
+  const handleReset = () => {
+    reset() // Reset form to initial values
+    setPastedToken('') // Clear pasted token
+    setCreatedAppToken(null) // Clear created token
+  }
 
   return (
     <>
@@ -276,6 +292,9 @@ export const AppTokenForm = ({}: TProps) => {
           <ButtonGroup>
             <Button type='submit' colorScheme='blue' disabled={isSubmitting}>
               {(createdAppToken ? 'Update ' : 'Create new ') + 'App Token'}
+            </Button>
+            <Button onClick={handleReset} variant='outline' colorScheme='red'>
+              Clear Form
             </Button>
           </ButtonGroup>
         </VStack>
