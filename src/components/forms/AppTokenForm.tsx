@@ -1,12 +1,7 @@
-import { useEffect, useRef, useState, useCallback } from 'react'
-import {
-  useForm,
-  SubmitHandler,
-  SubmitErrorHandler,
-  Controller,
-} from 'react-hook-form'
+import { useState, useCallback } from 'react'
+import { useForm, SubmitHandler, SubmitErrorHandler } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { IChakraSelect, ICorpus, IError } from '@/interfaces'
+import { IChakraSelect, IError } from '@/interfaces'
 import { appTokenSchema } from '@/schemas/appTokenSchema'
 import { createAppToken } from '@/api/AppToken'
 import {
@@ -16,20 +11,19 @@ import {
   VStack,
   Button,
   ButtonGroup,
-  FormErrorMessage,
   useToast,
   Tooltip,
   Icon,
   Box,
   Code,
   useClipboard,
-  Input,
   Divider,
   IconButton,
+  InputGroup,
+  InputRightElement,
 } from '@chakra-ui/react'
-import { useNavigate } from 'react-router-dom'
 import { ApiError } from '../feedback/ApiError'
-import { InfoOutlineIcon, CopyIcon } from '@chakra-ui/icons'
+import { InfoOutlineIcon, CloseIcon } from '@chakra-ui/icons'
 import { TextField } from './fields/TextField'
 import { FormLoader } from '../feedback/FormLoader'
 import { IAppTokenFormPost } from '@/interfaces/AppToken'
@@ -38,9 +32,7 @@ import * as Yup from 'yup'
 import { SelectField } from '@/components/forms/fields/SelectField'
 import { jwtDecode } from 'jwt-decode'
 
-type TProps = {
-  corpus?: ICorpus
-}
+type TProps = {}
 
 export type IAppTokenFormSubmit = Yup.InferType<typeof appTokenSchema>
 
@@ -50,8 +42,7 @@ interface JWTPayload {
   allowed_corpora_ids?: string[]
 }
 
-export const AppTokenForm = ({ corpus: loadedCorpus }: TProps) => {
-  const navigate = useNavigate()
+export const AppTokenForm = ({}: TProps) => {
   const toast = useToast()
   const [formError, setFormError] = useState<IError | null | undefined>()
   const [createdAppToken, setCreatedAppToken] = useState<string | null>(null)
@@ -59,14 +50,11 @@ export const AppTokenForm = ({ corpus: loadedCorpus }: TProps) => {
   const [pastedToken, setPastedToken] = useState<string>('')
 
   const {
-    register,
     handleSubmit,
     control,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
     setValue,
-    getValues,
-    watch,
   } = useForm<IAppTokenFormSubmit>({
     resolver: yupResolver(appTokenSchema),
   })
@@ -124,7 +112,7 @@ export const AppTokenForm = ({ corpus: loadedCorpus }: TProps) => {
       const formData: IAppTokenFormPost = {
         theme: formValues.theme,
         hostname: formValues.hostname,
-        expiry_years: formValues.expiry_years,
+        expiry_years: formValues.expiry_years || null,
         corpora_ids: formValues.corpora_ids.map(
           (corpus: IChakraSelect) => corpus.value,
         ),
@@ -135,7 +123,7 @@ export const AppTokenForm = ({ corpus: loadedCorpus }: TProps) => {
           const appToken = response.response
           toast.closeAll()
           setCreatedAppToken(appToken)
-          // Copy token to clipboard on create success
+          setPastedToken('')
           navigator.clipboard.writeText(appToken).then(() => {
             toast({
               title: 'App token copied to clipboard',
@@ -155,7 +143,7 @@ export const AppTokenForm = ({ corpus: loadedCorpus }: TProps) => {
           })
         })
     },
-    [loadedCorpus, navigate, toast, setFormError],
+    [toast, setFormError],
   )
 
   const onSubmit: SubmitHandler<IAppTokenFormSubmit> = useCallback(
@@ -184,41 +172,62 @@ export const AppTokenForm = ({ corpus: loadedCorpus }: TProps) => {
           {formError && <ApiError error={formError} />}
 
           {createdAppToken && (
-            <Box
-              bg='green.50'
-              p={4}
-              borderRadius='md'
-              onDoubleClick={() => {
-                onCopy()
-                toast({
-                  title: 'Token copied to clipboard',
-                  status: 'success',
-                  duration: 2000,
-                  position: 'top',
-                })
-              }}
-            >
-              <Code
-                p={2}
-                bg='green.100'
+            <>
+              <Box
+                bg='green.50'
+                p={4}
                 borderRadius='md'
-                whiteSpace='normal'
-                wordBreak='break-all'
-                width='100%'
-                cursor='copy'
+                onClick={() => {
+                  onCopy()
+                  if (hasCopied)
+                    toast({
+                      title: 'Token copied to clipboard',
+                      status: 'success',
+                      duration: 2000,
+                      position: 'top',
+                    })
+                }}
               >
-                {createdAppToken}
-              </Code>
-            </Box>
+                <Code
+                  p={2}
+                  bg='green.100'
+                  borderRadius='md'
+                  whiteSpace='normal'
+                  wordBreak='break-all'
+                  width='100%'
+                  cursor='copy'
+                >
+                  {createdAppToken}
+                </Code>
+              </Box>
+              <Divider />
+            </>
           )}
 
           <FormControl>
             <FormLabel>Paste Existing Token (Optional)</FormLabel>
-            <Input
-              placeholder='Paste your existing app token here'
-              value={pastedToken}
-              onChange={(e) => setPastedToken(e.target.value)}
-            />
+            <InputGroup>
+              <Textarea
+                placeholder='Paste your existing app token here'
+                value={pastedToken}
+                onChange={(e) => setPastedToken(e.target.value)}
+                pr='4.5rem' // Make space for clear button
+                whiteSpace='normal'
+                wordBreak='break-all'
+              />
+              {pastedToken && (
+                <InputRightElement width='4.5rem'>
+                  <IconButton
+                    h='1.75rem'
+                    size='sm'
+                    onClick={() => setPastedToken('')}
+                    icon={<CloseIcon />}
+                    aria-label='Clear token'
+                    variant='ghost'
+                  />
+                </InputRightElement>
+              )}
+            </InputGroup>
             <Button
               mt={2}
               size='sm'
@@ -242,8 +251,8 @@ export const AppTokenForm = ({ corpus: loadedCorpus }: TProps) => {
             name='hostname'
             label={
               <>
-                'Domain'
-                <Tooltip label='This is the internally used description of this corpus'>
+                Custom App Domain
+                <Tooltip label='URL of the custom app that will use this token'>
                   <Icon as={InfoOutlineIcon} ml={2} cursor='pointer' />
                 </Tooltip>
               </>
@@ -266,7 +275,7 @@ export const AppTokenForm = ({ corpus: loadedCorpus }: TProps) => {
 
           <ButtonGroup>
             <Button type='submit' colorScheme='blue' disabled={isSubmitting}>
-              {(loadedCorpus ? 'Update ' : 'Create new ') + 'App Token'}
+              {(createdAppToken ? 'Update ' : 'Create new ') + 'App Token'}
             </Button>
           </ButtonGroup>
         </VStack>

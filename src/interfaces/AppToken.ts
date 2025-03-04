@@ -2,7 +2,7 @@ export interface IAppTokenFormPost {
   corpora_ids: string[]
   theme: string
   hostname: string
-  expiry_years?: number
+  expiry_years: number | null
 }
 
 export interface IAppToken {
