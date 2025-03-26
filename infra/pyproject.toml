@@ -1,0 +1,5 @@
+[project]
+name = "admin_frontend"
+version = "1.0.0"
+requires-python = ">=3.11"
+dependencies = ["pulumi", "pulumi-aws"]

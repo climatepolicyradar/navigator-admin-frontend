@@ -3,4 +3,5 @@ description: Admin Frontend App
 runtime:
   name: python
   options:
-    virtualenv: venv
+    toolchain: uv
+    virtualenv: ../.venv
