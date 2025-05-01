@@ -11,9 +11,11 @@ import Document from '@/views/document/Document'
 import Corpus from '@/views/corpus/Corpus'
 import Corpora from '@/views/corpus/Corpora'
 import CorpusList from '@/components/lists/CorpusList'
+import CorpusTypeList from '@/components/lists/CorpusTypeList'
 import { familyRoutes } from './familyRoutes'
 import { collectionRoutes } from './collectionRoutes'
-import { corpusTypeRoutes } from './corpusTypeRoutes'
+import CorpusTypes from '@/views/corpusTypes/CorpusTypes'
+import CorpusType from '@/views/corpusTypes/CorpusType'
 import OrganisationList from '@/components/lists/OrganisationList'
 import Organisations from '@/views/organisation/Organisations'
 import Organisation from '@/views/organisation/Organisation'
@@ -39,7 +41,6 @@ const authenticatedRoutes = [
               },
               ...familyRoutes,
               ...collectionRoutes,
-              ...corpusTypeRoutes,
               {
                 path: 'document/:importId/edit',
                 element: <Document />,
@@ -75,6 +76,28 @@ const authenticatedRoutes = [
                   {
                     path: '',
                     element: <CorpusList />,
+                    errorElement: <ErrorPage />,
+                  },
+                ],
+              },
+              {
+                path: '/corpus-type/new',
+                element: <CorpusType />,
+                errorElement: <ErrorPage />,
+              },
+              {
+                path: 'corpus-type/:name/edit',
+                element: <CorpusType />,
+                errorElement: <ErrorPage />,
+              },
+              {
+                path: 'corpus-types',
+                element: <CorpusTypes />,
+                errorElement: <ErrorPage />,
+                children: [
+                  {
+                    path: '',
+                    element: <CorpusTypeList />,
                     errorElement: <ErrorPage />,
                   },
                 ],
