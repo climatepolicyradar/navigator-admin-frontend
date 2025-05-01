@@ -157,7 +157,7 @@ export const DocumentForm = ({
       if (data.type) {
         metadata.type = data.type
           .filter((t) => typeof t.value === 'string')
-          .map((t) => t.value)
+          .map((t) => t.value as string)
       }
       return {
         family_import_id: data.family_import_id || familyId || '',
