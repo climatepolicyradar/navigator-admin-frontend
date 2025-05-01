@@ -30,18 +30,21 @@ export const documentSchema = yup
         otherwise: (schema) => schema.notRequired(),
       }),
     type: yup
-      .object({
-        label: yup.string().when('$isTypeRequired', {
-          is: true,
-          then: (schema) => schema.required('Type.label is a required field'),
-          otherwise: (schema) => schema.notRequired(),
+      .array()
+      .of(
+        yup.object({
+          label: yup.string().when('$isTypeRequired', {
+            is: true,
+            then: (schema) => schema.required('Type.label is a required field'),
+            otherwise: (schema) => schema.notRequired(),
+          }),
+          value: yup.string().when('$isTypeRequired', {
+            is: true,
+            then: (schema) => schema.required('Type.value is a required field'),
+            otherwise: (schema) => schema.notRequired(),
+          }),
         }),
-        value: yup.string().when('$isTypeRequired', {
-          is: true,
-          then: (schema) => schema.required('Type.value is a required field'),
-          otherwise: (schema) => schema.notRequired(),
-        }),
-      })
+      )
       .nullable()
       .when('$isTypeRequired', {
         is: true,

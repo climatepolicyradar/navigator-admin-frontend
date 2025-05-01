@@ -9,6 +9,7 @@ import {
   ICollection,
   ICollectionFormPost,
   IDocument,
+  IDocumentFormPostModified,
   TFamily,
   TFamilyFormPost,
 } from '@/interfaces'
@@ -33,6 +34,16 @@ const updateEvent = (data: IEvent, id: string) => {
 
 const getDocument = (id: string) => {
   return documentRepository.find((doc) => doc.import_id === id)
+}
+
+const createDocument = (data: IDocumentFormPostModified, org: string) => {
+  const import_id = `${org}.document.${documentRepository.length}`
+  documentRepository.push({
+    import_id: import_id,
+    status: 'created',
+    ...data,
+  } as IDocument)
+  return import_id
 }
 
 const updateDocument = (data: IDocument, id: string) => {
@@ -92,6 +103,7 @@ export {
   getEvent,
   updateEvent,
   getDocument,
+  createDocument,
   updateDocument,
   getCollection,
   createCollection,

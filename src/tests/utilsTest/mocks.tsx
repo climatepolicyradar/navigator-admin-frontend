@@ -516,6 +516,7 @@ export { mockMCFConfig as mcfConfigMock }
 export { mockDocument }
 export { mockDocument2 }
 export { mockEvent }
+export { mockUNFCCCFamilyNoDocumentsNoEvents }
 export { mockCCLWFamilyWithOneEvent }
 export { mockCCLWFamilyOneDocument }
 export { mockGCFFamily }
