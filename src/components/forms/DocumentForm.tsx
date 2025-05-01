@@ -290,7 +290,7 @@ export const DocumentForm = ({
               label='Type'
               control={control}
               options={documentTypes}
-              isMulti={false}
+              isMulti={true}
               isRequired={true}
               isClearable={false}
             />
