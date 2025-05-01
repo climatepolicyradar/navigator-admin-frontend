@@ -115,10 +115,9 @@ export const DocumentForm = ({
             }
           : undefined,
         type: loadedDocument?.metadata?.type
-          ? {
-              label: loadedDocument?.metadata?.type[0],
-              value: loadedDocument?.metadata?.type[0],
-            }
+          ? loadedDocument.metadata.type.map((t) => {
+              return { label: t, value: t }
+            })
           : undefined,
         title: loadedDocument.title,
         source_url: loadedDocument.source_url ?? '',
@@ -155,8 +154,10 @@ export const DocumentForm = ({
       if (data.role?.value) {
         metadata.role = [data.role?.value]
       }
-      if (data.type?.value) {
-        metadata.type = [data.type?.value]
+      if (data.type) {
+        metadata.type = data.type
+          .filter((t) => typeof t.value === 'string')
+          .map((t) => t.value)
       }
       return {
         family_import_id: data.family_import_id || familyId || '',
