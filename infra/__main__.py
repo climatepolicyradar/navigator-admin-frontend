@@ -12,6 +12,7 @@ from util.naming import DEFAULT_TAGS, NAME_PREFIX
 
 from resources.app_runner_service import AppRunnerConfig, AppRunnerService
 from resources.ecr_repository import ECRRepository, ECRRepositoryConfig, PolicyOptions
+from resources.github_actions_role import GitHubActionsRole
 from resources.util import tag_name, validate_aws_account, validate_stack_and_branch
 
 validate_aws_account()
@@ -102,3 +103,13 @@ frontend = AppRunnerService(
 
 pulumi.export("new frontend service name", frontend.service.service_name)
 pulumi.export("new frontend arn", frontend.service.arn)
+
+########################################################################
+# Create new GitHub Actions role
+########################################################################
+
+# Create GitHub Actions role only for CPR stacks (in current account)
+if stack == "staging" or stack == "production":
+    github_actions_role = GitHubActionsRole(
+        name="navigator-admin-frontend-github-actions",
+    )
