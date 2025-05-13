@@ -101,15 +101,15 @@ frontend = AppRunnerService(
     env_vars=frontend_env,
 )
 
-pulumi.export("new frontend service name", frontend.service.service_name)
-pulumi.export("new frontend arn", frontend.service.arn)
+pulumi.export("new admin frontend service name", frontend.service.service_name)
+pulumi.export("new admin frontend arn", frontend.service.arn)
 
 ########################################################################
 # Create new GitHub Actions role
 ########################################################################
 
 # Create GitHub Actions role only for CPR stacks (in current account)
-if stack == "staging" or stack == "production":
+if stack in ["production", "staging"]:
     github_actions_role = GitHubActionsRole(
         name="navigator-admin-frontend-github-actions",
     )
