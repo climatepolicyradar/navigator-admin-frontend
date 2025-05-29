@@ -34,10 +34,9 @@ export const OrganisationForm = ({ organisation: loadedOrg }: TProps) => {
 
   const handleFormSubmission = useCallback(
     // TODO: Remove under APP-54.
-    /* trunk-ignore(eslint/@typescript-eslint/require-await) */
     async (formValues: IOrgFormSubmit) => {
       setFormError(null)
-      console.debug(formValues)
+      console.debug(formValues) // eslint-disable-line no-console
 
       if (loadedOrg) {
         toast({

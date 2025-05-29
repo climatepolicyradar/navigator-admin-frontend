@@ -37,7 +37,6 @@ const mockUseCorpora = vi.fn()
 // Mock modules before imports
 vi.mock('@/hooks/useCorpora', () => ({
   // TODO: Remove this ignore.
-  /* trunk-ignore(eslint/@typescript-eslint/no-unsafe-return) */
   default: () => mockUseCorpora(),
 }))
 

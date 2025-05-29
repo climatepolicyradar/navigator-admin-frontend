@@ -57,7 +57,6 @@ export const CorpusTypeForm = ({ corpusType: loadedCorpusType }: TProps) => {
 
   const handleFormSubmission = useCallback(
     // TODO: Remove under APP-54.
-    /* trunk-ignore(eslint/@typescript-eslint/require-await) */
     async (formValues: ICorpusTypeFormSubmit) => {
       setFormError(null)
 
