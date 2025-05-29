@@ -6,7 +6,7 @@ import userEvent from '@testing-library/user-event'
 import { TTaxonomy } from '@/interfaces'
 
 describe('EventEditDrawer', () => {
-  it('renders edit form for existing event if an editingEvent is passed in', () => {
+  it('renders edit form for existing event if an editingEvent is passed in', async () => {
     const eventDate = new Date(2024, 6, 11).toISOString()
     // We put the formattedDate here so that the formatting runs in the same locale
     // as the test suite component when it runs formatDate.
@@ -16,7 +16,7 @@ describe('EventEditDrawer', () => {
       import_id: '1',
       event_title: 'Test event title',
       date: eventDate,
-      event_type_value: 'Appealed',
+      event_type_value: 'Test event type',
       event_status: 'Submitted',
       family_import_id: '1',
     }
@@ -27,6 +27,17 @@ describe('EventEditDrawer', () => {
         isOpen={true}
         canModify={true}
         familyId={'1'}
+        taxonomy={
+          {
+            _event: {
+              event_type: {
+                allowed_values: ['Test event type', 'Other event type'],
+                allow_any: false,
+                allow_blanks: false,
+              },
+            },
+          } as TTaxonomy
+        }
       />,
     )
     expect(
@@ -34,6 +45,15 @@ describe('EventEditDrawer', () => {
         `Edit: ${editingEvent.event_title}, on ${formattedDate}`,
       ),
     ).toBeInTheDocument()
+
+    expect(screen.getByText('Test event type')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('combobox', { name: 'Event Type' }))
+    expect(
+      screen.getByRole('option', {
+        name: 'Other event type',
+      }),
+    ).toBeInTheDocument()
+
     expect(
       screen.getByRole('button', { name: 'Update Event' }),
     ).toBeInTheDocument()
