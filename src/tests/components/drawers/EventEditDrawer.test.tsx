@@ -2,6 +2,8 @@ import '@testing-library/jest-dom'
 import { render, screen } from '@testing-library/react'
 import { EventEditDrawer } from '@/components/drawers/EventEditDrawer'
 import { formatDate } from '@/utils/formatDate'
+import userEvent from '@testing-library/user-event'
+import { TTaxonomy } from '@/interfaces'
 
 describe('EventEditDrawer', () => {
   it('renders edit form for existing event if an editingEvent is passed in', () => {
@@ -37,17 +39,37 @@ describe('EventEditDrawer', () => {
     ).toBeInTheDocument()
   })
 
-  it('renders create new event form if an editingEvent is not passed in', () => {
+  it('renders create new event form if an editingEvent is not passed in', async () => {
     render(
       <EventEditDrawer
+        familyId={'1'}
         onClose={() => {}}
         isOpen={true}
-        familyId={'1'}
-        canModify={true}
         onSuccess={() => {}}
+        canModify={false}
+        taxonomy={
+          {
+            _event: {
+              event_type: {
+                allowed_values: ['Test event type'],
+                allow_any: false,
+                allow_blanks: false,
+              },
+            },
+          } as TTaxonomy
+        }
       />,
     )
     expect(screen.getByText('Add new Event')).toBeInTheDocument()
+
+    expect(screen.getByText('Select event type')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('combobox', { name: 'Event Type' }))
+    expect(
+      screen.getByRole('option', {
+        name: 'Test event type',
+      }),
+    ).toBeInTheDocument()
+
     expect(
       screen.getByRole('button', { name: 'Create New Event' }),
     ).toBeInTheDocument()
