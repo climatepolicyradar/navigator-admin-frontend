@@ -165,8 +165,14 @@ export const EventForm = ({
           </FormControl>
 
           <FormControl isRequired isInvalid={!!errors.date}>
-            <FormLabel>Date</FormLabel>
-            <Input type='date' {...register('date')} isReadOnly={!canModify} />
+            <FormLabel htmlFor='event-date'>Date</FormLabel>
+            <Input
+              id='event-date'
+              type='date'
+              {...register('date')}
+              isReadOnly={!canModify}
+              aria-label='Date'
+            />
             {errors.date && (
               <FormErrorMessage>{errors.date.message}</FormErrorMessage>
             )}
