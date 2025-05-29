@@ -1,6 +1,4 @@
 import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from '@chakra-ui/icons'
-import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import {
   Table,
   Thead,
@@ -15,7 +13,9 @@ import {
   Tooltip,
   SkeletonText,
 } from '@chakra-ui/react'
+import { useState, useEffect } from 'react'
 import { GoPencil } from 'react-icons/go'
+import { Link } from 'react-router-dom'
 
 import useCorpora from '@/hooks/useCorpora'
 import { ICorpus, IError } from '@/interfaces'

@@ -1,11 +1,11 @@
+import { http, HttpResponse } from 'msw'
+
+import { extractOrgFromAuthHeader } from '@/tests/helpers'
 import {
   cclwConfigMock,
   mcfConfigMock,
   unfcccConfigMock,
 } from '@/tests/utilsTest/mocks'
-import { http, HttpResponse } from 'msw'
-
-import { extractOrgFromAuthHeader } from '@/tests/helpers'
 
 export const configHandlers = [
   http.get('*/v1/config', ({ request }) => {

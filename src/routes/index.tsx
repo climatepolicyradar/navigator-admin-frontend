@@ -2,6 +2,7 @@ import ErrorPage from '@views/Error'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
 import Root from '@/Root'
+import { AppTokenForm } from '@/components/forms/AppTokenForm'
 import CorpusList from '@/components/lists/CorpusList'
 import CorpusTypeList from '@/components/lists/CorpusTypeList'
 import DocumentList from '@/components/lists/DocumentList'
@@ -20,7 +21,6 @@ import Organisations from '@/views/organisation/Organisations'
 import { ProtectedRoute } from './ProtectedRoute'
 import { collectionRoutes } from './collectionRoutes'
 import { familyRoutes } from './familyRoutes'
-import { AppTokenForm } from '@/components/forms/AppTokenForm'
 
 const authenticatedRoutes = [
   {
