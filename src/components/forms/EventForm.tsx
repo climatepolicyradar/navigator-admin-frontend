@@ -180,18 +180,14 @@ export const EventForm = ({
               isReadOnly={!canModify}
             >
               {/* Add event type options from taxonomy if available */}
-              {taxonomy?.event_type &&
-                (Array.isArray(taxonomy.event_type)
-                  ? taxonomy.event_type.map((type: string) => (
-                      <option key={type} value={type}>
-                        {type}
-                      </option>
-                    ))
-                  : taxonomy.event_type.allowed_values?.map((type: string) => (
-                      <option key={type} value={type}>
-                        {type}
-                      </option>
-                    )))}
+              {taxonomy?._event?.event_type &&
+                taxonomy._event.event_type.allowed_values?.map(
+                  (type: string) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ),
+                )}
             </Select>
             {errors.event_type_value && (
               <FormErrorMessage>
