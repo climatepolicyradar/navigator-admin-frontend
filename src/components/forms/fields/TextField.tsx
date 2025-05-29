@@ -14,7 +14,7 @@ type TProps<T extends FieldValues> = {
   control: Control<T>
   type?: 'text' | 'number'
   placeholder?: string
-  label?: string
+  label?: string | React.ReactNode
   isRequired?: boolean
   showHelperText?: boolean
   isDisabled?: boolean
@@ -50,7 +50,12 @@ export const TextField = <T extends FieldValues>({
                 {...field} // This destructured object contains the value
                 bg='white'
                 type={type}
-                placeholder={placeholder ?? `Enter ${label?.toLowerCase()}`}
+                placeholder={
+                  placeholder ??
+                  (typeof label === 'string'
+                    ? `Enter ${label?.toLowerCase()}`
+                    : placeholder)
+                }
                 value={field.value ?? ''} // this prevents the component changing from a controlled to uncontrolled component
               />
               {showHelperText && isDisabled && (

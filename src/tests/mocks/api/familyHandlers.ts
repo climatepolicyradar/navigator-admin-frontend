@@ -5,6 +5,7 @@ import { extractOrgFromAuthHeader } from '@/tests/helpers'
 import {
   mockCCLWFamilyOneDocument,
   mockCCLWFamilyWithOneEvent,
+  mockUNFCCCFamilyNoDocumentsNoEvents,
   mockFamiliesData,
   mockUNFCCCFamily,
 } from '@/tests/utilsTest/mocks'
@@ -19,6 +20,9 @@ export const familyHandlers = [
     }
     if (id === 'mockCCLWFamilyOneDocument') {
       return HttpResponse.json({ ...mockCCLWFamilyOneDocument })
+    }
+    if (id === 'mockUNFCCCFamilyNoDocumentsNoEvents') {
+      return HttpResponse.json({ ...mockUNFCCCFamilyNoDocumentsNoEvents })
     }
     if (id?.includes('GCF')) {
       const family = getFamily(id as string)
@@ -42,6 +46,9 @@ export const familyHandlers = [
     }
     if (id === 'mockCCLWFamilyOneDocument') {
       return HttpResponse.json({ ...mockCCLWFamilyOneDocument })
+    }
+    if (id === 'mockUNFCCCFamilyNoDocumentsNoEvents') {
+      return HttpResponse.json({ ...mockUNFCCCFamilyNoDocumentsNoEvents })
     }
     return HttpResponse.json({ ...mockFamiliesData[0] })
   }),

@@ -259,4 +259,34 @@ describe('DocumentForm', () => {
     expect(screen.getByText('Role')).toBeInTheDocument()
     expect(screen.getByText('Type')).toBeInTheDocument()
   })
+
+  it('allows selection of multiple document types', async () => {
+    customRender(
+      <DocumentForm
+        familyId={'test'}
+        onSuccess={onDocumentFormSuccess}
+        document={mockDocument}
+        taxonomy={mockUNFCCCTaxonomy}
+      />,
+    )
+
+    const typeDropdown = screen.getByRole('combobox', { name: 'Type' })
+    expect(typeDropdown).toBeInTheDocument()
+
+    await userEvent.click(typeDropdown)
+    const selectedOption1 = screen.getByRole('option', {
+      name: 'Type One',
+    })
+    await userEvent.click(selectedOption1)
+    expect(screen.getByText('Type One')).toBeInTheDocument()
+
+    await userEvent.click(typeDropdown)
+    const selectedOption2 = screen.getByRole('option', {
+      name: 'Type Two',
+    })
+    await userEvent.click(selectedOption2)
+
+    expect(screen.getByText('Type Two')).toBeInTheDocument()
+    expect(screen.getByText('Type One')).toBeInTheDocument()
+  })
 })

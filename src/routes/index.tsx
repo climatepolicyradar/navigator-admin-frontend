@@ -20,6 +20,7 @@ import Organisations from '@/views/organisation/Organisations'
 import { ProtectedRoute } from './ProtectedRoute'
 import { collectionRoutes } from './collectionRoutes'
 import { familyRoutes } from './familyRoutes'
+import { AppTokenForm } from '@/components/forms/AppTokenForm'
 
 const authenticatedRoutes = [
   {
@@ -123,6 +124,11 @@ const authenticatedRoutes = [
                     errorElement: <ErrorPage />,
                   },
                 ],
+              },
+              {
+                path: '/app-tokens/new',
+                element: <AppTokenForm />,
+                errorElement: <ErrorPage />,
               },
             ],
           },

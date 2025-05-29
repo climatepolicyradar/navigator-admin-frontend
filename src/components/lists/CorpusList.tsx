@@ -1,5 +1,6 @@
-// import { deleteCorpus } from '@/api/Corpora'
 import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from '@chakra-ui/icons'
+import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import {
   Table,
   Thead,
@@ -14,9 +15,7 @@ import {
   Tooltip,
   SkeletonText,
 } from '@chakra-ui/react'
-import { useState, useEffect } from 'react'
 import { GoPencil } from 'react-icons/go'
-import { Link, useSearchParams } from 'react-router-dom'
 
 import useCorpora from '@/hooks/useCorpora'
 import { ICorpus, IError } from '@/interfaces'
@@ -31,8 +30,7 @@ export default function CorpusList() {
     reverse: boolean
   }>({ key: 'import_id', reverse: false })
   const [filteredItems, setFilteredItems] = useState<ICorpus[]>()
-  const [searchParams] = useSearchParams()
-  const { corpora, loading, error } = useCorpora(searchParams.get('q') ?? '')
+  const { corpora, loading, error } = useCorpora()
   const [corpusError] = useState<string | null | undefined>()
   const [formError] = useState<IError | null | undefined>()
 

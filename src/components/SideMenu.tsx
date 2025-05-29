@@ -121,10 +121,6 @@ export function SideMenu() {
                     >
                       Corpora
                     </IconLink>
-                  </>
-                )}
-                {isSuperUser && (
-                  <>
                     <IconLink
                       icon={<Icon as={GoLog} mr='2' />}
                       to='/corpus-types'
@@ -132,16 +128,19 @@ export function SideMenu() {
                     >
                       Corpus Types
                     </IconLink>
-                  </>
-                )}
-                {isSuperUser && (
-                  <>
                     <IconLink
                       icon={<Icon as={GoLog} mr='2' />}
                       to='/organisations'
                       current={isCurrentPage('organisations')}
                     >
                       Organisations
+                    </IconLink>
+                    <IconLink
+                      icon={<Icon as={GoLog} mr='2' />}
+                      to='/app-tokens/new'
+                      current={isCurrentPage('app-tokens')}
+                    >
+                      Create App Token
                     </IconLink>
                   </>
                 )}
