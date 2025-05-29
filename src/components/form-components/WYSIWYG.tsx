@@ -39,6 +39,7 @@ export const WYSIWYG = ({ html = DEFAULT_HTML, onChange, id }: TProps) => {
     <div>
       <Card>
         <CardBody>
+          {/* @ts-ignore react-draft-wysiwyg has some type definition issues with newer React versions */}
           <Editor
             data-testid={id}
             editorState={editorState}
