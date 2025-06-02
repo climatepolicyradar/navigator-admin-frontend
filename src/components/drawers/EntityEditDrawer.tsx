@@ -11,7 +11,7 @@ type TProps = {
   onDocumentSuccess?: (documentId: string) => void
   onEventSuccess?: (eventId: string) => void
   familyId?: string
-  taxonomy?: TTaxonomy
+  taxonomy: TTaxonomy
   canModify?: boolean
 }
 

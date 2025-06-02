@@ -10,6 +10,7 @@ import {
   ICollectionFormPost,
   IDocument,
   IDocumentFormPostModified,
+  IEventFormPost,
   TFamily,
   TFamilyFormPost,
 } from '@/interfaces'
@@ -21,6 +22,20 @@ const familyRepository: TFamily[] = [...mockFamiliesData]
 
 const getEvent = (id: string) => {
   return eventRepository.find((event) => event.import_id === id)
+}
+
+const createEvent = (data: IEventFormPost, org: string) => {
+  const import_id = `${org}.event.${eventRepository.length}`
+  eventRepository.push({
+    import_id: import_id,
+    event_status: 'created',
+    ...data,
+    date:
+      data.date instanceof Date
+        ? data.date.toISOString()
+        : new Date(data.date).toISOString(),
+  })
+  return import_id
 }
 
 const updateEvent = (data: IEvent, id: string) => {
@@ -101,6 +116,7 @@ const reset = () => {
 
 export {
   getEvent,
+  createEvent,
   updateEvent,
   getDocument,
   createDocument,
