@@ -288,11 +288,6 @@ const mockCCLWConfig: IConfig = {
           allow_blanks: false,
           allowed_values: ['Instrument One', 'Instrument Two'],
         },
-        event_type: {
-          allow_any: false,
-          allow_blanks: false,
-          allowed_values: ['Event One', 'Event Two'],
-        },
         _document: {
           role: {
             allow_any: false,
@@ -347,11 +342,6 @@ const mockUNFCCCConfig: IConfig = {
           allow_any: false,
           allow_blanks: false,
           allowed_values: ['Type One', 'Type Two'],
-        },
-        event_type: {
-          allow_any: false,
-          allow_blanks: false,
-          allowed_values: ['Event One', 'Event Two'],
         },
         _document: {
           role: {
@@ -426,11 +416,6 @@ const mockMCFConfig: IConfig = {
             allowed_values: ['Event 1'],
           },
         },
-        event_type: {
-          allow_any: false,
-          allow_blanks: false,
-          allowed_values: ['Event 1', 'Event 2'],
-        },
         project_id: {
           allow_any: true,
           allow_blanks: false,
@@ -486,11 +471,6 @@ const mockMCFConfig: IConfig = {
           allow_blanks: true,
           allowed_values: [],
         },
-        event_type: {
-          allow_any: false,
-          allow_blanks: false,
-          allowed_values: ['Event One'],
-        },
         _document: {
           type: {
             allow_any: false,
@@ -500,6 +480,11 @@ const mockMCFConfig: IConfig = {
         },
         _event: {
           event_type: {
+            allow_any: false,
+            allow_blanks: false,
+            allowed_values: ['Event One'],
+          },
+          datetime_event_name: {
             allow_any: false,
             allow_blanks: false,
             allowed_values: ['Event One'],
