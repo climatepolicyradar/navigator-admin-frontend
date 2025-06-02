@@ -5,8 +5,7 @@ config:
   admin_frontend:apprunner_frontend_max_concurrency: "50"
   admin_frontend:apprunner_frontend_max_instance_count: "10"
   admin_frontend:apprunner_frontend_min_instance_count: "1"
-  admin_frontend:ecr_uri:
-    secure: AAABAGWdtx4q9wyoa14MX4Ej3W8hRgv+9wXg/+9WDmNSwlk755sENrz3vcK8ZnaJn9yZkNLI49VkL7EJvcmHYg2Fkh3N84m07GbRKNzBBgyAUCW5ffTdD/LS+H6mwr8CKtjjxHQ=
+  admin_frontend:ecr_uri: 073457443605.dkr.ecr.eu-west-1.amazonaws.com
   admin_frontend:hostname: https://admin.dev.climatepolicyradar.org
   admin_frontend:robots: "false"
   admin_frontend:validation_account_id:

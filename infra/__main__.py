@@ -5,10 +5,7 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).parent.parent))
 
-import pulumi
-import pulumi_aws as aws
-from apprunner.main import create_apprunner_config, create_frontend_auto_scaling_config
-from util.naming import DEFAULT_TAGS, NAME_PREFIX
+import pulumi  # type: ignore
 
 from resources.app_runner_service import AppRunnerConfig, AppRunnerService
 from resources.ecr_repository import ECRRepository, ECRRepositoryConfig, PolicyOptions
@@ -35,51 +32,23 @@ frontend_env = {
 }
 
 ########################################################################
-# Create old App Runner service
-########################################################################
-
-IRELAND_RESOURCE = pulumi.ResourceOptions(
-    provider=aws.Provider("eu-west-1", region="eu-west-1")
-)
-SMALL_INSTANCE = aws.apprunner.ServiceInstanceConfigurationArgs()
-
-IMAGE_IDENTIFIER = f"{config.require('ecr_uri')}:{config.require('docker_tag')}"
-
-auto_scaling_config = create_frontend_auto_scaling_config()
-frontend = aws.apprunner.Service(
-    resource_name=f"{NAME_PREFIX}-app",
-    service_name=f"{NAME_PREFIX}-app",
-    opts=IRELAND_RESOURCE,
-    instance_configuration=SMALL_INSTANCE,
-    auto_scaling_configuration_arn=auto_scaling_config.arn,
-    source_configuration=create_apprunner_config(
-        account_id=aws.get_caller_identity().account_id,
-        image_identifier=IMAGE_IDENTIFIER,
-        env=frontend_env,
-    ),
-    tags=DEFAULT_TAGS,
-)
-
-pulumi.export("frontend service name", frontend.service_name)
-pulumi.export("frontend arn", frontend.arn)
-
-########################################################################
 # Create ECR repo
 ########################################################################
 
-if "production" in stack:
-    # Create ECR repo in production account
-    ecr_repo = ECRRepository(
-        "navigator-admin-frontend",
-        config=ECRRepositoryConfig(
-            principal_service=PolicyOptions.APPRUNNER, image_scan_on_push=False
-        ),
-        opts=pulumi.ResourceOptions(import_="navigator-admin-frontend"),
-    )
+# Create ECR repo in production account
+ecr_repo = ECRRepository(
+    "navigator-admin-frontend",
+    config=ECRRepositoryConfig(
+        principal_service=PolicyOptions.APPRUNNER, image_scan_on_push=False
+    ),
+    opts=pulumi.ResourceOptions(
+        import_="navigator-admin-frontend" if stack == "production" else None
+    ),
+)
 
-    # Export the repository URL for use in CI/CD pipelines
-    pulumi.export("ecr_repository_url", ecr_repo.repository.repository_url)
-    pulumi.export("ecr_repository_name", ecr_repo.repository.name)
+# Export the repository URL for use in CI/CD pipelines
+pulumi.export("ecr_repository_url", ecr_repo.repository.repository_url)
+pulumi.export("ecr_repository_name", ecr_repo.repository.name)
 
 ########################################################################
 # Create new App Runner service
@@ -90,6 +59,7 @@ apprunner_config = AppRunnerConfig(
     max_instances=int(config.require("apprunner_frontend_max_instance_count")),
     min_instances=int(config.require("apprunner_frontend_min_instance_count")),
     port=3000,
+    auto_deploy=True,
 )
 
 # Create the frontend AppRunner service in current account
@@ -101,15 +71,14 @@ frontend = AppRunnerService(
     env_vars=frontend_env,
 )
 
-pulumi.export("new admin frontend service name", frontend.service.service_name)
-pulumi.export("new admin frontend arn", frontend.service.arn)
+pulumi.export("admin frontend service name", frontend.service.service_name)
+pulumi.export("admin frontend arn", frontend.service.arn)
 
 ########################################################################
 # Create new GitHub Actions role
 ########################################################################
 
-# Create GitHub Actions role only for CPR stacks (in current account)
-if stack in ["production", "staging"]:
-    github_actions_role = GitHubActionsRole(
-        name="navigator-admin-frontend-github-actions",
-    )
+# Create GitHub Actions role
+github_actions_role = GitHubActionsRole(
+    name="navigator-admin-frontend-github-actions",
+)
