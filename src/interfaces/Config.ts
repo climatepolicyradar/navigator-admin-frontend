@@ -38,6 +38,11 @@ export type TDocumentSubTaxonomy =
 // Event sub-taxonomies.
 export interface IEventSubTaxonomy extends ISubTaxonomy {
   event_type: ITaxonomyField
+  datetime_event_name: {
+    allowed_values: string[]
+    allow_any?: boolean
+    allow_blanks?: boolean
+  }
 }
 
 // Taxonomy builder.

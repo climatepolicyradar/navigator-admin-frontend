@@ -29,7 +29,7 @@ type TProps = {
   familyId?: string
   canModify?: boolean
   event?: IEvent
-  taxonomy?: TTaxonomy
+  taxonomy: TTaxonomy
   onSuccess?: (eventId: string) => void
 }
 
@@ -85,6 +85,11 @@ export const EventForm = ({
         event_title: event.event_title,
         date: eventDateFormatted,
         event_type_value: event.event_type_value,
+        metadata: {
+          event_type: [event.event_type_value],
+          datetime_event_name:
+            taxonomy._event.datetime_event_name.allowed_values,
+        },
       }
 
       try {
@@ -120,6 +125,11 @@ export const EventForm = ({
         event_title: event.event_title,
         date: eventDateFormatted,
         event_type_value: event.event_type_value,
+        metadata: {
+          event_type: [event.event_type_value],
+          datetime_event_name:
+            taxonomy._event.datetime_event_name.allowed_values,
+        },
       }
 
       try {
