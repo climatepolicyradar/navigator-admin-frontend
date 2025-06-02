@@ -41,14 +41,21 @@ ecr_repo = ECRRepository(
     config=ECRRepositoryConfig(
         principal_service=PolicyOptions.APPRUNNER, image_scan_on_push=False
     ),
-    opts=pulumi.ResourceOptions(
-        import_="navigator-admin-frontend" if stack == "production" else None
-    ),
 )
 
 # Export the repository URL for use in CI/CD pipelines
 pulumi.export("ecr_repository_url", ecr_repo.repository.repository_url)
 pulumi.export("ecr_repository_name", ecr_repo.repository.name)
+
+# Get the concrete repository URL value
+repository_url = ecr_repo.repository.repository_url.apply(lambda url: url)
+repository_url.apply(lambda url: pulumi.info(f"Repository URL: {url}"))
+docker_tag = config.require("docker_tag")
+pulumi.info(f"Docker tag: {docker_tag}")
+image_identifier = ecr_repo.repository.repository_url.apply(
+    lambda url: f"{url}:{docker_tag}"
+)
+image_identifier.apply(lambda id: pulumi.info(f"Final image identifier: {id}"))
 
 ########################################################################
 # Create new App Runner service
@@ -67,8 +74,9 @@ name_prefix = tag_name()
 frontend = AppRunnerService(
     name=name_prefix,
     config=apprunner_config,
-    image_identifier=f"{config.require('ecr_uri')}:{config.require('docker_tag')}",
+    image_identifier=image_identifier,
     env_vars=frontend_env,
+    opts=pulumi.ResourceOptions(depends_on=[ecr_repo.repository]),
 )
 
 pulumi.export("admin frontend service name", frontend.service.service_name)
