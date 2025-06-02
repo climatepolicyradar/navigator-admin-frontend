@@ -10,7 +10,7 @@ vi.mock('react-router-dom', async (importOriginal) => {
   }
 })
 
-describe('', () => {
+describe('FamilyEditMultipleDocTypes', () => {
   it('displays multiple document types after creating a document', async () => {
     setupUser({ organisationName: 'UNFCCC', orgId: 3 })
     const { user } = renderRoute(
