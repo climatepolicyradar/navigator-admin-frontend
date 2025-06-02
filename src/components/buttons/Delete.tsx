@@ -1,4 +1,3 @@
-import { useRef } from 'react'
 import {
   AlertDialog,
   AlertDialogBody,
@@ -12,6 +11,7 @@ import {
   IconButton,
   Tooltip,
 } from '@chakra-ui/react'
+import { useRef } from 'react'
 import { GoX } from 'react-icons/go'
 
 interface IProps {

@@ -1,6 +1,4 @@
-import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import { IError } from '@/interfaces'
+import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from '@chakra-ui/icons'
 import {
   Table,
   Thead,
@@ -15,14 +13,17 @@ import {
   Tooltip,
   SkeletonText,
 } from '@chakra-ui/react'
+import { useState, useEffect } from 'react'
 import { GoPencil } from 'react-icons/go'
+import { Link } from 'react-router-dom'
+
+import useOrganisations from '@/hooks/useOrganisations'
+import { IError } from '@/interfaces'
+import { IOrganisation } from '@/interfaces/Organisation'
+import { sortBy } from '@/utils/sortBy'
 
 import { Loader } from '../Loader'
-import { sortBy } from '@/utils/sortBy'
-import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon } from '@chakra-ui/icons'
 import { ApiError } from '../feedback/ApiError'
-import { IOrganisation } from '@/interfaces/Organisation'
-import useOrganisations from '@/hooks/useOrganisations'
 
 export default function OrganisationList() {
   const [sortControls, setSortControls] = useState<{

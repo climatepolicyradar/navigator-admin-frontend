@@ -1,3 +1,4 @@
+import { WarningIcon } from '@chakra-ui/icons'
 import {
   Box,
   Button,
@@ -6,7 +7,7 @@ import {
   Flex,
   Text,
 } from '@chakra-ui/react'
-import { WarningIcon } from '@chakra-ui/icons'
+
 import { FamilyDocument } from '@/components/family/FamilyDocument'
 import { IDocument } from '@/interfaces'
 

@@ -1,6 +1,7 @@
+import { IDocument, IEvent, TTaxonomy } from '@/interfaces'
+
 import { DocumentEditDrawer } from './DocumentEditDrawer'
 import { EventEditDrawer } from './EventEditDrawer'
-import { IDocument, IEvent, TTaxonomy } from '@/interfaces'
 
 type TProps = {
   isOpen: boolean

@@ -1,4 +1,3 @@
-import { Controller, Control, FieldValues, Path } from 'react-hook-form'
 import {
   Input,
   FormControl,
@@ -8,6 +7,7 @@ import {
   InputGroup,
   InputLeftAddon,
 } from '@chakra-ui/react'
+import { Controller, Control, FieldValues, Path } from 'react-hook-form'
 
 type TProps<T extends FieldValues> = {
   name: Path<T>
@@ -45,7 +45,7 @@ export const TextField = <T extends FieldValues>({
             {label && <FormLabel>{label}</FormLabel>}
 
             <InputGroup>
-              {type === 'number' && <InputLeftAddon children='$' />}
+              {type === 'number' && <InputLeftAddon>$</InputLeftAddon>}
               <Input
                 {...field} // This destructured object contains the value
                 bg='white'

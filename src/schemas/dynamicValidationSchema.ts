@@ -1,11 +1,12 @@
 import * as yup from 'yup'
+
+import { TFamilyMetadata, TTaxonomy } from '@/interfaces'
 import {
   FieldType,
   CorpusInfo,
   CORPUS_METADATA_CONFIG,
   MetadataFieldConfig,
 } from '@/interfaces/Metadata'
-import { TFamilyMetadata, TTaxonomy } from '@/interfaces'
 
 // Type-safe field validation function
 const getFieldValidation = (

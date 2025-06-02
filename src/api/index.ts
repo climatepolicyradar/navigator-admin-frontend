@@ -11,7 +11,7 @@ API.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
     if (401 === error.response?.status) {
-      console.log('401 - Unauthorized')
+      console.error('401 - Unauthorized') // eslint-disable-line no-console
       delete API.defaults.headers.common['Authorization']
       localStorage.removeItem('token')
       window.location.href = '/login'

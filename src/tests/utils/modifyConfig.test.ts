@@ -1,5 +1,6 @@
-import { IConfig } from '@/interfaces'
 import { modifyConfig } from '@utils/modifyConfig'
+
+import { IConfig } from '@/interfaces'
 
 describe('modifyConfig', () => {
   it('adds a languagesSorted property to the config object with languages sorted alphabetically by label', () => {

@@ -1,7 +1,8 @@
 import { render, screen } from '@testing-library/react'
 import { vi } from 'vitest'
-import { mockEvent } from '@/tests/utilsTest/mocks'
+
 import { EventSection } from '@/components/forms/sections/EventSection'
+import { mockEvent } from '@/tests/utilsTest/mocks'
 import { formatDate } from '@/utils/formatDate'
 
 // Mock the useEvent hook

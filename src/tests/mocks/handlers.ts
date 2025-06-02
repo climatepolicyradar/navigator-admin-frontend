@@ -1,8 +1,8 @@
-import { familyHandlers } from './api/familyHandlers'
 import { collectionHandlers } from './api/collectionHandlers'
-import { eventHandlers } from './api/eventHandlers'
-import { documentHandlers } from './api/documentHandlers'
 import { configHandlers } from './api/configHandlers'
+import { documentHandlers } from './api/documentHandlers'
+import { eventHandlers } from './api/eventHandlers'
+import { familyHandlers } from './api/familyHandlers'
 
 export const handlers = [
   ...configHandlers,

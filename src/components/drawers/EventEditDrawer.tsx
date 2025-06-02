@@ -5,9 +5,11 @@ import {
   DrawerHeader,
   DrawerOverlay,
 } from '@chakra-ui/react'
+
 import { IEvent, TTaxonomy } from '@/interfaces'
-import { EventForm } from '../forms/EventForm'
 import { formatDate } from '@/utils/formatDate'
+
+import { EventForm } from '../forms/EventForm'
 
 type TProps = {
   event?: IEvent

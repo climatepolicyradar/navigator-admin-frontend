@@ -1,8 +1,7 @@
-import { Outlet } from 'react-router-dom'
-
+import { Flex } from '@chakra-ui/react'
 import { ContentWrapper } from '@components/ContentWrapper'
 import { Header } from '@components/Header'
-import { Flex } from '@chakra-ui/react'
+import { Outlet } from 'react-router-dom'
 
 function Root() {
   return (

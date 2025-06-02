@@ -1,4 +1,3 @@
-import useEvent from '@/hooks/useEvent'
 import {
   Card,
   CardBody,
@@ -9,11 +8,14 @@ import {
   Spinner,
   Button,
 } from '@chakra-ui/react'
-import { ApiError } from '../feedback/ApiError'
-import { DeleteButton } from '../buttons/Delete'
-import { formatDate } from '@/utils/formatDate'
-import { IEvent } from '@/interfaces'
 import { useEffect } from 'react'
+
+import useEvent from '@/hooks/useEvent'
+import { IEvent } from '@/interfaces'
+import { formatDate } from '@/utils/formatDate'
+
+import { DeleteButton } from '../buttons/Delete'
+import { ApiError } from '../feedback/ApiError'
 
 type TProps = {
   eventId: string

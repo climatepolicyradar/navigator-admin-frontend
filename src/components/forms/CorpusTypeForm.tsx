@@ -1,8 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react'
-import { useForm, SubmitHandler, SubmitErrorHandler } from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
-import { IError } from '@/interfaces'
-import { corpusTypeSchema } from '@/schemas/corpusTypeSchema'
+import { InfoOutlineIcon } from '@chakra-ui/icons'
 import {
   FormControl,
   FormLabel,
@@ -21,11 +17,17 @@ import {
   ModalFooter,
   Modal,
 } from '@chakra-ui/react'
-import { ApiError } from '../feedback/ApiError'
-import { InfoOutlineIcon } from '@chakra-ui/icons'
-import { TextField } from './fields/TextField'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { useEffect, useRef, useState, useCallback } from 'react'
+import { useForm, SubmitHandler, SubmitErrorHandler } from 'react-hook-form'
 import * as Yup from 'yup'
+
+import { IError } from '@/interfaces'
 import { ICorpusType } from '@/interfaces/CorpusType'
+import { corpusTypeSchema } from '@/schemas/corpusTypeSchema'
+
+import { ApiError } from '../feedback/ApiError'
+import { TextField } from './fields/TextField'
 
 type TProps = {
   corpusType?: ICorpusType
@@ -55,7 +57,6 @@ export const CorpusTypeForm = ({ corpusType: loadedCorpusType }: TProps) => {
 
   const handleFormSubmission = useCallback(
     // TODO: Remove under APP-54.
-    /* trunk-ignore(eslint/@typescript-eslint/require-await) */
     async (formValues: ICorpusTypeFormSubmit) => {
       setFormError(null)
 

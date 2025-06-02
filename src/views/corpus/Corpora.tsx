@@ -1,3 +1,4 @@
+import { SearchIcon } from '@chakra-ui/icons'
 import {
   Box,
   Button,
@@ -10,8 +11,6 @@ import {
   Spacer,
 } from '@chakra-ui/react'
 import { Link, Form, Outlet, useSearchParams } from 'react-router-dom'
-
-import { SearchIcon } from '@chakra-ui/icons'
 
 export default function Corpora() {
   const [searchParams] = useSearchParams()

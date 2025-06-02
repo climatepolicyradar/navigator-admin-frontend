@@ -1,11 +1,13 @@
 import { render, screen } from '@testing-library/react'
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import '../../setup'
-import { IOrganisation } from '@/interfaces/Organisation'
-import { TestWrapper } from '@/tests/utilsTest/render'
 import '@testing-library/jest-dom'
+
 import OrganisationList from '@/components/lists/OrganisationList'
 import useOrganisations from '@/hooks/useOrganisations'
+import { IOrganisation } from '@/interfaces/Organisation'
+import { TestWrapper } from '@/tests/utilsTest/render'
+
+import '../../setup'
 
 // Mock data needs to be defined before imports for vi.mock hoisting
 const mockOrganisations: IOrganisation[] = [
@@ -30,16 +32,11 @@ const mockUseOrganisations = useOrganisations as unknown as ReturnType<
 >
 
 // Mock modules before imports
-vi.mock('@/hooks/useOrganisations', () => ({
-  default: vi.fn(),
-}))
+vi.mock('@/hooks/useOrganisations', () => ({ default: vi.fn() }))
 
 vi.mock('react-router-dom', async (importOriginal) => {
   const actual = await importOriginal()
-  return {
-    ...(actual as object),
-    useNavigate: () => vi.fn(),
-  }
+  return { ...(actual as object), useNavigate: () => vi.fn() }
 })
 
 const renderComponent = () => {

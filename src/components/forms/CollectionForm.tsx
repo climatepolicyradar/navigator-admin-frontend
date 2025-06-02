@@ -1,10 +1,3 @@
-import { useEffect, useState } from 'react'
-import { useForm, SubmitHandler } from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
-import { ICollection, ICollectionFormPost, IError } from '@/interfaces'
-import { collectionSchema } from '@/schemas/collectionSchema'
-import { createCollection, updateCollection } from '@/api/Collections'
-
 import {
   FormControl,
   FormLabel,
@@ -16,7 +9,15 @@ import {
   useToast,
   FormHelperText,
 } from '@chakra-ui/react'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { useEffect, useState } from 'react'
+import { useForm, SubmitHandler } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
+
+import { createCollection, updateCollection } from '@/api/Collections'
+import { ICollection, ICollectionFormPost, IError } from '@/interfaces'
+import { collectionSchema } from '@/schemas/collectionSchema'
+
 import { ApiError } from '../feedback/ApiError'
 
 interface ICollectionForm {
