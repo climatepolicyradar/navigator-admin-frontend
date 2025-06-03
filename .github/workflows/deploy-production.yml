@@ -23,7 +23,7 @@ jobs:
       name: production
     steps:
       - uses: actions/checkout@v4
-      - name: Configure AWS credentials
+      - name: Configure AWS credentials (production)
         uses: aws-actions/configure-aws-credentials@v4.1.0
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/navigator-admin-frontend-github-actions
