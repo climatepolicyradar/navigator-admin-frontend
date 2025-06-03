@@ -1,6 +1,6 @@
 .PHONEY: build build_dev run run_dev
 
-TAG = navigator-admin-frontend
+TAG ?= navigator-admin-frontend
 VITE_PORT ?= 3000
 
 stop:
