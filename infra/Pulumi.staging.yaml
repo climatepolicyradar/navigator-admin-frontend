@@ -6,7 +6,7 @@ config:
   admin_frontend:apprunner_frontend_max_instance_count: "10"
   admin_frontend:apprunner_frontend_min_instance_count: "1"
   admin_frontend:ecr_uri: 073457443605.dkr.ecr.eu-west-1.amazonaws.com
-  admin_frontend:hostname: https://admin.dev.climatepolicyradar.org
+  admin_frontend:hostname: https://admin.staging.climatepolicyradar.org
   admin_frontend:robots: "false"
   admin_frontend:validation_account_id:
     secure: AAABAML/NGllT3ud2OIF47uyzD7KUbHFnfNUui+U7A36zDLXmAZsFGK+EIc=
