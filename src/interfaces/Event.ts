@@ -14,14 +14,17 @@ export interface IEventFormPost {
   event_type_value: string
   family_import_id: string
   family_document_import_id?: string | null
+  metadata: IEventMetadata
 }
 
 export interface IEventFormPut {
   event_title: string
   date: Date
   event_type_value: string
+  metadata: IEventMetadata
 }
 
 export interface IEventMetadata {
   event_type: string[]
+  datetime_event_name: string[]
 }

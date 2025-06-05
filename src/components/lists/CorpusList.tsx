@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
-// import { deleteCorpus } from '@/api/Corpora'
+import { Link } from 'react-router-dom'
 import { ICorpus, IError } from '@/interfaces'
 import {
   Table,
@@ -30,8 +29,7 @@ export default function CorpusList() {
     reverse: boolean
   }>({ key: 'import_id', reverse: false })
   const [filteredItems, setFilteredItems] = useState<ICorpus[]>()
-  const [searchParams] = useSearchParams()
-  const { corpora, loading, error } = useCorpora(searchParams.get('q') ?? '')
+  const { corpora, loading, error } = useCorpora()
   const [corpusError] = useState<string | null | undefined>()
   const [formError] = useState<IError | null | undefined>()
 

@@ -467,7 +467,7 @@ describe('CorpusForm', () => {
         description: 'Original Description',
         organisation_id: 1,
         organisation_name: 'Test Organisation 1',
-        corpus_text: 'TBD',
+        corpus_text: '<p>TBD</p>',
         corpus_image_url: null,
         corpus_type_name: 'Test Corpus Type 1',
         corpus_type_description: 'Test Corpus Type Description 1',
@@ -529,7 +529,7 @@ describe('CorpusForm', () => {
           expect.objectContaining({
             title: 'Updated Corpus',
             description: 'Updated Description',
-            corpus_text: 'TBD',
+            corpus_text: '<p>TBD</p>',
             corpus_image_url: null,
             corpus_type_description: 'Test Corpus Type Description 1',
           }),

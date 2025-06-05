@@ -9,6 +9,8 @@ import {
   ICollection,
   ICollectionFormPost,
   IDocument,
+  IDocumentFormPostModified,
+  IEventFormPost,
   TFamily,
   TFamilyFormPost,
 } from '@/interfaces'
@@ -22,6 +24,20 @@ const getEvent = (id: string) => {
   return eventRepository.find((event) => event.import_id === id)
 }
 
+const createEvent = (data: IEventFormPost, org: string) => {
+  const import_id = `${org}.event.${eventRepository.length}`
+  eventRepository.push({
+    import_id: import_id,
+    event_status: 'created',
+    ...data,
+    date:
+      data.date instanceof Date
+        ? data.date.toISOString()
+        : new Date(data.date).toISOString(),
+  })
+  return import_id
+}
+
 const updateEvent = (data: IEvent, id: string) => {
   eventRepository = eventRepository.map((event) => {
     if (id === event.import_id) {
@@ -33,6 +49,16 @@ const updateEvent = (data: IEvent, id: string) => {
 
 const getDocument = (id: string) => {
   return documentRepository.find((doc) => doc.import_id === id)
+}
+
+const createDocument = (data: IDocumentFormPostModified, org: string) => {
+  const import_id = `${org}.document.${documentRepository.length}`
+  documentRepository.push({
+    import_id: import_id,
+    status: 'created',
+    ...data,
+  } as IDocument)
+  return import_id
 }
 
 const updateDocument = (data: IDocument, id: string) => {
@@ -90,8 +116,10 @@ const reset = () => {
 
 export {
   getEvent,
+  createEvent,
   updateEvent,
   getDocument,
+  createDocument,
   updateDocument,
   getCollection,
   createCollection,

@@ -19,6 +19,7 @@ import CorpusType from '@/views/corpusTypes/CorpusType'
 import OrganisationList from '@/components/lists/OrganisationList'
 import Organisations from '@/views/organisation/Organisations'
 import Organisation from '@/views/organisation/Organisation'
+import { AppTokenForm } from '@/components/forms/AppTokenForm'
 
 const authenticatedRoutes = [
   {
@@ -122,6 +123,11 @@ const authenticatedRoutes = [
                     errorElement: <ErrorPage />,
                   },
                 ],
+              },
+              {
+                path: '/app-tokens/new',
+                element: <AppTokenForm />,
+                errorElement: <ErrorPage />,
               },
             ],
           },
