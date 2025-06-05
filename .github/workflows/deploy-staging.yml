@@ -19,6 +19,8 @@ jobs:
       name: staging
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: Configure AWS credentials (staging)
         uses: aws-actions/configure-aws-credentials@v4.1.0
@@ -38,7 +40,8 @@ jobs:
           IMAGE_TAG: latest
           AWS_REGION: eu-west-1
           ECR_REPOSITORY: navigator-admin-frontend
+          VITE_PORT: 3000
         run: |
-          TAG=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG make build
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
