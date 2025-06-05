@@ -44,6 +44,7 @@ jobs:
           IMAGE_TAG: latest
           AWS_REGION: eu-west-1
           ECR_REPOSITORY: navigator-admin-frontend
+          VITE_PORT: 3000
         run: |
           # Build with local tag first
           make build
