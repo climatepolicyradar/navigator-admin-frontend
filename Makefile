@@ -1,6 +1,6 @@
 .PHONEY: build build_dev run run_dev
 
-TAG = navigator-admin-frontend
+TAG ?= navigator-admin-frontend
 VITE_PORT ?= 3000
 
 stop:
@@ -19,7 +19,7 @@ run:
 	docker run --name ${TAG} -p ${VITE_PORT}:${VITE_PORT} ${TAG}
 
 run_ci:
-	docker run --name ${TAG} -p ${VITE_PORT}:${VITE_PORT} -e MY_APP_API_URL=https://admin.dev.climatepolicyradar.org/api/ ${TAG}
+	docker run --name ${TAG} -p ${VITE_PORT}:${VITE_PORT} -e MY_APP_API_URL=https://admin.staging.climatepolicyradar.org/api/ ${TAG}
 
 rebuild: stop build run_ci
 
