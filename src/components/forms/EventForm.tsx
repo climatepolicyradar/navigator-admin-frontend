@@ -30,7 +30,7 @@ type TProps = {
   familyId?: string
   canModify?: boolean
   event?: IEvent
-  taxonomy?: TTaxonomy
+  taxonomy: TTaxonomy
   onSuccess?: (eventId: string) => void
 }
 
@@ -86,6 +86,11 @@ export const EventForm = ({
         event_title: event.event_title,
         date: eventDateFormatted,
         event_type_value: event.event_type_value,
+        metadata: {
+          event_type: [event.event_type_value],
+          datetime_event_name:
+            taxonomy._event.datetime_event_name.allowed_values,
+        },
       }
 
       try {
@@ -121,6 +126,11 @@ export const EventForm = ({
         event_title: event.event_title,
         date: eventDateFormatted,
         event_type_value: event.event_type_value,
+        metadata: {
+          event_type: [event.event_type_value],
+          datetime_event_name:
+            taxonomy._event.datetime_event_name.allowed_values,
+        },
       }
 
       try {
@@ -166,8 +176,14 @@ export const EventForm = ({
           </FormControl>
 
           <FormControl isRequired isInvalid={!!errors.date}>
-            <FormLabel>Date</FormLabel>
-            <Input type='date' {...register('date')} isReadOnly={!canModify} />
+            <FormLabel htmlFor='event-date'>Date</FormLabel>
+            <Input
+              id='event-date'
+              type='date'
+              {...register('date')}
+              isReadOnly={!canModify}
+              aria-label='Date'
+            />
             {errors.date && (
               <FormErrorMessage>{errors.date.message}</FormErrorMessage>
             )}
@@ -181,18 +197,14 @@ export const EventForm = ({
               isReadOnly={!canModify}
             >
               {/* Add event type options from taxonomy if available */}
-              {taxonomy?.event_type &&
-                (Array.isArray(taxonomy.event_type)
-                  ? taxonomy.event_type.map((type: string) => (
-                      <option key={type} value={type}>
-                        {type}
-                      </option>
-                    ))
-                  : taxonomy.event_type.allowed_values?.map((type: string) => (
-                      <option key={type} value={type}>
-                        {type}
-                      </option>
-                    )))}
+              {taxonomy?._event?.event_type &&
+                taxonomy._event.event_type.allowed_values?.map(
+                  (type: string) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ),
+                )}
             </Select>
             {errors.event_type_value && (
               <FormErrorMessage>

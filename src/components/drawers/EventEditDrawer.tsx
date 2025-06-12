@@ -18,7 +18,7 @@ type TProps = {
   isOpen: boolean
   onSuccess?: (eventId: string) => void
   canModify?: boolean
-  taxonomy?: TTaxonomy
+  taxonomy: TTaxonomy
 }
 
 export const EventEditDrawer = ({

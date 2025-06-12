@@ -352,6 +352,15 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   }, [config, loadedFamily, reset, collections, corpusInfo])
 
   const onAddNewEntityClick = (entityType: TChildEntity) => {
+    if (!taxonomy) {
+      toast({
+        title: 'Unable to open editor',
+        description:
+          'Required taxonomy information is not available. Please try refreshing the page.',
+        status: 'error',
+      })
+      return
+    }
     setEditingEntity(entityType)
     if (entityType === 'document') setEditingDocument(undefined)
     if (entityType === 'event') setEditingEvent(undefined)
@@ -362,6 +371,15 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     entityType: TChildEntity,
     entity: IEvent | IDocument,
   ) => {
+    if (!taxonomy) {
+      toast({
+        title: 'Unable to open editor',
+        description:
+          'Required taxonomy information is not available. Please try refreshing the page.',
+        status: 'error',
+      })
+      return
+    }
     setEditingEntity(entityType)
     if (entityType === 'document') setEditingDocument(entity as IDocument)
     if (entityType === 'event') setEditingEvent(entity as IEvent)
@@ -607,7 +625,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
         }}
       />
 
-      {isOpen && editingEntity && (
+      {isOpen && editingEntity && taxonomy && (
         <EntityEditDrawer
           isOpen={isOpen}
           onClose={onClose}

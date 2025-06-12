@@ -1,8 +1,9 @@
 import { http, HttpResponse } from 'msw'
 
-import { IEvent } from '@/interfaces/Event'
+import { IEvent, IEventFormPost } from '@/interfaces/Event'
+import { extractOrgFromAuthHeader } from '@/tests/helpers'
 
-import { getEvent, updateEvent } from '../repository'
+import { createEvent, getEvent, updateEvent } from '../repository'
 
 export const eventHandlers = [
   http.get('*/v1/events/:id', ({ params }) => {
@@ -16,5 +17,11 @@ export const eventHandlers = [
     updateEvent(updateData as IEvent, id as string)
     const updatedEvent = getEvent(id as string)
     return HttpResponse.json(updatedEvent)
+  }),
+  http.post('*/v1/events', async ({ request }) => {
+    const org = extractOrgFromAuthHeader(request.headers)
+    const event = await request.json()
+    const createdEventId = createEvent(event as IEventFormPost, org)
+    return HttpResponse.json(createdEventId)
   }),
 ]
