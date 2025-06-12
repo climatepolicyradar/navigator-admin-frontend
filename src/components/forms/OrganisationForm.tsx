@@ -1,13 +1,15 @@
+import { VStack, Button, ButtonGroup, useToast } from '@chakra-ui/react'
+import { yupResolver } from '@hookform/resolvers/yup'
 import { useEffect, useState, useCallback } from 'react'
 import { useForm, SubmitHandler, SubmitErrorHandler } from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
-import { IError } from '@/interfaces'
-import { VStack, Button, ButtonGroup, useToast } from '@chakra-ui/react'
-import { ApiError } from '../feedback/ApiError'
-import { TextField } from './fields/TextField'
 import * as Yup from 'yup'
+
+import { IError } from '@/interfaces'
 import { IOrganisation } from '@/interfaces/Organisation'
 import { organisationSchema } from '@/schemas/organisationSchema'
+
+import { ApiError } from '../feedback/ApiError'
+import { TextField } from './fields/TextField'
 
 type TProps = {
   organisation?: IOrganisation
@@ -32,10 +34,9 @@ export const OrganisationForm = ({ organisation: loadedOrg }: TProps) => {
 
   const handleFormSubmission = useCallback(
     // TODO: Remove under APP-54.
-    /* trunk-ignore(eslint/@typescript-eslint/require-await) */
     async (formValues: IOrgFormSubmit) => {
       setFormError(null)
-      console.debug(formValues)
+      console.debug(formValues) // eslint-disable-line no-console
 
       if (loadedOrg) {
         toast({

@@ -1,8 +1,8 @@
 import { AxiosError } from 'axios'
 
 import API from '@/api'
-import { ICollection, ICollectionFormPost, IError } from '@/interfaces'
 import { setToken } from '@/api/Auth'
+import { ICollection, ICollectionFormPost, IError } from '@/interfaces'
 
 export async function getCollections(query?: string) {
   setToken(API)

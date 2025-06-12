@@ -1,4 +1,4 @@
-import { useParams, Link as RouterLink } from 'react-router-dom'
+import { ArrowBackIcon } from '@chakra-ui/icons'
 import {
   Link,
   Box,
@@ -7,11 +7,12 @@ import {
   Button,
   SkeletonText,
 } from '@chakra-ui/react'
-import { ArrowBackIcon } from '@chakra-ui/icons'
-import { CollectionForm } from '@/components/forms/CollectionForm'
-import useCollection from '@/hooks/useCollection'
+import { useParams, Link as RouterLink } from 'react-router-dom'
+
 import { Loader } from '@/components/Loader'
 import { ApiError } from '@/components/feedback/ApiError'
+import { CollectionForm } from '@/components/forms/CollectionForm'
+import useCollection from '@/hooks/useCollection'
 
 export default function Collection() {
   const { importId } = useParams()

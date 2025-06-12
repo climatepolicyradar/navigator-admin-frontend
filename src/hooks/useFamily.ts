@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 
-import { IError, TFamily } from '@/interfaces'
 import { getFamily } from '@/api/Families'
+import { IError, TFamily } from '@/interfaces'
 
 const useFamily = (id?: string) => {
   const [family, setFamily] = useState<TFamily | null>(null)

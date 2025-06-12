@@ -1,4 +1,7 @@
+import { http, HttpResponse } from 'msw'
+
 import { TFamilyFormPost } from '@/interfaces'
+import { extractOrgFromAuthHeader } from '@/tests/helpers'
 import {
   mockCCLWFamilyOneDocument,
   mockCCLWFamilyWithOneEvent,
@@ -6,9 +9,8 @@ import {
   mockFamiliesData,
   mockUNFCCCFamily,
 } from '@/tests/utilsTest/mocks'
-import { http, HttpResponse } from 'msw'
+
 import { createFamily, getFamily } from '../repository'
-import { extractOrgFromAuthHeader } from '@/tests/helpers'
 
 export const familyHandlers = [
   http.get('*/v1/families/:id', ({ params }) => {

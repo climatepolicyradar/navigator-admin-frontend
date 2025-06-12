@@ -1,20 +1,21 @@
 import {
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  FormHelperText,
+} from '@chakra-ui/react'
+import { Select as CRSelect } from 'chakra-react-select'
+import {
   Controller,
   Control,
   RegisterOptions,
   FieldValues,
   Path,
 } from 'react-hook-form'
-import { Select as CRSelect } from 'chakra-react-select'
+
+import { IChakraSelect } from '@/interfaces'
 import { chakraStylesSelect } from '@/styles/chakra'
 import { generateSelectOptions } from '@/utils/metadataUtils'
-import {
-  FormControl,
-  FormLabel,
-  FormErrorMessage,
-  FormHelperText,
-} from '@chakra-ui/react'
-import { IChakraSelect } from '@/interfaces'
 
 type TProps<T extends FieldValues> = {
   name: Path<T>
@@ -22,7 +23,7 @@ type TProps<T extends FieldValues> = {
   control: Control<T>
   options: string[] | IChakraSelect[]
   isMulti?: boolean
-  rules?: RegisterOptions
+  rules?: RegisterOptions<T, Path<T>>
   isRequired?: boolean
   isClearable?: boolean
 }

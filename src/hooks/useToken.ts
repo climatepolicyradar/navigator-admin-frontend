@@ -1,5 +1,6 @@
 import { IDecodedToken } from '@/interfaces'
 import { decodeToken } from '@/utils/decodeToken'
+
 import { useAuth } from './useAuth'
 
 const useToken = (): IDecodedToken | null => {

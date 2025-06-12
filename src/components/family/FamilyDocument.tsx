@@ -1,4 +1,3 @@
-import useDocument from '@/hooks/useDocument'
 import {
   Card,
   CardBody,
@@ -10,11 +9,14 @@ import {
   Spinner,
   Badge,
 } from '@chakra-ui/react'
-import { ApiError } from '../feedback/ApiError'
-import { IDocument } from '@/interfaces'
-import { DeleteButton } from '../buttons/Delete'
-import { getStatusColour } from '@/utils/getStatusColour'
 import { useEffect } from 'react'
+
+import useDocument from '@/hooks/useDocument'
+import { IDocument } from '@/interfaces'
+import { getStatusColour } from '@/utils/getStatusColour'
+
+import { DeleteButton } from '../buttons/Delete'
+import { ApiError } from '../feedback/ApiError'
 
 type TProps = {
   documentId: string

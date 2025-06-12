@@ -1,8 +1,8 @@
+import { useEffect } from 'react'
 import { useNavigate, useRouteError } from 'react-router-dom'
 
-import { IError, IDetailedError } from '@/interfaces'
-import { useEffect } from 'react'
 import { useAuth } from '@/hooks/useAuth'
+import { IError, IDetailedError } from '@/interfaces'
 
 const ErrorDetail = (errorDetail: string | IDetailedError[]) => {
   if (typeof errorDetail === 'string') return errorDetail

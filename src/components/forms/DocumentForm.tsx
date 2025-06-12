@@ -1,22 +1,3 @@
-import { useEffect, useState, useCallback, useMemo } from 'react'
-import { useForm, SubmitHandler, SubmitErrorHandler } from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
-import {
-  BACK_TO_FAMILIES_ERROR_DETAIL,
-  NO_TAXONOMY_ERROR,
-} from '@/constants/errors'
-import {
-  IDocument,
-  IDocumentFormPost,
-  IDocumentFormPostModified,
-  IDocumentMetadata,
-  IError,
-  TDocumentSubTaxonomy,
-  TTaxonomy,
-} from '@/interfaces'
-import { createDocument, updateDocument } from '@/api/Documents'
-import { documentSchema } from '@/schemas/documentSchema'
-
 import {
   Box,
   FormControl,
@@ -30,9 +11,29 @@ import {
   FormHelperText,
   FormErrorMessage,
 } from '@chakra-ui/react'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { useEffect, useState, useCallback, useMemo } from 'react'
+import { useForm, SubmitHandler, SubmitErrorHandler } from 'react-hook-form'
+
+import { createDocument, updateDocument } from '@/api/Documents'
+import {
+  BACK_TO_FAMILIES_ERROR_DETAIL,
+  NO_TAXONOMY_ERROR,
+} from '@/constants/errors'
 import useConfig from '@/hooks/useConfig'
-import { FormLoader } from '../feedback/FormLoader'
+import {
+  IDocument,
+  IDocumentFormPost,
+  IDocumentFormPostModified,
+  IDocumentMetadata,
+  IError,
+  TDocumentSubTaxonomy,
+  TTaxonomy,
+} from '@/interfaces'
+import { documentSchema } from '@/schemas/documentSchema'
+
 import { ApiError } from '../feedback/ApiError'
+import { FormLoader } from '../feedback/FormLoader'
 import { SelectField } from './fields/SelectField'
 
 type TProps = {

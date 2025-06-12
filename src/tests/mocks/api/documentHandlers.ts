@@ -1,7 +1,9 @@
-import { IDocument, IDocumentFormPostModified } from '@/interfaces'
 import { http, HttpResponse } from 'msw'
-import { createDocument, getDocument, updateDocument } from '../repository'
+
+import { IDocument, IDocumentFormPostModified } from '@/interfaces'
 import { extractOrgFromAuthHeader } from '@/tests/helpers'
+
+import { createDocument, getDocument, updateDocument } from '../repository'
 
 export const documentHandlers = [
   http.get('*/v1/documents/:id', ({ params }) => {

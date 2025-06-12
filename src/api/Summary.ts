@@ -1,8 +1,8 @@
 import { AxiosError } from 'axios'
 
 import API from '@/api'
-import { ISummary, IError } from '@/interfaces'
 import { setToken } from '@/api/Auth'
+import { ISummary, IError } from '@/interfaces'
 
 export async function getSummary() {
   setToken(API)

@@ -1,7 +1,6 @@
+import { SearchIcon } from '@chakra-ui/icons'
 import { Box, Flex, HStack, Heading, IconButton, Input } from '@chakra-ui/react'
 import { Form, Outlet, useSearchParams } from 'react-router-dom'
-
-import { SearchIcon } from '@chakra-ui/icons'
 
 export default function Documents() {
   const [searchParams] = useSearchParams()

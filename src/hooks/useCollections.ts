@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 
-import { IError, ICollection } from '@/interfaces'
 import { getCollections } from '@/api/Collections'
+import { IError, ICollection } from '@/interfaces'
 
 const useCollections = (query: string) => {
   const [collections, setCollections] = useState<ICollection[]>([])

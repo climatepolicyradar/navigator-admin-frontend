@@ -1,9 +1,4 @@
-import { useState, useCallback } from 'react'
-import { useForm, SubmitHandler, SubmitErrorHandler } from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
-import { IChakraSelect, IError } from '@/interfaces'
-import { appTokenSchema } from '@/schemas/appTokenSchema'
-import { createAppToken } from '@/api/AppToken'
+import { InfoOutlineIcon, CloseIcon } from '@chakra-ui/icons'
 import {
   FormControl,
   FormLabel,
@@ -22,15 +17,22 @@ import {
   InputGroup,
   InputRightElement,
 } from '@chakra-ui/react'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { jwtDecode } from 'jwt-decode'
+import { useState, useCallback } from 'react'
+import { useForm, SubmitHandler, SubmitErrorHandler } from 'react-hook-form'
+import * as Yup from 'yup'
+
+import { createAppToken } from '@/api/AppToken'
+import { SelectField } from '@/components/forms/fields/SelectField'
+import useCorpora from '@/hooks/useCorpora'
+import { IChakraSelect, IError } from '@/interfaces'
+import { IAppTokenFormPost } from '@/interfaces/AppToken'
+import { appTokenSchema } from '@/schemas/appTokenSchema'
+
 import { ApiError } from '../feedback/ApiError'
-import { InfoOutlineIcon, CloseIcon } from '@chakra-ui/icons'
 import { TextField } from './fields/TextField'
 import { FormLoader } from '../feedback/FormLoader'
-import { IAppTokenFormPost } from '@/interfaces/AppToken'
-import useCorpora from '@/hooks/useCorpora'
-import * as Yup from 'yup'
-import { SelectField } from '@/components/forms/fields/SelectField'
-import { jwtDecode } from 'jwt-decode'
 
 export type IAppTokenFormSubmit = Yup.InferType<typeof appTokenSchema>
 

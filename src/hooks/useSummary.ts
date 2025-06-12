@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 
-import { IError, ISummary } from '@/interfaces'
 import { getSummary } from '@/api/Summary'
+import { IError, ISummary } from '@/interfaces'
 
 let cache: ISummary | null = null
 

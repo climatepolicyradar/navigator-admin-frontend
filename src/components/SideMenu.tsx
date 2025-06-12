@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { HamburgerIcon } from '@chakra-ui/icons'
 import {
   Drawer,
   DrawerBody,
@@ -13,8 +13,6 @@ import {
   useDisclosure,
   Icon,
 } from '@chakra-ui/react'
-import { Link as RouterLink, useLocation } from 'react-router-dom'
-import { HamburgerIcon } from '@chakra-ui/icons'
 import {
   GoHome,
   GoRepo,
@@ -25,8 +23,11 @@ import {
   GoClock,
   GoLog,
 } from 'react-icons/go'
-import Logout from './Logout'
+import { Link as RouterLink, useLocation } from 'react-router-dom'
+
 import useToken from '@/hooks/useToken'
+
+import Logout from './Logout'
 
 const IconLink = ({
   icon,
