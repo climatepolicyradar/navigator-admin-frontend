@@ -1,0 +1,43 @@
+name: Pull Request
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  code-quality:
+    if: |
+      ! cancelled() && always()
+    permissions:
+      # For trunk to post annotations
+      checks: write
+      # For repo checkout
+      contents: read
+    uses: climatepolicyradar/reusable-workflows/.github/workflows/node-precommit-validator.yml@v5
+    with:
+      node-version: 20.11.0
+      package-manager: yarn
+
+  test:
+    if: |
+      ! cancelled() && always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js 20.11.0
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.11.0
+          cache: yarn
+
+      - name: Install dev dependencies
+        run: yarn install --production=false
+
+      - name: Run Tests
+        run: yarn test

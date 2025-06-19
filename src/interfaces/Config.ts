@@ -38,6 +38,11 @@ export type TDocumentSubTaxonomy =
 // Event sub-taxonomies.
 export interface IEventSubTaxonomy extends ISubTaxonomy {
   event_type: ITaxonomyField
+  datetime_event_name: {
+    allowed_values: string[]
+    allow_any?: boolean
+    allow_blanks?: boolean
+  }
 }
 
 // Taxonomy builder.
@@ -55,7 +60,6 @@ export interface IConfigTaxonomyCCLW extends ITaxonomy {
   keyword: ITaxonomyField
   framework: ITaxonomyField
   instrument: ITaxonomyField
-  event_type: ITaxonomyField
   _document: IDefaultDocSubTaxonomy
   _event: IEventSubTaxonomy
 }
@@ -63,7 +67,6 @@ export interface IConfigTaxonomyCCLW extends ITaxonomy {
 export interface IConfigTaxonomyUNFCCC extends ITaxonomy {
   author: ITaxonomyField
   author_type: ITaxonomyField
-  event_type: ITaxonomyField
   _document: IDefaultDocSubTaxonomy
   _event: IEventSubTaxonomy
 }
@@ -71,13 +74,11 @@ export interface IConfigTaxonomyUNFCCC extends ITaxonomy {
 export interface IConfigReportsTaxonomy extends ITaxonomy {
   author: ITaxonomyField
   author_type: ITaxonomyField
-  event_type: ITaxonomyField
   _document: IReportsDocSubTaxonomy
   _event: IEventSubTaxonomy
 }
 
 interface IConfigMCFBaseTaxonomy extends ITaxonomy {
-  event_type: ITaxonomyField
   implementing_agency: ITaxonomyField
   project_id: ITaxonomyField
   project_url: ITaxonomyField
