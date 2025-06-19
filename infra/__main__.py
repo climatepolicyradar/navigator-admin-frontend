@@ -189,7 +189,7 @@ dns = DNS(
 
 # Get admin backend stack reference
 admin_backend_stack = pulumi.StackReference(f"climatepolicyradar/admin_backend/{env}")
-admin_backend_service_url = admin_backend_stack.get_output("apprunner_service_url")
+admin_backend_service_url = admin_backend_stack.get_output("new_apprunner_service_url")
 
 admin_frontend.service.service_url.apply(
     lambda url: pulumi.info(f"Admin Frontend app runner URL: {url}")
