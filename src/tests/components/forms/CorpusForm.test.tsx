@@ -11,11 +11,14 @@ import '../../setup'
 import { ICorpusType } from '@/interfaces/CorpusType'
 import useOrganisations from '@/hooks/useOrganisations'
 import { IOrganisation } from '@/interfaces/Organisation'
+import useCorpora from '@/hooks/useCorpora'
+import React from 'react'
 
 // Mock the API calls
 vi.mock('@/api/Corpora', () => ({
   createCorpus: vi.fn(),
   updateCorpus: vi.fn(),
+  getCorpora: vi.fn(),
 }))
 
 vi.mock('@/hooks/useConfig', () => ({
@@ -27,6 +30,10 @@ vi.mock('@/hooks/useCorpusTypes', () => ({
 }))
 
 vi.mock('@/hooks/useOrganisations', () => ({
+  default: vi.fn(),
+}))
+
+vi.mock('@/hooks/useCorpora', () => ({
   default: vi.fn(),
 }))
 
@@ -99,6 +106,29 @@ const mockUseOrganisations = useOrganisations as unknown as ReturnType<
   typeof vi.fn
 >
 
+const mockUseCorpora = useCorpora as unknown as ReturnType<typeof vi.fn>
+
+vi.mock('@/components/form-components/WYSIWYG', () => ({
+  WYSIWYG: ({
+    html,
+    onChange,
+    id,
+  }: {
+    html: string
+    onChange: (val: string) => void
+    id?: string
+  }) => (
+    <textarea
+      data-testid='corpus-text-editor'
+      defaultValue={html}
+      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+        onChange(e.target.value)
+      }
+      id={id}
+    />
+  ),
+}))
+
 describe('CorpusForm', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -116,6 +146,12 @@ describe('CorpusForm', () => {
       organisations: mockOrganisations,
       loading: false,
       error: null,
+    })
+    mockUseCorpora.mockReturnValue({
+      corpora: [],
+      loading: false,
+      error: null,
+      reload: vi.fn(),
     })
   })
 
@@ -136,9 +172,6 @@ describe('CorpusForm', () => {
       expect(screen.getByRole('textbox', { name: 'Title' })).toBeInTheDocument()
       expect(
         screen.getByRole('textbox', { name: 'Description' }),
-      ).toBeInTheDocument()
-      expect(
-        screen.getByRole('textbox', { name: 'rdw-editor' }),
       ).toBeInTheDocument()
       expect(
         screen.getByRole('textbox', { name: 'Corpus Image URL' }),
@@ -263,9 +296,6 @@ describe('CorpusForm', () => {
         'Test Description',
       )
       expect(
-        screen.getByRole('textbox', { name: 'rdw-editor' }),
-      ).toBeInTheDocument()
-      expect(
         screen.getByRole('textbox', { name: 'Corpus Image URL' }),
       ).toHaveValue('http://test.com/image.jpg')
       expect(screen.getByTestId('corpus-type-select')).toBeInTheDocument()
@@ -319,6 +349,11 @@ describe('CorpusForm', () => {
         'New Description',
       )
 
+      // Fill in corpus text (WYSIWYG editor)
+      const corpusTextEditor = screen.getByTestId('corpus-text-editor')
+      await userEvent.clear(corpusTextEditor)
+      await userEvent.type(corpusTextEditor, 'Test corpus content')
+
       // Select corpus type
       const corpusTypeSelectGroup = screen.getByRole('group', {
         name: 'Corpus Type Name',
@@ -356,7 +391,7 @@ describe('CorpusForm', () => {
           import_id: 'TEST.corpus.i00000001.n0000',
           title: 'New Corpus',
           description: 'New Description',
-          corpus_text: null,
+          corpus_text: 'Test corpus content',
           corpus_image_url: null,
           corpus_type_name: 'Test Corpus Type 1',
           organisation_id: 1,
@@ -383,6 +418,11 @@ describe('CorpusForm', () => {
         screen.getByRole('textbox', { name: 'Description' }),
         'New Description',
       )
+
+      // Fill in corpus text (WYSIWYG editor)
+      const corpusTextEditor = screen.getByTestId('corpus-text-editor')
+      await userEvent.clear(corpusTextEditor)
+      await userEvent.type(corpusTextEditor, 'Test corpus content')
 
       // Select corpus type
       const corpusTypeSelectGroup = screen.getByRole('group', {
@@ -427,7 +467,7 @@ describe('CorpusForm', () => {
           import_id: 'Academic.corpus.CCLW.apples',
           title: 'New Corpus',
           description: 'New Description',
-          corpus_text: null,
+          corpus_text: 'Test corpus content',
           corpus_image_url: null,
           corpus_type_name: 'Test Corpus Type 1',
           organisation_id: 2,
@@ -443,10 +483,10 @@ describe('CorpusForm', () => {
         response: {
           import_id: 'test-id',
           title: 'Updated Title',
-          description: 'Updated Description',
+          description: null,
           corpus_type_name: 'test-type',
           corpus_type_description: 'Test Type Description',
-          corpus_text: null,
+          corpus_text: 'Updated Corpus Text',
           corpus_image_url: null,
           organisation_id: 1,
           organisation_name: 'test-org',
