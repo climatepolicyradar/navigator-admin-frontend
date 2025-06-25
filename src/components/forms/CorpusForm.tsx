@@ -376,7 +376,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
             isRequired={true}
           />
 
-          <FormControl isRequired>
+          <FormControl isRequired={false}>
             <FormLabel>
               Description
               <Tooltip label='This is the internally used description of this corpus'>
@@ -390,7 +390,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
             />
           </FormControl>
 
-          <FormControl>
+          <FormControl isRequired>
             <FormLabel htmlFor='corpus-text-editor'>
               Corpus Text
               <Tooltip label='This is exposed on the navigator application as the public facing description of this corpus'>
