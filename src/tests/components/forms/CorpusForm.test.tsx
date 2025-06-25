@@ -351,8 +351,8 @@ describe('CorpusForm', () => {
 
       // Fill in corpus text (WYSIWYG editor)
       const corpusTextEditor = screen.getByTestId('corpus-text-editor')
-      await user.clear(corpusTextEditor)
-      await user.type(corpusTextEditor, 'Test corpus content')
+      await userEvent.clear(corpusTextEditor)
+      await userEvent.type(corpusTextEditor, 'Test corpus content')
 
       // Select corpus type
       const corpusTypeSelectGroup = screen.getByRole('group', {
@@ -421,8 +421,8 @@ describe('CorpusForm', () => {
 
       // Fill in corpus text (WYSIWYG editor)
       const corpusTextEditor = screen.getByTestId('corpus-text-editor')
-      await user.clear(corpusTextEditor)
-      await user.type(corpusTextEditor, 'Test corpus content')
+      await userEvent.clear(corpusTextEditor)
+      await userEvent.type(corpusTextEditor, 'Test corpus content')
 
       // Select corpus type
       const corpusTypeSelectGroup = screen.getByRole('group', {
