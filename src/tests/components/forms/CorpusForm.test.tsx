@@ -12,7 +12,6 @@ import { ICorpusType } from '@/interfaces/CorpusType'
 import useOrganisations from '@/hooks/useOrganisations'
 import { IOrganisation } from '@/interfaces/Organisation'
 import useCorpora from '@/hooks/useCorpora'
-import { fireEvent } from '@testing-library/react'
 import React from 'react'
 
 // Mock the API calls
@@ -121,7 +120,7 @@ vi.mock('@/components/form-components/WYSIWYG', () => ({
   }) => (
     <textarea
       data-testid='corpus-text-editor'
-      value={html}
+      defaultValue={html}
       onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
         onChange(e.target.value)
       }
@@ -352,9 +351,8 @@ describe('CorpusForm', () => {
 
       // Fill in corpus text (WYSIWYG editor)
       const corpusTextEditor = screen.getByTestId('corpus-text-editor')
-      fireEvent.change(corpusTextEditor, {
-        target: { value: 'Test corpus content' },
-      })
+      await user.clear(corpusTextEditor)
+      await user.type(corpusTextEditor, 'Test corpus content')
 
       // Select corpus type
       const corpusTypeSelectGroup = screen.getByRole('group', {
@@ -423,9 +421,8 @@ describe('CorpusForm', () => {
 
       // Fill in corpus text (WYSIWYG editor)
       const corpusTextEditor = screen.getByTestId('corpus-text-editor')
-      fireEvent.change(corpusTextEditor, {
-        target: { value: 'Test corpus content' },
-      })
+      await user.clear(corpusTextEditor)
+      await user.type(corpusTextEditor, 'Test corpus content')
 
       // Select corpus type
       const corpusTypeSelectGroup = screen.getByRole('group', {
