@@ -57,8 +57,8 @@ export interface ICorpusFormSubmit {
   import_id_part3?: string
   import_id_part4?: string
   title: string
-  description: string
-  corpus_text?: string | null
+  description?: string | null
+  corpus_text: string
   corpus_image_url?: string | null
   corpus_type_name: { label: string; value: string }
   corpus_type_description: string
@@ -140,10 +140,8 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
       if (loadedCorpus) {
         const formData: ICorpusFormPut = {
           title: formValues.title,
-          description: formValues.description,
-          corpus_text: convertEmptyToNull(
-            stripHtml(formValues.corpus_text || ''),
-          ),
+          description: formValues.description || null,
+          corpus_text: stripHtml(formValues.corpus_text || ''),
           corpus_image_url: convertEmptyToNull(formValues.corpus_image_url),
           corpus_type_description: formValues.corpus_type_description,
         }
@@ -173,10 +171,8 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
       const formData: ICorpusFormPost = {
         import_id: `${formValues.import_id_part1?.value}.${formValues.import_id_part2}.${formValues.import_id_part3}.${formValues.import_id_part4}`,
         title: formValues.title,
-        description: formValues.description,
-        corpus_text: convertEmptyToNull(
-          stripHtml(formValues.corpus_text || ''),
-        ),
+        description: formValues.description || null,
+        corpus_text: stripHtml(formValues.corpus_text || ''),
         corpus_image_url: convertEmptyToNull(formValues.corpus_image_url),
         corpus_type_name: formValues.corpus_type_name.value,
         organisation_id: formValues.organisation_id.value,

@@ -8,8 +8,8 @@ interface CorpusValidation {
   import_id_part3?: string
   import_id_part4?: string
   title?: string
-  description?: string
-  corpus_text?: string | null
+  description?: string | null
+  corpus_text?: string
   corpus_image_url?: string | null
   corpus_type_name?: { label: string; value: string }
   corpus_type_description?: string
@@ -63,8 +63,8 @@ export const corpusSchema = yup
       otherwise: (schema) => schema.notRequired(),
     }),
     title: yup.string().required(),
-    description: yup.string().required(),
-    corpus_text: yup.string().nullable(),
+    description: yup.string().nullable(),
+    corpus_text: yup.string().required(),
     corpus_image_url: yup.string().nullable(),
     corpus_type_name: yup.object({
       label: yup.string().required(),

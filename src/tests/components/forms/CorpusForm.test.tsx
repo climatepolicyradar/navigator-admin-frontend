@@ -443,10 +443,10 @@ describe('CorpusForm', () => {
         response: {
           import_id: 'test-id',
           title: 'Updated Title',
-          description: 'Updated Description',
+          description: null,
           corpus_type_name: 'test-type',
           corpus_type_description: 'Test Type Description',
-          corpus_text: null,
+          corpus_text: 'Updated Corpus Text',
           corpus_image_url: null,
           organisation_id: 1,
           organisation_name: 'test-org',
