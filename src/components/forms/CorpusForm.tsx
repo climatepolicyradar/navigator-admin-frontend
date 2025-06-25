@@ -68,6 +68,7 @@ export interface ICorpusFormSubmit {
 export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
   const navigate = useNavigate()
   const toast = useToast()
+  const { reload: reloadCorpora } = useCorpora()
   const [formError, setFormError] = useState<IError | null | undefined>()
   const {
     register,
@@ -186,6 +187,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
             status: 'success',
             position: 'top',
           })
+          reloadCorpora()
           navigate(`/corpora`)
         })
         .catch((error: IError) => {
@@ -206,6 +208,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
       navigate,
       toast,
       setFormError,
+      reloadCorpora,
     ],
   )
 
