@@ -223,9 +223,35 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
   )
 
   const onSubmitErrorHandler: SubmitErrorHandler<ICorpusFormSubmit> =
-    useCallback((errors) => {
-      console.error(errors)
-    }, [])
+    useCallback(
+      (errors) => {
+        console.error('onSubmitErrorHandler', errors)
+
+        // Collect all error messages from validation errors
+        const errorMessages = Object.values(errors)
+          .map((error) => error?.message)
+          .filter(Boolean)
+
+        const errorMessage =
+          errorMessages.length > 0
+            ? errorMessages.join(', ')
+            : 'Form validation failed'
+
+        setFormError({
+          status: 400,
+          detail: errorMessage,
+          message: errorMessage,
+          returnPage: '/corpora',
+        } as IError)
+
+        toast({
+          title: 'Form submission error',
+          description: errorMessage,
+          status: 'error',
+        })
+      },
+      [toast],
+    )
 
   const handleModalConfirm = () => {
     setIsConfirmed(true)
