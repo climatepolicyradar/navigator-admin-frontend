@@ -3,7 +3,7 @@ name: Export OpenTelemetry Trace for CI
 on:
   workflow_run:
     workflows:
-      - Deploy to staging
+      - Merge to main
     types: [completed]
 
 permissions:
@@ -24,3 +24,4 @@ jobs:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           runId: ${{ github.event.workflow_run.id }}
           otlpHeaders: false
+          otelServiceName: navigator-admin-frontend
