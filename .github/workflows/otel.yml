@@ -20,7 +20,7 @@ jobs:
       - name: Export Workflow Trace (staging)
         uses: corentinmusard/otel-cicd-action@v1
         with:
-          otlpEndpoint: https://otel.staging.climatepolicyradar.org/
+          otlpEndpoint: https://otel.staging.climatepolicyradar.org/v1/traces
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           runId: ${{ github.event.workflow_run.id }}
           otlpHeaders: false
