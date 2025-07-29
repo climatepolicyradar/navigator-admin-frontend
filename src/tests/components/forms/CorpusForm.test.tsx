@@ -9,8 +9,6 @@ import { BrowserRouter } from 'react-router-dom'
 import { ChakraProvider } from '@chakra-ui/react'
 import '../../setup'
 import { ICorpusType } from '@/interfaces/CorpusType'
-import useOrganisations from '@/hooks/useOrganisations'
-import { IOrganisation } from '@/interfaces/Organisation'
 import useCorpora from '@/hooks/useCorpora'
 import React from 'react'
 
@@ -26,10 +24,6 @@ vi.mock('@/hooks/useConfig', () => ({
 }))
 
 vi.mock('@/hooks/useCorpusTypes', () => ({
-  default: vi.fn(),
-}))
-
-vi.mock('@/hooks/useOrganisations', () => ({
   default: vi.fn(),
 }))
 
@@ -72,23 +66,6 @@ const mockConfig = {
   ],
 }
 
-const mockOrganisations: IOrganisation[] = [
-  {
-    id: 1,
-    internal_name: 'TEST',
-    display_name: 'Test Organisation 1',
-    description: "Test Organisation 1's description",
-    type: 'Test',
-  },
-  {
-    id: 2,
-    internal_name: 'CCLW',
-    display_name: 'Test Organisation 2',
-    description: "Test Organisation 2's description",
-    type: 'Academic',
-  },
-]
-
 const mockCorpusTypes: ICorpusType[] = [
   {
     name: 'Test Corpus Type 1',
@@ -102,9 +79,6 @@ const mockCorpusTypes: ICorpusType[] = [
 
 const mockUseConfig = useConfig as unknown as ReturnType<typeof vi.fn>
 const mockUseCorpusTypes = useCorpusTypes as unknown as ReturnType<typeof vi.fn>
-const mockUseOrganisations = useOrganisations as unknown as ReturnType<
-  typeof vi.fn
->
 
 const mockUseCorpora = useCorpora as unknown as ReturnType<typeof vi.fn>
 
@@ -142,11 +116,6 @@ describe('CorpusForm', () => {
       loading: false,
       error: null,
     })
-    mockUseOrganisations.mockReturnValue({
-      organisations: mockOrganisations,
-      loading: false,
-      error: null,
-    })
     mockUseCorpora.mockReturnValue({
       corpora: [],
       loading: false,
@@ -166,7 +135,7 @@ describe('CorpusForm', () => {
   }
 
   describe('Form Rendering', () => {
-    it('renders all form fields correctly for new corpus', () => {
+    it('renders all form fields correctly for new corpus', async () => {
       renderCorpusForm()
 
       expect(screen.getByRole('textbox', { name: 'Title' })).toBeInTheDocument()
@@ -180,7 +149,7 @@ describe('CorpusForm', () => {
         screen.getByRole('group', { name: 'Corpus Type Name' }),
       ).toBeInTheDocument()
       expect(
-        screen.getByRole('group', { name: 'Organisation' }),
+        await screen.findByRole('group', { name: 'Organisation' }),
       ).toBeInTheDocument()
 
       expect(
@@ -225,7 +194,7 @@ describe('CorpusForm', () => {
     it('shows all organisation options with correct labels and values when clicking the select', async () => {
       renderCorpusForm()
 
-      const organisationSelectGroup = screen.getByRole('group', {
+      const organisationSelectGroup = await screen.findByRole('group', {
         name: 'Organisation',
       })
       expect(organisationSelectGroup).toBeInTheDocument()
@@ -272,7 +241,7 @@ describe('CorpusForm', () => {
       )
     })
 
-    it('renders form fields with loaded corpus data', () => {
+    it('renders form fields with loaded corpus data', async () => {
       const mockCorpus = {
         import_id: 'test-id',
         title: 'Test Corpus',
@@ -303,7 +272,9 @@ describe('CorpusForm', () => {
       expect(
         screen.getByRole('textbox', { name: 'Corpus Type Description' }),
       ).toHaveValue('Test Corpus Type Description 1')
-      expect(screen.getByTestId('organisation-select')).toBeInTheDocument()
+      expect(
+        await screen.findByTestId('organisation-select'),
+      ).toBeInTheDocument()
       expect(screen.getByText('Test Organisation 1')).toBeInTheDocument()
       expect(
         screen.getByRole('button', { name: /update corpus/i }),
