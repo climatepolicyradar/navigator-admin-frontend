@@ -32,10 +32,6 @@ describe('OrganisationCreate', () => {
     await user.type(organisationTypeInput, 'Test Organisation Type')
     expect(organisationTypeInput).toHaveValue('Test Organisation Type')
 
-    await user.click(
-      screen.getByRole('button', { name: 'Create new Organisation' }),
-    )
-
     const attributionLinkInput = screen.getByRole('textbox', {
       name: 'Attribution Link',
     })

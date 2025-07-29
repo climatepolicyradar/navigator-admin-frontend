@@ -79,6 +79,7 @@ export const OrganisationForm = ({ organisation: loadedOrg }: TProps) => {
         type: loadedOrg?.type || '',
         display_name: loadedOrg?.display_name || '',
         description: loadedOrg?.description || '',
+        attribution_link: loadedOrg?.attribution_link || '',
       })
     }
   }, [loadedOrg, reset])

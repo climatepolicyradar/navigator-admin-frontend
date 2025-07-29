@@ -24,4 +24,10 @@ export const organisationHandlers = [
   http.get('*/v1/organisations', () => {
     return HttpResponse.json(mockOrganisations)
   }),
+  http.get('*/v1/organisations/:id', ({ params }) => {
+    const { id } = params
+    return HttpResponse.json(
+      mockOrganisations.find((org) => org.id.toString() === id),
+    )
+  }),
 ]
