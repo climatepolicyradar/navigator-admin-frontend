@@ -119,6 +119,13 @@ export const OrganisationForm = ({ organisation: loadedOrg }: TProps) => {
             isRequired={true}
           />
 
+          <TextField
+            name='attribution_link'
+            label='Attribution Link'
+            control={control}
+            isRequired={true}
+          />
+
           <ButtonGroup>
             <Button type='submit' colorScheme='blue' disabled={isSubmitting}>
               {(loadedOrg ? 'Update ' : 'Create new ') + 'Organisation'}
