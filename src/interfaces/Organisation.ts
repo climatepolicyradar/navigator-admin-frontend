@@ -4,4 +4,5 @@ export interface IOrganisation {
   display_name: string
   description: string
   type: string
+  attribution_link: string
 }
