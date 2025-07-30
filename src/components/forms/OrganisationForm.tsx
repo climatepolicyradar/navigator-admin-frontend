@@ -79,6 +79,7 @@ export const OrganisationForm = ({ organisation: loadedOrg }: TProps) => {
         type: loadedOrg?.type || '',
         display_name: loadedOrg?.display_name || '',
         description: loadedOrg?.description || '',
+        attribution_link: loadedOrg?.attribution_link || '',
       })
     }
   }, [loadedOrg, reset])
@@ -115,6 +116,13 @@ export const OrganisationForm = ({ organisation: loadedOrg }: TProps) => {
           <TextField
             name='type'
             label='Organisation Type'
+            control={control}
+            isRequired={true}
+          />
+
+          <TextField
+            name='attribution_link'
+            label='Attribution Link'
             control={control}
             isRequired={true}
           />

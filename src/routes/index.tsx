@@ -16,10 +16,8 @@ import { familyRoutes } from './familyRoutes'
 import { collectionRoutes } from './collectionRoutes'
 import CorpusTypes from '@/views/corpusTypes/CorpusTypes'
 import CorpusType from '@/views/corpusTypes/CorpusType'
-import OrganisationList from '@/components/lists/OrganisationList'
-import Organisations from '@/views/organisation/Organisations'
-import Organisation from '@/views/organisation/Organisation'
 import { AppTokenForm } from '@/components/forms/AppTokenForm'
+import { organisationRoutes } from './organisationRoutes'
 
 const authenticatedRoutes = [
   {
@@ -41,6 +39,7 @@ const authenticatedRoutes = [
               },
               ...familyRoutes,
               ...collectionRoutes,
+              ...organisationRoutes,
               {
                 path: 'document/:importId/edit',
                 element: <Document />,
@@ -98,28 +97,6 @@ const authenticatedRoutes = [
                   {
                     path: '',
                     element: <CorpusTypeList />,
-                    errorElement: <ErrorPage />,
-                  },
-                ],
-              },
-              {
-                path: '/organisation/new',
-                element: <Organisation />,
-                errorElement: <ErrorPage />,
-              },
-              {
-                path: 'organisation/:id/edit',
-                element: <Organisation />,
-                errorElement: <ErrorPage />,
-              },
-              {
-                path: 'organisations',
-                element: <Organisations />,
-                errorElement: <ErrorPage />,
-                children: [
-                  {
-                    path: '',
-                    element: <OrganisationList />,
                     errorElement: <ErrorPage />,
                   },
                 ],

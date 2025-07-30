@@ -1,6 +1,7 @@
 import AuthProvider from '@/providers/AuthProvider'
 import { collectionRoutes } from '@/routes/collectionRoutes'
 import { familyRoutes } from '@/routes/familyRoutes'
+import { organisationRoutes } from '@/routes/organisationRoutes'
 import { ChakraProvider } from '@chakra-ui/react'
 import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -29,7 +30,11 @@ export const renderRoute = (route = '/') => {
       <ChakraProvider>
         <AuthProvider>
           <RouterProvider
-            router={createBrowserRouter([...familyRoutes, ...collectionRoutes])}
+            router={createBrowserRouter([
+              ...familyRoutes,
+              ...collectionRoutes,
+              ...organisationRoutes,
+            ])}
           />
         </AuthProvider>
       </ChakraProvider>,
