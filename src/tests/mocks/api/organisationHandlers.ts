@@ -1,4 +1,4 @@
-import { IOrganisation } from '@/interfaces/Organisation'
+import { IOrganisation, IOrganisationFormPost } from '@/interfaces/Organisation'
 import { http, HttpResponse } from 'msw'
 
 const mockOrganisations: IOrganisation[] = [
@@ -8,7 +8,7 @@ const mockOrganisations: IOrganisation[] = [
     display_name: 'Test Organisation 1',
     description: 'Test Description 1',
     type: 'TYPE 1',
-    attribution_link: 'test_attribution_link_1.com',
+    attribution_url: 'test_attribution_link_1.com',
   },
   {
     id: 2,
@@ -16,7 +16,7 @@ const mockOrganisations: IOrganisation[] = [
     display_name: 'Test Organisation 2',
     description: 'Test Description 2',
     type: 'TYPE 2',
-    attribution_link: 'test_attribution_link_2.com',
+    attribution_url: 'test_attribution_link_2.com',
   },
 ]
 
@@ -29,5 +29,11 @@ export const organisationHandlers = [
     return HttpResponse.json(
       mockOrganisations.find((org) => org.id.toString() === id),
     )
+  }),
+  http.post('*/v1/organisations', async ({ request }) => {
+    const updateData = await request.json()
+    const id = mockOrganisations.length + 1
+    mockOrganisations.push({ ...(updateData as IOrganisationFormPost), id: id })
+    return HttpResponse.json(id)
   }),
 ]

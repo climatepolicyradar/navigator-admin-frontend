@@ -4,5 +4,13 @@ export interface IOrganisation {
   display_name: string
   description: string
   type: string
-  attribution_link: string
+  attribution_url: string
+}
+
+export interface IOrganisationFormPost {
+  internal_name: string
+  display_name: string
+  description: string
+  type: string
+  attribution_url: string
 }
