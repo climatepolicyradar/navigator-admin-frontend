@@ -20,6 +20,12 @@ describe('OrganisationCreate', () => {
     await user.type(shorthandInput, 'Test shorthand')
     expect(shorthandInput).toHaveValue('Test shorthand')
 
+    const displayNameInput = screen.getByRole('textbox', {
+      name: 'Display Name',
+    })
+    await user.type(displayNameInput, 'Test display name')
+    expect(displayNameInput).toHaveValue('Test display name')
+
     const descriptionInput = screen.getByRole('textbox', {
       name: 'Description',
     })
@@ -43,7 +49,13 @@ describe('OrganisationCreate', () => {
     )
 
     expect(
-      await screen.findByText('Organisation create has not been implemented'),
-    )
+      await screen.findByText('Organisation has been successfully created'),
+    ).toBeInTheDocument()
+    expect(
+      await screen.findByRole('heading', {
+        level: 1,
+        name: 'Editing: Test display name',
+      }),
+    ).toBeInTheDocument()
   })
 })

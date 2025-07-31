@@ -59,7 +59,7 @@ describe('OrganisationEdit', () => {
     )
 
     expect(
-      await screen.findByText('Organisation update has not been implemented'),
+      await screen.findByText('Organisation has been successfully updated'),
     )
   })
 })
