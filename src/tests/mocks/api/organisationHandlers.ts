@@ -1,7 +1,7 @@
-import { IOrganisation, IOrganisationFormPost } from '@/interfaces/Organisation'
+import { IOrganisation } from '@/interfaces/Organisation'
 import { http, HttpResponse } from 'msw'
 
-const mockOrganisations: IOrganisation[] = [
+let mockOrganisations: IOrganisation[] = [
   {
     id: 1,
     internal_name: 'Test Organisation 1',
@@ -31,9 +31,20 @@ export const organisationHandlers = [
     )
   }),
   http.post('*/v1/organisations', async ({ request }) => {
-    const updateData = await request.json()
+    const data = await request.json()
     const id = mockOrganisations.length + 1
-    mockOrganisations.push({ ...(updateData as IOrganisationFormPost), id: id })
+    mockOrganisations.push({ ...(data as IOrganisation), id: id })
     return HttpResponse.json(id)
+  }),
+  http.put('*/v1/organisations/:id', async ({ params, request }) => {
+    const { id } = params
+    const data = await request.json()
+
+    mockOrganisations = mockOrganisations.map((org) =>
+      org.id.toString() === id ? { ...org, ...(data as IOrganisation) } : org,
+    )
+    return HttpResponse.json(
+      mockOrganisations.find((org) => org.id.toString() === id),
+    )
   }),
 ]

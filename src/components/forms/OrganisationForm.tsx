@@ -9,7 +9,7 @@ import * as Yup from 'yup'
 import { IOrganisation, IOrganisationFormPost } from '@/interfaces/Organisation'
 import { organisationSchema } from '@/schemas/organisationSchema'
 import { useNavigate } from 'react-router-dom'
-import { createOrganisation } from '@/api/Organisations'
+import { createOrganisation, updateOrganisation } from '@/api/Organisations'
 
 type TProps = {
   organisation?: IOrganisation
@@ -45,12 +45,24 @@ export const OrganisationForm = ({ organisation: loadedOrg }: TProps) => {
     }
 
     if (loadedOrg) {
-      toast({
-        title: 'Not implemented',
-        description: 'Organisation update has not been implemented',
-        status: 'error',
-        position: 'top',
-      })
+      return await updateOrganisation(organisationData, loadedOrg.id)
+        .then(() => {
+          toast.closeAll()
+          toast({
+            title: 'Organisation has been successfully updated',
+            status: 'success',
+            position: 'top',
+          })
+        })
+        .catch((error: IError) => {
+          setFormError(error)
+          toast({
+            title: 'Organisation has not been updated',
+            description: error.message,
+            status: 'error',
+            position: 'top',
+          })
+        })
     }
     return await createOrganisation(organisationData)
       .then((data) => {
