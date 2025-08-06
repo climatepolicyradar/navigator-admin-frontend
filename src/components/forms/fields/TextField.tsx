@@ -47,7 +47,7 @@ export const TextField = <T extends FieldValues>({
             <InputGroup>
               {type === 'number' && <InputLeftAddon children='$' />}
               <Input
-                {...field} // This destructured object contains the value
+                {...field}
                 bg='white'
                 type={type}
                 placeholder={
@@ -58,10 +58,11 @@ export const TextField = <T extends FieldValues>({
                 }
                 value={field.value ?? ''} // this prevents the component changing from a controlled to uncontrolled component
               />
-              {showHelperText && isDisabled && (
-                <FormHelperText>You cannot edit this</FormHelperText>
-              )}
             </InputGroup>
+            {/* Move helper text here, outside InputGroup */}
+            {showHelperText && isDisabled && (
+              <FormHelperText>You cannot edit this</FormHelperText>
+            )}
             {error && <FormErrorMessage>{error.message}</FormErrorMessage>}
           </FormControl>
         )
