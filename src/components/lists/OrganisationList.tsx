@@ -104,6 +104,9 @@ export default function OrganisationList() {
                   >
                     Type {renderSortIcon('type')}
                   </Th>
+                  <Th onClick={() => {}} cursor='pointer'>
+                    Attribution Link {renderSortIcon('attribution_url')}
+                  </Th>
                   <Th></Th>
                 </Tr>
               </Thead>
@@ -130,6 +133,7 @@ export default function OrganisationList() {
                     <Td>{org.display_name}</Td>
                     <Td>{org.description}</Td>
                     <Td>{org.type}</Td>
+                    <Td>{org.attribution_url}</Td>
                     <Td>
                       <HStack gap={2}>
                         <Tooltip label='Edit'>

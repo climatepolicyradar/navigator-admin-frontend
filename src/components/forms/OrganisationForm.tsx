@@ -6,16 +6,19 @@ import { VStack, Button, ButtonGroup, useToast } from '@chakra-ui/react'
 import { ApiError } from '../feedback/ApiError'
 import { TextField } from './fields/TextField'
 import * as Yup from 'yup'
-import { IOrganisation } from '@/interfaces/Organisation'
+import { IOrganisation, IOrganisationFormPost } from '@/interfaces/Organisation'
 import { organisationSchema } from '@/schemas/organisationSchema'
+import { useNavigate } from 'react-router-dom'
+import { createOrganisation, updateOrganisation } from '@/api/Organisations'
 
 type TProps = {
   organisation?: IOrganisation
 }
 
-export type IOrgFormSubmit = Yup.InferType<typeof organisationSchema>
+export type IOrganisationForm = Yup.InferType<typeof organisationSchema>
 
 export const OrganisationForm = ({ organisation: loadedOrg }: TProps) => {
+  const navigate = useNavigate()
   const toast = useToast()
   const [formError, setFormError] = useState<IError | null | undefined>()
   const {
@@ -23,54 +26,75 @@ export const OrganisationForm = ({ organisation: loadedOrg }: TProps) => {
     control,
     reset,
     formState: { isSubmitting },
-  } = useForm<IOrgFormSubmit>({
+  } = useForm<IOrganisationForm>({
     resolver: yupResolver(organisationSchema),
     context: {
       isNewOrg: loadedOrg ? false : true,
     },
   })
 
-  const handleFormSubmission = useCallback(
-    // TODO: Remove under APP-54.
-    /* trunk-ignore(eslint/@typescript-eslint/require-await) */
-    async (formValues: IOrgFormSubmit) => {
-      setFormError(null)
-      console.debug(formValues)
+  const handleFormSubmission = async (organisation: IOrganisationForm) => {
+    setFormError(null)
 
-      if (loadedOrg) {
+    const organisationData: IOrganisationFormPost = {
+      internal_name: organisation.internal_name,
+      display_name: organisation.display_name ?? '',
+      description: organisation.description,
+      type: organisation.type,
+      attribution_url: organisation.attribution_url,
+    }
+
+    if (loadedOrg) {
+      return await updateOrganisation(organisationData, loadedOrg.id)
+        .then(() => {
+          toast.closeAll()
+          toast({
+            title: 'Organisation has been successfully updated',
+            status: 'success',
+            position: 'top',
+          })
+        })
+        .catch((error: IError) => {
+          setFormError(error)
+          toast({
+            title: 'Organisation has not been updated',
+            description: error.message,
+            status: 'error',
+            position: 'top',
+          })
+        })
+    }
+    return await createOrganisation(organisationData)
+      .then((data) => {
+        toast.closeAll()
         toast({
-          title: 'Not implemented',
-          description: 'Organisation update has not been implemented',
-          status: 'error',
+          title: 'Organisation has been successfully created',
+          status: 'success',
           position: 'top',
         })
-      } else {
-        toast({
-          title: 'Not implemented',
-          description: 'Organisation create has not been implemented',
-          status: 'error',
-          position: 'top',
-        })
-      }
-    },
-    [loadedOrg, toast, setFormError],
-  )
-
-  const onSubmit: SubmitHandler<IOrgFormSubmit> = useCallback(
-    (data) => {
-      handleFormSubmission(data).catch((error: IError) => {
-        console.error(error)
+        navigate(`/organisation/${data.response.data}/edit`, { replace: true })
       })
-    },
-    [handleFormSubmission],
-  )
+      .catch((error: IError) => {
+        setFormError(error)
+        toast({
+          title: 'Collection has not been created',
+          description: error.message,
+          status: 'error',
+          position: 'top',
+        })
+      })
+  }
 
-  const onSubmitErrorHandler: SubmitErrorHandler<IOrgFormSubmit> = useCallback(
-    (errors) => {
+  const onSubmit: SubmitHandler<IOrganisationForm> = (data) => {
+    handleFormSubmission(data).catch((error: IError) => {
+      console.error(error)
+    })
+  }
+
+  const onSubmitErrorHandler: SubmitErrorHandler<IOrganisationForm> =
+    useCallback((errors) => {
       console.error(errors)
-    },
-    [],
-  )
+    }, [])
 
   useEffect(() => {
     if (loadedOrg) {
@@ -79,6 +103,7 @@ export const OrganisationForm = ({ organisation: loadedOrg }: TProps) => {
         type: loadedOrg?.type || '',
         display_name: loadedOrg?.display_name || '',
         description: loadedOrg?.description || '',
+        attribution_url: loadedOrg?.attribution_url || '',
       })
     }
   }, [loadedOrg, reset])
@@ -102,7 +127,7 @@ export const OrganisationForm = ({ organisation: loadedOrg }: TProps) => {
             name='display_name'
             label='Display Name'
             control={control}
-            isRequired={loadedOrg ? true : false}
+            isRequired={true}
           />
 
           <TextField
@@ -115,6 +140,13 @@ export const OrganisationForm = ({ organisation: loadedOrg }: TProps) => {
           <TextField
             name='type'
             label='Organisation Type'
+            control={control}
+            isRequired={true}
+          />
+
+          <TextField
+            name='attribution_url'
+            label='Attribution Link'
             control={control}
             isRequired={true}
           />

@@ -42,6 +42,7 @@ import { ImportIdSection } from './sections/ImportIdSection'
 import { FormLoader } from '../feedback/FormLoader'
 import useCorpusTypes from '@/hooks/useCorpusTypes'
 import useOrganisations from '@/hooks/useOrganisations'
+import useCorpora from '@/hooks/useCorpora'
 
 type TProps = {
   corpus?: ICorpus
@@ -57,8 +58,8 @@ export interface ICorpusFormSubmit {
   import_id_part3?: string
   import_id_part4?: string
   title: string
-  description: string
-  corpus_text?: string | null
+  description?: string | null
+  corpus_text: string
   corpus_image_url?: string | null
   corpus_type_name: { label: string; value: string }
   corpus_type_description: string
@@ -68,6 +69,7 @@ export interface ICorpusFormSubmit {
 export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
   const navigate = useNavigate()
   const toast = useToast()
+  const { reload: reloadCorpora } = useCorpora()
   const [formError, setFormError] = useState<IError | null | undefined>()
   const {
     register,
@@ -140,10 +142,8 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
       if (loadedCorpus) {
         const formData: ICorpusFormPut = {
           title: formValues.title,
-          description: formValues.description,
-          corpus_text: convertEmptyToNull(
-            stripHtml(formValues.corpus_text || ''),
-          ),
+          description: formValues.description || null,
+          corpus_text: stripHtml(formValues.corpus_text || ''),
           corpus_image_url: convertEmptyToNull(formValues.corpus_image_url),
           corpus_type_description: formValues.corpus_type_description,
         }
@@ -173,10 +173,8 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
       const formData: ICorpusFormPost = {
         import_id: `${formValues.import_id_part1?.value}.${formValues.import_id_part2}.${formValues.import_id_part3}.${formValues.import_id_part4}`,
         title: formValues.title,
-        description: formValues.description,
-        corpus_text: convertEmptyToNull(
-          stripHtml(formValues.corpus_text || ''),
-        ),
+        description: formValues.description || null,
+        corpus_text: stripHtml(formValues.corpus_text || ''),
         corpus_image_url: convertEmptyToNull(formValues.corpus_image_url),
         corpus_type_name: formValues.corpus_type_name.value,
         organisation_id: formValues.organisation_id.value,
@@ -190,6 +188,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
             status: 'success',
             position: 'top',
           })
+          reloadCorpora()
           navigate(`/corpora`)
         })
         .catch((error: IError) => {
@@ -210,6 +209,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
       navigate,
       toast,
       setFormError,
+      reloadCorpora,
     ],
   )
 
@@ -223,9 +223,35 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
   )
 
   const onSubmitErrorHandler: SubmitErrorHandler<ICorpusFormSubmit> =
-    useCallback((errors) => {
-      console.error(errors)
-    }, [])
+    useCallback(
+      (errors) => {
+        console.error('onSubmitErrorHandler', errors)
+
+        // Collect all error messages from validation errors
+        const errorMessages = Object.values(errors)
+          .map((error) => error?.message)
+          .filter(Boolean)
+
+        const errorMessage =
+          errorMessages.length > 0
+            ? errorMessages.join(', ')
+            : 'Form validation failed'
+
+        setFormError({
+          status: 400,
+          detail: errorMessage,
+          message: errorMessage,
+          returnPage: '/corpora',
+        } as IError)
+
+        toast({
+          title: 'Form submission error',
+          description: errorMessage,
+          status: 'error',
+        })
+      },
+      [toast],
+    )
 
   const handleModalConfirm = () => {
     setIsConfirmed(true)
@@ -350,7 +376,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
             isRequired={true}
           />
 
-          <FormControl isRequired>
+          <FormControl isRequired={false}>
             <FormLabel>
               Description
               <Tooltip label='This is the internally used description of this corpus'>
@@ -364,7 +390,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
             />
           </FormControl>
 
-          <FormControl>
+          <FormControl isRequired>
             <FormLabel htmlFor='corpus-text-editor'>
               Corpus Text
               <Tooltip label='This is exposed on the navigator application as the public facing description of this corpus'>
