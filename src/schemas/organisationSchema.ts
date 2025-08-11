@@ -6,6 +6,6 @@ export const organisationSchema = yup
     internal_name: yup.string().required(),
     description: yup.string().required(),
     type: yup.string().required(),
-    attribution_url: yup.string().required(),
+    attribution_url: yup.string().nullable(),
   })
   .required()

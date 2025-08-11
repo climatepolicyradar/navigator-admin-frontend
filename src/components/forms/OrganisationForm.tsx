@@ -41,7 +41,9 @@ export const OrganisationForm = ({ organisation: loadedOrg }: TProps) => {
       display_name: organisation.display_name ?? '',
       description: organisation.description,
       type: organisation.type,
-      attribution_url: organisation.attribution_url,
+      attribution_url: organisation.attribution_url
+        ? organisation.attribution_url
+        : null,
     }
 
     if (loadedOrg) {
@@ -148,7 +150,7 @@ export const OrganisationForm = ({ organisation: loadedOrg }: TProps) => {
             name='attribution_url'
             label='Attribution Link'
             control={control}
-            isRequired={true}
+            isRequired={false}
           />
 
           <ButtonGroup>
