@@ -30,17 +30,14 @@ interface IMcfProjectsBaseMetadata extends IMetadata {
 
 export interface IAfProjectsMetadata extends IMcfProjectsBaseMetadata {
   sector: string[]
-  external_id: string[]
 }
 
 export interface ICifProjectsMetadata extends IMcfProjectsBaseMetadata {
   sector: string[]
-  external_id: string[]
 }
 
 export interface IGefProjectsMetadata extends IMcfProjectsBaseMetadata {
   focal_area: string[]
-  external_id: string[]
 }
 
 export interface IGcfProjectsMetadata extends IMcfProjectsBaseMetadata {
@@ -49,7 +46,6 @@ export interface IGcfProjectsMetadata extends IMcfProjectsBaseMetadata {
   result_type: string[]
   sector: string[]
   theme: string[]
-  external_id: string[]
 }
 
 export interface IReportsMetadata extends IMetadata {
