@@ -48,8 +48,9 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
     renderFields: {
       author: { type: FieldType.TEXT },
       author_type: { type: FieldType.SINGLE_SELECT },
+      external_id: { type: FieldType.TEXT },
     },
-    validationFields: ['author', 'author_type'],
+    validationFields: ['author', 'author_type', 'external_id'],
   },
   'Laws and Policies': {
     renderFields: {
@@ -59,6 +60,7 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
       keyword: { type: FieldType.MULTI_SELECT },
       framework: { type: FieldType.MULTI_SELECT },
       instrument: { type: FieldType.MULTI_SELECT },
+      external_id: { type: FieldType.TEXT },
     },
     validationFields: [
       'topic',
@@ -67,6 +69,7 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
       'keyword',
       'framework',
       'instrument',
+      'external_id',
     ],
   },
   AF: {
@@ -79,6 +82,7 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
       project_url: { type: FieldType.TEXT },
       project_value_co_financing: { type: FieldType.NUMBER },
       project_value_fund_spend: { type: FieldType.NUMBER },
+      external_id: { type: FieldType.TEXT },
     },
     validationFields: [
       'project_id',
@@ -89,6 +93,7 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
       'implementing_agency',
       'project_value_co_financing',
       'project_value_fund_spend',
+      'external_id',
     ],
   },
   CIF: {
@@ -101,6 +106,7 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
       project_url: { type: FieldType.TEXT },
       project_value_co_financing: { type: FieldType.NUMBER },
       project_value_fund_spend: { type: FieldType.NUMBER },
+      external_id: { type: FieldType.TEXT },
     },
     validationFields: [
       'project_id',
@@ -111,6 +117,7 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
       'implementing_agency',
       'project_value_co_financing',
       'project_value_fund_spend',
+      'external_id',
     ],
   },
   GCF: {
@@ -127,6 +134,7 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
       project_value_co_financing: { type: FieldType.NUMBER },
       project_value_fund_spend: { type: FieldType.NUMBER },
       approved_ref: { type: FieldType.TEXT },
+      external_id: { type: FieldType.TEXT },
     },
     validationFields: [
       'project_id',
@@ -141,6 +149,7 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
       'result_area',
       'result_type',
       'theme',
+      'external_id',
     ],
   },
   GEF: {
@@ -153,6 +162,7 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
       project_url: { type: FieldType.TEXT },
       project_value_co_financing: { type: FieldType.NUMBER },
       project_value_fund_spend: { type: FieldType.NUMBER },
+      external_id: { type: FieldType.TEXT },
     },
     validationFields: [
       'project_id',
@@ -163,6 +173,7 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
       'implementing_agency',
       'project_value_co_financing',
       'project_value_fund_spend',
+      'external_id',
     ],
   },
   default: {
