@@ -75,6 +75,7 @@ const mockUNFCCCFamily: IInternationalAgreementsFamily = {
   metadata: {
     author: ['Author One'],
     author_type: ['Type One'],
+    external_id: ['External ID One', 'External ID Two'],
   },
 }
 
@@ -105,6 +106,7 @@ const mockCCLWFamily: ILawsAndPoliciesFamily = {
     keyword: ['Keyword One', 'Keyword Two'],
     framework: ['Framework One', 'Framework Two'],
     instrument: ['Instrument One', 'Instrument Two'],
+    external_id: ['External ID One', 'External ID Two'],
   },
 }
 
