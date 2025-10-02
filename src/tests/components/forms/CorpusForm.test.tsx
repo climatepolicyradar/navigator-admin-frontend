@@ -389,6 +389,7 @@ describe('CorpusForm', () => {
           corpus_image_url: null,
           corpus_type_name: 'Test Corpus Type 1',
           organisation_id: 1,
+          attribution_url: null,
         })
       })
 
@@ -465,6 +466,7 @@ describe('CorpusForm', () => {
           corpus_image_url: null,
           corpus_type_name: 'Test Corpus Type 1',
           organisation_id: 2,
+          attribution_url: null,
         })
       })
 
