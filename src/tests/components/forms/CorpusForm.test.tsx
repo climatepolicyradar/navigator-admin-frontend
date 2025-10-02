@@ -570,7 +570,7 @@ describe('CorpusForm', () => {
       })
     })
 
-    it.only('successfully updates an existing corpus with attribution URL', async () => {
+    it('successfully updates an existing corpus with attribution URL', async () => {
       const mockUpdateResponse = {
         response: {
           import_id: 'test-id',

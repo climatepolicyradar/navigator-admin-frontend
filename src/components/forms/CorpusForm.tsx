@@ -63,7 +63,7 @@ export interface ICorpusFormSubmit {
   corpus_image_url?: string | null
   corpus_type_name: { label: string; value: string }
   corpus_type_description: string
-  attribution_url: string | null
+  attribution_url?: string | null
   organisation_id: { label: string; value: number }
 }
 
