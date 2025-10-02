@@ -140,6 +140,9 @@ describe('CorpusForm', () => {
 
       expect(screen.getByRole('textbox', { name: 'Title' })).toBeInTheDocument()
       expect(
+        screen.getByRole('textbox', { name: 'Corpus Attribution URL' }),
+      ).toBeInTheDocument()
+      expect(
         screen.getByRole('textbox', { name: 'Description' }),
       ).toBeInTheDocument()
       expect(
@@ -299,6 +302,26 @@ describe('CorpusForm', () => {
 
       // Wait for the error message to appear
       expect(screen.getByText(/failed to load config/i)).toBeInTheDocument()
+    })
+
+    it('renders an empty string when corpus attribution url is null', () => {
+      const mockCorpus = {
+        import_id: 'test-id',
+        title: 'Test Corpus',
+        description: null,
+        corpus_text: '<p>Test Text</p>',
+        corpus_image_url: null,
+        corpus_type_name: 'Test Corpus Type 1',
+        corpus_type_description: 'Test Corpus Type Description 1',
+        organisation_id: 1,
+        attribution_url: null,
+      }
+
+      renderCorpusForm({ corpus: mockCorpus })
+
+      expect(
+        screen.getByRole('textbox', { name: 'Corpus Attribution URL' }),
+      ).toHaveValue('')
     })
   })
 
@@ -461,6 +484,7 @@ describe('CorpusForm', () => {
           corpus_image_url: null,
           organisation_id: 1,
           organisation_name: 'test-org',
+          attribution_url: null,
         },
       }
       vi.mocked(updateCorpus).mockResolvedValueOnce(mockUpdateResponse)
@@ -492,7 +516,6 @@ describe('CorpusForm', () => {
 
       // Wait for all form fields to be initialized
       await waitFor(() => {
-        // Check required fields
         expect(screen.getByRole('textbox', { name: 'Title' })).toHaveValue(
           'Original Title',
         )
@@ -500,12 +523,10 @@ describe('CorpusForm', () => {
           screen.getByRole('textbox', { name: 'Description' }),
         ).toHaveValue('Original Description')
 
-        // Check optional fields
         expect(
           screen.getByRole('textbox', { name: 'Corpus Image URL' }),
         ).toHaveValue('')
 
-        // Check corpus type fields
         expect(screen.getByTestId('corpus-type-select')).toBeInTheDocument()
         expect(
           screen.getByRole('textbox', { name: 'Corpus Type Description' }),
@@ -543,6 +564,77 @@ describe('CorpusForm', () => {
             corpus_text: '<p>TBD</p>',
             corpus_image_url: null,
             corpus_type_description: 'Test Corpus Type Description 1',
+          }),
+          'test-id',
+        )
+      })
+    })
+
+    it.only('successfully updates an existing corpus with attribution URL', async () => {
+      const mockUpdateResponse = {
+        response: {
+          import_id: 'test-id',
+          title: 'Updated Title',
+          description: null,
+          corpus_type_name: 'test-type',
+          corpus_type_description: 'Test Type Description',
+          corpus_text: 'Updated Corpus Text',
+          corpus_image_url: null,
+          organisation_id: 1,
+          organisation_name: 'test-org',
+          attribution_url: 'http://test.com/attribution',
+        },
+      }
+      vi.mocked(updateCorpus).mockResolvedValueOnce(mockUpdateResponse)
+
+      // Use the default mockConfig
+      mockUseConfig.mockReturnValue({
+        config: mockConfig,
+        loading: false,
+        error: null,
+      })
+
+      const mockCorpus = {
+        import_id: 'test-id',
+        title: 'Original Title',
+        description: 'Original Description',
+        organisation_id: 1,
+        organisation_name: 'Test Organisation 1',
+        corpus_text: '<p>TBD</p>',
+        corpus_image_url: null,
+        corpus_type_name: 'Test Corpus Type 1',
+        corpus_type_description: 'Test Corpus Type Description 1',
+        attribution_url: 'www.test-attribution-url.com',
+      }
+      const user = userEvent.setup()
+
+      renderCorpusForm({
+        corpus: mockCorpus,
+      })
+
+      await waitFor(() => {
+        expect(
+          screen.getByRole('textbox', { name: 'Corpus Attribution URL' }),
+        ).toHaveValue('www.test-attribution-url.com')
+      })
+
+      const attributionUrlInput = screen.getByRole('textbox', {
+        name: 'Corpus Attribution URL',
+      })
+
+      await user.clear(attributionUrlInput)
+      await user.type(attributionUrlInput, 'http://test.com/attribution')
+
+      // Submit form
+      const submitButton = screen.getByRole('button', {
+        name: /update corpus/i,
+      })
+      await user.click(submitButton)
+
+      await waitFor(() => {
+        expect(updateCorpus).toHaveBeenCalledWith(
+          expect.objectContaining({
+            attribution_url: 'http://test.com/attribution',
           }),
           'test-id',
         )

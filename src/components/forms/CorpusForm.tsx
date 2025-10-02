@@ -63,6 +63,7 @@ export interface ICorpusFormSubmit {
   corpus_image_url?: string | null
   corpus_type_name: { label: string; value: string }
   corpus_type_description: string
+  attribution_url: string | null
   organisation_id: { label: string; value: number }
 }
 
@@ -146,6 +147,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
           corpus_text: stripHtml(formValues.corpus_text || ''),
           corpus_image_url: convertEmptyToNull(formValues.corpus_image_url),
           corpus_type_description: formValues.corpus_type_description,
+          attribution_url: convertEmptyToNull(formValues.attribution_url),
         }
 
         return await updateCorpus(formData, loadedCorpus.import_id)
@@ -178,6 +180,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
         corpus_image_url: convertEmptyToNull(formValues.corpus_image_url),
         corpus_type_name: formValues.corpus_type_name.value,
         organisation_id: formValues.organisation_id.value,
+        attribution_url: convertEmptyToNull(formValues.attribution_url),
       }
 
       return await createCorpus(formData)
@@ -315,6 +318,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
       reset({
         import_id: loadedCorpus.import_id || '',
         title: loadedCorpus.title || '',
+        attribution_url: loadedCorpus.attribution_url || '',
         description: loadedCorpus.description || '',
         corpus_text: loadedCorpus.corpus_text || '',
         corpus_image_url: loadedCorpus.corpus_image_url || '',
@@ -407,6 +411,13 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
           <TextField
             name='corpus_image_url'
             label='Corpus Image URL'
+            control={control}
+            isRequired={false}
+          />
+
+          <TextField
+            name='attribution_url'
+            label='Corpus Attribution URL'
             control={control}
             isRequired={false}
           />
