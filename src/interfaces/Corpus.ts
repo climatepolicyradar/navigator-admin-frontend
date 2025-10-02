@@ -19,7 +19,7 @@ export interface ICorpusFormPost {
   corpus_image_url: string | null
   corpus_type_name: string
   organisation_id: number
-  attribution_url: string
+  attribution_url: string | null
 }
 
 export interface ICorpusFormPut {
