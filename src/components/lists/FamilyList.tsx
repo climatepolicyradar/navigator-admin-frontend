@@ -295,10 +295,10 @@ export default function FamilyList() {
                 <Th>
                   <Flex gap={2} align='center'>
                     <span
-                      onClick={() => handleHeaderClick('corpus')}
+                      onClick={() => handleHeaderClick('corpus_import_id')}
                       style={{ cursor: 'pointer' }}
                     >
-                      Corpus {renderSortIcon('corpus')}
+                      Corpus {renderSortIcon('corpus_import_id')}
                     </span>
                     {!configError && (
                       <Popover>
