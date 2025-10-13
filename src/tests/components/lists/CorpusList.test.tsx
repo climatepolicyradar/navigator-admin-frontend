@@ -10,6 +10,7 @@ const mockCorpora: ICorpus[] = [
     corpus_type_description: 'Test Type Description',
     organisation_id: 1,
     organisation_name: 'Test Organisation',
+    attribution_url: null,
   },
   {
     import_id: 'test-corpus-2',
@@ -21,6 +22,7 @@ const mockCorpora: ICorpus[] = [
     corpus_type_description: 'Test Type Description',
     organisation_id: 1,
     organisation_name: 'Test Organisation',
+    attribution_url: null,
   },
 ] as const
 

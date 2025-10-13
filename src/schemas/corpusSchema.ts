@@ -66,6 +66,7 @@ export const corpusSchema = yup
     description: yup.string().nullable(),
     corpus_text: yup.string().required(),
     corpus_image_url: yup.string().nullable(),
+    attribution_url: yup.string().url('Must be a valid URL').nullable(),
     corpus_type_name: yup.object({
       label: yup.string().required(),
       value: yup.string().required(),
