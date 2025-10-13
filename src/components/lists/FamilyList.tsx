@@ -234,6 +234,16 @@ export default function FamilyList() {
                   Category {renderSortIcon('category')}
                 </Flex>
               </Th>
+              {config?.corpora?.length && config?.corpora?.length > 1 && (
+                <Th
+                  onClick={() => handleHeaderClick('corpus_import_id')}
+                  cursor='pointer'
+                >
+                  <Flex gap={2} align='center'>
+                    Corpus {renderSortIcon('corpus_import_id')}
+                  </Flex>
+                </Th>
+              )}
               <Th>
                 <Flex gap={2} align='center'>
                   <span>Geographies</span>
