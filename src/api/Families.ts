@@ -10,18 +10,21 @@ export type TFamilySearchQuery = {
   status?: string | null
   title?: string | null
   description?: string | null
+  corpora?: string[] | null
 }
 
 type TSearchParams = {
   q?: string
   geography?: string[]
   status?: string
+  corpus?: string[]
 }
 
 export async function getFamilies({
   query,
   geographies,
   status,
+  corpora,
 }: TFamilySearchQuery) {
   setToken(API)
 
@@ -33,6 +36,9 @@ export async function getFamilies({
   }
   if (status) {
     searchParams['status'] = status
+  }
+  if (corpora) {
+    searchParams['corpus'] = corpora
   }
 
   const response = await API.get<TFamily[]>('/v1/families/', {
