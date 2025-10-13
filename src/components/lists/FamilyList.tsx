@@ -261,51 +261,47 @@ export default function FamilyList() {
                   Category {renderSortIcon('category')}
                 </Flex>
               </Th>
-              {config?.corpora?.length && config?.corpora?.length > 1 && (
-                <Th>
-                  <Flex gap={2} align='center'>
-                    <span
-                      onClick={() => handleHeaderClick('corpus_import_id')}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      Corpus {renderSortIcon('corpus_import_id')}
-                    </span>
-                    {!configError && (
-                      <Popover>
-                        <PopoverTrigger>
-                          <IconButton
-                            aria-label='Filter by corpus'
-                            icon={<FiFilter />}
-                            size='xs'
-                            variant='ghost'
-                            colorScheme={
-                              selectedCorpus.length ? 'blue' : 'gray'
-                            }
-                          />
-                        </PopoverTrigger>
-                        <PopoverContent>
-                          <PopoverBody>
-                            {configLoading ? (
-                              <Spinner size='sm' />
-                            ) : (
-                              <Select
-                                isMulti={true}
-                                isClearable={true}
-                                options={corpusOptions}
-                                value={selectedCorpus}
-                                onChange={handleCorpusChange}
-                                placeholder='Select corpora...'
-                                closeMenuOnSelect={false}
-                                size='sm'
-                              />
-                            )}
-                          </PopoverBody>
-                        </PopoverContent>
-                      </Popover>
-                    )}
-                  </Flex>
-                </Th>
-              )}
+              <Th>
+                <Flex gap={2} align='center'>
+                  <span
+                    onClick={() => handleHeaderClick('corpus_import_id')}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    Corpus {renderSortIcon('corpus_import_id')}
+                  </span>
+                  {!configError && (
+                    <Popover>
+                      <PopoverTrigger>
+                        <IconButton
+                          aria-label='Filter by corpus'
+                          icon={<FiFilter />}
+                          size='xs'
+                          variant='ghost'
+                          colorScheme={selectedCorpus.length ? 'blue' : 'gray'}
+                        />
+                      </PopoverTrigger>
+                      <PopoverContent>
+                        <PopoverBody>
+                          {configLoading ? (
+                            <Spinner size='sm' />
+                          ) : (
+                            <Select
+                              isMulti={true}
+                              isClearable={true}
+                              options={corpusOptions}
+                              value={selectedCorpus}
+                              onChange={handleCorpusChange}
+                              placeholder='Select corpora...'
+                              closeMenuOnSelect={false}
+                              size='sm'
+                            />
+                          )}
+                        </PopoverBody>
+                      </PopoverContent>
+                    </Popover>
+                  )}
+                </Flex>
+              </Th>
               <Th>
                 <Flex gap={2} align='center'>
                   <span>Geographies</span>
@@ -472,9 +468,7 @@ export default function FamilyList() {
                   </Flex>
                 </Td>
                 <Td>{family.category}</Td>
-                {config?.corpora?.length && config?.corpora?.length > 1 && (
-                  <Td>{family.corpus_title}</Td>
-                )}
+                <Td>{family.corpus_title}</Td>
                 <Td>
                   <Flex gap={1} wrap='wrap'>
                     {family.geographies.sort().map((geography) => (
