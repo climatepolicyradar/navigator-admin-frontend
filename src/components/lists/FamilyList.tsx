@@ -70,7 +70,7 @@ export async function loader({ request }: ILoaderProps) {
     searchQuery['status'] = status
   }
   if (corpusIds.length) {
-    searchQuery['corpus'] = corpusIds
+    searchQuery['corpora'] = corpusIds
   }
   const response = await getFamilies(searchQuery)
   return response
@@ -163,43 +163,13 @@ export default function FamilyList() {
   }
 
   useEffect(() => {
-    // First filter by geography
-    const geographyFiltered = families.filter((family) =>
-      selectedGeographies.length
-        ? selectedGeographies.some((geography) =>
-            family.geographies.includes(geography.value),
-          )
-        : true,
-    )
-
-    // Then filter by corpus
-    const corpusFiltered = geographyFiltered.filter((family) =>
-      selectedCorpus.length
-        ? selectedCorpus.some(
-            (corpus) => family.corpus_import_id === corpus.value,
-          )
-        : true,
-    )
-
-    // Then filter by status from URL
-    const statusParam = searchParams.get('status')
-    const statusFiltered = statusParam
-      ? corpusFiltered.filter((family) => family.status === statusParam)
-      : corpusFiltered
-
-    // Finally, sort the filtered results
-    const sortedItems = statusFiltered
+    // Server handles filtering via URL params (geography, corpus, status)
+    const sortedItems = families
       .slice()
       .sort(sortBy(sortControls.key, sortControls.reverse))
 
     setFilteredItems(sortedItems)
-  }, [
-    families,
-    selectedGeographies,
-    selectedCorpus,
-    sortControls,
-    searchParams,
-  ])
+  }, [families, sortControls])
 
   const handleGeographyChange = (newValue: unknown) => {
     const selectedItems = newValue as IChakraSelect[]
