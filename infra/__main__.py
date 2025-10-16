@@ -18,7 +18,7 @@ from resources.cloudfront_distribution import (
 )
 from resources.cors_policy import CloudFrontCORSPolicy, CORSPolicyConfig
 from resources.dns import DNS, DNSConfig
-from resources.ecr_repository import ECRRepository, ECRRepositoryConfig, PolicyOptions
+from resources.ecr_repository import ECRRepository, ECRRepositoryConfig
 from resources.github_actions_role import GitHubActionsRole
 from resources.util import (
     BehaviourOptions,
@@ -53,12 +53,9 @@ frontend_env = {
 # Create ECR repo
 ########################################################################
 
-# Create ECR repo in production account
 ecr_repo = ECRRepository(
     "navigator-admin-frontend",
-    config=ECRRepositoryConfig(
-        principal_service=PolicyOptions.APPRUNNER, image_scan_on_push=False
-    ),
+    config=ECRRepositoryConfig(image_scan_on_push=False),
 )
 
 # Export the repository URL for use in CI/CD pipelines
