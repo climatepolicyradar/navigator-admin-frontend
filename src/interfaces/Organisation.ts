@@ -4,7 +4,7 @@ export interface IOrganisation {
   display_name: string
   description: string
   type: string
-  attribution_url: string
+  attribution_url: string | null
 }
 
 export interface IOrganisationFormPost {
@@ -12,5 +12,5 @@ export interface IOrganisationFormPost {
   display_name: string
   description: string
   type: string
-  attribution_url: string
+  attribution_url: string | null
 }

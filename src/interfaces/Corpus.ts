@@ -8,6 +8,7 @@ export interface ICorpus {
   corpus_image_url: string | null
   organisation_id: number
   organisation_name: string
+  attribution_url: string | null
 }
 
 export interface ICorpusFormPost {
@@ -18,6 +19,7 @@ export interface ICorpusFormPost {
   corpus_image_url: string | null
   corpus_type_name: string
   organisation_id: number
+  attribution_url: string | null
 }
 
 export interface ICorpusFormPut {
@@ -26,4 +28,5 @@ export interface ICorpusFormPut {
   corpus_text: string
   corpus_image_url: string | null
   corpus_type_description: string
+  attribution_url: string | null
 }

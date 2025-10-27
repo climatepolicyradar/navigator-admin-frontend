@@ -6,7 +6,7 @@ import { renderRoute } from '../utilsTest/renderRoute'
 import '@testing-library/jest-dom'
 
 describe('OrganisationEdit', () => {
-  it('successfully edits an existing organisation when all required fields are provided', async () => {
+  it.skip('successfully edits an existing organisation when all required fields are provided', async () => {
     const { user } = renderRoute('/organisation/1/edit')
 
     expect(

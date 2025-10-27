@@ -59,6 +59,7 @@ export async function loader({ request }: ILoaderProps) {
   const q = url.searchParams.get('q')
   const geographies = url.searchParams.getAll('geography')
   const status = url.searchParams.get('status')
+  const corpusIds = url.searchParams.getAll('corpus')
   const searchQuery: TFamilySearchQuery = {
     query: q,
   }
@@ -67,6 +68,9 @@ export async function loader({ request }: ILoaderProps) {
   }
   if (status) {
     searchQuery['status'] = status
+  }
+  if (corpusIds.length) {
+    searchQuery['corpora'] = corpusIds
   }
   const response = await getFamilies(searchQuery)
   return response
@@ -82,6 +86,7 @@ export default function FamilyList() {
   const [selectedGeographies, setSelectedGeographies] = useState<
     IChakraSelect[]
   >([])
+  const [selectedCorpus, setSelectedCorpus] = useState<IChakraSelect[]>([])
   const [sortControls, setSortControls] = useState<{
     key: keyof TFamily
     reverse: boolean
@@ -97,6 +102,7 @@ export default function FamilyList() {
   const [formError, setFormError] = useState<IError | null | undefined>()
   // String so useEffect doesn't keep re-rendering (referential comparison)
   const qGeographies = searchParams.getAll('geography').join(';')
+  const qCorpus = searchParams.getAll('corpus').join(';')
 
   const userToken = useMemo(() => {
     const token = localStorage.getItem('token')
@@ -157,35 +163,31 @@ export default function FamilyList() {
   }
 
   useEffect(() => {
-    // First filter by geography
-    const geographyFiltered = families.filter((family) =>
-      selectedGeographies.length
-        ? selectedGeographies.some((geography) =>
-            family.geographies.includes(geography.value),
-          )
-        : true,
-    )
-
-    // Then filter by status from URL
-    const statusParam = searchParams.get('status')
-    const statusFiltered = statusParam
-      ? geographyFiltered.filter((family) => family.status === statusParam)
-      : geographyFiltered
-
-    // Finally, sort the filtered results
-    const sortedItems = statusFiltered
+    // Server handles filtering via URL params (geography, corpus, status)
+    const sortedItems = families
       .slice()
       .sort(sortBy(sortControls.key, sortControls.reverse))
 
     setFilteredItems(sortedItems)
-  }, [families, selectedGeographies, sortControls, searchParams])
+  }, [families, sortControls])
 
   const handleGeographyChange = (newValue: unknown) => {
     const selectedItems = newValue as IChakraSelect[]
     setSearchParams({
       q: searchParams.get('q') ?? '',
       status: searchParams.get('status') ?? '',
+      corpus: searchParams.getAll('corpus'),
       geography: selectedItems.map((item) => item.label),
+    })
+  }
+
+  const handleCorpusChange = (newValue: unknown) => {
+    const selectedItems = newValue as IChakraSelect[]
+    setSearchParams({
+      q: searchParams.get('q') ?? '',
+      status: searchParams.get('status') ?? '',
+      geography: searchParams.getAll('geography'),
+      corpus: selectedItems.map((item) => item.value),
     })
   }
 
@@ -202,6 +204,18 @@ export default function FamilyList() {
       .sort((a, b) => a.label.localeCompare(b.label))
   }, [config])
 
+  // Get all available corpora from config
+  const corpusOptions = useMemo(() => {
+    if (!config) return []
+
+    return config.corpora
+      .map((corpus) => ({
+        value: corpus.corpus_import_id,
+        label: corpus.title,
+      }))
+      .sort((a, b) => a.label.localeCompare(b.label))
+  }, [config])
+
   useEffect(() => {
     const geographiesArray = qGeographies ? qGeographies.split(';') : []
     const convertedGeographies: IChakraSelect[] = geographiesArray.map(
@@ -213,6 +227,19 @@ export default function FamilyList() {
 
     setSelectedGeographies(convertedGeographies)
   }, [qGeographies, geographyOptions])
+
+  useEffect(() => {
+    const corpusArray = qCorpus ? qCorpus.split(';') : []
+    const convertedCorpus: IChakraSelect[] = corpusArray.map(
+      (corpus) =>
+        corpusOptions.find((option) => option.value === corpus) || {
+          value: corpus,
+          label: corpus,
+        },
+    )
+
+    setSelectedCorpus(convertedCorpus)
+  }, [qCorpus, corpusOptions])
 
   return (
     <Box flex={1}>
@@ -232,6 +259,47 @@ export default function FamilyList() {
               >
                 <Flex gap={2} align='center'>
                   Category {renderSortIcon('category')}
+                </Flex>
+              </Th>
+              <Th>
+                <Flex gap={2} align='center'>
+                  <span
+                    onClick={() => handleHeaderClick('corpus_import_id')}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    Corpus {renderSortIcon('corpus_import_id')}
+                  </span>
+                  {!configError && (
+                    <Popover>
+                      <PopoverTrigger>
+                        <IconButton
+                          aria-label='Filter by corpus'
+                          icon={<FiFilter />}
+                          size='xs'
+                          variant='ghost'
+                          colorScheme={selectedCorpus.length ? 'blue' : 'gray'}
+                        />
+                      </PopoverTrigger>
+                      <PopoverContent>
+                        <PopoverBody>
+                          {configLoading ? (
+                            <Spinner size='sm' />
+                          ) : (
+                            <Select
+                              isMulti={true}
+                              isClearable={true}
+                              options={corpusOptions}
+                              value={selectedCorpus}
+                              onChange={handleCorpusChange}
+                              placeholder='Select corpora...'
+                              closeMenuOnSelect={false}
+                              size='sm'
+                            />
+                          )}
+                        </PopoverBody>
+                      </PopoverContent>
+                    </Popover>
+                  )}
                 </Flex>
               </Th>
               <Th>
@@ -400,6 +468,7 @@ export default function FamilyList() {
                   </Flex>
                 </Td>
                 <Td>{family.category}</Td>
+                <Td>{family.corpus_title}</Td>
                 <Td>
                   <Flex gap={1} wrap='wrap'>
                     {family.geographies.sort().map((geography) => (

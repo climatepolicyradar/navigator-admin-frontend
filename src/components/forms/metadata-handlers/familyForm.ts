@@ -32,6 +32,7 @@ export type MetadataHandler<T extends TFamilyMetadata> = {
 interface IFamilyFormIntlAgreements extends IFamilyFormBase {
   author?: string
   author_type?: IChakraSelect
+  external_id?: string
 }
 
 interface IFamilyFormLawsAndPolicies extends IFamilyFormBase {
@@ -41,6 +42,7 @@ interface IFamilyFormLawsAndPolicies extends IFamilyFormBase {
   keyword?: IChakraSelect[]
   framework?: IChakraSelect[]
   instrument?: IChakraSelect[]
+  external_id?: string
 }
 
 interface IFamilyFormMcfProjects extends IFamilyFormBase {
@@ -51,14 +53,17 @@ interface IFamilyFormMcfProjects extends IFamilyFormBase {
   project_url?: string
   project_value_co_financing?: string
   project_value_fund_spend?: string
+  external_id?: string
 }
 
 interface IFamilyFormAfProjects extends IFamilyFormMcfProjects {
   sector?: IChakraSelect[]
+  external_id?: string
 }
 
 interface IFamilyFormCifProjects extends IFamilyFormMcfProjects {
   sector?: IChakraSelect[]
+  external_id?: string
 }
 
 interface IFamilyFormGcfProjects extends IFamilyFormMcfProjects {
@@ -67,10 +72,12 @@ interface IFamilyFormGcfProjects extends IFamilyFormMcfProjects {
   result_type?: IChakraSelect[]
   theme?: IChakraSelect[]
   approved_ref?: string
+  external_id?: string
 }
 
 interface IFamilyFormGefProjects extends IFamilyFormMcfProjects {
   focal_area?: IChakraSelect[]
+  external_id?: string
 }
 
 interface IFamilyFormReports extends IFamilyFormBase {
@@ -102,6 +109,7 @@ export const corpusMetadataHandlers: Record<
       return {
         author: intlData.author ? [intlData.author] : [],
         author_type: intlData.author_type ? [intlData.author_type?.value] : [],
+        external_id: intlData.external_id ? [intlData.external_id] : [],
       } as IInternationalAgreementsMetadata
     },
     createSubmissionData: (baseData, metadata) =>
@@ -123,6 +131,9 @@ export const corpusMetadataHandlers: Record<
         instrument:
           lawsPolicyData.instrument?.map((instrument) => instrument.value) ||
           [],
+        external_id: lawsPolicyData.external_id
+          ? [lawsPolicyData.external_id]
+          : [],
       } as ILawsAndPoliciesMetadata
     },
     createSubmissionData: (baseData, metadata) =>
@@ -150,6 +161,7 @@ export const corpusMetadataHandlers: Record<
           afData.project_value_fund_spend !== undefined
             ? [`${afData.project_value_fund_spend}`]
             : [],
+        external_id: afData.external_id ? [afData.external_id] : [],
       } as IAfProjectsMetadata
     },
     createSubmissionData: (baseData, metadata) =>
@@ -177,6 +189,7 @@ export const corpusMetadataHandlers: Record<
           cifData.project_value_fund_spend !== undefined
             ? [`${cifData.project_value_fund_spend}`]
             : [],
+        external_id: cifData.external_id ? [cifData.external_id] : [],
       } as ICifProjectsMetadata
     },
     createSubmissionData: (baseData, metadata) =>
@@ -210,6 +223,7 @@ export const corpusMetadataHandlers: Record<
         result_type:
           gcfData.result_type?.map((result_type) => result_type.value) || [],
         theme: gcfData.theme?.map((theme) => theme.value) || [],
+        external_id: gcfData.external_id ? [gcfData.external_id] : [],
       } as IGcfProjectsMetadata
     },
     createSubmissionData: (baseData, metadata) =>
@@ -238,6 +252,7 @@ export const corpusMetadataHandlers: Record<
           gefData.project_value_fund_spend !== undefined
             ? [`${gefData.project_value_fund_spend}`]
             : [],
+        external_id: gefData.external_id ? [gefData.external_id] : [],
       } as IGefProjectsMetadata
     },
     createSubmissionData: (baseData, metadata) =>
