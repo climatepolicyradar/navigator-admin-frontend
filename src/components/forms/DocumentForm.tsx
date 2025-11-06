@@ -237,6 +237,18 @@ export const DocumentForm = ({
       <form onSubmit={handleSubmit(onSubmit, onSubmitErrorHandler)}>
         <VStack gap='4' mb={12} align={'stretch'}>
           {formError && <ApiError error={formError} />}
+          
+          <FormControl isRequired isReadOnly isDisabled>
+            <FormLabel>Document ID</FormLabel>
+            <Input
+              bg='white'
+              value={loadedDocument?.import_id || ''}
+              readOnly
+              disabled
+            />
+            <FormHelperText>This field is not editable</FormHelperText>
+          </FormControl>
+
           <FormControl isRequired isReadOnly isDisabled>
             <FormLabel>Family ID</FormLabel>
             <Input
