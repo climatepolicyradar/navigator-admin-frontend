@@ -237,7 +237,7 @@ export const DocumentForm = ({
       <form onSubmit={handleSubmit(onSubmit, onSubmitErrorHandler)}>
         <VStack gap='4' mb={12} align={'stretch'}>
           {formError && <ApiError error={formError} />}
-          
+
           <FormControl isRequired isReadOnly isDisabled>
             <FormLabel>Document ID</FormLabel>
             <Input
