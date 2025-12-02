@@ -15,7 +15,7 @@ jobs:
       checks: write
       # For repo checkout
       contents: read
-    uses: climatepolicyradar/reusable-workflows/.github/workflows/node-precommit-validator.yml@v5
+    uses: climatepolicyradar/reusable-workflows/.github/workflows/node-precommit-validator.yml@v22
     with:
       node-version: 20.11.0
       package-manager: yarn
