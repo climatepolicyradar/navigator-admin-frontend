@@ -54,6 +54,7 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
   },
   'Laws and Policies': {
     renderFields: {
+      type: { type: FieldType.SINGLE_SELECT },
       topic: { type: FieldType.MULTI_SELECT },
       hazard: { type: FieldType.MULTI_SELECT },
       sector: { type: FieldType.MULTI_SELECT },
@@ -63,6 +64,7 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
       external_id: { type: FieldType.TEXT },
     },
     validationFields: [
+      'type',
       'topic',
       'hazard',
       'sector',

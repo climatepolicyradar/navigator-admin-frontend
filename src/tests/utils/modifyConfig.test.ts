@@ -41,6 +41,10 @@ describe('modifyConfig', () => {
             type: 'Academic',
           },
           taxonomy: {
+            type: {
+              allow_blanks: false,
+              allowed_values: ['type1', 'type2'],
+            },
             topic: {
               allow_blanks: false,
               allowed_values: ['topic1', 'topic2'],

@@ -54,6 +54,7 @@ interface ITaxonomy {
 
 // Corpus type specific taxonomies.
 export interface IConfigTaxonomyCCLW extends ITaxonomy {
+  type: ITaxonomyField
   topic: ITaxonomyField
   hazard: ITaxonomyField
   sector: ITaxonomyField
