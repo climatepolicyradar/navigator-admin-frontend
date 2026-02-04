@@ -36,7 +36,7 @@ interface IFamilyFormIntlAgreements extends IFamilyFormBase {
 }
 
 interface IFamilyFormLawsAndPolicies extends IFamilyFormBase {
-  type?: IChakraSelect[]
+  type?: IChakraSelect
   topic?: IChakraSelect[]
   hazard?: IChakraSelect[]
   sector?: IChakraSelect[]
@@ -123,7 +123,7 @@ export const corpusMetadataHandlers: Record<
     extractMetadata: (formData: TFamilyFormSubmit) => {
       const lawsPolicyData = formData as IFamilyFormLawsAndPolicies
       return {
-        type: lawsPolicyData.type?.map((type) => type.value) || [],
+        type: lawsPolicyData.type ? [lawsPolicyData.type?.value] : [],
         topic: lawsPolicyData.topic?.map((topic) => topic.value) || [],
         hazard: lawsPolicyData.hazard?.map((hazard) => hazard.value) || [],
         sector: lawsPolicyData.sector?.map((sector) => sector.value) || [],
