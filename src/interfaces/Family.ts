@@ -8,6 +8,7 @@ export interface IInternationalAgreementsMetadata extends IMetadata {
 }
 
 export interface ILawsAndPoliciesMetadata extends IMetadata {
+  type: string[]
   topic: string[]
   hazard: string[]
   sector: string[]

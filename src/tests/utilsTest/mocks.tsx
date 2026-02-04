@@ -100,6 +100,7 @@ const mockCCLWFamily: ILawsAndPoliciesFamily = {
   created: new Date(2021, 1, 3).toISOString(),
   last_modified: new Date(2021, 1, 4).toISOString(),
   metadata: {
+    type: ['Type One', 'Type Two'],
     topic: ['Topic One', 'Topic Two'],
     hazard: ['Hazard One', 'Hazard Two'],
     sector: ['Sector One', 'Sector Two'],
@@ -260,6 +261,11 @@ const mockCCLWConfig: IConfig = {
         type: 'Academic',
       },
       taxonomy: {
+        type: {
+          allow_any: false,
+          allow_blanks: false,
+          allowed_values: ['Type One', 'Type Two'],
+        },
         topic: {
           allow_any: false,
           allow_blanks: false,
