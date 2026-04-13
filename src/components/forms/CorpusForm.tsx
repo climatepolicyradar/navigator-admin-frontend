@@ -519,6 +519,7 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
           {!loadedCorpus && config && !configLoading && (
             <ImportIdSection
               corpora={config?.corpora || []}
+              organisations={organisations}
               watchedOrganisation={watchedOrganisation}
               watchedImportIdPart1={watchedImportIdPart1}
               control={control}
