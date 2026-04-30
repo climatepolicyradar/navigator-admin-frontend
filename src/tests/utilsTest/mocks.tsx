@@ -263,7 +263,7 @@ const mockCCLWConfig: IConfig = {
       taxonomy: {
         type: {
           allow_any: false,
-          allow_blanks: false,
+          allow_blanks: true,
           allowed_values: ['Type One', 'Type Two'],
         },
         topic: {

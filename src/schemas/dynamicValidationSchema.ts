@@ -7,6 +7,25 @@ import {
 } from '@/interfaces/Metadata'
 import { TFamilyMetadata, TTaxonomy } from '@/interfaces'
 
+// Chakra single-select when taxonomy allows blanks: no value, or a complete option.
+const optionalChakraSingleSelectSchema = () =>
+  yup.mixed().test({
+    name: 'optional-chakra-single-select',
+    message: 'Invalid selection',
+    test(value: unknown) {
+      if (value === undefined || value === null) return true
+      if (typeof value !== 'object' || Array.isArray(value)) return false
+      if (Object.keys(value).length === 0) return true
+      const option = value as { value?: unknown; label?: unknown }
+      return (
+        typeof option.value === 'string' &&
+        option.value.length > 0 &&
+        typeof option.label === 'string' &&
+        option.label.length > 0
+      )
+    },
+  })
+
 // Type-safe field validation function
 const getFieldValidation = (
   fieldConfig: MetadataFieldConfig,
@@ -32,10 +51,12 @@ const getFieldValidation = (
         .min(1, 'You must provide at least one author')
       break
     case FieldType.SINGLE_SELECT:
-      fieldValidation = yup.object({
-        value: yup.string().required(),
-        label: yup.string().required(),
-      })
+      fieldValidation = isRequired
+        ? yup.object({
+            value: yup.string().required(),
+            label: yup.string().required(),
+          })
+        : optionalChakraSingleSelectSchema()
       break
     case FieldType.TEXT:
       fieldValidation = yup.string()
