@@ -42,7 +42,7 @@ describe('modifyConfig', () => {
           },
           taxonomy: {
             type: {
-              allow_blanks: false,
+              allow_blanks: true,
               allowed_values: ['type1', 'type2'],
             },
             topic: {
