@@ -61,6 +61,7 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
       keyword: { type: FieldType.MULTI_SELECT },
       framework: { type: FieldType.MULTI_SELECT },
       instrument: { type: FieldType.MULTI_SELECT },
+      domain: { type: FieldType.MULTI_SELECT },
       external_id: { type: FieldType.TEXT },
     },
     validationFields: [
@@ -72,6 +73,7 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
       'framework',
       'instrument',
       'external_id',
+      'domain',
     ],
   },
   AF: {
@@ -85,6 +87,7 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
       project_value_co_financing: { type: FieldType.NUMBER },
       project_value_fund_spend: { type: FieldType.NUMBER },
       external_id: { type: FieldType.TEXT },
+      domain: { type: FieldType.MULTI_SELECT },
     },
     validationFields: [
       'project_id',
@@ -96,6 +99,7 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
       'project_value_co_financing',
       'project_value_fund_spend',
       'external_id',
+      'domain',
     ],
   },
   CIF: {
@@ -109,6 +113,7 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
       project_value_co_financing: { type: FieldType.NUMBER },
       project_value_fund_spend: { type: FieldType.NUMBER },
       external_id: { type: FieldType.TEXT },
+      domain: { type: FieldType.MULTI_SELECT },
     },
     validationFields: [
       'project_id',
@@ -120,6 +125,7 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
       'project_value_co_financing',
       'project_value_fund_spend',
       'external_id',
+      'domain',
     ],
   },
   GCF: {
@@ -137,6 +143,7 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
       project_value_fund_spend: { type: FieldType.NUMBER },
       approved_ref: { type: FieldType.TEXT },
       external_id: { type: FieldType.TEXT },
+      domain: { type: FieldType.MULTI_SELECT },
     },
     validationFields: [
       'project_id',
@@ -152,6 +159,7 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
       'result_type',
       'theme',
       'external_id',
+      'domain',
     ],
   },
   GEF: {
@@ -165,6 +173,7 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
       project_value_co_financing: { type: FieldType.NUMBER },
       project_value_fund_spend: { type: FieldType.NUMBER },
       external_id: { type: FieldType.TEXT },
+      domain: { type: FieldType.MULTI_SELECT },
     },
     validationFields: [
       'project_id',
@@ -176,6 +185,7 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
       'project_value_co_financing',
       'project_value_fund_spend',
       'external_id',
+      'domain',
     ],
   },
   default: {
@@ -187,7 +197,8 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
       author: { type: FieldType.MULTI_VALUE_INPUT },
       author_type: { type: FieldType.MULTI_SELECT },
       external_id: { type: FieldType.TEXT },
+      domain: { type: FieldType.MULTI_SELECT },
     },
-    validationFields: ['author', 'author_type', 'external_id'],
+    validationFields: ['author', 'author_type', 'external_id', 'domain'],
   },
 }
