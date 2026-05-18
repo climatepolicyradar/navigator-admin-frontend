@@ -94,9 +94,9 @@ describe('FamilyForm', () => {
 
   it('renders FamilyReadDTO data on edit', async () => {
     const testFamily = mockFamiliesData[1]
-    const { getAllByText } = renderComponent(testFamily)
-    await flushPromises()
-    const expectedEvents = getAllByText('Test event title')
+    renderComponent(testFamily)
+
+    const expectedEvents = await screen.findAllByText('Test event title')
 
     expect(screen.getByLabelText('family-import-id')).toHaveTextContent(
       testFamily.import_id,
@@ -148,9 +148,3 @@ describe('FamilyForm Icons Visibility', () => {
     expect(warningIconDocument).not.toBeInTheDocument()
   })
 })
-
-// TEST: isDirty & external navigation & internal navigation
-
-// TET: not isDirty & external navigation & internal navigation
-
-// TEST: Validators
