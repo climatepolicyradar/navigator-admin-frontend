@@ -63,6 +63,7 @@ export interface IFamilyFormBase {
   title: string
   summary: string
   geographies: IChakraSelect[]
+  subdivisions: IChakraSelect[]
   category: string
   corpus: IChakraSelect
   collections?: IChakraSelect[]
@@ -556,6 +557,17 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               }))}
               isMulti={true}
               isRequired={true}
+            />
+            <SelectField
+              name='subdivisions'
+              label='Subdivisions'
+              control={control}
+              options={getCountries(config?.geographies).map((country) => ({
+                value: country.value,
+                label: country.display_value,
+              }))}
+              isMulti={true}
+              isRequired={false}
             />
             {!loadedFamily && (
               <SelectField

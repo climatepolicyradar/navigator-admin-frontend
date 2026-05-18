@@ -83,4 +83,23 @@ describe('FamilyForm create', () => {
       }),
     ).toBeInTheDocument()
   })
+
+  it('allows selecting subnational geographies', async () => {
+    setupUser({ organisationName: 'GCF', orgId: 6 })
+    renderRoute('/family/new')
+
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Create new family' }),
+    ).toBeInTheDocument()
+
+    expect(
+      await screen.findByRole('combobox', { name: 'Geographies' }),
+    ).toBeInTheDocument()
+
+    const subdivisionInput = screen.getByRole('combobox', {
+      name: 'Subdivisions',
+    })
+
+    expect(subdivisionInput).toBeInTheDocument()
+  })
 })
