@@ -76,6 +76,7 @@ const mockUNFCCCFamily: IInternationalAgreementsFamily = {
     author: ['Author One'],
     author_type: ['Type One'],
     external_id: ['External ID One', 'External ID Two'],
+    domain: ['Climate'],
   },
 }
 
@@ -108,6 +109,7 @@ const mockCCLWFamily: ILawsAndPoliciesFamily = {
     framework: ['Framework One', 'Framework Two'],
     instrument: ['Instrument One', 'Instrument Two'],
     external_id: ['External ID One', 'External ID Two'],
+    domain: ['Climate'],
   },
 }
 
@@ -190,6 +192,7 @@ const mockGCFFamily: IReportsFamily = {
     author: ['Author One', 'Author 2'],
     author_type: ['Individual', 'Academic/Research'],
     external_id: ['1234'],
+    domain: ['Climate'],
   },
 }
 
