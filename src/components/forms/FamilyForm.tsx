@@ -59,6 +59,7 @@ import {
   FieldType,
   IFormMetadata,
 } from '@/interfaces/Metadata'
+import useSubdivisions from '@/hooks/useSubdivisions'
 export interface IFamilyFormBase {
   title: string
   summary: string
@@ -90,6 +91,11 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     error: collectionsError,
     loading: collectionsLoading,
   } = useCollections('')
+  const {
+    subdivisions,
+    error: subdivisionsError,
+    loading: subdivisionsLoading,
+  } = useSubdivisions()
   const toast = useToast()
   const [formError, setFormError] = useState<IError | null | undefined>()
 
@@ -475,7 +481,12 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   }
 
   const canLoadForm =
-    !configLoading && !collectionsLoading && !configError && !collectionsError
+    !configLoading &&
+    !collectionsLoading &&
+    !configError &&
+    !collectionsError &&
+    !subdivisionsError &&
+    !subdivisionsLoading
 
   const blocker = useBlocker(({ currentLocation, nextLocation }) => {
     const isRouteChange = currentLocation.pathname !== nextLocation.pathname
@@ -510,8 +521,12 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
           detail='Please go back to the "Families" page, if you think there has been a mistake please contact the administrator.'
         />
       )}
-      {(configError || collectionsError || formError) && (
-        <ApiError error={configError || collectionsError || formError} />
+      {(configError || collectionsError || formError || subdivisionsError) && (
+        <ApiError
+          error={
+            configError || collectionsError || formError || subdivisionsError
+          }
+        />
       )}
 
       {canLoadForm && (
@@ -562,9 +577,9 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               name='subdivisions'
               label='Subdivisions'
               control={control}
-              options={getCountries(config?.geographies).map((country) => ({
-                value: country.value,
-                label: country.display_value,
+              options={subdivisions?.map((subdivision) => ({
+                value: subdivision.code,
+                label: subdivision.name,
               }))}
               isMulti={true}
               isRequired={false}
