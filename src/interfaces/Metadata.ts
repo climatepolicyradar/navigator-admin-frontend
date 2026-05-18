@@ -49,6 +49,7 @@ export const CORPUS_METADATA_CONFIG: CorpusMetadataConfig = {
       author: { type: FieldType.TEXT },
       author_type: { type: FieldType.SINGLE_SELECT },
       external_id: { type: FieldType.TEXT },
+      domain: { type: FieldType.MULTI_SELECT },
     },
     validationFields: ['author', 'author_type', 'external_id'],
   },
