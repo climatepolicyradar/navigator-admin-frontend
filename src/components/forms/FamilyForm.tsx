@@ -181,9 +181,9 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
 
   const availableSubdivisionOptions = useMemo(() => {
     if (watchGeographies && watchGeographies.length > 0) {
-      return subdivisions.filter(
-        (subdivision) =>
-          subdivision.country_alpha_3 === watchGeographies[0].value,
+      const watchGeographiesCodes = watchGeographies.map((geo) => geo.value)
+      return subdivisions.filter((subdivision) =>
+        watchGeographiesCodes.includes(subdivision.country_alpha_3),
       )
     }
     return subdivisions

@@ -84,7 +84,7 @@ describe('FamilyForm create', () => {
     ).toBeInTheDocument()
   })
 
-  it('allows selecting subnational geographies', async () => {
+  it('allows selecting subdivisions', async () => {
     setupUser({ organisationName: 'GCF', orgId: 6 })
     const { user } = renderRoute('/family/new')
 
@@ -148,6 +148,61 @@ describe('FamilyForm create', () => {
 
     // check that only subdivisions of the selected geography present
     expect(screen.queryByText('Subdivision 1')).not.toBeInTheDocument()
+    expect(screen.getByText('Subdivision 2')).toBeInTheDocument()
+  })
+
+  it('allows selecting subdivisions for multiple different selected geographies', async () => {
+    setupUser({ organisationName: 'GCF', orgId: 6 })
+    const { user } = renderRoute('/family/new')
+
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Create new family' }),
+    ).toBeInTheDocument()
+
+    const geographiesInput = await screen.findByRole('combobox', {
+      name: 'Geographies',
+    })
+
+    await user.click(geographiesInput)
+
+    expect(screen.getByText('Country 1')).toBeInTheDocument()
+    expect(screen.getByText('Country 2')).toBeInTheDocument()
+
+    // select first geography
+    const geographyOption1 = screen.getByRole('option', {
+      name: 'Country 1',
+    })
+    await user.click(geographyOption1)
+
+    const subdivisionInput = screen.getByRole('combobox', {
+      name: 'Subdivisions',
+    })
+
+    // select first geography subdivision
+    await user.click(subdivisionInput)
+    const subdivisionOption1 = screen.getByRole('option', {
+      name: 'Subdivision 1',
+    })
+    await user.click(subdivisionOption1)
+
+    // select second geography
+    await user.click(geographiesInput)
+    const geographyOption2 = screen.getByRole('option', {
+      name: 'Country 2',
+    })
+    await user.click(geographyOption2)
+
+    // select second geography subdivision
+    await user.click(subdivisionInput)
+    const subdivisionOption2 = screen.getByRole('option', {
+      name: 'Subdivision 2',
+    })
+    await user.click(subdivisionOption2)
+
+    // check that both geographies and subdivisions are displayed
+    expect(screen.getByText('Country 1')).toBeInTheDocument()
+    expect(screen.getByText('Country 2')).toBeInTheDocument()
+    expect(screen.getByText('Subdivision 1')).toBeInTheDocument()
     expect(screen.getByText('Subdivision 2')).toBeInTheDocument()
   })
 })
