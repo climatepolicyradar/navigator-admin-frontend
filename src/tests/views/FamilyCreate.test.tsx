@@ -92,11 +92,7 @@ describe('FamilyForm create', () => {
       screen.getByRole('heading', { level: 1, name: 'Create new family' }),
     ).toBeInTheDocument()
 
-    expect(
-      await screen.findByRole('combobox', { name: 'Geographies' }),
-    ).toBeInTheDocument()
-
-    const subdivisionInput = screen.getByRole('combobox', {
+    const subdivisionInput = await screen.findByRole('combobox', {
       name: 'Subdivisions',
     })
     expect(screen.queryByText('Subdivision 1')).not.toBeInTheDocument()
@@ -110,5 +106,48 @@ describe('FamilyForm create', () => {
     await user.click(subdivisionOption)
 
     expect(screen.getByText('Subdivision 1')).toBeInTheDocument()
+  })
+
+  it('selecting a geography filters the subdivision list accordingly', async () => {
+    setupUser({ organisationName: 'GCF', orgId: 6 })
+    const { user } = renderRoute('/family/new')
+
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Create new family' }),
+    ).toBeInTheDocument()
+
+    const subdivisionInput = await screen.findByRole('combobox', {
+      name: 'Subdivisions',
+    })
+
+    expect(subdivisionInput).toBeInTheDocument()
+
+    await user.click(subdivisionInput)
+
+    // check all subdivisions present when no geography selected
+    expect(screen.getByText('Subdivision 1')).toBeInTheDocument()
+    expect(screen.getByText('Subdivision 2')).toBeInTheDocument()
+
+    const geographiesInput = await screen.findByRole('combobox', {
+      name: 'Geographies',
+    })
+
+    await user.click(geographiesInput)
+
+    expect(screen.getByText('Country 1')).toBeInTheDocument()
+    expect(screen.getByText('Country 2')).toBeInTheDocument()
+
+    const geographyOption = screen.getByRole('option', {
+      name: 'Country 2',
+    })
+
+    // select a geography
+    await user.click(geographyOption)
+
+    await user.click(subdivisionInput)
+
+    // check that only subdivisions of the selected geography present
+    expect(screen.queryByText('Subdivision 1')).not.toBeInTheDocument()
+    expect(screen.getByText('Subdivision 2')).toBeInTheDocument()
   })
 })

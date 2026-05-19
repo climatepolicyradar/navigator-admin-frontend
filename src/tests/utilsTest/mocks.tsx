@@ -28,6 +28,28 @@ const mockConfig = {
           },
           children: [],
         },
+        {
+          node: {
+            id: 1,
+            display_value: 'Country 1',
+            slug: 'country-1',
+            value: 'AAA',
+            type: 'ISO-3166',
+            parent_id: 0,
+          },
+          children: [],
+        },
+        {
+          node: {
+            id: 2,
+            display_value: 'Country 2',
+            slug: 'country-2',
+            value: 'BBB',
+            type: 'ISO-3166',
+            parent_id: 0,
+          },
+          children: [],
+        },
       ],
     },
   ],

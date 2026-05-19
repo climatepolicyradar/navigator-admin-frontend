@@ -10,6 +10,13 @@ export const geographiesHandlers = [
         country_alpha_2: 'AA',
         country_alpha_3: 'AAA',
       },
+      {
+        code: 'BB-1',
+        name: 'Subdivision 2',
+        type: 'State',
+        country_alpha_2: 'BB',
+        country_alpha_3: 'BBB',
+      },
     ])
   }),
 ]

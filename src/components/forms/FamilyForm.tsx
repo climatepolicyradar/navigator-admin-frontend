@@ -96,6 +96,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     error: subdivisionsError,
     loading: subdivisionsLoading,
   } = useSubdivisions()
+
   const toast = useToast()
   const [formError, setFormError] = useState<IError | null | undefined>()
 
@@ -175,6 +176,18 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       corpus?.corpus_import_id.startsWith('MCF'),
     )
   }, [config?.corpora])
+
+  const watchGeographies = watch('geographies')
+
+  const availableSubdivisionOptions = useMemo(() => {
+    if (watchGeographies && watchGeographies.length > 0) {
+      return subdivisions.filter(
+        (subdivision) =>
+          subdivision.country_alpha_3 === watchGeographies[0].value,
+      )
+    }
+    return subdivisions
+  }, [watchGeographies, subdivisions])
 
   useEffect(() => {
     if (loadedFamily) {
@@ -577,7 +590,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               name='subdivisions'
               label='Subdivisions'
               control={control}
-              options={subdivisions?.map((subdivision) => ({
+              options={availableSubdivisionOptions?.map((subdivision) => ({
                 value: subdivision.code,
                 label: subdivision.name,
               }))}
