@@ -84,7 +84,7 @@ describe('FamilyForm create', () => {
     ).toBeInTheDocument()
   })
 
-  it('allows selecting subdivisions', async () => {
+  it('allows creating a family with subdivisions', async () => {
     setupUser({ organisationName: 'GCF', orgId: 6 })
     const { user } = renderRoute('/family/new')
 
@@ -92,20 +92,57 @@ describe('FamilyForm create', () => {
       screen.getByRole('heading', { level: 1, name: 'Create new family' }),
     ).toBeInTheDocument()
 
+    // add title
+    await user.type(
+      await screen.findByRole('textbox', { name: 'Title' }),
+      'GCF Family with subdivision',
+    )
+    // select geography
+    await user.click(screen.getByRole('combobox', { name: 'Geographies' }))
+    const geo_option = screen.getByRole('option', {
+      name: 'Afghanistan',
+    })
+    await user.click(geo_option)
+    expect(screen.getByText('Afghanistan')).toBeInTheDocument()
+
+    // select subdivision
     const subdivisionInput = await screen.findByRole('combobox', {
       name: 'Subdivisions',
     })
-    expect(screen.queryByText('Subdivision 1')).not.toBeInTheDocument()
-
-    expect(subdivisionInput).toBeInTheDocument()
     await user.click(subdivisionInput)
 
     const subdivisionOption = screen.getByRole('option', {
-      name: 'Subdivision 1',
+      name: 'Balkh',
     })
     await user.click(subdivisionOption)
+    expect(screen.getByText('Balkh')).toBeInTheDocument()
 
-    expect(screen.getByText('Subdivision 1')).toBeInTheDocument()
+    // select corpus
+    const corpus_name = 'Climate Investment Funds Guidance'
+    await user.click(screen.getByRole('combobox', { name: 'Corpus' }))
+    const corpus_option = screen.getByRole('option', {
+      name: corpus_name,
+    })
+    await user.click(corpus_option)
+    expect(screen.getByText(corpus_name)).toBeInTheDocument()
+
+    // select category
+    await user.click(screen.getByRole('radio', { name: 'Reports (Guidance)' }))
+
+    // submit
+    await user.click(screen.getByRole('button', { name: 'Create Family' }))
+
+    expect(
+      await screen.findByText('Family has been successfully created'),
+    ).toBeInTheDocument()
+    expect(
+      await screen.findByRole('heading', {
+        level: 1,
+        name: 'Editing: GCF Family with subdivision',
+      }),
+    ).toBeInTheDocument()
+    // check subdivision was successfully saved
+    expect(screen.getByText('Balkh')).toBeInTheDocument()
   })
 
   it('selecting a geography filters the subdivision list accordingly', async () => {

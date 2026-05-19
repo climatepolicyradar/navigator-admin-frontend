@@ -228,13 +228,17 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       throw new Error('No corpus type specified')
     }
 
+    const allGeographies = formData.geographies
+      ?.map((geo) => geo.value)
+      .concat(formData.subdivisions?.map((sub) => sub.value))
+
     // Prepare base family data common to all types
     const baseData: IFamilyFormPostBase = {
       title: formData.title,
       summary: stripHtml(formData.summary),
       // We still expect this value in the backend
       geography: formData.geographies?.[0].value || '',
-      geographies: formData.geographies?.map((geo) => geo.value),
+      geographies: allGeographies,
       category: formData.category,
       corpus_import_id: formData.corpus?.value || '',
       collections:
@@ -342,16 +346,27 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
         }, {})
       }
 
+      const countryGeographies = loadedFamily.geographies
+        .map((geo) =>
+          getCountries(config?.geographies)?.find((c) => c.value === geo),
+        )
+        .filter((c) => c !== undefined)
+
+      const subdivisionGeographies = loadedFamily.geographies
+        .map((geo) => subdivisions?.find((s) => s.code === geo))
+        .filter((c) => c !== undefined)
+
       // Pre-set the form values of the base family form (IFamilyFormBase) to that of the loaded family
       reset({
         title: loadedFamily.title,
         summary: loadedFamily.summary,
-        geographies: loadedFamily.geographies?.map((geography) => ({
-          value: geography,
-          label:
-            getCountries(config?.geographies)?.find(
-              (country) => country.value === geography,
-            )?.display_value || geography,
+        geographies: countryGeographies?.map((geography) => ({
+          value: geography?.value,
+          label: geography?.display_value,
+        })),
+        subdivisions: subdivisionGeographies?.map((subdivision) => ({
+          value: subdivision?.code,
+          label: subdivision?.name,
         })),
         corpus: loadedFamily.corpus_import_id
           ? {
@@ -379,7 +394,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     } else {
       setLoadedAndReset(true)
     }
-  }, [config, loadedFamily, reset, collections, corpusInfo])
+  }, [config, loadedFamily, reset, collections, corpusInfo, subdivisions])
 
   const onAddNewEntityClick = (entityType: TChildEntity) => {
     if (!taxonomy) {

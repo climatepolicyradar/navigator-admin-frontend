@@ -100,4 +100,17 @@ describe('FamilyForm edit', () => {
     expect(await screen.findByText('New document title')).toBeInTheDocument()
     expect(screen.queryByText('Test document title')).not.toBeInTheDocument()
   })
+
+  it('correctly displays subdivision data', async () => {
+    renderRoute('/family/mockUNFCCCFamilyWithSubdivisions/edit')
+
+    expect(
+      await screen.findByText('Editing: UNFCCC Family Four'),
+    ).toBeInTheDocument()
+
+    expect(await screen.findByText('Country 1')).toBeInTheDocument()
+    expect(screen.getByText('Country 2')).toBeInTheDocument()
+    expect(screen.getByText('Subdivision 1')).toBeInTheDocument()
+    expect(screen.getByText('Subdivision 2')).toBeInTheDocument()
+  })
 })

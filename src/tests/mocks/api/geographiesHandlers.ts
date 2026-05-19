@@ -17,6 +17,13 @@ export const geographiesHandlers = [
         country_alpha_2: 'BB',
         country_alpha_3: 'BBB',
       },
+      {
+        code: 'AF-BAL',
+        name: 'Balkh',
+        type: 'Province',
+        country_alpha_2: 'AF',
+        country_alpha_3: 'AFG',
+      },
     ])
   }),
 ]
