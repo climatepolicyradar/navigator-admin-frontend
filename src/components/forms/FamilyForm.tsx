@@ -48,6 +48,7 @@ import {
   IChakraSelect,
   ICollection,
   IConfigCorpora,
+  ISubdivision,
   TTaxonomy,
 } from '@/interfaces'
 import {
@@ -206,7 +207,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       .map((watchSubdivision) =>
         subdivisions.find((sub) => sub.code === watchSubdivision.value),
       )
-      .filter((ws) => ws !== undefined)
+      .filter((ws): ws is ISubdivision => ws !== undefined)
 
     const validSubdivisions = watchSubdivisionsWithParentCode
       .filter((subdivision) =>
