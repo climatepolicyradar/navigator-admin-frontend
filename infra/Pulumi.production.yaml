@@ -11,5 +11,7 @@ config:
   admin_frontend:vite_api_url:
     secure: AAABAO4OWcJLoB1EnstvOwlRKfoVN1OY5ntybtfADptdJG5zpSIwX/GvIqhTYQUiZnt0RRwmxYGKHJwSTQgh71l2Om2nAxWX
   aws:region: eu-west-1
+  admin_frontend:vite_geographies_api_url:
+    secure: AAABAM3jtyZEhLQLAZo79oweTkAIUCH2KtRaskgrHDU+HneFVPYxLzJREVw099l1D8KmdOstbe281NINnhl7U3Xg
 environment:
   - admin_frontend/production

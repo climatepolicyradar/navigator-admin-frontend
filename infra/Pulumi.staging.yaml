@@ -11,5 +11,7 @@ config:
   admin_frontend:validation_account_id:
     secure: AAABAML/NGllT3ud2OIF47uyzD7KUbHFnfNUui+U7A36zDLXmAZsFGK+EIc=
   aws:region: eu-west-1
+  admin_frontend:vite_geographies_api_url:
+    secure: AAABAIsdMEPFWdDcM+/xATb0h64AsuykJ9CXPlpekUIRqSKgjB8a6G85wGFCJjqF2ET6aQ3pjhBim9u2vTYwnX0u/lgS5OR/IbI=
 environment:
   - admin_frontend/staging

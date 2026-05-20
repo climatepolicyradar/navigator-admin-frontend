@@ -44,6 +44,7 @@ config = pulumi.Config()
 # the MY_APP_ prefixed key name as the value.
 frontend_env = {
     "MY_APP_API_URL": config.require("vite_api_url"),
+    "MY_APP_GEOGRAPHIES_API_URL": config.require("vite_geographies_api_url"),
     "API_VERSION": config.require("api_version"),
     "ROBOTS": config.require("robots"),
     "HOSTNAME": config.require("hostname"),
