@@ -97,6 +97,7 @@ describe('FamilyForm create', () => {
       await screen.findByRole('textbox', { name: 'Title' }),
       'GCF Family with subdivision',
     )
+
     // select geography
     await user.click(screen.getByRole('combobox', { name: 'Geographies' }))
     const geo_option = screen.getByRole('option', {
@@ -153,18 +154,6 @@ describe('FamilyForm create', () => {
       screen.getByRole('heading', { level: 1, name: 'Create new family' }),
     ).toBeInTheDocument()
 
-    const subdivisionInput = await screen.findByRole('combobox', {
-      name: 'Subdivisions',
-    })
-
-    expect(subdivisionInput).toBeInTheDocument()
-
-    await user.click(subdivisionInput)
-
-    // check all subdivisions present when no geography selected
-    expect(screen.getByText('Subdivision 1')).toBeInTheDocument()
-    expect(screen.getByText('Subdivision 2')).toBeInTheDocument()
-
     const geographiesInput = await screen.findByRole('combobox', {
       name: 'Geographies',
     })
@@ -181,6 +170,11 @@ describe('FamilyForm create', () => {
     // select a geography
     await user.click(geographyOption)
 
+    const subdivisionInput = await screen.findByRole('combobox', {
+      name: 'Subdivisions',
+    })
+
+    expect(subdivisionInput).toBeInTheDocument()
     await user.click(subdivisionInput)
 
     // check that only subdivisions of the selected geography present

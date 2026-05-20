@@ -25,6 +25,8 @@ type TProps<T extends FieldValues> = {
   rules?: RegisterOptions
   isRequired?: boolean
   isClearable?: boolean
+  isDisabled?: boolean
+  placeholder?: string
 }
 
 export const SelectField = <T extends FieldValues>({
@@ -36,6 +38,8 @@ export const SelectField = <T extends FieldValues>({
   rules,
   isRequired,
   isClearable,
+  isDisabled,
+  placeholder,
 }: TProps<T>) => {
   // Determine if options are already in IChakraSelect format
   const selectOptions = options
@@ -65,7 +69,11 @@ export const SelectField = <T extends FieldValues>({
         },
       }}
       render={({ field, fieldState: { error } }) => (
-        <FormControl isInvalid={!!error} isRequired={isRequired}>
+        <FormControl
+          isInvalid={!!error}
+          isRequired={isRequired}
+          isDisabled={isDisabled}
+        >
           {label && <FormLabel>{label}</FormLabel>}
           {isMulti && (
             <FormHelperText mb={2}>
@@ -77,6 +85,8 @@ export const SelectField = <T extends FieldValues>({
             isClearable={isClearable}
             isMulti={isMulti}
             isSearchable={true}
+            isDisabled={isDisabled}
+            placeholder={placeholder}
             options={selectOptions}
             aria-label={label}
             {...field}

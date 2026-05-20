@@ -178,16 +178,53 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   }, [config?.corpora])
 
   const watchGeographies = watch('geographies')
+  const watchGeographiesCodes = useMemo(() => {
+    return watchGeographies ? watchGeographies.map((geo) => geo.value) : []
+  }, [watchGeographies])
+  const watchSubdivisions = watch('subdivisions')
+  const hasGeographies = watchGeographies && watchGeographies.length > 0
 
   const availableSubdivisionOptions = useMemo(() => {
     if (watchGeographies && watchGeographies.length > 0) {
-      const watchGeographiesCodes = watchGeographies.map((geo) => geo.value)
       return subdivisions.filter((subdivision) =>
         watchGeographiesCodes.includes(subdivision.country_alpha_3),
       )
     }
     return subdivisions
-  }, [watchGeographies, subdivisions])
+  }, [watchGeographies, watchGeographiesCodes, subdivisions])
+
+  useEffect(() => {
+    if (!watchSubdivisions || watchSubdivisions.length === 0) return
+    if (!watchGeographies || watchGeographies.length === 0) {
+      setValue('subdivisions', [])
+      return
+    }
+
+    const watchSubdivisionsWithParentCode = watchSubdivisions
+      .map((watchSubdivision) =>
+        subdivisions.find((sub) => sub.code === watchSubdivision.value),
+      )
+      .filter((ws) => ws !== undefined)
+
+    const validSubdivisions = watchSubdivisionsWithParentCode
+      .filter((subdivision) =>
+        watchGeographiesCodes.includes(subdivision.country_alpha_3),
+      )
+      .map((sub) => ({
+        value: sub.code,
+        label: sub.name,
+      }))
+
+    if (validSubdivisions.length !== watchSubdivisions.length) {
+      setValue('subdivisions', validSubdivisions)
+    }
+  }, [
+    watchSubdivisions,
+    watchGeographies,
+    watchGeographiesCodes,
+    subdivisions,
+    setValue,
+  ])
 
   useEffect(() => {
     if (loadedFamily) {
@@ -611,6 +648,10 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               }))}
               isMulti={true}
               isRequired={false}
+              isDisabled={!hasGeographies}
+              placeholder={
+                hasGeographies ? 'Select...' : 'Select a geography first'
+              }
             />
             {!loadedFamily && (
               <SelectField

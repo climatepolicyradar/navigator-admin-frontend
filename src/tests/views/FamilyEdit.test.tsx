@@ -113,4 +113,24 @@ describe('FamilyForm edit', () => {
     expect(screen.getByText('Subdivision 1')).toBeInTheDocument()
     expect(screen.getByText('Subdivision 2')).toBeInTheDocument()
   })
+
+  it('removes subdivision if related country is removed', async () => {
+    const { user } = renderRoute(
+      '/family/mockUNFCCCFamilyWithSubdivisions/edit',
+    )
+
+    expect(
+      await screen.findByText('Editing: UNFCCC Family Four'),
+    ).toBeInTheDocument()
+
+    expect(await screen.findByText('Country 1')).toBeInTheDocument()
+    expect(screen.getByText('Country 2')).toBeInTheDocument()
+    expect(screen.getByText('Subdivision 1')).toBeInTheDocument()
+    expect(screen.getByText('Subdivision 2')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Remove Country 1' }))
+
+    expect(screen.queryByText('Country 1')).not.toBeInTheDocument()
+    expect(screen.queryByText('Subdivision 1')).not.toBeInTheDocument()
+  })
 })
