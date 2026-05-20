@@ -48,6 +48,7 @@ import {
   IChakraSelect,
   ICollection,
   IConfigCorpora,
+  ISubdivision,
   TTaxonomy,
 } from '@/interfaces'
 import {
@@ -59,10 +60,12 @@ import {
   FieldType,
   IFormMetadata,
 } from '@/interfaces/Metadata'
+import useSubdivisions from '@/hooks/useSubdivisions'
 export interface IFamilyFormBase {
   title: string
   summary: string
   geographies: IChakraSelect[]
+  subdivisions: IChakraSelect[]
   category: string
   corpus: IChakraSelect
   collections?: IChakraSelect[]
@@ -89,6 +92,12 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     error: collectionsError,
     loading: collectionsLoading,
   } = useCollections('')
+  const {
+    subdivisions,
+    error: subdivisionsError,
+    loading: subdivisionsLoading,
+  } = useSubdivisions()
+
   const toast = useToast()
   const [formError, setFormError] = useState<IError | null | undefined>()
 
@@ -169,6 +178,57 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     )
   }, [config?.corpora])
 
+  const watchGeographies = watch('geographies')
+  const watchGeographiesCodes = useMemo(() => {
+    return watchGeographies ? watchGeographies.map((geo) => geo.value) : []
+  }, [watchGeographies])
+  const watchSubdivisions = watch('subdivisions')
+  const hasGeographies = watchGeographies && watchGeographies.length > 0
+
+  const availableSubdivisionOptions = useMemo(() => {
+    if (watchGeographies && watchGeographies.length > 0) {
+      return subdivisions
+        .filter((subdivision) =>
+          watchGeographiesCodes.includes(subdivision.country_alpha_3),
+        )
+        .sort((op1, op2) => op1.name.localeCompare(op2.name))
+    }
+    return subdivisions
+  }, [watchGeographies, watchGeographiesCodes, subdivisions])
+
+  useEffect(() => {
+    if (!watchSubdivisions || watchSubdivisions.length === 0) return
+    if (!watchGeographies || watchGeographies.length === 0) {
+      setValue('subdivisions', [])
+      return
+    }
+
+    const watchSubdivisionsWithParentCode = watchSubdivisions
+      .map((watchSubdivision) =>
+        subdivisions.find((sub) => sub.code === watchSubdivision.value),
+      )
+      .filter((ws): ws is ISubdivision => ws !== undefined)
+
+    const validSubdivisions = watchSubdivisionsWithParentCode
+      .filter((subdivision) =>
+        watchGeographiesCodes.includes(subdivision.country_alpha_3),
+      )
+      .map((sub) => ({
+        value: sub.code,
+        label: sub.name,
+      }))
+
+    if (validSubdivisions.length !== watchSubdivisions.length) {
+      setValue('subdivisions', validSubdivisions)
+    }
+  }, [
+    watchSubdivisions,
+    watchGeographies,
+    watchGeographiesCodes,
+    subdivisions,
+    setValue,
+  ])
+
   useEffect(() => {
     if (loadedFamily) {
       return
@@ -208,13 +268,17 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       throw new Error('No corpus type specified')
     }
 
+    const allGeographies = formData.geographies
+      ?.map((geo) => geo.value)
+      .concat(formData.subdivisions?.map((sub) => sub.value))
+
     // Prepare base family data common to all types
     const baseData: IFamilyFormPostBase = {
       title: formData.title,
       summary: stripHtml(formData.summary),
       // We still expect this value in the backend
       geography: formData.geographies?.[0].value || '',
-      geographies: formData.geographies?.map((geo) => geo.value),
+      geographies: allGeographies,
       category: formData.category,
       corpus_import_id: formData.corpus?.value || '',
       collections:
@@ -322,16 +386,27 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
         }, {})
       }
 
+      const countryGeographies = loadedFamily.geographies
+        .map((geo) =>
+          getCountries(config?.geographies)?.find((c) => c.value === geo),
+        )
+        .filter((c) => c !== undefined)
+
+      const subdivisionGeographies = loadedFamily.geographies
+        .map((geo) => subdivisions?.find((s) => s.code === geo))
+        .filter((c) => c !== undefined)
+
       // Pre-set the form values of the base family form (IFamilyFormBase) to that of the loaded family
       reset({
         title: loadedFamily.title,
         summary: loadedFamily.summary,
-        geographies: loadedFamily.geographies?.map((geography) => ({
-          value: geography,
-          label:
-            getCountries(config?.geographies)?.find(
-              (country) => country.value === geography,
-            )?.display_value || geography,
+        geographies: countryGeographies?.map((geography) => ({
+          value: geography?.value,
+          label: geography?.display_value,
+        })),
+        subdivisions: subdivisionGeographies?.map((subdivision) => ({
+          value: subdivision?.code,
+          label: subdivision?.name,
         })),
         corpus: loadedFamily.corpus_import_id
           ? {
@@ -359,7 +434,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     } else {
       setLoadedAndReset(true)
     }
-  }, [config, loadedFamily, reset, collections, corpusInfo])
+  }, [config, loadedFamily, reset, collections, corpusInfo, subdivisions])
 
   const onAddNewEntityClick = (entityType: TChildEntity) => {
     if (!taxonomy) {
@@ -474,7 +549,12 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   }
 
   const canLoadForm =
-    !configLoading && !collectionsLoading && !configError && !collectionsError
+    !configLoading &&
+    !collectionsLoading &&
+    !configError &&
+    !collectionsError &&
+    !subdivisionsError &&
+    !subdivisionsLoading
 
   const blocker = useBlocker(({ currentLocation, nextLocation }) => {
     const isRouteChange = currentLocation.pathname !== nextLocation.pathname
@@ -509,8 +589,12 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
           detail='Please go back to the "Families" page, if you think there has been a mistake please contact the administrator.'
         />
       )}
-      {(configError || collectionsError || formError) && (
-        <ApiError error={configError || collectionsError || formError} />
+      {(configError || collectionsError || formError || subdivisionsError) && (
+        <ApiError
+          error={
+            configError || collectionsError || formError || subdivisionsError
+          }
+        />
       )}
 
       {canLoadForm && (
@@ -556,6 +640,21 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
               }))}
               isMulti={true}
               isRequired={true}
+            />
+            <SelectField
+              name='subdivisions'
+              label='Subdivisions'
+              control={control}
+              options={availableSubdivisionOptions?.map((subdivision) => ({
+                value: subdivision.code,
+                label: subdivision.name,
+              }))}
+              isMulti={true}
+              isRequired={false}
+              isDisabled={!hasGeographies}
+              placeholder={
+                hasGeographies ? 'Select...' : 'Select a geography first'
+              }
             />
             {!loadedFamily && (
               <SelectField

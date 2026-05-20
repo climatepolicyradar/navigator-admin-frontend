@@ -28,6 +28,28 @@ const mockConfig = {
           },
           children: [],
         },
+        {
+          node: {
+            id: 1,
+            display_value: 'Country 1',
+            slug: 'country-1',
+            value: 'AAA',
+            type: 'ISO-3166',
+            parent_id: 0,
+          },
+          children: [],
+        },
+        {
+          node: {
+            id: 2,
+            display_value: 'Country 2',
+            slug: 'country-2',
+            value: 'BBB',
+            type: 'ISO-3166',
+            parent_id: 0,
+          },
+          children: [],
+        },
       ],
     },
   ],
@@ -120,6 +142,20 @@ const mockUNFCCCFamilyNoDocumentsNoEvents: IInternationalAgreementsFamily = {
   summary: 'Summary for UNFCCC Family Three with no documents and no events',
   documents: [], // Without documents
   events: [], // Without events
+  created: new Date(2021, 0, 5).toISOString(),
+  last_modified: new Date(2021, 0, 6).toISOString(),
+  published_date: null,
+  last_updated_date: null,
+}
+
+const mockUNFCCCFamilyWithSubdivisions: IInternationalAgreementsFamily = {
+  ...mockUNFCCCFamily,
+  import_id: 'UNFCCC.family.4.0',
+  title: 'UNFCCC Family Four',
+  summary: 'Summary for UNFCCC Family Four with subdivisions',
+  geographies: ['AAA', 'BBB', 'AA-1', 'BB-1'],
+  documents: [],
+  events: [],
   created: new Date(2021, 0, 5).toISOString(),
   last_modified: new Date(2021, 0, 6).toISOString(),
   published_date: null,
@@ -523,6 +559,7 @@ export { mockDocument }
 export { mockDocument2 }
 export { mockEvent }
 export { mockUNFCCCFamilyNoDocumentsNoEvents }
+export { mockUNFCCCFamilyWithSubdivisions }
 export { mockCCLWFamilyWithOneEvent }
 export { mockCCLWFamilyOneDocument }
 export { mockGCFFamily }

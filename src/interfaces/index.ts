@@ -6,6 +6,7 @@ export * from './Document'
 export * from './Event'
 export * from './Family'
 export * from './Summary'
+export * from './Subdivision'
 
 import { OptionBase } from 'chakra-react-select'
 
