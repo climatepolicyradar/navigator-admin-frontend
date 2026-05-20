@@ -5,6 +5,7 @@ export interface IInternationalAgreementsMetadata extends IMetadata {
   author: string[]
   author_type: string[]
   external_id: string[]
+  domain: string[]
 }
 
 export interface ILawsAndPoliciesMetadata extends IMetadata {
@@ -16,6 +17,7 @@ export interface ILawsAndPoliciesMetadata extends IMetadata {
   framework: string[]
   instrument: string[]
   external_id: string[]
+  domain: string[]
 }
 
 interface IMcfProjectsBaseMetadata extends IMetadata {
@@ -27,6 +29,7 @@ interface IMcfProjectsBaseMetadata extends IMetadata {
   project_value_co_financing: string[]
   project_value_fund_spend: string[]
   external_id: string[]
+  domain: string[]
 }
 
 export interface IAfProjectsMetadata extends IMcfProjectsBaseMetadata {
@@ -53,6 +56,7 @@ export interface IReportsMetadata extends IMetadata {
   author: string[]
   author_type: string[]
   external_id: string[]
+  domain: string[]
 }
 
 type TMcfProjectsMetadata =
