@@ -640,7 +640,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 label: country.display_value,
               }))}
               isMulti={true}
-              isRequired={false}
+              isRequired={true}
             />
             <SelectField
               name='subdivisions'
