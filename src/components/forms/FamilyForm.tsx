@@ -268,9 +268,10 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       throw new Error('No corpus type specified')
     }
 
-    const allGeographies = formData.geographies
-      ?.map((geo) => geo.value)
+    const allGeographies = (formData.geographies ?? [])
+      .map((geo) => geo.value)
       .concat(formData.subdivisions?.map((sub) => sub.value))
+      .filter((ws): ws is string => ws !== undefined)
 
     // Prepare base family data common to all types
     const baseData: IFamilyFormPostBase = {
