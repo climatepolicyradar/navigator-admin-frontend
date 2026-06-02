@@ -13,5 +13,15 @@ config:
   aws:region: eu-west-1
   admin_frontend:vite_geographies_api_url:
     secure: AAABAIsdMEPFWdDcM+/xATb0h64AsuykJ9CXPlpekUIRqSKgjB8a6G85wGFCJjqF2ET6aQ3pjhBim9u2vTYwnX0u/lgS5OR/IbI=
+  admin_frontend:vpc_id:
+    secure: AAABAEAq53GbfU6CclZUCaUk8s5//7HRcphrR8TvMmvI0Y7Sz7YAgMno0D4ihqUVmcpGG2Q=
+  admin_frontend:vpc_public_subnet_1_id:
+    secure: AAABAD2EbcmrspWkuVdu0FHuAOQD7hb3imZkh9AMYamuON5N52wS30ddI3V++/bdHnZTBq6NPLU=
+  admin_frontend:vpc_public_subnet_2_id:
+    secure: AAABAEofuI6wG95dkLpdvG/UuvjpEBcRglinfb6c4TfqYgYQJVojKgIMwsE5RVMoaS6kDrfJ35M=
+  admin_frontend:vpc_public_subnet_3_id:
+    secure: AAABAHMtq8l59xR1TLfU0Bf6PPRH54QEGjmgNjdJDlTdOo4+zAZCPAA13d3vxhqG3UWS8EL15F0=
+  admin_frontend:cloudfront_origin_prefix_list_id:
+    secure: AAABADDklktuw/8uKFDuy7xDccLlJyfTa7HPJpr/uPI2MAxtKV0Qaekwrg==
 environment:
   - admin_frontend/staging

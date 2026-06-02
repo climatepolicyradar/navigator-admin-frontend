@@ -1,4 +1,23 @@
-"""An AWS Python Pulumi program."""
+"""
+                    .--.
+                   (o  o)
+                   /    \
+                  /|    |\
+                  ^^    ^^
+
+    🚧 migration in progress 🚧
+
+    App Runner → ECS Express
+    STATUS
+  → ECS Express is live behind CloudFront
+  → Cleanup and refactor work to be completed, with the infra code moved to the infra
+    directory in the service
+
+    Roadmap
+  → Remove old App Runner service and related resources
+
+    This file is temporary and mid-refactor.
+"""
 
 import sys
 from pathlib import Path
@@ -8,6 +27,16 @@ import pulumi  # type: ignore
 import pulumi_aws as aws  # type: ignore
 
 sys.path.append(str(Path(__file__).parent.parent))
+
+from pulumi_aws import ecs, get_caller_identity, iam
+from pulumi_aws.ecs.express_gateway_service import (
+    ExpressGatewayService,
+    ExpressGatewayServiceNetworkConfigurationArgs,
+    ExpressGatewayServicePrimaryContainerArgs,
+    ExpressGatewayServicePrimaryContainerEnvironmentArgs,
+    ExpressGatewayServiceScalingTargetArgs,
+)
+from util.naming import DEFAULT_TAGS
 
 from resources.app_runner_service import AppRunnerConfig, AppRunnerService
 from resources.cache_policy import CachePolicyConfig, CloudFrontCachePolicy
@@ -288,4 +317,204 @@ dns.create_record(
     record_type=aws.route53.RecordType.CNAME,
     records=[apex_domain],  # Point to apex domain
     ttl=300,
+)
+
+
+########################################################################
+# ECS Express Mode
+########################################################################
+# Migration in progress: App Runner → ECS Express
+# This service runs alongside App Runner. CloudFront is not yet pointed
+# at it — that switchover happens in a follow-up PR.
+########################################################################
+
+
+name = "admin-frontend"
+account_id = get_caller_identity().account_id
+
+# Task role: runtime permissions. The frontend container doesn't need
+# AWS API access at runtime (no S3, no Secrets Manager, no nothing),
+# so this role has the trust policy only.
+ecs_task_role = iam.Role(
+    f"{name}-ecs-task-role",
+    name=f"{name}-ecs-task-role",
+    assume_role_policy=iam.get_policy_document(
+        statements=[
+            iam.GetPolicyDocumentStatementArgs(
+                effect="Allow",
+                principals=[
+                    iam.GetPolicyDocumentStatementPrincipalArgs(
+                        type="Service",
+                        identifiers=["ecs-tasks.amazonaws.com"],
+                    )
+                ],
+                actions=["sts:AssumeRole"],
+            )
+        ]
+    ).json,
+)
+
+# Execution role: pulls the image from ECR and writes container logs.
+# GitHub Actions assumes this role during deploys, same as the backend.
+ecs_task_execution_role = iam.Role(
+    f"{name}-{stack}-ecs-task-execution-role",
+    name=f"{name}-{stack}-ecs-task-execution-role",
+    assume_role_policy=iam.get_policy_document(
+        statements=[
+            iam.GetPolicyDocumentStatementArgs(
+                effect="Allow",
+                principals=[
+                    iam.GetPolicyDocumentStatementPrincipalArgs(
+                        type="Service",
+                        identifiers=["ecs-tasks.amazonaws.com"],
+                    )
+                ],
+                actions=["sts:AssumeRole"],
+            ),
+            iam.GetPolicyDocumentStatementArgs(
+                effect="Allow",
+                principals=[
+                    iam.GetPolicyDocumentStatementPrincipalArgs(
+                        type="AWS",
+                        identifiers=[
+                            f"arn:aws:iam::{account_id}:role/{github_actions_role.name}"
+                        ],
+                    )
+                ],
+                actions=["sts:AssumeRole"],
+            ),
+        ]
+    ).json,
+    managed_policy_arns=[
+        "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy",
+    ],
+)
+
+# Infrastructure role: lets ECS Express manage the ALB, target groups,
+# and security groups it provisions on our behalf.
+ecs_infrastructure_role = iam.Role(
+    f"{name}-{stack}-ecs-infrastructure-role",
+    name=f"{name}-{stack}-ecs-infrastructure-role",
+    assume_role_policy=iam.get_policy_document(
+        statements=[
+            iam.GetPolicyDocumentStatementArgs(
+                effect="Allow",
+                principals=[
+                    iam.GetPolicyDocumentStatementPrincipalArgs(
+                        type="Service",
+                        identifiers=["ecs.amazonaws.com"],
+                    )
+                ],
+                actions=["sts:AssumeRole"],
+            ),
+            iam.GetPolicyDocumentStatementArgs(
+                effect="Allow",
+                principals=[
+                    iam.GetPolicyDocumentStatementPrincipalArgs(
+                        type="AWS",
+                        identifiers=[
+                            f"arn:aws:iam::{account_id}:role/{github_actions_role.name}"
+                        ],
+                    )
+                ],
+                actions=["sts:AssumeRole"],
+            ),
+        ]
+    ).json,
+    managed_policy_arns=[
+        "arn:aws:iam::aws:policy/service-role/AmazonECSInfrastructureRoleforExpressGatewayServices",
+    ],
+)
+
+ecs_cluster = ecs.Cluster(
+    f"{name}-{stack}-ecs-cluster",
+    name=f"{name}-{stack}",
+    settings=[
+        ecs.ClusterSettingArgs(
+            name="containerInsights",
+            value="enabled",
+        )
+    ],
+)
+
+########################################################################
+# ECS networking — public ALB, locked to CloudFront prefix list
+########################################################################
+# The ALB is internet-facing because that's where CloudFront origins it,
+# but the security group only permits inbound from the CloudFront
+# origin-facing prefix list. TLS terminates at CloudFront; the
+# CloudFront → ALB hop is plain HTTP on the AWS backbone, matching the
+# pattern used by the admin-backend service.
+########################################################################
+
+ecs_alb_security_group = aws.ec2.SecurityGroup(
+    f"{name}-{stack}-ecs-alb-sg",
+    name=f"{name}-{stack}-ecs-alb-sg",
+    description="Allows inbound HTTP from CloudFront to the Express Gateway ALB",
+    vpc_id=config.require("vpc_id"),
+    ingress=[
+        aws.ec2.SecurityGroupIngressArgs(
+            description="HTTP from CloudFront edge locations",
+            from_port=80,
+            to_port=80,
+            protocol="tcp",
+            prefix_list_ids=[config.require("cloudfront_origin_prefix_list_id")],
+        ),
+    ],
+    egress=[
+        aws.ec2.SecurityGroupEgressArgs(
+            from_port=0,
+            to_port=0,
+            protocol="-1",
+            cidr_blocks=["0.0.0.0/0"],
+        ),
+    ],
+    tags=dict(DEFAULT_TAGS),
+)
+
+primary_container = ExpressGatewayServicePrimaryContainerArgs(
+    image=ecr_repo.repository.repository_url.apply(lambda url: f"{url}:latest"),
+    container_port=3000,
+    environments=[
+        ExpressGatewayServicePrimaryContainerEnvironmentArgs(name=k, value=v)
+        for k, v in frontend_env.items()
+    ],
+)
+
+ecs_express_service = ExpressGatewayService(
+    f"{name}-{stack}-ecs-express-service",
+    service_name=f"{name}-{stack}",
+    cluster=ecs_cluster.arn,
+    execution_role_arn=ecs_task_execution_role.arn,
+    infrastructure_role_arn=ecs_infrastructure_role.arn,
+    task_role_arn=ecs_task_role.arn,
+    primary_container=primary_container,
+    health_check_path="/",
+    cpu="1024",
+    memory="2048",
+    scaling_targets=[
+        ExpressGatewayServiceScalingTargetArgs(
+            auto_scaling_metric="AVERAGE_CPU",
+            auto_scaling_target_value=70,
+            min_task_count=1,
+            max_task_count=4,
+        ),
+    ],
+    network_configurations=[
+        ExpressGatewayServiceNetworkConfigurationArgs(
+            security_groups=[ecs_alb_security_group.id],
+            subnets=[
+                config.require("vpc_public_subnet_1_id"),
+                config.require("vpc_public_subnet_2_id"),
+                config.require("vpc_public_subnet_3_id"),
+            ],
+        )
+    ],
+)
+
+pulumi.export(
+    "ecs_express_service_url",
+    ecs_express_service.ingress_paths.apply(
+        lambda paths: paths[0].endpoint if paths else None
+    ),
 )
