@@ -56,7 +56,7 @@ jobs:
       # most of this is taken from
       # https://docs.github.com/en/actions/use-cases-and-examples/deploying/deploying-to-amazon-elastic-container-service#creating-the-workflow
       - name: Configure AWS credentials (staging)
-        uses: aws-actions/configure-aws-credentials@v5.0.0
+        uses: aws-actions/configure-aws-credentials@v6.2.0
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_STAGING }}:role/navigator-admin-frontend-github-actions
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
@@ -119,7 +119,7 @@ jobs:
 
       # Production
       - name: Configure AWS credentials (production)
-        uses: aws-actions/configure-aws-credentials@v5.0.0
+        uses: aws-actions/configure-aws-credentials@v6.2.0
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/navigator-admin-frontend-github-actions
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
