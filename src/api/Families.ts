@@ -43,7 +43,7 @@ export async function getFamilies({
 
   const response = await API.get<TFamily[]>('/v1/families/', {
     params: searchParams,
-    paramsSerializer: { indexes: null }, // Allows multiple 'geography' param instances
+    paramsSerializer: { indexes: null }, // Allows multiple 'geography' param instances.
   })
     .then((response) => {
       return response

@@ -3,7 +3,7 @@ import { MemoryRouter } from 'react-router-dom'
 import { render as rtlRender, RenderOptions } from '@testing-library/react'
 import { ChakraProvider } from '@chakra-ui/react'
 
-// Solution for avoid -> Error: Uncaught [TypeError: env.window.matchMedia is not a function]
+// Solution for avoid -> Error: Uncaught [TypeError: env.window.matchMedia is not a function].
 // Please check https://github.com/chakra-ui/chakra-ui/discussions/6664
 // Please check https://jestjs.io/docs/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom
 Object.defineProperty(window, 'matchMedia', {
