@@ -3,6 +3,7 @@ import {
   mockCCLWFamilyOneDocument,
   mockCCLWFamilyWithOneEvent,
   mockUNFCCCFamilyNoDocumentsNoEvents,
+  mockUNFCCCFamilyWithSubdivisions,
   mockFamiliesData,
   mockUNFCCCFamily,
 } from '@/tests/utilsTest/mocks'
@@ -21,6 +22,9 @@ export const familyHandlers = [
     }
     if (id === 'mockUNFCCCFamilyNoDocumentsNoEvents') {
       return HttpResponse.json({ ...mockUNFCCCFamilyNoDocumentsNoEvents })
+    }
+    if (id === 'mockUNFCCCFamilyWithSubdivisions') {
+      return HttpResponse.json({ ...mockUNFCCCFamilyWithSubdivisions })
     }
     if (id?.includes('GCF')) {
       const family = getFamily(id as string)
@@ -47,6 +51,9 @@ export const familyHandlers = [
     }
     if (id === 'mockUNFCCCFamilyNoDocumentsNoEvents') {
       return HttpResponse.json({ ...mockUNFCCCFamilyNoDocumentsNoEvents })
+    }
+    if (id === 'mockUNFCCCFamilyWithSubdivisions') {
+      return HttpResponse.json({ ...mockUNFCCCFamilyWithSubdivisions })
     }
     return HttpResponse.json({ ...mockFamiliesData[0] })
   }),
