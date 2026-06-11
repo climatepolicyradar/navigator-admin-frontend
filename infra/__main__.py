@@ -210,115 +210,6 @@ dns = DNS(
     config=dns_config,
 )
 
-########################################################################
-# Create CloudFront distribution
-########################################################################
-
-# Get admin backend stack reference
-admin_backend_stack = pulumi.StackReference(f"climatepolicyradar/admin_backend/{env}")
-admin_backend_service_url = admin_backend_stack.get_output("new_apprunner_service_url")
-
-admin_frontend.service.service_url.apply(
-    lambda url: pulumi.info(f"Admin Frontend app runner URL: {url}")
-)
-admin_backend_service_url.apply(
-    lambda url: pulumi.info(f"Admin Backend app runner URL: {url}")
-)
-
-# Create origins for both admin frontend and adminAPI
-origins = [
-    OriginConfig(
-        origin_id="admin-frontend",
-        domain_name=cast(
-            str,
-            admin_frontend.service.service_url.apply(
-                lambda url: cast(str, url).replace("https://", "")
-            ),
-        ),
-    )
-]
-origins.append(
-    OriginConfig(
-        origin_id="admin-api",
-        domain_name=cast(
-            str,
-            admin_backend_service_url.apply(
-                lambda url: cast(str, url).replace("https://", "")
-            ),
-        ),
-    )
-)
-
-# Define ordered cache behaviors for API routes
-ordered_cache_behaviors = None
-ordered_cache_behaviors = [
-    {
-        "allowed_methods": [
-            "GET",
-            "HEAD",
-            "OPTIONS",
-            "PUT",
-            "POST",
-            "PATCH",
-            "DELETE",
-        ],
-        "cached_methods": ["GET", "HEAD", "OPTIONS"],
-        "cache_policy_id": cache_policy.policy.id,
-        "compress": True,
-        "path_pattern": "/api/tokens",
-        "target_origin_id": "admin-api",
-        "viewer_protocol_policy": "redirect-to-https",
-    },
-    {
-        "allowed_methods": [
-            "GET",
-            "HEAD",
-            "OPTIONS",
-            "PUT",
-            "POST",
-            "PATCH",
-            "DELETE",
-        ],
-        "cached_methods": ["GET", "HEAD", "OPTIONS"],
-        "cache_policy_id": cache_policy.policy.id,
-        "compress": True,
-        "path_pattern": "/api/v1/*",
-        "target_origin_id": "admin-api",
-        "viewer_protocol_policy": "redirect-to-https",
-    },
-]
-
-# Create the CloudFront distribution
-cf = CloudFrontDistribution(
-    "AdminFrontendDistribution",
-    DistributionType.FRONTEND,
-    description="Admin Service",
-    aliases=[apex_domain, www_domain],
-    origins=origins,
-    cache_policy_id=cast(str, cache_policy.policy.id),
-    acm_certificate=dns.certificate,
-    origin_request_policy_id=cast(str, cors_policy.policy.id),
-    ordered_cache_behaviors=ordered_cache_behaviors,
-    tags={"Environment": env},
-)
-
-# Create A record for apex domain
-dns.create_alias_record(
-    name=apex_domain,  # Use full domain name
-    target_zone_id=CLOUDFRONT_ZONE_ID,
-    target_dns_name=cast(str, cf.distribution.domain_name),
-    record_type="A",
-    evaluate_target_health=False,
-)
-
-# Create CNAME record for www subdomain pointing to apex domain
-dns.create_record(
-    name=www_domain,  # Use full www domain name
-    record_type=aws.route53.RecordType.CNAME,
-    records=[apex_domain],  # Point to apex domain
-    ttl=300,
-)
-
 
 ########################################################################
 # ECS Express Mode
@@ -512,9 +403,121 @@ ecs_express_service = ExpressGatewayService(
     ],
 )
 
+########################################################################
+# Create CloudFront distribution
+########################################################################
+
+# Get admin backend stack reference
+admin_backend_stack = pulumi.StackReference(f"climatepolicyradar/admin_backend/{env}")
+admin_backend_service_url = admin_backend_stack.get_output("ecs_express_service_url")
+
+admin_frontend.service.service_url.apply(
+    lambda url: pulumi.info(f"Admin Frontend app runner URL: {url}")
+)
+admin_backend_service_url.apply(
+    lambda url: pulumi.info(f"Admin Backend ECS Express Service URL: {url}")
+)
+
+# Create origins for both admin frontend and adminAPI
+origins = [
+    OriginConfig(
+        origin_id="admin-frontend",
+        domain_name=cast(
+            str,
+            ecs_express_service.ingress_paths.apply(
+                lambda paths: (
+                    paths[0].endpoint.replace("https://", "") if paths else None
+                )
+            ),
+        ),
+    )
+]
+origins.append(
+    OriginConfig(
+        origin_id="admin-api",
+        domain_name=cast(
+            str,
+            admin_backend_service_url.apply(
+                lambda url: cast(str, url).replace("https://", "")
+            ),
+        ),
+    )
+)
+
+# Define ordered cache behaviors for API routes
+ordered_cache_behaviors = None
+ordered_cache_behaviors = [
+    {
+        "allowed_methods": [
+            "GET",
+            "HEAD",
+            "OPTIONS",
+            "PUT",
+            "POST",
+            "PATCH",
+            "DELETE",
+        ],
+        "cached_methods": ["GET", "HEAD", "OPTIONS"],
+        "cache_policy_id": cache_policy.policy.id,
+        "compress": True,
+        "path_pattern": "/api/tokens",
+        "target_origin_id": "admin-api",
+        "viewer_protocol_policy": "redirect-to-https",
+    },
+    {
+        "allowed_methods": [
+            "GET",
+            "HEAD",
+            "OPTIONS",
+            "PUT",
+            "POST",
+            "PATCH",
+            "DELETE",
+        ],
+        "cached_methods": ["GET", "HEAD", "OPTIONS"],
+        "cache_policy_id": cache_policy.policy.id,
+        "compress": True,
+        "path_pattern": "/api/v1/*",
+        "target_origin_id": "admin-api",
+        "viewer_protocol_policy": "redirect-to-https",
+    },
+]
+
+# Create the CloudFront distribution
+cf = CloudFrontDistribution(
+    "AdminFrontendDistribution",
+    DistributionType.FRONTEND,
+    description="Admin Service",
+    aliases=[apex_domain, www_domain],
+    origins=origins,
+    cache_policy_id=cast(str, cache_policy.policy.id),
+    acm_certificate=dns.certificate,
+    origin_request_policy_id=cast(str, cors_policy.policy.id),
+    ordered_cache_behaviors=ordered_cache_behaviors,
+    tags={"Environment": env},
+)
+
+# Create A record for apex domain
+dns.create_alias_record(
+    name=apex_domain,  # Use full domain name
+    target_zone_id=CLOUDFRONT_ZONE_ID,
+    target_dns_name=cast(str, cf.distribution.domain_name),
+    record_type="A",
+    evaluate_target_health=False,
+)
+
+# Create CNAME record for www subdomain pointing to apex domain
+dns.create_record(
+    name=www_domain,  # Use full www domain name
+    record_type=aws.route53.RecordType.CNAME,
+    records=[apex_domain],  # Point to apex domain
+    ttl=300,
+)
+
+
 pulumi.export(
     "ecs_express_service_url",
     ecs_express_service.ingress_paths.apply(
-        lambda paths: paths[0].endpoint if paths else None
+        lambda paths: paths[0].endpoint.removeprefix("https://") if paths else None
     ),
 )
