@@ -18,6 +18,7 @@ import CorpusTypes from '@/views/corpusTypes/CorpusTypes'
 import CorpusType from '@/views/corpusTypes/CorpusType'
 import { AppTokenForm } from '@/components/forms/AppTokenForm'
 import { organisationRoutes } from './organisationRoutes'
+import { userRoutes } from './userRoutes'
 
 const authenticatedRoutes = [
   {
@@ -40,6 +41,7 @@ const authenticatedRoutes = [
               ...familyRoutes,
               ...collectionRoutes,
               ...organisationRoutes,
+              ...userRoutes,
               {
                 path: 'document/:importId/edit',
                 element: <Document />,
