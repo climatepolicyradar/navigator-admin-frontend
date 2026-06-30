@@ -9,3 +9,8 @@ export interface IUser {
   is_superuser: boolean
   organisations: IOrgMembership[]
 }
+
+export interface IUserWrite {
+  name: string | null
+  organisations: IOrgMembership[]
+}

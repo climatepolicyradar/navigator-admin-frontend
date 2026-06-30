@@ -10,4 +10,5 @@ export interface ICollectionFormPost {
   title: string
   description?: string
   organisation?: string
+  org_id?: number
 }

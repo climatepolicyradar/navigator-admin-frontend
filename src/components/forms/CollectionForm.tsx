@@ -4,6 +4,8 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { ICollection, ICollectionFormPost, IError } from '@/interfaces'
 import { collectionSchema } from '@/schemas/collectionSchema'
 import { createCollection, updateCollection } from '@/api/Collections'
+import useToken from '@/hooks/useToken'
+import useOrganisations from '@/hooks/useOrganisations'
 
 import {
   FormControl,
@@ -15,6 +17,7 @@ import {
   ButtonGroup,
   useToast,
   FormHelperText,
+  Select,
 } from '@chakra-ui/react'
 import { useNavigate } from 'react-router-dom'
 import { ApiError } from '../feedback/ApiError'
@@ -32,6 +35,9 @@ export const CollectionForm = ({ collection: loadedCollection }: TProps) => {
   const navigate = useNavigate()
   const toast = useToast()
   const [formError, setFormError] = useState<IError | null | undefined>()
+  const [selectedOrgId, setSelectedOrgId] = useState<number | undefined>(
+    undefined,
+  )
   const {
     register,
     handleSubmit,
@@ -41,12 +47,31 @@ export const CollectionForm = ({ collection: loadedCollection }: TProps) => {
     resolver: yupResolver(collectionSchema),
   })
 
+  const decodedToken = useToken()
+  const userOrgIds = decodedToken?.org_ids ?? []
+  const isMultiOrg = !loadedCollection && userOrgIds.length > 1
+
+  const { organisations } = useOrganisations()
+  const userOrganisations = organisations.filter((org) =>
+    userOrgIds.includes(org.id),
+  )
+
   const handleFormSubmission = async (collection: ICollectionForm) => {
     setFormError(null)
+
+    if (isMultiOrg && !selectedOrgId) {
+      setFormError({
+        status: 400,
+        detail: 'Please select an organisation',
+        message: 'Please select an organisation',
+      })
+      return
+    }
 
     const collectionData: ICollectionFormPost = {
       title: collection.title,
       description: collection.description,
+      ...(isMultiOrg && selectedOrgId ? { org_id: selectedOrgId } : {}),
     }
 
     if (loadedCollection) {
@@ -115,6 +140,27 @@ export const CollectionForm = ({ collection: loadedCollection }: TProps) => {
             <FormLabel>Import ID</FormLabel>
             <Input bg='white' value={loadedCollection?.import_id} />
             <FormHelperText>You cannot edit this</FormHelperText>
+          </FormControl>
+        )}
+        {isMultiOrg && (
+          <FormControl isRequired>
+            <FormLabel>Organisation</FormLabel>
+            <Select
+              bg='white'
+              placeholder='Select organisation'
+              value={selectedOrgId ?? ''}
+              onChange={(e) =>
+                setSelectedOrgId(
+                  e.target.value ? Number(e.target.value) : undefined,
+                )
+              }
+            >
+              {userOrganisations.map((org) => (
+                <option key={org.id} value={org.id}>
+                  {org.display_name}
+                </option>
+              ))}
+            </Select>
           </FormControl>
         )}
         <FormControl isRequired>
