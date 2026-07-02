@@ -51,7 +51,6 @@ export const UserForm = ({ user }: TProps) => {
   const toast = useToast()
   const [formError, setFormError] = useState<IError | null | undefined>()
   const { organisations } = useOrganisations()
-  const originalOrgIds = new Set(user.organisations.map((o) => o.id))
 
   const {
     handleSubmit,
@@ -134,7 +133,6 @@ export const UserForm = ({ user }: TProps) => {
                 selected.find((o) => o.id === orgId)?.is_admin ?? false
 
               const toggleOrg = (orgId: number) => {
-                if (originalOrgIds.has(orgId)) return
                 if (isSelected(orgId)) {
                   field.onChange(selected.filter((o) => o.id !== orgId))
                 } else {
@@ -155,7 +153,6 @@ export const UserForm = ({ user }: TProps) => {
                   <FormLabel>Organisations</FormLabel>
                   <VStack align='stretch' gap={2}>
                     {organisations.map((org) => {
-                      const locked = originalOrgIds.has(org.id)
                       return (
                         <HStack
                           key={org.id}
@@ -163,20 +160,14 @@ export const UserForm = ({ user }: TProps) => {
                           bg='white'
                           borderRadius='md'
                           border='1px solid'
-                          borderColor={locked ? 'blue.200' : 'gray.200'}
+                          borderColor='gray.200'
                         >
                           <Checkbox
                             isChecked={isSelected(org.id)}
                             onChange={() => toggleOrg(org.id)}
-                            isDisabled={locked}
                           >
                             <Text>{org.display_name}</Text>
                           </Checkbox>
-                          {locked && (
-                            <Text fontSize='xs' color='blue.500' ml={2}>
-                              original
-                            </Text>
-                          )}
                           {isSelected(org.id) && (
                             <HStack ml='auto'>
                               <Text fontSize='sm' color='gray.600'>
