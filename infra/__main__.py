@@ -1,24 +1,3 @@
-"""
-                    .--.
-                   (o  o)
-                   /    \
-                  /|    |\
-                  ^^    ^^
-
-    🚧 migration in progress 🚧
-
-    App Runner → ECS Express
-    STATUS
-  → ECS Express is live behind CloudFront
-  → Cleanup and refactor work to be completed, with the infra code moved to the infra
-    directory in the service
-
-    Roadmap
-  → Remove old App Runner service and related resources
-
-    This file is temporary and mid-refactor.
-"""
-
 import sys
 from pathlib import Path
 from typing import cast
@@ -38,7 +17,6 @@ from pulumi_aws.ecs.express_gateway_service import (
 )
 from util.naming import DEFAULT_TAGS
 
-from resources.app_runner_service import AppRunnerConfig, AppRunnerService
 from resources.cache_policy import CachePolicyConfig, CloudFrontCachePolicy
 from resources.cloudfront_distribution import (
     CloudFrontDistribution,
@@ -101,31 +79,7 @@ image_identifier = ecr_repo.repository.repository_url.apply(
     lambda url: f"{url}:{docker_tag}"
 )
 image_identifier.apply(lambda id: pulumi.info(f"Final image identifier: {id}"))
-
-########################################################################
-# Create App Runner service
-########################################################################
-
-apprunner_config = AppRunnerConfig(
-    max_concurrency=int(config.require("apprunner_frontend_max_concurrency")),
-    max_instances=int(config.require("apprunner_frontend_max_instance_count")),
-    min_instances=int(config.require("apprunner_frontend_min_instance_count")),
-    port=3000,
-    auto_deploy=True,
-)
-
-# Create the frontend AppRunner service in current account
 name_prefix = tag_name()
-admin_frontend = AppRunnerService(
-    name=name_prefix,
-    config=apprunner_config,
-    image_identifier=image_identifier,
-    env_vars=frontend_env,
-    opts=pulumi.ResourceOptions(depends_on=[ecr_repo.repository]),
-)
-
-pulumi.export("admin frontend service name", admin_frontend.service.service_name)
-pulumi.export("admin frontend arn", admin_frontend.service.arn)
 
 ########################################################################
 # Create GitHub Actions role
@@ -411,9 +365,7 @@ ecs_express_service = ExpressGatewayService(
 admin_backend_stack = pulumi.StackReference(f"climatepolicyradar/admin_backend/{env}")
 admin_backend_service_url = admin_backend_stack.get_output("ecs_express_service_url")
 
-admin_frontend.service.service_url.apply(
-    lambda url: pulumi.info(f"Admin Frontend app runner URL: {url}")
-)
+
 admin_backend_service_url.apply(
     lambda url: pulumi.info(f"Admin Backend ECS Express Service URL: {url}")
 )
