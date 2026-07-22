@@ -396,6 +396,16 @@ origins.append(
     )
 )
 
+########################################################################
+# NOTE: The distribution for admin.climatepolicyradar.org (no environment
+# subdomain) is NOT managed in this codebase. It lives in the "cpr" AWS
+# account, separate from this stack's account, and was left over from
+# before environment-specific domains (admin.production.*, etc.) existed.
+# If it needs updating, it must be changed manually/directly in that
+# account's CloudFront console — Pulumi here has no visibility into it.
+########################################################################
+
+
 # Define ordered cache behaviors for API routes
 ordered_cache_behaviors = None
 ordered_cache_behaviors = [
