@@ -16,7 +16,7 @@ const useUser = (email?: string) => {
 
       getUser(email)
         .then(({ response }) => {
-          if (!ignore) setUser(response.data)
+          if (!ignore) setUser(response)
         })
         .catch((error: IError) => {
           setError(error)
