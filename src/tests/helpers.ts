@@ -28,6 +28,7 @@ export const setupUser = ({
           },
         },
         org_id: orgId,
+        org_ids: [orgId],
       },
       process.env.SECRET_KEY || '',
     ),
