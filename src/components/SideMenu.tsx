@@ -136,6 +136,13 @@ export function SideMenu() {
                     </IconLink>
                     <IconLink
                       icon={<Icon as={GoLog} mr='2' />}
+                      to='/users'
+                      current={isCurrentPage('users')}
+                    >
+                      Users
+                    </IconLink>
+                    <IconLink
+                      icon={<Icon as={GoLog} mr='2' />}
                       to='/app-tokens/new'
                       current={isCurrentPage('app-tokens')}
                     >
