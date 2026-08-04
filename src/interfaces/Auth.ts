@@ -16,6 +16,7 @@ export interface IDecodedToken {
   sub: string
   email: string
   org_id: number
+  org_ids: number[]
   is_superuser: boolean
   authorisation: {
     [key: string]: {
