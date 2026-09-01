@@ -146,8 +146,8 @@ describe('CorpusForm', () => {
         screen.getByRole('textbox', { name: 'Description' }),
       ).toBeInTheDocument()
       expect(
-        screen.getByRole('textbox', { name: 'Corpus Image URL' }),
-      ).toBeInTheDocument()
+        screen.queryByRole('textbox', { name: 'Corpus Image URL' }),
+      ).not.toBeInTheDocument()
       expect(
         screen.getByRole('group', { name: 'Corpus Type Name' }),
       ).toBeInTheDocument()
@@ -267,9 +267,10 @@ describe('CorpusForm', () => {
       expect(screen.getByRole('textbox', { name: 'Description' })).toHaveValue(
         'Test Description',
       )
-      expect(
-        screen.getByRole('textbox', { name: 'Corpus Image URL' }),
-      ).toHaveValue('http://test.com/image.jpg')
+      expect(screen.getByRole('img', { name: /corpus logo/i })).toHaveAttribute(
+        'src',
+        'http://test.com/image.jpg',
+      )
       expect(screen.getByTestId('corpus-type-select')).toBeInTheDocument()
       expect(screen.getByText('Test Corpus Type 1')).toBeInTheDocument()
       expect(
@@ -525,9 +526,7 @@ describe('CorpusForm', () => {
           screen.getByRole('textbox', { name: 'Description' }),
         ).toHaveValue('Original Description')
 
-        expect(
-          screen.getByRole('textbox', { name: 'Corpus Image URL' }),
-        ).toHaveValue('')
+        expect(screen.getByText(/no image uploaded/i)).toBeInTheDocument()
 
         expect(screen.getByTestId('corpus-type-select')).toBeInTheDocument()
         expect(
