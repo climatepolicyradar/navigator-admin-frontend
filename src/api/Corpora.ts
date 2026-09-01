@@ -1,7 +1,13 @@
 import { AxiosError } from 'axios'
 
 import API from '@/api'
-import { ICorpus, ICorpusFormPost, ICorpusFormPut, IError } from '@/interfaces'
+import {
+  ICorpus,
+  ICorpusFormPost,
+  ICorpusFormPut,
+  ICorpusLogoUpload,
+  IError,
+} from '@/interfaces'
 import { setToken } from '@/api/Auth'
 
 export async function getCorpora(query?: string) {
@@ -68,6 +74,27 @@ export async function updateCorpus(data: ICorpusFormPut, importId: string) {
   setToken(API)
 
   const response = await API.put<ICorpus>('/v1/corpora/' + importId, data)
+    .then((response) => {
+      return response.data
+    })
+    .catch((error: AxiosError<{ detail: string }>) => {
+      const e: IError = {
+        status: error.response?.status || 500,
+        detail: error.response?.data?.detail || 'Unknown error',
+        message: error.message,
+      }
+      throw e
+    })
+
+  return { response }
+}
+
+export async function getUploadUrl(corpusId: string) {
+  setToken(API)
+
+  const response = await API.post<ICorpusLogoUpload>(
+    '/v1/corpora/' + corpusId + '/upload-url',
+  )
     .then((response) => {
       return response.data
     })

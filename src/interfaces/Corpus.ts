@@ -30,3 +30,8 @@ export interface ICorpusFormPut {
   corpus_type_description: string
   attribution_url: string | null
 }
+
+export interface ICorpusLogoUpload {
+  presigned_upload_url: string
+  object_cdn_url: string
+}
