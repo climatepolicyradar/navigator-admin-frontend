@@ -38,6 +38,7 @@ import { WYSIWYG } from '../form-components/WYSIWYG'
 import { stripHtml } from '@/utils/stripHtml'
 import { convertEmptyToNull } from '@/utils/convertEmptyToNull'
 import { TextField } from './fields/TextField'
+import { CorpusImageUpload } from './fields/CorpusImageUpload'
 import { ImportIdSection } from './sections/ImportIdSection'
 import { FormLoader } from '../feedback/FormLoader'
 import useCorpusTypes from '@/hooks/useCorpusTypes'
@@ -408,12 +409,17 @@ export const CorpusForm = ({ corpus: loadedCorpus }: TProps) => {
             />
           </FormControl>
 
-          <TextField
-            name='corpus_image_url'
-            label='Corpus Image URL'
-            control={control}
-            isRequired={false}
-          />
+          {loadedCorpus && (
+            <CorpusImageUpload
+              corpusId={loadedCorpus.import_id}
+              currentImageUrl={watch('corpus_image_url') || null}
+              onImageChange={(newImageUrl) =>
+                setValue('corpus_image_url', newImageUrl, {
+                  shouldDirty: true,
+                })
+              }
+            />
+          )}
 
           <TextField
             name='attribution_url'
