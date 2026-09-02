@@ -35,6 +35,7 @@ export const CorpusImageUpload = ({
   const [uploadError, setUploadError] = useState<string | null>(null)
   const [pendingFile, setPendingFile] = useState<File | null>(null)
   const [isUploading, setIsUploading] = useState(false)
+  const [cacheBustToken, setCacheBustToken] = useState<number | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const resetFileInput = () => {
@@ -94,6 +95,7 @@ export const CorpusImageUpload = ({
       }
 
       onImageChange(response.object_cdn_url)
+      setCacheBustToken(Date.now())
       setPendingFile(null)
       resetFileInput()
     } catch (error) {
@@ -104,13 +106,18 @@ export const CorpusImageUpload = ({
     }
   }
 
+  const displayedImageUrl =
+    currentImageUrl && cacheBustToken
+      ? `${currentImageUrl}?t=${cacheBustToken}`
+      : currentImageUrl
+
   return (
     <FormControl>
       <FormLabel htmlFor='corpus-image-upload-input'>Corpus Image</FormLabel>
       <VStack align='stretch' gap='2'>
-        {currentImageUrl ? (
+        {displayedImageUrl ? (
           <Image
-            src={currentImageUrl}
+            src={displayedImageUrl}
             alt='Corpus logo'
             maxH='150px'
             maxW='300px'
