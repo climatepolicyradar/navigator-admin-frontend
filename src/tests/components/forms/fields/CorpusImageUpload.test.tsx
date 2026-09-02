@@ -153,6 +153,62 @@ describe('CorpusImageUpload', () => {
     })
   })
 
+  it('cache-busts the rendered preview after a fresh upload without changing the saved URL', async () => {
+    vi.mocked(getUploadUrl).mockResolvedValueOnce({
+      response: {
+        presigned_upload_url: 'https://s3.example.com/presigned-put',
+        object_cdn_url: 'https://cdn.example.com/corpora/test-id/logo.png',
+      },
+    })
+    vi.mocked(global.fetch).mockResolvedValueOnce({ ok: true } as Response)
+
+    // The S3 key is fixed per corpus, so a fresh upload produces the exact
+    // same CDN URL as before. Without cache-busting, the browser (and any
+    // CDN edge cache) would keep serving the old cached image for that URL
+    // even though the underlying S3 object has changed.
+    const { rerender } = renderComponent(
+      'https://cdn.example.com/corpora/test-id/logo.png',
+    )
+    const user = userEvent.setup()
+
+    const file = new File(['fake-png-bytes'], 'logo.png', {
+      type: 'image/png',
+    })
+    const input = screen.getByLabelText(/upload image/i)
+    await user.upload(input, file)
+
+    const confirmButton = await screen.findByRole('button', {
+      name: /confirm/i,
+    })
+    await user.click(confirmButton)
+
+    await waitFor(() => {
+      expect(onImageChange).toHaveBeenCalledWith(
+        'https://cdn.example.com/corpora/test-id/logo.png',
+      )
+    })
+
+    // Parent re-renders with the (unchanged) saved URL, as CorpusForm does
+    // after setValue - the widget must still show the freshly uploaded
+    // image, not fall back to the plain cached URL.
+    rerender(
+      <ChakraProvider>
+        <CorpusImageUpload
+          corpusId={corpusId}
+          currentImageUrl='https://cdn.example.com/corpora/test-id/logo.png'
+          onImageChange={onImageChange}
+        />
+      </ChakraProvider>,
+    )
+
+    const img = screen.getByRole('img', { name: /corpus logo/i })
+    const src = img.getAttribute('src')
+    expect(src).not.toBe('https://cdn.example.com/corpora/test-id/logo.png')
+    expect(src).toMatch(
+      /^https:\/\/cdn\.example\.com\/corpora\/test-id\/logo\.png\?.+/,
+    )
+  })
+
   it('shows an error and does not call onImageChange when the S3 PUT fails', async () => {
     vi.mocked(getUploadUrl).mockResolvedValueOnce({
       response: {
