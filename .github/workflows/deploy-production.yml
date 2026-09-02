@@ -24,7 +24,7 @@ jobs:
       - name: Configure AWS credentials (production)
         uses: aws-actions/configure-aws-credentials@v6.2.3
         with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/navigator-admin-frontend-github-actions
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/navigator-admin-frontend-github-actions
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
           aws-region: eu-west-1
 
@@ -35,7 +35,7 @@ jobs:
       - name: Build, tag, and push image to Amazon ECR (production)
         id: build-image-prod
         env:
-          ECR_REGISTRY: ${{ secrets.DOCKER_REGISTRY_PROD }}
+          ECR_REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
           IMAGE_TAG: ${{ github.sha }}
           AWS_REGION: eu-west-1
           ECR_REPOSITORY: navigator-admin-frontend
@@ -51,9 +51,9 @@ jobs:
         with:
           cluster: admin-frontend-production
           service-name: admin-frontend-production
-          image: ${{ secrets.DOCKER_REGISTRY_PROD }}/navigator-admin-frontend:${{ github.sha }}
-          execution-role-arn: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/admin-frontend-production-ecs-task-execution-role
-          infrastructure-role-arn: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/admin-frontend-production-ecs-infrastructure-role
+          image: ${{ secrets.DOCKER_REGISTRY }}/navigator-admin-frontend:${{ github.sha }}
+          execution-role-arn: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/admin-frontend-production-ecs-task-execution-role
+          infrastructure-role-arn: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/admin-frontend-production-ecs-infrastructure-role
 
       - name: Verify production deployment outcome
         env:

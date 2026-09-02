@@ -24,7 +24,7 @@ jobs:
       - name: Configure AWS credentials (staging)
         uses: aws-actions/configure-aws-credentials@v6.2.3
         with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_STAGING }}:role/navigator-admin-frontend-github-actions
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/navigator-admin-frontend-github-actions
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
           aws-region: eu-west-1
 
@@ -35,7 +35,7 @@ jobs:
       - name: Build, tag, and push image to Amazon ECR (staging)
         id: build-image-staging
         env:
-          ECR_REGISTRY: ${{ secrets.DOCKER_REGISTRY_STAGING }}
+          ECR_REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
           IMAGE_TAG: ${{ github.sha }}
           AWS_REGION: eu-west-1
           ECR_REPOSITORY: navigator-admin-frontend
@@ -51,9 +51,9 @@ jobs:
         with:
           cluster: admin-frontend-staging
           service-name: admin-frontend-staging
-          image: ${{ secrets.DOCKER_REGISTRY_STAGING }}/navigator-admin-frontend:${{ github.sha }}
-          execution-role-arn: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_STAGING }}:role/admin-frontend-staging-ecs-task-execution-role
-          infrastructure-role-arn: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_STAGING }}:role/admin-frontend-staging-ecs-infrastructure-role
+          image: ${{ secrets.DOCKER_REGISTRY }}/navigator-admin-frontend:${{ github.sha }}
+          execution-role-arn: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/admin-frontend-staging-ecs-task-execution-role
+          infrastructure-role-arn: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/admin-frontend-staging-ecs-infrastructure-role
 
       - name: Verify staging deployment outcome
         env:
