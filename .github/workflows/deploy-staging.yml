@@ -51,7 +51,7 @@ jobs:
         with:
           cluster: admin-frontend-staging
           service-name: admin-frontend-staging
-          image: ${{ secrets.DOCKER_REGISTRY }}/navigator-admin-frontend:${{ github.sha }}
+          image: ${{ steps.build-image-staging.outputs.image }}
           execution-role-arn: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/admin-frontend-staging-ecs-task-execution-role
           infrastructure-role-arn: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/admin-frontend-staging-ecs-infrastructure-role
 

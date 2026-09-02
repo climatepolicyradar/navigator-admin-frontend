@@ -51,7 +51,7 @@ jobs:
         with:
           cluster: admin-frontend-production
           service-name: admin-frontend-production
-          image: ${{ secrets.DOCKER_REGISTRY }}/navigator-admin-frontend:${{ github.sha }}
+          image: ${{ steps.build-image-production.outputs.image }}
           execution-role-arn: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/admin-frontend-production-ecs-task-execution-role
           infrastructure-role-arn: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/admin-frontend-production-ecs-infrastructure-role
 
