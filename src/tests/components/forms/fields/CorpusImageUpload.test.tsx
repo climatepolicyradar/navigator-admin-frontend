@@ -141,7 +141,7 @@ describe('CorpusImageUpload', () => {
         'https://s3.example.com/presigned-put',
         expect.objectContaining({
           method: 'PUT',
-          headers: { 'Content-Type': 'image/png' },
+          headers: { 'Content-Type': 'image/png', 'Cache-Control': 'no-cache' },
           body: file,
         }),
       )

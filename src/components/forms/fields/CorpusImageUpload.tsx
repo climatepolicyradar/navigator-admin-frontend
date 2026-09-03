@@ -84,9 +84,17 @@ export const CorpusImageUpload = ({
     try {
       const { response } = await getUploadUrl(corpusId)
 
+      // Cache-Control must match what the backend signed into the
+      // presigned URL (app/service/corpus.py get_upload_url) - S3 rejects
+      // the PUT with a signature mismatch otherwise. It's required so a
+      // fresh upload to this fixed key is never served stale from a CDN or
+      // browser cache.
       const putResponse = await fetch(response.presigned_upload_url, {
         method: 'PUT',
-        headers: { 'Content-Type': ACCEPTED_MIME_TYPE },
+        headers: {
+          'Content-Type': ACCEPTED_MIME_TYPE,
+          'Cache-Control': 'no-cache',
+        },
         body: pendingFile,
       })
 
