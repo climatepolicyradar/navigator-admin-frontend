@@ -8,7 +8,6 @@ import {
   Button,
   Flex,
   Heading,
-  Icon,
   Progress,
   Text,
   VStack,
@@ -119,7 +118,7 @@ export default function FileUpload() {
     return `${(bytes / Math.pow(1024, index)).toFixed(1)} ${units[index]}`
   }
 
-  const handleUpload = async (): Promise<void> => {
+  const handleUpload = (): void => {
     if (!file) return
 
     setStatus('uploading')
@@ -259,7 +258,7 @@ export default function FileUpload() {
                     : undefined
                 }
               >
-                <Icon as={FiUploadCloud} boxSize={7} />
+                <FiUploadCloud size={28} />
               </Box>
 
               <Text fontSize='md' fontWeight='semibold'>
@@ -323,7 +322,7 @@ export default function FileUpload() {
                     bg='blue.50'
                     color='blue.600'
                   >
-                    <Icon as={FiFileText} boxSize={5} />
+                    <FiFileText size={20} />
                   </Box>
 
                   <Box minW={0} flex={1}>
@@ -349,7 +348,7 @@ export default function FileUpload() {
                       variant='ghost'
                       onClick={resetUpload}
                     >
-                      <Icon as={FiX} boxSize={4} />
+                      <FiX size={20} />
                     </Button>
                   )}
                 </Flex>
@@ -385,7 +384,11 @@ export default function FileUpload() {
             {/* Success */}
             {status === 'success' && (
               <Alert status='success' borderRadius='lg'>
-                <AlertIcon as={FiCheckCircle} />
+                <FiCheckCircle
+                  size={20}
+                  color='green'
+                  style={{ marginRight: '8px' }}
+                />
 
                 <Box>
                   <Text fontWeight='medium'>Upload successful</Text>
