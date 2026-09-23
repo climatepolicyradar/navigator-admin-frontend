@@ -1,5 +1,5 @@
-import { useCallback, useRef, useState } from 'react'
-import type { ChangeEvent, DragEvent, KeyboardEvent } from 'react'
+import { useRef, useState } from 'react'
+import type { ChangeEvent, DragEvent } from 'react'
 import {
   Alert,
   AlertIcon,
@@ -8,142 +8,165 @@ import {
   Button,
   Flex,
   Heading,
+  IconButton,
   Progress,
   Text,
   VStack,
 } from '@chakra-ui/react'
-import { FiCheckCircle, FiFileText, FiUploadCloud, FiX } from 'react-icons/fi'
+import { FiFileText, FiUploadCloud, FiX } from 'react-icons/fi'
 
 type UploadStatus = 'idle' | 'uploading' | 'success' | 'error'
 
-interface ValidationError {
-  row: number
+interface UploadError {
+  /** CSV row the error relates to. Omitted for file-level errors. */
+  row?: number
   field: string
   message: string
 }
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10 MB
+const MAX_FILE_SIZE_MB = 10
+const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024
+
+const UPLOAD_FAILED_MESSAGE =
+  'Upload failed. Check your connection and try again.'
+
+const formatFileSize = (bytes: number): string => {
+  if (bytes <= 0) return '0 Bytes'
+
+  const units = ['Bytes', 'KB', 'MB', 'GB']
+  const index = Math.min(
+    Math.floor(Math.log(bytes) / Math.log(1024)),
+    units.length - 1,
+  )
+
+  if (index === 0) return `${bytes} Bytes`
+
+  return `${(bytes / Math.pow(1024, index)).toFixed(1)} ${units[index]}`
+}
+
+const validateFile = (file: File): string | null => {
+  if (!file.name.toLowerCase().endsWith('.csv')) {
+    return 'Only CSV files are supported.'
+  }
+
+  if (file.size === 0) {
+    return 'The CSV file is empty.'
+  }
+
+  if (file.size > MAX_FILE_SIZE_BYTES) {
+    return `The CSV file must be smaller than ${MAX_FILE_SIZE_MB} MB.`
+  }
+
+  return null
+}
 
 export default function CSVUpload() {
   const [file, setFile] = useState<File | null>(null)
   const [status, setStatus] = useState<UploadStatus>('idle')
-  const [errors, setErrors] = useState<ValidationError[]>([])
+  const [errors, setErrors] = useState<UploadError[]>([])
   const [isDragging, setIsDragging] = useState(false)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const validateFile = useCallback((selectedFile: File): string | null => {
-    if (!selectedFile.name.toLowerCase().endsWith('.csv')) {
-      return 'Only CSV files are supported.'
+  const isUploading = status === 'uploading'
+
+  const handleFileSelect = (selectedFile: File | undefined) => {
+    if (!selectedFile) return
+
+    const validationError = validateFile(selectedFile)
+
+    if (validationError) {
+      setFile(null)
+      setStatus('error')
+      setErrors([{ field: 'file', message: validationError }])
+      return
     }
 
-    if (selectedFile.size > MAX_FILE_SIZE) {
-      return 'The CSV file must be smaller than 10 MB.'
-    }
-
-    return null
-  }, [])
-
-  const handleFileSelect = useCallback(
-    (selectedFile: File | undefined) => {
-      if (!selectedFile) return
-
-      const validationError = validateFile(selectedFile)
-
-      if (validationError) {
-        setFile(null)
-        setStatus('error')
-        setErrors([
-          {
-            row: 0,
-            field: 'file',
-            message: validationError,
-          },
-        ])
-        return
-      }
-
-      setFile(selectedFile)
-      setStatus('idle')
-      setErrors([])
-    },
-    [validateFile],
-  )
+    setFile(selectedFile)
+    setStatus('idle')
+    setErrors([])
+  }
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     handleFileSelect(event.target.files?.[0])
+
+    // Clear the input so choosing the same file again still fires onChange.
+    event.target.value = ''
   }
 
   const handleDrop = (event: DragEvent<HTMLDivElement>) => {
     event.preventDefault()
     setIsDragging(false)
 
-    if (status === 'uploading') return
+    if (isUploading) return
 
     handleFileSelect(event.dataTransfer.files?.[0])
   }
 
   const handleDragOver = (event: DragEvent<HTMLDivElement>) => {
     event.preventDefault()
+    event.dataTransfer.dropEffect = isUploading ? 'none' : 'copy'
 
-    if (status !== 'uploading') {
+    if (!isUploading) {
       setIsDragging(true)
     }
   }
 
   const handleDragLeave = (event: DragEvent<HTMLDivElement>) => {
     event.preventDefault()
+
+    if (event.currentTarget.contains(event.relatedTarget as Node | null)) {
+      return
+    }
+
     setIsDragging(false)
   }
 
   const openFilePicker = () => {
-    if (status !== 'uploading') {
+    if (!isUploading) {
       fileInputRef.current?.click()
     }
   }
 
-  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault()
-      openFilePicker()
-    }
+  const handleUpload = () => {
+    uploadFile()
   }
 
-  const formatFileSize = (bytes: number): string => {
-    if (bytes === 0) return '0 Bytes'
-
-    const units = ['Bytes', 'KB', 'MB', 'GB']
-    const index = Math.floor(Math.log(bytes) / Math.log(1024))
-
-    return `${(bytes / Math.pow(1024, index)).toFixed(1)} ${units[index]}`
-  }
-
-  const handleUpload = (): void => {
+  const uploadFile = (): void => {
     if (!file) return
 
     setStatus('uploading')
     setErrors([])
 
     try {
-      // TODO: wire up to admin backend upload endpoint
+      // TODO: wire up to the admin backend endpoint (POST /api/v1/csv-upload).
+      // Use the app's authenticated API client so the auth token is sent, and
+      // don't set Content-Type manually: the browser adds the multipart boundary.
       //
       // const formData = new FormData()
-      // formData.append('file', file)
+      // formData.append('file', file) // must be `file` to match the FastAPI param
       //
-      // await fetch('/api/csv-upload', {
+      // const response = await fetch('/api/v1/csv-upload', {
       //   method: 'POST',
       //   body: formData,
       // })
+      //
+      // if (!response.ok) {
+      //   const body = await response.json().catch(() => null)
+      //   throw new Error(body?.detail ?? UPLOAD_FAILED_MESSAGE)
+      // }
 
       // Temporary until the API is connected.
       setStatus('success')
-    } catch {
+    } catch (error) {
       setStatus('error')
       setErrors([
         {
-          row: 0,
           field: 'upload',
-          message: 'Upload failed. Please try again.',
+          message:
+            error instanceof Error && error.message
+              ? error.message
+              : UPLOAD_FAILED_MESSAGE,
         },
       ])
     }
@@ -154,10 +177,6 @@ export default function CSVUpload() {
     setStatus('idle')
     setErrors([])
     setIsDragging(false)
-
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ''
-    }
   }
 
   return (
@@ -173,18 +192,25 @@ export default function CSVUpload() {
         </Text>
       </Box>
 
+      {/* Kept outside the drop zone so its click events don't bubble into it */}
+      <input
+        ref={fileInputRef}
+        type='file'
+        accept='.csv,text/csv'
+        hidden
+        onChange={handleInputChange}
+      />
+
       {/* Main upload area */}
       <Flex flex='1' align='center' justify='center' w='100%' py={8}>
         <Box w='100%' maxW='720px'>
           <VStack align='stretch' spacing={4}>
             {/* Drop zone */}
             <Box
-              role='button'
-              tabIndex={status === 'uploading' ? -1 : 0}
-              aria-label='Upload CSV file'
-              aria-disabled={status === 'uploading'}
+              role='group'
+              aria-label='CSV file drop zone'
+              aria-disabled={isUploading}
               onClick={openFilePicker}
-              onKeyDown={handleKeyDown}
               onDrop={handleDrop}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
@@ -203,41 +229,29 @@ export default function CSVUpload() {
               borderRadius='xl'
               transition='all 0.2s ease-out'
               cursor={
-                status === 'uploading'
-                  ? 'not-allowed'
-                  : isDragging
-                    ? 'copy'
-                    : 'pointer'
+                isUploading ? 'not-allowed' : isDragging ? 'copy' : 'pointer'
               }
               borderColor={
-                status === 'uploading'
-                  ? 'gray.200'
-                  : isDragging
-                    ? 'blue.500'
-                    : 'gray.300'
+                isUploading ? 'gray.200' : isDragging ? 'blue.500' : 'gray.300'
               }
-              bg={
-                status === 'uploading'
-                  ? 'gray.50'
-                  : isDragging
-                    ? 'blue.50'
-                    : 'gray.50'
-              }
-              opacity={status === 'uploading' ? 0.7 : 1}
+              bg={isDragging ? 'blue.50' : 'gray.50'}
+              opacity={isUploading ? 0.7 : 1}
               transform={isDragging ? 'scale(1.01)' : 'scale(1)'}
               boxShadow={isDragging ? 'md' : 'none'}
               _hover={
-                status === 'uploading'
+                isUploading
                   ? undefined
                   : {
                       borderColor: isDragging ? 'blue.500' : 'blue.400',
-                      bg: isDragging ? 'blue.50' : 'blue.50',
+                      bg: 'blue.50',
                       boxShadow: 'sm',
                     }
               }
-              _focusVisible={{
-                outline: 'none',
-                boxShadow: 'outline',
+              sx={{
+                '@media (prefers-reduced-motion: reduce)': {
+                  transition: 'none',
+                  transform: 'none',
+                },
               }}
             >
               {/* Upload icon */}
@@ -253,7 +267,7 @@ export default function CSVUpload() {
                 bg={isDragging ? 'blue.100' : 'gray.100'}
                 color={isDragging ? 'blue.600' : 'gray.500'}
                 _groupHover={
-                  status !== 'uploading' && !isDragging
+                  !isUploading && !isDragging
                     ? { bg: 'blue.100', color: 'blue.600' }
                     : undefined
                 }
@@ -277,7 +291,7 @@ export default function CSVUpload() {
                 variant='outline'
                 colorScheme='blue'
                 type='button'
-                isDisabled={status === 'uploading'}
+                isDisabled={isUploading}
                 onClick={(event) => {
                   event.stopPropagation()
                   openFilePicker()
@@ -287,16 +301,8 @@ export default function CSVUpload() {
               </Button>
 
               <Text mt={4} fontSize='xs' color='gray.400'>
-                CSV files only · Maximum 10 MB
+                CSV files only · Maximum {MAX_FILE_SIZE_MB} MB
               </Text>
-
-              <input
-                ref={fileInputRef}
-                type='file'
-                accept='.csv,text/csv'
-                hidden
-                onChange={handleInputChange}
-              />
             </Box>
 
             {/* Selected file */}
@@ -341,19 +347,18 @@ export default function CSVUpload() {
                     </Text>
                   </Box>
 
-                  {status !== 'uploading' && (
-                    <Button
+                  {!isUploading && (
+                    <IconButton
                       aria-label='Remove file'
+                      icon={<FiX size={20} />}
                       size='sm'
                       variant='ghost'
                       onClick={resetUpload}
-                    >
-                      <FiX size={20} />
-                    </Button>
+                    />
                   )}
                 </Flex>
 
-                {status === 'uploading' && (
+                {isUploading && (
                   <Progress
                     mt={4}
                     size='xs'
@@ -371,9 +376,9 @@ export default function CSVUpload() {
                 <Button
                   minW='140px'
                   colorScheme='blue'
-                  onClick={handleUpload}
-                  isDisabled={status === 'uploading'}
-                  isLoading={status === 'uploading'}
+                  onClick={() => void handleUpload()}
+                  isDisabled={isUploading}
+                  isLoading={isUploading}
                   loadingText='Uploading'
                 >
                   Upload CSV
@@ -384,17 +389,13 @@ export default function CSVUpload() {
             {/* Success */}
             {status === 'success' && (
               <Alert status='success' borderRadius='lg'>
-                <FiCheckCircle
-                  size={20}
-                  color='green'
-                  style={{ marginRight: '8px' }}
-                />
+                <AlertIcon />
 
                 <Box>
                   <Text fontWeight='medium'>Upload successful</Text>
 
                   <Text fontSize='sm' color='gray.600'>
-                    Your CSV file has been uploaded successfully.
+                    Your CSV file has been uploaded.
                   </Text>
                 </Box>
               </Alert>
@@ -412,7 +413,7 @@ export default function CSVUpload() {
                     <AlertIcon />
 
                     <Box fontSize='sm'>
-                      {error.row > 0 && (
+                      {error.row !== undefined && (
                         <Text as='span' fontWeight='bold'>
                           Row {error.row}:{' '}
                         </Text>
