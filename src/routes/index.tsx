@@ -19,6 +19,7 @@ import CorpusType from '@/views/corpusTypes/CorpusType'
 import { AppTokenForm } from '@/components/forms/AppTokenForm'
 import { organisationRoutes } from './organisationRoutes'
 import { userRoutes } from './userRoutes'
+import CSVUpload from '@/views/csvUpload/csvUpload'
 
 const authenticatedRoutes = [
   {
@@ -106,6 +107,11 @@ const authenticatedRoutes = [
               {
                 path: '/app-tokens/new',
                 element: <AppTokenForm />,
+                errorElement: <ErrorPage />,
+              },
+              {
+                path: '/csv-upload',
+                element: <CSVUpload />,
                 errorElement: <ErrorPage />,
               },
             ],
