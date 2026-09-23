@@ -22,9 +22,9 @@ interface ValidationError {
   message: string
 }
 
-const MAX_FILE_SIZE = 50 * 1024 * 1024 // 50 MB
+const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10 MB
 
-export default function FileUpload() {
+export default function CSVUpload() {
   const [file, setFile] = useState<File | null>(null)
   const [status, setStatus] = useState<UploadStatus>('idle')
   const [errors, setErrors] = useState<ValidationError[]>([])
@@ -38,7 +38,7 @@ export default function FileUpload() {
     }
 
     if (selectedFile.size > MAX_FILE_SIZE) {
-      return 'The CSV file must be smaller than 50 MB.'
+      return 'The CSV file must be smaller than 10 MB.'
     }
 
     return null
@@ -287,7 +287,7 @@ export default function FileUpload() {
               </Button>
 
               <Text mt={4} fontSize='xs' color='gray.400'>
-                CSV files only · Maximum 50 MB
+                CSV files only · Maximum 10 MB
               </Text>
 
               <input
