@@ -110,7 +110,7 @@ const authenticatedRoutes = [
                 errorElement: <ErrorPage />,
               },
               {
-                path: '/file-upload',
+                path: '/csv-upload',
                 element: <CSVUpload />,
                 errorElement: <ErrorPage />,
               },
