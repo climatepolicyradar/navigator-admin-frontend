@@ -14,6 +14,8 @@ import {
   VStack,
 } from '@chakra-ui/react'
 import { FiFileText, FiUploadCloud, FiX } from 'react-icons/fi'
+import { IError } from '@/interfaces'
+import { uploadCsv } from '@/api/CSVUpload'
 
 type UploadStatus = 'idle' | 'uploading' | 'success' | 'error'
 
@@ -128,45 +130,21 @@ export default function CSVUpload() {
     }
   }
 
-  const handleUpload = () => {
-    uploadFile()
-  }
-
-  const uploadFile = (): void => {
+  const handleUpload = async (): Promise<void> => {
     if (!file) return
 
     setStatus('uploading')
     setErrors([])
 
     try {
-      // TODO: wire up to the admin backend endpoint (POST /api/v1/csv-upload).
-      // Use the app's authenticated API client so the auth token is sent, and
-      // don't set Content-Type manually: the browser adds the multipart boundary.
-      //
-      // const formData = new FormData()
-      // formData.append('file', file) // must be `file` to match the FastAPI param
-      //
-      // const response = await fetch('/api/v1/csv-upload', {
-      //   method: 'POST',
-      //   body: formData,
-      // })
-      //
-      // if (!response.ok) {
-      //   const body = await response.json().catch(() => null)
-      //   throw new Error(body?.detail ?? UPLOAD_FAILED_MESSAGE)
-      // }
-
-      // Temporary until the API is connected.
+      await uploadCsv(file)
       setStatus('success')
     } catch (error) {
       setStatus('error')
       setErrors([
         {
           field: 'upload',
-          message:
-            error instanceof Error && error.message
-              ? error.message
-              : UPLOAD_FAILED_MESSAGE,
+          message: (error as IError).message || UPLOAD_FAILED_MESSAGE,
         },
       ])
     }
