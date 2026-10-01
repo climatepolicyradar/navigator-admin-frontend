@@ -70,5 +70,11 @@
     "vite": "^5.0.0",
     "vitest": "^2.1.6",
     "vitest-localstorage-mock": "^0.1.2"
+  },
+  "overrides": {
+    "markdownlint-cli": {
+      "minimatch": "^10.2.3",
+      "smol-toml": "^1.7.1"
+    }
   }
 }
