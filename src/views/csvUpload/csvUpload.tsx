@@ -18,14 +18,10 @@ import { IError } from '@/interfaces'
 import { uploadCsv } from '@/api/CSVUpload'
 import UploadGuidance from './UploadGuidance'
 
-type UploadStatus = 'idle' | 'uploading' | 'success' | 'error'
+import { validateCsvColumns } from '@/utils/validateCsvColumns'
+import type { UploadError } from '@/interfaces/UploadError'
 
-interface UploadError {
-  /** CSV row the error relates to. Omitted for file-level errors. */
-  row?: number
-  field: string
-  message: string
-}
+type UploadStatus = 'idle' | 'validating' | 'uploading' | 'success' | 'error'
 
 const MAX_FILE_SIZE_MB = 10
 const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024
@@ -69,42 +65,11 @@ export default function CSVUpload() {
   const [errors, setErrors] = useState<UploadError[]>([])
   const [isDragging, setIsDragging] = useState(false)
 
-  const fileInputRef = useRef<HTMLInputElement>(null)
-
   const isUploading = status === 'uploading'
+  const isValidating = status === 'validating'
+  const isBusy = isUploading || isValidating
 
-  const handleFileSelect = (selectedFile: File | undefined) => {
-    if (!selectedFile) return
-
-    const validationError = validateFile(selectedFile)
-
-    if (validationError) {
-      setFile(null)
-      setStatus('error')
-      setErrors([{ field: 'file', message: validationError }])
-      return
-    }
-
-    setFile(selectedFile)
-    setStatus('idle')
-    setErrors([])
-  }
-
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    handleFileSelect(event.target.files?.[0])
-
-    // Clear the input so choosing the same file again still fires onChange.
-    event.target.value = ''
-  }
-
-  const handleDrop = (event: DragEvent<HTMLDivElement>) => {
-    event.preventDefault()
-    setIsDragging(false)
-
-    if (isUploading) return
-
-    handleFileSelect(event.dataTransfer.files?.[0])
-  }
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleDragOver = (event: DragEvent<HTMLDivElement>) => {
     event.preventDefault()
@@ -149,6 +114,50 @@ export default function CSVUpload() {
         },
       ])
     }
+  }
+
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    void handleFileSelect(event.target.files?.[0])
+    event.target.value = ''
+  }
+
+  const handleDrop = (event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault()
+    setIsDragging(false)
+    if (isBusy) return
+    void handleFileSelect(event.dataTransfer.files?.[0])
+  }
+
+  const rejectFile = (rejections: UploadError[]) => {
+    setFile(null)
+    setStatus('error')
+    setErrors(rejections)
+  }
+
+  const handleFileSelect = async (selectedFile: File | undefined) => {
+    if (!selectedFile) return
+
+    // 1. Cheap, synchronous checks: extension, empty, size
+    const fileError = validateFile(selectedFile)
+    if (fileError) {
+      rejectFile([{ field: 'file', message: fileError }])
+      return
+    }
+
+    // 2. Async header check
+    setFile(null)
+    setErrors([])
+    setStatus('validating')
+
+    const headerErrors = await validateCsvColumns(selectedFile)
+
+    if (headerErrors.length) {
+      rejectFile(headerErrors)
+      return
+    }
+
+    setFile(selectedFile)
+    setStatus('idle')
   }
 
   const resetUpload = () => {
@@ -294,6 +303,25 @@ export default function CSVUpload() {
                   CSV files only · Maximum {MAX_FILE_SIZE_MB} MB
                 </Text>
               </Box>
+
+              {isValidating && (
+                <Box>
+                  <Progress
+                    size='xs'
+                    isIndeterminate
+                    colorScheme='blue'
+                    borderRadius='full'
+                  />
+                  <Text
+                    mt={2}
+                    fontSize='xs'
+                    color='gray.500'
+                    textAlign='center'
+                  >
+                    Checking file…
+                  </Text>
+                </Box>
+              )}
 
               {/* Selected file */}
               {file && (

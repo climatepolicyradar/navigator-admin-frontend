@@ -15,24 +15,7 @@ import {
 } from '@chakra-ui/react'
 import { FiExternalLink } from 'react-icons/fi'
 
-type RequiredField = { name: string; description: string }
-
-// TODO: replace with your real required columns
-const REQUIRED_FIELDS: RequiredField[] = [
-  { name: 'document_id', description: 'Unique identifier for the document.' },
-  { name: 'title', description: 'Document title.' },
-  { name: 'parent_id', description: 'Required for child documents.' },
-  { name: 'geography_name', description: 'Paired with geography_code.' },
-  {
-    name: 'geography_code',
-    description: 'ISO 3166 code. Paired with geography_name.',
-  },
-  { name: 'language_name', description: 'Paired with language_code.' },
-  {
-    name: 'language_code',
-    description: 'ISO 639 code. Paired with language_name.',
-  },
-]
+import { REQUIRED_FIELDS } from '@/utils/validateCsvColumns'
 
 const ExternalLink = ({
   href,
