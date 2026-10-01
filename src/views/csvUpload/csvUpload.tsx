@@ -12,6 +12,7 @@ import {
   Progress,
   Text,
   VStack,
+  Code,
 } from '@chakra-ui/react'
 import { FiFileText, FiUploadCloud, FiX } from 'react-icons/fi'
 import { IError } from '@/interfaces'
@@ -64,6 +65,7 @@ export default function CSVUpload() {
   const [status, setStatus] = useState<UploadStatus>('idle')
   const [errors, setErrors] = useState<UploadError[]>([])
   const [isDragging, setIsDragging] = useState(false)
+  const [dataProvider, setDataProvider] = useState<string | null>(null)
 
   const isUploading = status === 'uploading'
   const isValidating = status === 'validating'
@@ -130,6 +132,7 @@ export default function CSVUpload() {
 
   const rejectFile = (rejections: UploadError[]) => {
     setFile(null)
+    setDataProvider(null)
     setStatus('error')
     setErrors(rejections)
   }
@@ -137,25 +140,26 @@ export default function CSVUpload() {
   const handleFileSelect = async (selectedFile: File | undefined) => {
     if (!selectedFile) return
 
-    // 1. Cheap, synchronous checks: extension, empty, size
     const fileError = validateFile(selectedFile)
     if (fileError) {
       rejectFile([{ field: 'file', message: fileError }])
       return
     }
 
-    // 2. Async header check
     setFile(null)
+    setDataProvider(null)
     setErrors([])
     setStatus('validating')
 
-    const headerErrors = await validateCsvColumns(selectedFile)
+    const { errors: validationErrors, dataProvider } =
+      await validateCsvColumns(selectedFile)
 
-    if (headerErrors.length) {
-      rejectFile(headerErrors)
+    if (validationErrors.length) {
+      rejectFile(validationErrors)
       return
     }
 
+    setDataProvider(dataProvider ?? null)
     setFile(selectedFile)
     setStatus('idle')
   }
@@ -390,6 +394,23 @@ export default function CSVUpload() {
                     />
                   )}
                 </Box>
+              )}
+
+              {file && dataProvider && status !== 'success' && (
+                <Alert
+                  status='warning'
+                  borderRadius='lg'
+                  alignItems='flex-start'
+                >
+                  <AlertIcon />
+                  <Box fontSize='sm'>
+                    <Text fontWeight='medium'>Check the data provider</Text>
+                    <Text>
+                      This file will be uploaded to the directory with all the
+                      other <Code>{dataProvider}</Code> documents.
+                    </Text>
+                  </Box>
+                </Alert>
               )}
 
               {/* Upload button */}
