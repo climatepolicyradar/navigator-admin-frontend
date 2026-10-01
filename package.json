@@ -14,6 +14,10 @@
     "test-int": "DISABLE_MSW=true vitest",
     "type-check": "tsc"
   },
+  "resolutions": {
+    "markdownlint-cli/minimatch": "^10.2.3",
+    "markdownlint-cli/smol-toml": "^1.7.1"
+  },
   "dependencies": {
     "@chakra-ui/icons": "^2.2.4",
     "@chakra-ui/react": "2.10.9",
@@ -70,11 +74,5 @@
     "vite": "^5.0.0",
     "vitest": "^2.1.6",
     "vitest-localstorage-mock": "^0.1.2"
-  },
-  "overrides": {
-    "markdownlint-cli": {
-      "minimatch": "^10.2.3",
-      "smol-toml": "^1.7.1"
-    }
   }
 }
