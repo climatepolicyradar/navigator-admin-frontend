@@ -1,4 +1,4 @@
-import { read, utils, type WorkBook } from 'xlsx'
+import Papa from 'papaparse'
 import type { UploadError } from '@/interfaces/UploadError'
 
 type RequiredField = { name: string; description: string }
@@ -27,41 +27,35 @@ const normalise = (value: unknown): string =>
     .trim()
     .toLowerCase()
 
-export async function validateCsvColumns(file: File): Promise<UploadError[]> {
-  if (file.size === 0) {
-    return [{ field: 'file', message: 'The file is empty.' }]
-  }
+/** Parses only the first row of the file. */
+const readFirstRow = (file: File): Promise<string[] | undefined> =>
+  new Promise((resolve, reject) => {
+    Papa.parse<string[]>(file, {
+      preview: 1, // only the header row is parsed
+      delimiter: ',', // be strict rather than auto-detecting ; \t | etc.
+      complete: (results) => resolve(results.data[0]),
+      error: (error) => reject(error),
+    })
+  })
 
-  let wb: WorkBook
+export async function validateCsvColumns(file: File): Promise<UploadError[]> {
+  let rawHeaders: string[] | undefined
 
   try {
-    // sheetRows: 1 → only the header row is parsed
-    wb = read(await file.arrayBuffer(), { sheetRows: 1 })
-  } catch {
+    rawHeaders = await readFirstRow(file)
+  } catch (error) {
+    console.error('validateCsvColumns read failed:', error)
     return [{ field: 'file', message: 'The file could not be read.' }]
   }
-
-  const ws = wb.Sheets[wb.SheetNames[0]]
-
-  if (!ws) {
-    return [{ field: 'file', message: 'The file contains no readable data.' }]
-  }
-
-  const [rawHeaders] = utils.sheet_to_json<unknown[]>(ws, {
-    header: 1,
-    defval: '',
-  })
 
   if (!rawHeaders?.length) {
     return [{ field: 'headers', message: 'The file contains no header row.' }]
   }
 
-  // Array.from turns any holes in a sparse array into '' rather than skipping them
-  const headers = Array.from(rawHeaders, normalise)
+  const headers = rawHeaders.map(normalise)
   const errors: UploadError[] = []
 
-  const missing = REQUIRED_COLUMNS.filter((column) => !headers.includes(column))
-
+  const missing = REQUIRED_COLUMNS.filter((c) => !headers.includes(c))
   if (missing.length) {
     errors.push({
       field: 'headers',
@@ -71,13 +65,11 @@ export async function validateCsvColumns(file: File): Promise<UploadError[]> {
 
   const seen = new Set<string>()
   const duplicates = new Set<string>()
-
   for (const header of headers) {
     if (!header) continue
     if (seen.has(header)) duplicates.add(header)
     else seen.add(header)
   }
-
   if (duplicates.size) {
     errors.push({
       field: 'headers',

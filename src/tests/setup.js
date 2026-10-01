@@ -8,18 +8,6 @@ require('dotenv').config({ path: '.env' })
 
 expect.extend(matchers)
 
-// Polyfill Blob.arrayBuffer for older jsdom versions that don't implement it
-if (typeof Blob !== 'undefined' && !Blob.prototype.arrayBuffer) {
-  Blob.prototype.arrayBuffer = function () {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader()
-      reader.onload = () => resolve(reader.result)
-      reader.onerror = () => reject(reader.error)
-      reader.readAsArrayBuffer(this)
-    })
-  }
-}
-
 // Mock matchMedia
 //
 // This is used for testing responsive design features as many UI components from Chakra UI
