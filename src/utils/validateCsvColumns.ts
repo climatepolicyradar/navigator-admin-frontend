@@ -5,14 +5,14 @@ type RequiredField = { name: string; description: string }
 
 export const REQUIRED_FIELDS: RequiredField[] = [
   { name: 'document_id', description: 'Unique identifier for the document.' },
-  { name: 'title', description: 'Document title.' },
-  { name: 'parent_id', description: 'Required for child documents.' },
-  { name: 'geography_name', description: 'Paired with geography_code.' },
+  { name: 'document_title', description: 'Document title.' },
+  { name: 'parent_document_id', description: 'Required for child documents.' },
+  { name: 'geography', description: 'Paired with geography_code.' },
   {
     name: 'geography_code',
     description: 'ISO 3166 code. Paired with geography_name.',
   },
-  { name: 'language_name', description: 'Paired with language_code.' },
+  { name: 'language', description: 'Paired with language_code.' },
   {
     name: 'language_code',
     description: 'ISO 639 code. Paired with language_name.',
