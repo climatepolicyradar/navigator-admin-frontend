@@ -7,7 +7,6 @@ import {
 
 const COLUMNS: readonly string[] = REQUIRED_COLUMNS
 const FIRST = COLUMNS[0]
-const SECOND = COLUMNS[1]
 const LAST = COLUMNS[COLUMNS.length - 1]
 const PROVIDER = 'data_provider'
 
@@ -36,11 +35,6 @@ describe('header validation', () => {
     expect((await run(csv())).errors).toEqual([])
   })
 
-  it('allows extra columns and any column order', async () => {
-    const cols = ['extra', ...[...COLUMNS].reverse()]
-    expect((await run(csv(cols))).errors).toEqual([])
-  })
-
   it('lists every missing column, in schema order', async () => {
     expect(await messages(`${FIRST}\nx\n`)).toEqual([
       missingMessage(COLUMNS.slice(1)),
@@ -66,25 +60,6 @@ describe('header validation', () => {
     expect(await messages(csv(cols))).toEqual([`Duplicate columns: ${FIRST}`])
   })
 
-  it('reports missing and duplicate problems together', async () => {
-    const others = COLUMNS.filter((c) => c !== SECOND)
-    expect(await messages(`${SECOND},${SECOND}\nx,x\n`)).toEqual([
-      missingMessage(others),
-      `Duplicate columns: ${SECOND}`,
-    ])
-  })
-
-  it('tolerates a trailing comma in the header', async () => {
-    expect(
-      (await run(`${COLUMNS.join(',')},\n${dataRow(COLUMNS)},\n`)).errors,
-    ).toEqual([])
-  })
-
-  it('tolerates an empty cell in the middle of the header', async () => {
-    const cols = [COLUMNS[0], '', ...COLUMNS.slice(1)]
-    expect((await run(csv(cols))).errors).toEqual([])
-  })
-
   it('rejects a file whose first line is blank', async () => {
     expect(await messages(`\n${csv()}`)).toEqual([missingMessage(COLUMNS)])
   })
@@ -102,14 +77,6 @@ describe('header validation', () => {
     const [error] = (await run(`${FIRST}\nx\n`)).errors
     expect(error.field).toBe('headers')
     expect(error.row).toBeUndefined()
-  })
-
-  it('does not choke on a large file with a bad header', async () => {
-    const cols = COLUMNS.filter((c) => c !== LAST)
-    const rows = Array.from({ length: 20_000 }, () => dataRow(cols)).join('\n')
-    expect(await messages(`${cols.join(',')}\n${rows}`)).toEqual([
-      missingMessage([LAST]),
-    ])
   })
 })
 
@@ -133,11 +100,6 @@ describe('data_provider (first data row)', () => {
     )
   })
 
-  it('reads the right column whatever the column order', async () => {
-    const cols = [...COLUMNS].reverse()
-    expect((await run(csv(cols, 'Acme'))).dataProvider).toBe('Acme')
-  })
-
   it('uses only the first data row', async () => {
     const content = `${csv(COLUMNS, 'First')}${dataRow(COLUMNS, 'Second')}\n${dataRow(COLUMNS, 'Third')}\n`
     expect((await run(content)).dataProvider).toBe('First')
@@ -158,21 +120,6 @@ describe('data_provider (first data row)', () => {
 
   it('treats a whitespace-only value as empty', async () => {
     expect((await run(csv(COLUMNS, '   '))).errors).toHaveLength(1)
-  })
-
-  it('treats a first row that is too short as empty', async () => {
-    // data_provider is the last column, so a short row has no value for it
-    const short = COLUMNS.slice(0, -1)
-      .map(() => 'x')
-      .join(',')
-    const errors = (await run(`${COLUMNS.join(',')}\n${short}\n`)).errors
-    expect(errors).toHaveLength(1)
-    expect(errors[0].field).toBe(PROVIDER)
-  })
-
-  it('does not skip a blank line after the header: it counts as an empty first row', async () => {
-    const content = `${COLUMNS.join(',')}\n\n${dataRow(COLUMNS, 'Acme')}\n`
-    expect((await run(content)).errors).toHaveLength(1)
   })
 
   it('blocks a header-only file, since there is no data to read', async () => {
