@@ -85,19 +85,28 @@ export default function UploadGuidance() {
           <AccordionPanel px={4} pb={4}>
             <Text fontSize='sm' color='gray.600' mb={3}>
               Your file must include a header row containing all of these
-              columns:
+              columns, in this specific order:
             </Text>
-            <List spacing={2}>
-              {REQUIRED_FIELDS.map((field) => (
-                <ListItem key={field.name} fontSize='sm'>
-                  <Code colorScheme='blue'>{field.name}</Code>
-                  <Text as='span' color='gray.500'>
-                    {' '}
-                    – {field.description}
-                  </Text>
-                </ListItem>
-              ))}
-            </List>
+            <Box
+              maxH='50vh'
+              overflowY='auto'
+              pr={2}
+              tabIndex={0}
+              role='region'
+              aria-label='Required columns'
+            >
+              <List spacing={2}>
+                {REQUIRED_FIELDS.map((field) => (
+                  <ListItem key={field.name} fontSize='sm'>
+                    <Code colorScheme='blue'>{field.name}</Code>
+                    <Text as='span' color='gray.500'>
+                      {' '}
+                      – {field.description}
+                    </Text>
+                  </ListItem>
+                ))}
+              </List>
+            </Box>
           </AccordionPanel>
         </AccordionItem>
 
