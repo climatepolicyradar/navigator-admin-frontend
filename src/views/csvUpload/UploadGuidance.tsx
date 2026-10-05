@@ -130,8 +130,8 @@ export default function UploadGuidance() {
         <AccordionItem>
           <SectionHeader title='Child documents' />
           <AccordionPanel px={4} pb={4} fontSize='sm' color='gray.700'>
-            Every child document must have a value in <Code>parent_id</Code>.
-            Rows without one will be rejected.
+            Every child document must have a value in{' '}
+            <Code>parent_document_id</Code>. Rows without one will be rejected.
           </AccordionPanel>
         </AccordionItem>
 

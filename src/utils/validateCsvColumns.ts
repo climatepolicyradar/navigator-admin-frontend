@@ -1,23 +1,163 @@
 import Papa from 'papaparse'
 import type { UploadError } from '@/interfaces/UploadError'
 
-type RequiredField = { name: string; description: string }
+type RequiredField = { name: string; description: string; required: boolean }
 
 export const REQUIRED_FIELDS: RequiredField[] = [
-  { name: 'document_id', description: 'Unique identifier for the document.' },
-  { name: 'document_title', description: 'Document title.' },
-  { name: 'parent_document_id', description: 'Required for child documents.' },
-  { name: 'geography', description: 'Paired with geography_code.' },
+  {
+    name: 'document_id',
+    description: 'Unique identifier for the document.',
+    required: true,
+  },
+  {
+    name: 'document_title',
+    description: 'The name of the law, policy or document.',
+    required: true,
+  },
+  {
+    name: 'alternative_titles',
+    description: 'Any other names the same document goes by.',
+    required: false,
+  },
+  {
+    name: 'document_function',
+    description: 'Is it the main document or an amendment, annex etc.?',
+    required: true,
+  },
+  {
+    name: 'summary',
+    description: 'A brief description of what the document does.',
+    required: false,
+  },
+  {
+    name: 'reference_number',
+    description: 'Official reference number.',
+    required: false,
+  },
+  {
+    name: 'external_identifiers',
+    description: 'Reference numbers from external systems, as SOURCE::ID.',
+    required: false,
+  },
+  {
+    name: 'entity_type',
+    description: 'Is this a Law or a Policy?',
+    required: true,
+  },
+  {
+    name: 'event_type',
+    description: 'What happened to this document?',
+    required: true,
+  },
+  {
+    name: 'event_date',
+    description: 'When the event happened, as YYYY-MM-DD.',
+    required: true,
+  },
+  {
+    name: 'event_description',
+    description: 'Extra context about the event.',
+    required: false,
+  },
+  {
+    name: 'region',
+    description: 'Region the document applies to.',
+    required: false,
+  },
+  {
+    name: 'region_code',
+    description: 'Code for the region.',
+    required: false,
+  },
+  {
+    name: 'geography',
+    description: 'Which country or countries. Paired with geography_code.',
+    required: true,
+  },
   {
     name: 'geography_code',
-    description: 'ISO 3166 code. Paired with geography_name.',
+    description: 'ISO 3166 code. Automated from geography.',
+    required: false,
   },
-  { name: 'language', description: 'Paired with language_code.' },
+  {
+    name: 'subdivision',
+    description: 'Which sub-division.',
+    required: false,
+  },
+  {
+    name: 'subdivision_code',
+    description: 'Automated from subdivision.',
+    required: false,
+  },
+  {
+    name: 'domain',
+    description: 'Subject area, either Climate or Nature.',
+    required: false,
+  },
+  {
+    name: 'response_areas',
+    description: 'One or more response areas.',
+    required: false,
+  },
+  {
+    name: 'data_provider',
+    description: 'Who gave you this data.',
+    required: false,
+  },
+
+  {
+    name: 'accreditation_text',
+    description: 'Accreditation text for the data provider.',
+    required: false,
+  },
+
+  {
+    name: 'attribution_url',
+    description: 'Link to the data provider’s attribution page.',
+    required: false,
+  },
+
+  {
+    name: 'accreditation_logo',
+    description: 'Logo for the data provider. CDN-hosted image URL.',
+    required: false,
+  },
+  {
+    name: 'source_url',
+    description: 'Where people can find the document online.',
+    required: true,
+  },
+  {
+    name: 'document_type',
+    description: 'What kind of document it is.',
+    required: true,
+  },
+  {
+    name: 'type',
+    description:
+      'How broad it is: Laws, Policies, or Rules, regulations and guidelines.',
+    required: true,
+  },
+  {
+    name: 'variant',
+    description: 'Is this the original or a translation?',
+    required: true,
+  },
+  {
+    name: 'language',
+    description: 'Language(s) it is written in. Paired with language_code.',
+    required: true,
+  },
   {
     name: 'language_code',
-    description: 'ISO 639 code. Paired with language_name.',
+    description: 'ISO 639 code.',
+    required: false,
   },
-  { name: 'data_provider', description: 'Name of the data provider.' },
+  {
+    name: 'parent_document_id',
+    description: 'Amendments only: the main document being amended.',
+    required: false,
+  },
 ]
 
 export const REQUIRED_COLUMNS = REQUIRED_FIELDS.map((f) => f.name)
