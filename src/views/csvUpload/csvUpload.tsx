@@ -397,11 +397,7 @@ export default function CSVUpload() {
               )}
 
               {file && dataProvider && status !== 'success' && (
-                <Alert
-                  status='warning'
-                  borderRadius='lg'
-                  alignItems='flex-start'
-                >
+                <Alert status='info' borderRadius='lg' alignItems='flex-start'>
                   <AlertIcon />
                   <Box fontSize='sm'>
                     <Text fontWeight='medium'>Check the data provider</Text>
