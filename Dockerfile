@@ -62,3 +62,5 @@ CMD ["nginx", "-g", "daemon off;"]
 # Nginx image "FROM nginxinc/nginx-unprivileged:stable", but it is unclear how
 # to do this whilst injecting environment variables in at runtime in Vite.
 RUN chmod 0777 /var/cache/nginx/ /var/run/ /etc/nginx/conf.d
+
+USER nginx
