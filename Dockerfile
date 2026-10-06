@@ -12,7 +12,7 @@ ARG VITE_PORT
 ##############
 # Stage 1: Compiling and building the frontend assets using Node.
 ##############
-FROM node:20.11.0-bullseye as builder
+FROM node:22.13.0-bullseye as builder
 
 WORKDIR /app
 COPY . /app
