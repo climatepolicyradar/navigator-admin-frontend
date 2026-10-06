@@ -25,6 +25,8 @@ import {
   GoClock,
   GoLog,
 } from 'react-icons/go'
+import { MdUpload } from 'react-icons/md'
+import { FaUsers } from 'react-icons/fa'
 import Logout from './Logout'
 import useToken from '@/hooks/useToken'
 
@@ -135,7 +137,7 @@ export function SideMenu() {
                       Organisations
                     </IconLink>
                     <IconLink
-                      icon={<Icon as={GoLog} mr='2' />}
+                      icon={<Icon as={FaUsers} mr='2' />}
                       to='/users'
                       current={isCurrentPage('users')}
                     >
@@ -147,6 +149,13 @@ export function SideMenu() {
                       current={isCurrentPage('app-tokens')}
                     >
                       Create App Token
+                    </IconLink>
+                    <IconLink
+                      icon={<Icon as={MdUpload} mr='2' />}
+                      to='/csv-upload'
+                      current={isCurrentPage('csv-upload')}
+                    >
+                      CSV Upload
                     </IconLink>
                   </>
                 )}
