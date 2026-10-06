@@ -9,11 +9,12 @@ export interface ICsvUploadResponse {
   key: string
 }
 
-export async function uploadCsv(file: File) {
+export async function uploadCsv(file: File, dataProvider: string) {
   setToken(API)
 
   const formData = new FormData()
   formData.append('file', file)
+  formData.append('data_provider', dataProvider)
 
   const response = await API.post<ICsvUploadResponse>(
     '/v1/csv-upload',

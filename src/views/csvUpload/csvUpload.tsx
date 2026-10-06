@@ -105,7 +105,11 @@ export default function CSVUpload() {
     setErrors([])
 
     try {
-      await uploadCsv(file)
+      if (!dataProvider) {
+        throw new Error('Data provider is not set in your csv file.')
+      }
+
+      await uploadCsv(file, dataProvider)
       setStatus('success')
     } catch (error) {
       setStatus('error')
