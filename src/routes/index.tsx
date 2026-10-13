@@ -20,6 +20,7 @@ import { AppTokenForm } from '@/components/forms/AppTokenForm'
 import { organisationRoutes } from './organisationRoutes'
 import { userRoutes } from './userRoutes'
 import CSVUpload from '@/views/csvUpload/csvUpload'
+import PDFUpload from '@/views/pdfUpload/pdfUpload'
 
 const authenticatedRoutes = [
   {
@@ -112,6 +113,11 @@ const authenticatedRoutes = [
               {
                 path: '/csv-upload',
                 element: <CSVUpload />,
+                errorElement: <ErrorPage />,
+              },
+              {
+                path: '/pdf-upload',
+                element: <PDFUpload />,
                 errorElement: <ErrorPage />,
               },
             ],
