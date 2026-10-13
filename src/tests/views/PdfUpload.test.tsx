@@ -97,14 +97,22 @@ describe('PDFUpload', () => {
 
   it('uploads the files and shows the stored keys on success', async () => {
     const file = pdf('a.pdf')
-    mockUpload.mockResolvedValueOnce([{ file, key: '2026-10-12/a.pdf' }])
+    mockUpload.mockResolvedValueOnce([
+      {
+        file,
+        key: '2026-10-12/a.pdf',
+        destination: 'www.amazon.com/2026-10-12/a.pdf',
+      },
+    ])
     renderComponent()
 
     selectFiles([file])
     fireEvent.click(await screen.findByRole('button', { name: 'Upload 1 PDF' }))
 
     expect(await screen.findByText('Upload successful')).toBeInTheDocument()
-    expect(screen.getByText('2026-10-12/a.pdf')).toBeInTheDocument()
+    expect(
+      screen.getByText('www.amazon.com/2026-10-12/a.pdf'),
+    ).toBeInTheDocument()
     expect(mockUpload).toHaveBeenCalledWith([file], expect.any(Function))
   })
 
@@ -112,8 +120,17 @@ describe('PDFUpload', () => {
     const a = pdf('a.pdf')
     const b = pdf('b.pdf')
     mockUpload.mockResolvedValueOnce([
-      { file: a, key: '2026-10-12/a.pdf' },
-      { file: b, key: '2026-10-12/b.pdf', error: UPLOAD_FAILED_MESSAGE },
+      {
+        file: a,
+        key: '2026-10-12/a.pdf',
+        destination: 'www.amazon.com/2026-10-12/a.pdf',
+      },
+      {
+        file: b,
+        key: '2026-10-12/b.pdf',
+        destination: 'www.amazon.com/2026-10-12/b.pdf',
+        error: UPLOAD_FAILED_MESSAGE,
+      },
     ])
     renderComponent()
 
@@ -125,7 +142,13 @@ describe('PDFUpload', () => {
     expect(await screen.findByText('Failed')).toBeInTheDocument()
     expect(screen.getByText(UPLOAD_FAILED_MESSAGE)).toBeInTheDocument()
 
-    mockUpload.mockResolvedValueOnce([{ file: b, key: '2026-10-12/b.pdf' }])
+    mockUpload.mockResolvedValueOnce([
+      {
+        file: b,
+        key: '2026-10-12/b.pdf',
+        destination: 'www.amazon.com/2026-10-12/b.pdf',
+      },
+    ])
     fireEvent.click(
       screen.getByRole('button', { name: 'Retry failed uploads' }),
     )

@@ -77,7 +77,12 @@ export async function uploadPdfs(
         )
         return { file, key, destination: destination_url }
       } catch {
-        return { file, key, error: UPLOAD_FAILED_MESSAGE }
+        return {
+          file,
+          key,
+          error: UPLOAD_FAILED_MESSAGE,
+          destination: destination_url,
+        }
       }
     }),
   )
