@@ -13,12 +13,14 @@ export interface IPdfUploadUrl {
   file_name: string
   key: string
   presigned_upload_url: string
+  destination_url: string
 }
 
 export interface IPdfUploadResult {
   file: File
   key: string
   error?: string
+  destination: string
 }
 
 export async function getPdfUploadUrls(
@@ -68,12 +70,12 @@ export async function uploadPdfs(
 
   return Promise.all(
     files.map(async (file, index): Promise<IPdfUploadResult> => {
-      const { key, presigned_upload_url } = urls[index]
+      const { key, presigned_upload_url, destination_url } = urls[index]
       try {
         await uploadToPresignedUrl(file, presigned_upload_url, (fraction) =>
           onProgress?.(index, fraction),
         )
-        return { file, key }
+        return { file, key, destination: destination_url }
       } catch {
         return { file, key, error: UPLOAD_FAILED_MESSAGE }
       }

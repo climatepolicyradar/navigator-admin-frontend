@@ -45,7 +45,7 @@ interface SelectedFile {
   file: File
   state: FileState
   progress: number
-  key?: string
+  destination?: string
   error?: string
 }
 
@@ -73,12 +73,17 @@ const formatFileSize = (bytes: number): string => {
 const plural = (count: number, word: string) =>
   `${count} ${word}${count === 1 ? '' : 's'}`
 
-function CopyKeyButton({ value }: { value: string }) {
+interface CopyButtonProps {
+  value: string
+  fileName: string
+}
+
+function CopyButton({ value, fileName }: CopyButtonProps) {
   const { hasCopied, onCopy } = useClipboard(value)
 
   return (
     <IconButton
-      aria-label={hasCopied ? 'Key copied' : `Copy key ${value}`}
+      aria-label={hasCopied ? 'URL copied' : `Copy URL for ${fileName}`}
       icon={hasCopied ? <FiCheck size={14} /> : <FiCopy size={14} />}
       size='xs'
       variant='ghost'
@@ -93,7 +98,7 @@ interface FileRowProps {
 }
 
 function FileRow({ item, onRemove }: FileRowProps) {
-  const { file, state, progress, key, error } = item
+  const { file, state, progress, destination, error } = item
   const badge = STATE_BADGE[state]
 
   const icon =
@@ -191,15 +196,15 @@ function FileRow({ item, onRemove }: FileRowProps) {
         </Text>
       )}
 
-      {state === 'success' && key && (
+      {state === 'success' && destination && (
         <Flex mt={3} align='center' gap={2}>
           <Text fontSize='xs' color='gray.600' flexShrink={0}>
-            Stored as
+            Stored at
           </Text>
-          <Code fontSize='xs' noOfLines={1} minW={0}>
-            {key}
+          <Code fontSize='xs' wordBreak='break-all' minW={0}>
+            {destination}
           </Code>
-          <CopyKeyButton value={key} />
+          <CopyButton value={destination} fileName={file.name} />
         </Flex>
       )}
     </ListItem>
@@ -309,7 +314,11 @@ export default function PDFUpload() {
           [ids[index]],
           result.error
             ? { state: 'error', error: result.error }
-            : { state: 'success', progress: 100, key: result.key },
+            : {
+                state: 'success',
+                progress: 100,
+                destination: result.destination,
+              },
         )
       })
     } catch (error) {
