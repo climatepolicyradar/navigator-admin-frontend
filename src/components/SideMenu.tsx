@@ -26,7 +26,7 @@ import {
   GoLog,
 } from 'react-icons/go'
 import { MdUpload } from 'react-icons/md'
-import { FaUsers } from 'react-icons/fa'
+import { FaUsers, FaFilePdf } from 'react-icons/fa'
 import Logout from './Logout'
 import useToken from '@/hooks/useToken'
 
@@ -156,6 +156,13 @@ export function SideMenu() {
                       current={isCurrentPage('csv-upload')}
                     >
                       CSV Upload
+                    </IconLink>
+                    <IconLink
+                      icon={<Icon as={FaFilePdf} mr='2' />}
+                      to='/pdf-upload'
+                      current={isCurrentPage('pdf-upload')}
+                    >
+                      PDF Upload
                     </IconLink>
                   </>
                 )}
