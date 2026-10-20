@@ -9,12 +9,14 @@ import {
   Flex,
   Heading,
   IconButton,
+  Link as ChakraLink,
   Progress,
   Text,
   VStack,
   Code,
 } from '@chakra-ui/react'
-import { FiFileText, FiUploadCloud, FiX } from 'react-icons/fi'
+import { Link as ReactRouterLink } from 'react-router-dom'
+import { FiExternalLink, FiFileText, FiUploadCloud, FiX } from 'react-icons/fi'
 import { IError } from '@/interfaces'
 import { uploadCsv } from '@/api/CSVUpload'
 import UploadGuidance from './UploadGuidance'
@@ -23,6 +25,9 @@ import { validateCsvColumns } from '@/utils/validateCsvColumns'
 import type { UploadError } from '@/interfaces/UploadError'
 
 type UploadStatus = 'idle' | 'validating' | 'uploading' | 'success' | 'error'
+
+const DATA_MAPPER_QUALITY_URL =
+  'https://app.snowflake.com/aslfnyz/jt31848/#/streamlit-apps/PRODUCTION.PLAYGROUND.DATA_MAPPER_QUALITY'
 
 const MAX_FILE_SIZE_MB = 10
 const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024
@@ -431,14 +436,39 @@ export default function CSVUpload() {
 
               {/* Success */}
               {status === 'success' && (
-                <Alert status='success' borderRadius='lg'>
+                <Alert
+                  status='success'
+                  borderRadius='lg'
+                  alignItems='flex-start'
+                >
                   <AlertIcon />
 
                   <Box>
                     <Text fontWeight='medium'>Upload successful</Text>
 
                     <Text fontSize='sm' color='gray.600'>
-                      Your CSV file has been uploaded.
+                      Your CSV file has been uploaded. It will be processed in
+                      the next nightly run and won't appear in Snowflake until
+                      the following day. Once the pipeline has run, you can view
+                      the results on the{' '}
+                      <ChakraLink
+                        as={ReactRouterLink}
+                        to={DATA_MAPPER_QUALITY_URL}
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        color='blue.600'
+                        textDecoration='underline'
+                      >
+                        Data Mapper Quality dashboard
+                        <FiExternalLink
+                          style={{
+                            display: 'inline',
+                            marginLeft: 4,
+                            verticalAlign: 'middle',
+                          }}
+                        />
+                      </ChakraLink>
+                      .
                     </Text>
                   </Box>
                 </Alert>
