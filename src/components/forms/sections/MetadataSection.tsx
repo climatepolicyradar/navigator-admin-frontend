@@ -10,6 +10,7 @@ type TProps = {
   taxonomy?: TTaxonomy
   control: Control<IFamilyFormBase>
   errors: FieldErrors<IFamilyFormBase>
+  disableFrameworksInput: boolean
   loadedFamily?: TFamily
   reset: UseFormReset<IFamilyFormBase>
 }
@@ -19,6 +20,7 @@ export const MetadataSection = ({
   taxonomy,
   control,
   errors,
+  disableFrameworksInput,
 }: TProps) => {
   if (!corpusInfo || !taxonomy) return null
 
@@ -46,6 +48,7 @@ export const MetadataSection = ({
           control={control}
           errors={errors}
           fieldType={fieldConfig.type}
+          disableFrameworksInput={disableFrameworksInput}
         />
       ))}
     </>

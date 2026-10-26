@@ -196,6 +196,8 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     return subdivisions
   }, [watchGeographies, watchGeographiesCodes, subdivisions])
 
+  const watchCategory = watch('category')
+
   useEffect(() => {
     if (!watchSubdivisions || watchSubdivisions.length === 0) return
     if (!watchGeographies || watchGeographies.length === 0) {
@@ -698,6 +700,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                   errors={errors}
                   loadedFamily={loadedFamily}
                   reset={reset}
+                  disableFrameworksInput={watchCategory === 'Executive'}
                 />
               </>
             )}

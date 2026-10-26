@@ -64,7 +64,14 @@ const mockConfig = {
   corpora: [
     {
       corpus_import_id: 'CCLW.corpus.i00000001.n0000',
-      corpus_type: 'Law and Policies',
+      corpus_type: 'Laws and Policies',
+      taxonomy: {
+        framework: {
+          allowed_values: ['Framework One', 'Framework Two'],
+          allow_any: false,
+          allow_blanks: true,
+        },
+      },
     },
   ],
   document: {

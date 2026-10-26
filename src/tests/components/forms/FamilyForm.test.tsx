@@ -8,6 +8,8 @@ import { FamilyForm } from '@/components/forms/FamilyForm'
 import { TFamily } from '@/interfaces'
 import { TestWrapper } from '@/tests/utilsTest/render'
 import '@testing-library/jest-dom'
+import userEvent from '@testing-library/user-event'
+import { setupUser } from '@/tests/helpers'
 
 const flushPromises = async () =>
   new Promise((resolve) => process.nextTick(resolve))
@@ -79,6 +81,9 @@ describe('FamilyForm', () => {
 
   afterEach(cleanup)
 
+  // The no-access test removes the token, so restore it for the other tests
+  beforeEach(() => setupUser())
+
   it('warns when no access', () => {
     // Remove the token in local storage to simulate a logged-in user without modification permissions
     localStorage.removeItem('token')
@@ -115,6 +120,35 @@ describe('FamilyForm', () => {
     expect(expectedEvents[0]).toHaveTextContent('Test event title')
 
     expect(screen.queryByText('corpus')).toBeNull() // it doesn't exist
+  })
+
+  it('disables framework input when executive category is selected', async () => {
+    const testFamily = mockFamiliesData[1]
+    renderComponent(testFamily)
+
+    await userEvent.click(
+      await screen.findByRole('radio', { name: 'Executive' }),
+    )
+
+    // react-select hides a disabled input (visibility: hidden), so *ByRole can't find it
+    const frameworkInput = await screen.findByLabelText('Framework')
+
+    expect(frameworkInput).toBeDisabled()
+  })
+
+  it('does not disable framework input when legislative category is selected', async () => {
+    const testFamily = mockFamiliesData[1]
+    renderComponent(testFamily)
+
+    await userEvent.click(
+      await screen.findByRole('radio', { name: 'Legislative' }),
+    )
+
+    const frameworkInput = await screen.findByRole('combobox', {
+      name: 'Framework',
+    })
+
+    expect(frameworkInput).not.toBeDisabled()
   })
 })
 
