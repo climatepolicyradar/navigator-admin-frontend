@@ -13,6 +13,7 @@ type TProps<T extends FieldValues> = {
   control: Control<T>
   errors: FieldErrors<T>
   fieldType: FieldType
+  disableFrameworksInput: boolean
 }
 
 function hasAllowedValues(
@@ -27,6 +28,7 @@ export const DynamicMetadataFields = <T extends FieldValues>({
   control,
   errors,
   fieldType,
+  disableFrameworksInput,
 }: TProps<T>) => {
   // Wrong typing escape hatch -- TODO extend for sub-taxonomies
   if (!taxonomyField) return null
@@ -67,6 +69,7 @@ export const DynamicMetadataFields = <T extends FieldValues>({
             isMulti={fieldType === FieldType.MULTI_SELECT}
             isRequired={isRequired}
             label={formatFieldLabel(fieldKey)}
+            isDisabled={disableFrameworksInput && fieldKey === 'framework'}
           />
         )
       case FieldType.NUMBER:
