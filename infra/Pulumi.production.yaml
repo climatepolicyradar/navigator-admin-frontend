@@ -23,5 +23,9 @@ config:
     secure: AAABAKRBnAWJn8+ee1jY9U0eoXoxCvEAe2YXuIAGhIbwKTKTcpykTDT6CKxUENPWYr0Q8/VOcqI=
   admin_frontend:vpc_public_subnet_3_id:
     secure: AAABAOTwfwUvSp6F0e2evA5Ci8paBUcEY5hayedNFI/rudgjC0NrxI3itKwLX+mqNsAw5FJmrzw=
+  aws:defaultTags:
+    tags:
+      Team: enrichment
+      Environment: production
 environment:
   - admin_frontend/production

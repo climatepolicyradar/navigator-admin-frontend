@@ -23,5 +23,9 @@ config:
     secure: AAABAHMtq8l59xR1TLfU0Bf6PPRH54QEGjmgNjdJDlTdOo4+zAZCPAA13d3vxhqG3UWS8EL15F0=
   admin_frontend:cloudfront_origin_prefix_list_id:
     secure: AAABADDklktuw/8uKFDuy7xDccLlJyfTa7HPJpr/uPI2MAxtKV0Qaekwrg==
+  aws:defaultTags:
+    tags:
+      Team: enrichment
+      Environment: production
 environment:
   - admin_frontend/staging
