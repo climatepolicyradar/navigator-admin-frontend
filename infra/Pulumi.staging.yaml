@@ -26,6 +26,6 @@ config:
   aws:defaultTags:
     tags:
       Team: enrichment
-      Environment: production
+      Environment: staging
 environment:
   - admin_frontend/staging
