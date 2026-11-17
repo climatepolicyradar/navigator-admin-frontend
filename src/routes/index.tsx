@@ -1,6 +1,7 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
 import { ProtectedRoute } from './ProtectedRoute'
+import { SuperUserRoute } from './SuperUserRoute'
 import Root from '@/Root'
 import Login from '@/views/auth/Login'
 import Dashboard from '@/views/dashboard/Dashboard'
@@ -22,6 +23,70 @@ import { userRoutes } from './userRoutes'
 import CSVUpload from '@/views/csvUpload/csvUpload'
 import PDFUpload from '@/views/pdfUpload/pdfUpload'
 
+const superUserRoutes = [
+  ...organisationRoutes,
+  ...userRoutes,
+  {
+    path: '/corpus/new',
+    element: <Corpus />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: 'corpus/:importId/edit',
+    element: <Corpus />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: 'corpora',
+    element: <Corpora />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        path: '',
+        element: <CorpusList />,
+        errorElement: <ErrorPage />,
+      },
+    ],
+  },
+  {
+    path: '/corpus-type/new',
+    element: <CorpusType />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: 'corpus-type/:name/edit',
+    element: <CorpusType />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: 'corpus-types',
+    element: <CorpusTypes />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        path: '',
+        element: <CorpusTypeList />,
+        errorElement: <ErrorPage />,
+      },
+    ],
+  },
+  {
+    path: '/app-tokens/new',
+    element: <AppTokenForm />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: '/csv-upload',
+    element: <CSVUpload />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: '/pdf-upload',
+    element: <PDFUpload />,
+    errorElement: <ErrorPage />,
+  },
+]
+
 const authenticatedRoutes = [
   {
     path: '/',
@@ -42,8 +107,6 @@ const authenticatedRoutes = [
               },
               ...familyRoutes,
               ...collectionRoutes,
-              ...organisationRoutes,
-              ...userRoutes,
               {
                 path: 'document/:importId/edit',
                 element: <Document />,
@@ -62,63 +125,8 @@ const authenticatedRoutes = [
                 ],
               },
               {
-                path: '/corpus/new',
-                element: <Corpus />,
-                errorElement: <ErrorPage />,
-              },
-              {
-                path: 'corpus/:importId/edit',
-                element: <Corpus />,
-                errorElement: <ErrorPage />,
-              },
-              {
-                path: 'corpora',
-                element: <Corpora />,
-                errorElement: <ErrorPage />,
-                children: [
-                  {
-                    path: '',
-                    element: <CorpusList />,
-                    errorElement: <ErrorPage />,
-                  },
-                ],
-              },
-              {
-                path: '/corpus-type/new',
-                element: <CorpusType />,
-                errorElement: <ErrorPage />,
-              },
-              {
-                path: 'corpus-type/:name/edit',
-                element: <CorpusType />,
-                errorElement: <ErrorPage />,
-              },
-              {
-                path: 'corpus-types',
-                element: <CorpusTypes />,
-                errorElement: <ErrorPage />,
-                children: [
-                  {
-                    path: '',
-                    element: <CorpusTypeList />,
-                    errorElement: <ErrorPage />,
-                  },
-                ],
-              },
-              {
-                path: '/app-tokens/new',
-                element: <AppTokenForm />,
-                errorElement: <ErrorPage />,
-              },
-              {
-                path: '/csv-upload',
-                element: <CSVUpload />,
-                errorElement: <ErrorPage />,
-              },
-              {
-                path: '/pdf-upload',
-                element: <PDFUpload />,
-                errorElement: <ErrorPage />,
+                element: <SuperUserRoute />,
+                children: superUserRoutes,
               },
             ],
           },

@@ -2,7 +2,8 @@ import { deleteFamily, getFamilies, TFamilySearchQuery } from '@/api/Families'
 import useConfig from '@/hooks/useConfig'
 import { IChakraSelect, IError, TFamily } from '@/interfaces'
 import { canModify } from '@/utils/canModify'
-import { decodeToken } from '@/utils/decodeToken'
+import useToken from '@/hooks/useToken'
+import useIsSuperUser from '@/hooks/useIsSuperUser'
 import { getCountries } from '@/utils/extractNestedGeographyData'
 import { formatDate, formatDateTime } from '@/utils/formatDate'
 import { getStatusAlias } from '@/utils/getStatusAlias'
@@ -104,15 +105,9 @@ export default function FamilyList() {
   const qGeographies = searchParams.getAll('geography').join(';')
   const qCorpus = searchParams.getAll('corpus').join(';')
 
-  const userToken = useMemo(() => {
-    const token = localStorage.getItem('token')
-    if (!token) return null
-    const decodedToken = decodeToken(token)
-    return decodedToken
-  }, [])
-
+  const userToken = useToken()
+  const isSuperuser = useIsSuperUser()
   const userAccess = !userToken ? null : userToken.authorisation
-  const isSuperuser = !userToken ? false : userToken.is_superuser
 
   const handleDeleteClick = async (id: string) => {
     setFormError(null)
