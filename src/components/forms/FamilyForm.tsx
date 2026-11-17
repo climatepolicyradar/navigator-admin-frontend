@@ -33,7 +33,8 @@ import {
 } from '@/interfaces/Family'
 import { canModify } from '@/utils/canModify'
 import { getCountries } from '@/utils/extractNestedGeographyData'
-import { decodeToken } from '@/utils/decodeToken'
+import useToken from '@/hooks/useToken'
+import useIsSuperUser from '@/hooks/useIsSuperUser'
 import { stripHtml } from '@/utils/stripHtml'
 import { generateDynamicValidationSchema } from '@/schemas/dynamicValidationSchema'
 import { createFamily, updateFamily } from '@/api/Families'
@@ -248,19 +249,15 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
     }
   }, [watchCorpus, isMCFCorpus, loadedFamily, setValue])
 
-  const userAccess = useMemo(() => {
-    const token = localStorage.getItem('token')
-    if (!token) return { canModify: false, isSuperUser: false }
-    const decodedToken = decodeToken(token)
-    return {
-      canModify: canModify(
+  const userToken = useToken()
+  const isSuperUser = useIsSuperUser()
+  const userCanModify = userToken
+    ? canModify(
         loadedFamily ? String(loadedFamily.organisation) : null,
-        decodedToken?.is_superuser ?? false,
-        decodedToken?.authorisation,
-      ),
-      isSuperUser: decodedToken?.is_superuser || false,
-    }
-  }, [loadedFamily])
+        isSuperUser,
+        userToken.authorisation,
+      )
+    : false
 
   const handleFormSubmission = async (formData: TFamilyFormSubmit) => {
     setFormError(null)
@@ -586,7 +583,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
       {!canLoadForm && (
         <SkeletonText mt='4' noOfLines={12} spacing='4' skeletonHeight='2' />
       )}
-      {!userAccess.canModify && (
+      {!userCanModify && (
         <ApiError
           message={`You do not have permission to edit document families in ${loadedFamily?.corpus_title || corpusInfo?.title} `}
           detail='Please go back to the "Families" page, if you think there has been a mistake please contact the administrator.'
@@ -706,7 +703,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
             )}
             <DocumentSection
               familyDocuments={familyDocuments}
-              userCanModify={userAccess.canModify}
+              userCanModify={userCanModify}
               onAddNew={onAddNewEntityClick}
               onEdit={onEditEntityClick}
               onDelete={onDocumentDeleteClick}
@@ -716,7 +713,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
             />
             <EventSection
               familyEvents={familyEvents}
-              userCanModify={userAccess.canModify}
+              userCanModify={userCanModify}
               onAddNew={onAddNewEntityClick}
               onEdit={onEditEntityClick}
               onDelete={onEventDeleteClick}
@@ -729,7 +726,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
                 type='submit'
                 colorScheme='blue'
                 isLoading={isSubmitting}
-                isDisabled={!userAccess.canModify}
+                isDisabled={!userCanModify}
               >
                 {loadedFamily ? 'Update Family' : 'Create Family'}
               </Button>
@@ -758,7 +755,7 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
           onEventSuccess={onEventFormSuccess}
           familyId={loadedFamily?.import_id}
           taxonomy={taxonomy}
-          canModify={userAccess.canModify}
+          canModify={userCanModify}
         />
       )}
     </>
