@@ -5,6 +5,9 @@ import { documentHandlers } from './api/documentHandlers'
 import { configHandlers } from './api/configHandlers'
 import { organisationHandlers } from './api/organisationHandlers'
 import { geographiesHandlers } from './api/geographiesHandlers'
+import { userHandlers } from './api/userHandlers'
+import { corpusHandlers } from './api/corpusHandlers'
+import { summaryHandlers } from './api/summaryHandlers'
 
 export const handlers = [
   ...configHandlers,
@@ -14,4 +17,7 @@ export const handlers = [
   ...documentHandlers,
   ...organisationHandlers,
   ...geographiesHandlers,
+  ...userHandlers,
+  ...corpusHandlers,
+  ...summaryHandlers,
 ]

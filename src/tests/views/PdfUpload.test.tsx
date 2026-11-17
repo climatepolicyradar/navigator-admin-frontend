@@ -7,6 +7,11 @@ import '@testing-library/jest-dom'
 import PDFUpload from '@/views/pdfUpload/pdfUpload'
 import { uploadPdfs } from '@/api/PDFUpload'
 import { validatePdfFiles } from '@/utils/validatePDFDocument'
+import { setupUser } from '@/tests/helpers'
+import {
+  expectRedirectedToDashboard,
+  renderApp,
+} from '@/tests/utilsTest/renderApp'
 
 vi.mock('@/api/PDFUpload', () => ({
   uploadPdfs: vi.fn(),
@@ -40,7 +45,10 @@ const selectFiles = (files: File[]) =>
 
 describe('PDFUpload', () => {
   beforeEach(() => {
-    vi.resetAllMocks()
+    // Reset only this file's mocks: vi.resetAllMocks() would also wipe the
+    // global window.matchMedia mock from setup.js that Chakra relies on.
+    mockUpload.mockReset()
+    mockValidate.mockReset()
     mockValidate.mockResolvedValue(null)
   })
 
@@ -186,6 +194,30 @@ describe('PDFUpload', () => {
 
     expect(
       screen.queryByRole('list', { name: 'Selected PDF files' }),
+    ).not.toBeInTheDocument()
+  })
+})
+
+describe('PDF upload page access', () => {
+  afterEach(() => setupUser())
+
+  it('is shown to superusers', async () => {
+    setupUser({ isSuperuser: true })
+    renderApp('/pdf-upload')
+
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'PDF Upload' }),
+    ).toBeInTheDocument()
+    expect(window.location.pathname).toBe('/pdf-upload')
+  })
+
+  it('redirects non-superusers to the dashboard', async () => {
+    setupUser({ isSuperuser: false })
+    renderApp('/pdf-upload')
+
+    await expectRedirectedToDashboard()
+    expect(
+      screen.queryByRole('heading', { name: 'PDF Upload' }),
     ).not.toBeInTheDocument()
   })
 })
