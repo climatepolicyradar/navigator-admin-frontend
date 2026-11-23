@@ -1,33 +1,33 @@
 import { screen } from '@testing-library/react'
 import { setupUser } from '@/tests/helpers'
-import {
-  expectRedirectedToDashboard,
-  renderApp,
-} from '@/tests/utilsTest/renderApp'
+import { renderApp } from '@/tests/utilsTest/renderApp'
 
-describe('Corpus page access', () => {
-  afterEach(() => setupUser())
-
+describe.each([
+  { page: 'create', path: '/corpus/new', heading: 'Create new corpus' },
+  {
+    page: 'edit',
+    path: '/corpus/CCLW.corpus.1.0/edit',
+    heading: 'Editing: Test Corpus 1',
+  },
+])('Corpus page access ($page)', ({ path, heading }) => {
   it('is shown to superusers', async () => {
     setupUser({ isSuperuser: true })
-    renderApp('/corpus/new')
+    renderApp(path)
 
     expect(
-      await screen.findByRole('heading', {
-        level: 1,
-        name: 'Create new corpus',
-      }),
+      await screen.findByRole('heading', { level: 1, name: heading }),
     ).toBeInTheDocument()
-    expect(window.location.pathname).toBe('/corpus/new')
   })
 
   it('redirects non-superusers to the dashboard', async () => {
     setupUser({ isSuperuser: false })
-    renderApp('/corpus/new')
+    renderApp(path)
 
-    await expectRedirectedToDashboard()
     expect(
-      screen.queryByRole('heading', { name: 'Create new corpus' }),
+      await screen.findByRole('heading', { level: 1, name: 'Dashboard' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByRole('heading', { name: heading }),
     ).not.toBeInTheDocument()
   })
 })

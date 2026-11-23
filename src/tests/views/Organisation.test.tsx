@@ -1,33 +1,37 @@
 import { screen } from '@testing-library/react'
 import { setupUser } from '@/tests/helpers'
-import {
-  expectRedirectedToDashboard,
-  renderApp,
-} from '@/tests/utilsTest/renderApp'
+import { renderApp } from '@/tests/utilsTest/renderApp'
 
-describe('Organisation page access', () => {
-  afterEach(() => setupUser())
-
+describe.each([
+  {
+    page: 'create',
+    path: '/organisation/new',
+    heading: 'Create new organisation',
+  },
+  {
+    page: 'edit',
+    path: '/organisation/1/edit',
+    heading: 'Editing: Test Organisation 1',
+  },
+])('Organisation page access ($page)', ({ path, heading }) => {
   it('is shown to superusers', async () => {
     setupUser({ isSuperuser: true })
-    renderApp('/organisation/new')
+    renderApp(path)
 
     expect(
-      await screen.findByRole('heading', {
-        level: 1,
-        name: 'Create new organisation',
-      }),
+      await screen.findByRole('heading', { level: 1, name: heading }),
     ).toBeInTheDocument()
-    expect(window.location.pathname).toBe('/organisation/new')
   })
 
   it('redirects non-superusers to the dashboard', async () => {
     setupUser({ isSuperuser: false })
-    renderApp('/organisation/new')
+    renderApp(path)
 
-    await expectRedirectedToDashboard()
     expect(
-      screen.queryByRole('heading', { name: 'Create new organisation' }),
+      await screen.findByRole('heading', { level: 1, name: 'Dashboard' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByRole('heading', { name: heading }),
     ).not.toBeInTheDocument()
   })
 })

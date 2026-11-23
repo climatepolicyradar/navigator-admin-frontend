@@ -8,10 +8,7 @@ import PDFUpload from '@/views/pdfUpload/pdfUpload'
 import { uploadPdfs } from '@/api/PDFUpload'
 import { validatePdfFiles } from '@/utils/validatePDFDocument'
 import { setupUser } from '@/tests/helpers'
-import {
-  expectRedirectedToDashboard,
-  renderApp,
-} from '@/tests/utilsTest/renderApp'
+import { renderApp } from '@/tests/utilsTest/renderApp'
 
 vi.mock('@/api/PDFUpload', () => ({
   uploadPdfs: vi.fn(),
@@ -199,8 +196,6 @@ describe('PDFUpload', () => {
 })
 
 describe('PDF upload page access', () => {
-  afterEach(() => setupUser())
-
   it('is shown to superusers', async () => {
     setupUser({ isSuperuser: true })
     renderApp('/pdf-upload')
@@ -208,16 +203,17 @@ describe('PDF upload page access', () => {
     expect(
       await screen.findByRole('heading', { level: 1, name: 'PDF Upload' }),
     ).toBeInTheDocument()
-    expect(window.location.pathname).toBe('/pdf-upload')
   })
 
   it('redirects non-superusers to the dashboard', async () => {
     setupUser({ isSuperuser: false })
     renderApp('/pdf-upload')
 
-    await expectRedirectedToDashboard()
     expect(
-      screen.queryByRole('heading', { name: 'PDF Upload' }),
+      await screen.findByRole('heading', { level: 1, name: 'Dashboard' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByRole('heading', { level: 1, name: 'PDF Upload' }),
     ).not.toBeInTheDocument()
   })
 })

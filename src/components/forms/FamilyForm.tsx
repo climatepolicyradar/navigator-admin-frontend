@@ -34,7 +34,6 @@ import {
 import { canModify } from '@/utils/canModify'
 import { getCountries } from '@/utils/extractNestedGeographyData'
 import useToken from '@/hooks/useToken'
-import useIsSuperUser from '@/hooks/useIsSuperUser'
 import { stripHtml } from '@/utils/stripHtml'
 import { generateDynamicValidationSchema } from '@/schemas/dynamicValidationSchema'
 import { createFamily, updateFamily } from '@/api/Families'
@@ -250,11 +249,10 @@ export const FamilyForm = ({ family: loadedFamily }: TProps) => {
   }, [watchCorpus, isMCFCorpus, loadedFamily, setValue])
 
   const userToken = useToken()
-  const isSuperUser = useIsSuperUser()
   const userCanModify = userToken
     ? canModify(
         loadedFamily ? String(loadedFamily.organisation) : null,
-        isSuperUser,
+        userToken.is_superuser,
         userToken.authorisation,
       )
     : false
