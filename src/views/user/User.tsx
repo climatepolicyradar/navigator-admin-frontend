@@ -12,6 +12,7 @@ import { Loader } from '@/components/Loader'
 import { ApiError } from '@/components/feedback/ApiError'
 import useUser from '@/hooks/useUser'
 import { UserForm } from '@/components/forms/UserForm'
+import { ResetPasswordButton } from '@/components/buttons/ResetPasswordButton'
 
 export default function User() {
   const { email } = useParams()
@@ -55,6 +56,14 @@ export default function User() {
         )}
         {canLoadForm && user && <UserForm user={user} />}
       </Box>
+      {canLoadForm && user && (
+        <Box my={4} p={4} bg={'gray.50'} boxShadow='base'>
+          <Heading as={'h2'} size='md' mb={4}>
+            Password
+          </Heading>
+          <ResetPasswordButton email={user.email} />
+        </Box>
+      )}
     </>
   )
 }

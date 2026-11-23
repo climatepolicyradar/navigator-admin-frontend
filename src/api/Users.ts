@@ -66,3 +66,24 @@ export async function updateUser(email: string, userWrite: IUserWrite) {
 
   return { response }
 }
+
+export async function resetUserPassword(email: string) {
+  setToken(API)
+
+  const response = await API.post<{ password: string }>(
+    `/v1/users/${encodeURIComponent(email)}/password-reset`,
+  )
+    .then((response) => {
+      return response.data.password
+    })
+    .catch((error: AxiosError<{ detail: string }>) => {
+      const e: IError = {
+        status: error.response?.status || 500,
+        detail: error.response?.data?.detail || 'Unknown error',
+        message: error.message,
+      }
+      throw e
+    })
+
+  return { response }
+}
