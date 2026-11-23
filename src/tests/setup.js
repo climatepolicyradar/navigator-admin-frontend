@@ -74,6 +74,10 @@ afterEach(() => {
   }
   cleanup()
   reset()
+  // AuthProvider seeds its state from localStorage on mount, so reset auth
+  // state between tests to stop a token from one test leaking into the next.
+  localStorage.clear()
+  setupUser()
 })
 
 // Clean up after the tests are finished.

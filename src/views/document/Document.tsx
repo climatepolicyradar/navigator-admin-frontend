@@ -1,4 +1,3 @@
-import { useMemo } from 'react'
 import { useParams, Link as RouterLink } from 'react-router-dom'
 import {
   Box,
@@ -15,8 +14,8 @@ import { ApiError } from '@/components/feedback/ApiError'
 import useDocument from '@/hooks/useDocument'
 import useFamily from '@/hooks/useFamily'
 import useConfig from '@/hooks/useConfig'
-import { decodeToken } from '@/utils/decodeToken'
-import { IDecodedToken } from '@/interfaces'
+import useToken from '@/hooks/useToken'
+import useIsSuperUser from '@/hooks/useIsSuperUser'
 import { canModify } from '@/utils/canModify'
 import useCorpusFromConfig from '@/hooks/useCorpusFromConfig'
 
@@ -34,15 +33,9 @@ export default function Document() {
     family?.corpus_import_id,
   )
   const taxonomy = corpusInfo?.taxonomy
-  const userToken = useMemo(() => {
-    const token = localStorage.getItem('token')
-    if (!token) return null
-    const decodedToken: IDecodedToken | null = decodeToken(token)
-    return decodedToken
-  }, [])
-
+  const userToken = useToken()
+  const isSuperUser = useIsSuperUser()
   const userAccess = !userToken ? null : userToken.authorisation
-  const isSuperUser = !userToken ? false : userToken.is_superuser
   // TODO: Get org_id from corpus PDCT-1171.
   const orgName = family ? String(family?.organisation) : null
 

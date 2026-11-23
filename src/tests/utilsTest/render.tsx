@@ -2,6 +2,7 @@ import React from 'react'
 import { MemoryRouter } from 'react-router-dom'
 import { render as rtlRender, RenderOptions } from '@testing-library/react'
 import { ChakraProvider } from '@chakra-ui/react'
+import AuthProvider from '@/providers/AuthProvider'
 
 // Solution for avoid -> Error: Uncaught [TypeError: env.window.matchMedia is not a function].
 // Please check https://github.com/chakra-ui/chakra-ui/discussions/6664
@@ -23,7 +24,9 @@ const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <React.StrictMode>
       <ChakraProvider>
-        <MemoryRouter>{children}</MemoryRouter>
+        <AuthProvider>
+          <MemoryRouter>{children}</MemoryRouter>
+        </AuthProvider>
       </ChakraProvider>
     </React.StrictMode>
   )

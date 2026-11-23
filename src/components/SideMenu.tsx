@@ -28,7 +28,7 @@ import {
 import { MdUpload } from 'react-icons/md'
 import { FaUsers, FaFilePdf } from 'react-icons/fa'
 import Logout from './Logout'
-import useToken from '@/hooks/useToken'
+import useIsSuperUser from '@/hooks/useIsSuperUser'
 
 const IconLink = ({
   icon,
@@ -64,8 +64,7 @@ export function SideMenu() {
   const isCurrentPage = (page: string) =>
     pathname.split('/').reverse()[0] === page
 
-  const userToken = useToken()
-  const isSuperUser = !userToken ? false : userToken.is_superuser
+  const isSuperUser = useIsSuperUser()
 
   return (
     <>
