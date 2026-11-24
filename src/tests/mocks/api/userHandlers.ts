@@ -18,4 +18,10 @@ export const userHandlers = [
       ? HttpResponse.json(user)
       : HttpResponse.json({ detail: 'User not found' }, { status: 404 })
   }),
+  http.post('*/v1/users/:email/password-reset', ({ params }) => {
+    const user = mockUsers.find((u) => u.email === params.email)
+    return user
+      ? HttpResponse.json({ password: 'generated-password-123' })
+      : HttpResponse.json({ detail: 'User not found' }, { status: 404 })
+  }),
 ]
