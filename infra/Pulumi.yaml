@@ -1,0 +1,7 @@
+name: admin_frontend
+description: Admin Frontend App
+runtime:
+  name: python
+  options:
+    toolchain: uv
+    virtualenv: ../.venv

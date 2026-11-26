@@ -1,0 +1,31 @@
+config:
+  admin_frontend:vite_api_url:
+    secure: AAABAJab4ioDJJByYj6O/2o/9tk25+cOci7VTmylzsULHxGq7OMDkFgHF+DVU6DwADP5sdLEqozLao4RXbC3oQEBhEr1KtK8jfPe+/+GRWc=
+  admin_frontend:api_version: v1
+  admin_frontend:apprunner_frontend_max_concurrency: "50"
+  admin_frontend:apprunner_frontend_max_instance_count: "10"
+  admin_frontend:apprunner_frontend_min_instance_count: "1"
+  admin_frontend:ecr_uri: 073457443605.dkr.ecr.eu-west-1.amazonaws.com
+  admin_frontend:hostname: https://admin.staging.climatepolicyradar.org
+  admin_frontend:robots: "false"
+  admin_frontend:validation_account_id:
+    secure: AAABAML/NGllT3ud2OIF47uyzD7KUbHFnfNUui+U7A36zDLXmAZsFGK+EIc=
+  aws:region: eu-west-1
+  admin_frontend:vite_geographies_api_url:
+    secure: AAABAIsdMEPFWdDcM+/xATb0h64AsuykJ9CXPlpekUIRqSKgjB8a6G85wGFCJjqF2ET6aQ3pjhBim9u2vTYwnX0u/lgS5OR/IbI=
+  admin_frontend:vpc_id:
+    secure: AAABAEAq53GbfU6CclZUCaUk8s5//7HRcphrR8TvMmvI0Y7Sz7YAgMno0D4ihqUVmcpGG2Q=
+  admin_frontend:vpc_public_subnet_1_id:
+    secure: AAABAD2EbcmrspWkuVdu0FHuAOQD7hb3imZkh9AMYamuON5N52wS30ddI3V++/bdHnZTBq6NPLU=
+  admin_frontend:vpc_public_subnet_2_id:
+    secure: AAABAEofuI6wG95dkLpdvG/UuvjpEBcRglinfb6c4TfqYgYQJVojKgIMwsE5RVMoaS6kDrfJ35M=
+  admin_frontend:vpc_public_subnet_3_id:
+    secure: AAABAHMtq8l59xR1TLfU0Bf6PPRH54QEGjmgNjdJDlTdOo4+zAZCPAA13d3vxhqG3UWS8EL15F0=
+  admin_frontend:cloudfront_origin_prefix_list_id:
+    secure: AAABADDklktuw/8uKFDuy7xDccLlJyfTa7HPJpr/uPI2MAxtKV0Qaekwrg==
+  aws:defaultTags:
+    tags:
+      Team: enrichment
+      Environment: staging
+environment:
+  - admin_frontend/staging
