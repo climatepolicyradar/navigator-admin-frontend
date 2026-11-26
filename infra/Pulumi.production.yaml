@@ -1,0 +1,31 @@
+config:
+  admin_frontend:api_version: v1
+  admin_frontend:apprunner_frontend_max_concurrency: "50"
+  admin_frontend:apprunner_frontend_max_instance_count: "10"
+  admin_frontend:apprunner_frontend_min_instance_count: "1"
+  admin_frontend:ecr_uri: 532586131621.dkr.ecr.eu-west-1.amazonaws.com
+  admin_frontend:hostname: https://admin.climatepolicyradar.org
+  admin_frontend:robots: "false"
+  admin_frontend:validation_account_id:
+    secure: AAABAPS0NFTfk5+n5/Q8iP8mp8TZIzybQ8C0TTBFj68ufJLpaUnhvUW4I6M=
+  admin_frontend:vite_api_url:
+    secure: AAABAO4OWcJLoB1EnstvOwlRKfoVN1OY5ntybtfADptdJG5zpSIwX/GvIqhTYQUiZnt0RRwmxYGKHJwSTQgh71l2Om2nAxWX
+  aws:region: eu-west-1
+  admin_frontend:vite_geographies_api_url:
+    secure: AAABAM3jtyZEhLQLAZo79oweTkAIUCH2KtRaskgrHDU+HneFVPYxLzJREVw099l1D8KmdOstbe281NINnhl7U3Xg
+  admin_frontend:cloudfront_origin_prefix_list_id:
+    secure: AAABAOErhdIrl9JYNBXjOvUP3IjK8ILRBHMY6fL/veR3RsqnbHgNaCi06w==
+  admin_frontend:vpc_id:
+    secure: AAABAB5Hns8GWgcgnuVrVfEvVmOo9apJPXvD7ck3pCZnCjcf2dLtL60yoobjtZ5EpRPh9BY=
+  admin_frontend:vpc_public_subnet_1_id:
+    secure: AAABAPccHDZV59V53FGQvIw2GqmJBaIY2pZLrRXVQaGL5bbQzP6KXPvgggW9GQK9LkBsPlQIoNw=
+  admin_frontend:vpc_public_subnet_2_id:
+    secure: AAABAKRBnAWJn8+ee1jY9U0eoXoxCvEAe2YXuIAGhIbwKTKTcpykTDT6CKxUENPWYr0Q8/VOcqI=
+  admin_frontend:vpc_public_subnet_3_id:
+    secure: AAABAOTwfwUvSp6F0e2evA5Ci8paBUcEY5hayedNFI/rudgjC0NrxI3itKwLX+mqNsAw5FJmrzw=
+  aws:defaultTags:
+    tags:
+      Team: enrichment
+      Environment: production
+environment:
+  - admin_frontend/production
